@@ -1,14 +1,14 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view='lHh Lpr lFf'>
     <q-header elevated>
       <q-toolbar>
         <q-btn
           flat
           dense
           round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
+          icon='menu'
+          aria-label='Menu'
+          @click='leftDrawerOpen = !leftDrawerOpen'
         />
 
         <q-toolbar-title>
@@ -16,38 +16,155 @@
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
+        <q-btn
+          flat
+          @click="goTo('signin')"
+          v-show='!authenticated'
+        >Sign In</q-btn>
+        <q-btn
+          flat
+          @click="goTo('register')"
+          v-show='!authenticated'
+        >Register</q-btn>
+        <q-btn
+          flat
+          round
+          @click="goTo('home')"
+          v-show='authenticated'
+        >
+          <q-icon name='home' />
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 20]'
+          >Home</q-tooltip>
+        </q-btn>
+        <q-btn
+          flat
+          round
+          dense
+          icon='mdi-account-search'
+          @click='playerList = !playerList'
+          aria-label='Player List...'
+          v-show='authenticated'
+        />
+        <q-btn
+          flat
+          round
+          @click="goTo('profile')"
+          v-if='authenticated'
+        >
+          <q-avatar class='gt-xs'>
+            <img :src='user.avatar' />
+          </q-avatar>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 20]'
+          >Profile</q-tooltip>
+        </q-btn>
+        <q-btn
+          flat
+          round
+          @click='signout'
+          v-show='authenticated'
+        >
+          <q-icon name='exit_to_app' />
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 20]'
+          >Signout</q-tooltip>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer
-      v-model="leftDrawerOpen"
+      v-model='leftDrawerOpen'
       show-if-above
       bordered
-      content-class="bg-grey-1"
+      content-class='bg-grey-1'
     >
       <q-list>
         <q-item-label
           header
-          class="text-grey-8"
+          class='text-grey-8'
         >
           Essential Links
         </q-item-label>
         <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
+          v-for='link in essentialLinks'
+          :key='link.title'
+          v-bind='link'
         />
       </q-list>
     </q-drawer>
+    <q-drawer
+      side='right'
+      overlay
+      bordered
+      elevated
+      v-model='playerList'
+      v-show='authenticated'
+      :content-class="$q.theme === 'mat' ? 'bg-grey-3' : null"
+      :content-style="{ fontSize: '16px' }"
+    >
+      <q-toolbar
+        inset
+        class='bg-info text-white shadow-2'
+      >
+        <q-btn
+          flat
+          dense
+        >
+          <q-icon name='mdi-account-search' />
+        </q-btn>
+        <q-toolbar-title>Players:</q-toolbar-title>
+      </q-toolbar>
 
+      <q-list bordered>
+        <q-item
+          v-for='p in players'
+          :key='p.id'
+          class='q-my-sm'
+          clickable
+          v-ripple
+        >
+          <q-item-section avatar>
+            <q-avatar
+              color='secondary'
+              text-color='white'
+            >
+              <img :src='p.avatar' />
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ p.nick }}</q-item-label>
+            <q-item-label
+              caption
+              lines='1'
+            >@{{ p.tId }}</q-item-label>
+          </q-item-section>
+          <q-item-section side>
+            <q-icon
+              name='chat_bubble'
+              color='green'
+            />
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </q-drawer>
     <q-page-container>
-      <router-view />
+      <router-view :user='user'></router-view>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
 import EssentialLink from 'components/EssentialLink'
+import { mapState, mapActions } from 'vuex'
+import { userService, chatService, playerService, tableService } from 'src/api'
+import auth from 'src/auth'
 
 export default {
   name: 'MainLayout',
@@ -96,8 +213,124 @@ export default {
           icon: 'public',
           link: 'https://facebook.quasar.dev'
         }
-      ]
+      ],
+      playerList: this.$q.platform.is.desktop,
+      page: '',
+      chats: [],
+      user: null
     }
-  }
+  },
+  computed: {
+    ...mapState('jstore', ['chatTo', 'players', 'tables']),
+    authenticated () {
+      return this.user != null
+    }
+  },
+  methods: {
+    ...mapActions('jstore', [
+      'setUser',
+      'setChats',
+      'setPlayer',
+      'setTable',
+      'setPlayers',
+      'setTables'
+    ]),
+    goTo (route) {
+      if (this.$route.name !== route) this.$router.push({ name: route })
+    },
+    signout () {
+      auth
+        .signout()
+        .then(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: 'You are now logged out, sign in again to continue to play'
+          })
+        })
+        .catch(() => {
+          this.$q.notify({
+            type: 'positive',
+            message: 'Cannot logout, please check again in a few minutes'
+          })
+        })
+    },
+    onServices () {
+      userService.on('update', user => {
+        this.user = user
+      })
+      chatService.on('created', chat => {
+        // this.chats.unshift(chat)
+        this.setChats(chat)
+      })
+      playerService.find().then(response => {
+        // this.setPlayers(response.data)
+      })
+      playerService.on('created', player => {
+        console.log('create', player)
+        this.onPlayer(player)
+      })
+      playerService.on('patched', player => {
+        console.log('player patched', player)
+        this.onPlayer(player)
+      })
+      playerService.on('removed', player => {
+        console.log('player removed', player)
+        player.state = -1
+        this.onPlayer(player)
+      })
+      tableService.find().then(response => {
+        this.setTables(response.data)
+        // this.setTables(response.data)
+        // let player = players.find(p => p.id === this.user._id)
+        // this.updatePlayer(player)
+      })
+      tableService.on('created', table => {
+        this.onTable(table)
+      })
+      tableService.on('patched', table => {
+        this.onTable(table)
+      })
+      tableService.on('removed', table => {
+        console.log('remove', table)
+        table.state = -1
+        this.onTable(table)
+      })
+    },
+    onPlayer (player) {
+      this.setPlayer(player)
+    },
+    onTable (table) {
+      this.setTable(table)
+    }
+  },
+  mounted () {
+    // Check if there is already a session running
+    auth
+      .login()
+      .then(user => {
+        this.$q.notify({
+          type: 'positive',
+          message: 'Restoring previous session'
+        })
+      })
+      .catch(_ => {
+        this.goTo('home')
+      })
+
+    // On successful login
+    auth.onAuthenticated(user => {
+      this.user = user
+      this.onServices()
+      this.goTo('lobby')
+    })
+
+    // On logout
+    auth.onLogout(() => {
+      this.user = null
+      this.goTo('home')
+    })
+  },
+  watch: {},
+  beforeDestroy () { }
 }
 </script>

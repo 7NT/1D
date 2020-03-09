@@ -47,13 +47,13 @@
             class="button button-primary block"
             href="localhost:3030/oauth/google"
           >
-            Login with Google
+            Google
           </a>
           <a
             class="button button-primary block"
             href="localhost:3030/oauth/facebook"
           >
-            Login with Facebook
+            Facebook
           </a>
         </q-card-actions>
       </q-card>

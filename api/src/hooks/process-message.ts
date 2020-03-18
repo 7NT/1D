@@ -21,6 +21,7 @@ export default (): Hook => {
     // Override the original data (so that people can't submit additional stuff)
     context.data = {
       text,
+      to: data.to,
       // Set the user id
       userId: user._id,
       // Add the current date

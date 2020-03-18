@@ -16,6 +16,9 @@
         </q-toolbar-title>
 
         <div>Quasar v{{ $q.version }}</div>
+        <!--
+          <a href="localhost:3030/oauth/google">Login with Google</a>
+        -->
         <q-btn
           flat
           @click="goTo('signin')"
@@ -43,7 +46,7 @@
           flat
           round
           dense
-          icon='mdi-account-search'
+          icon='contacts'
           @click='playerList = !playerList'
           aria-label='Player List...'
           v-show='authenticated'
@@ -236,7 +239,7 @@ export default {
       'setTables'
     ]),
     goTo (route) {
-      if (this.$route.name !== route) this.$router.push({ name: route })
+      if (this.$route.name !== route) this.$router.push({ name: route }).catch(e => { })
     },
     signout () {
       auth

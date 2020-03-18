@@ -5,7 +5,7 @@ import { Application } from '../declarations';
 export default function (app: Application) {
   const dbPath = app.get('nedb');
   const Model = new NeDB({
-    filename: path.join(dbPath, 'messages.db'),
+    filename: path.join(dbPath, 'chats.db'),
     autoload: true
   });
 

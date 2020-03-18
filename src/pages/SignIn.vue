@@ -43,18 +43,6 @@
             v-close-popup
             @click="onOk()"
           />
-          <a
-            class="button button-primary block"
-            href="localhost:3030/oauth/google"
-          >
-            Google
-          </a>
-          <a
-            class="button button-primary block"
-            href="localhost:3030/oauth/facebook"
-          >
-            Facebook
-          </a>
         </q-card-actions>
       </q-card>
     </q-dialog>

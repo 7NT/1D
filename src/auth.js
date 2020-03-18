@@ -12,7 +12,6 @@ const auth = {
   },
 
   register (credential) {
-    console.log('register', credential)
     return api.service('users').create(credential)
   },
 

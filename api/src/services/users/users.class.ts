@@ -14,7 +14,7 @@ interface UserData {
   email: string;
   password: string;
   avatar?: string;
-  githubId?: string;
+  netId?: string;
 }
 
 export class Users extends Service<UserData> {
@@ -24,7 +24,7 @@ export class Users extends Service<UserData> {
 
   create (data: UserData, params?: Params) {
     // This is the information we want from the user signup data
-    const { email, password, githubId } = data;
+    const { email, password, netId } = data;
     // Gravatar uses MD5 hashes from an email address (all lowercase) to get the image
     const hash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
     // The full avatar URL
@@ -33,8 +33,8 @@ export class Users extends Service<UserData> {
     const userData = {
       email,
       password,
-      githubId,
-      avatar
+      avatar,
+      netId
     };
 
     // Call the original `create` method with existing `params` and new data

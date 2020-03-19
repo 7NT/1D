@@ -137,7 +137,6 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { playerService, chatService } from 'src/api'
-import moment from 'moment'
 import myTableList from 'src/components/myTableList'
 import myPlayTable from 'src/components/myPlayTable'
 

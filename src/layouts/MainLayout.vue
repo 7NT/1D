@@ -33,7 +33,7 @@
           flat
           round
           @click="goTo('home')"
-          v-show='authenticated'
+          v-if='authenticated'
         >
           <q-icon name='home' />
           <q-tooltip
@@ -166,7 +166,7 @@
 <script>
 import EssentialLink from 'components/EssentialLink'
 import { mapState, mapActions } from 'vuex'
-import { userService, chatService, playerService, tableService } from 'src/api'
+import { userService, playerService, tableService } from 'src/api'
 import auth from 'src/auth'
 
 export default {
@@ -219,7 +219,6 @@ export default {
       ],
       playerList: this.$q.platform.is.desktop,
       page: '',
-      chats: [],
       user: null
     }
   },
@@ -261,15 +260,11 @@ export default {
       userService.on('update', user => {
         this.user = user
       })
-      chatService.on('created', chat => {
-        // this.chats.unshift(chat)
-        this.setChats(chat)
-      })
       playerService.find().then(response => {
         // this.setPlayers(response.data)
       })
       playerService.on('created', player => {
-        console.log('create', player)
+        console.log('create player', player)
         this.onPlayer(player)
       })
       playerService.on('patched', player => {
@@ -288,13 +283,15 @@ export default {
         // this.updatePlayer(player)
       })
       tableService.on('created', table => {
+        console.log('table created', table)
         this.onTable(table)
       })
       tableService.on('patched', table => {
+        console.log('table patched', table)
         this.onTable(table)
       })
       tableService.on('removed', table => {
-        console.log('remove', table)
+        console.log('table remove', table)
         table.state = -1
         this.onTable(table)
       })

@@ -44,8 +44,9 @@ module.exports = function (ctx) {
       all: 'auto',
 
       components: [
-        'QDialog',
-        'QIcon'
+        //'QChatMessage',
+        //'QDialog',
+        //'QIcon'
       ],
       directives: [
         'ClosePopup'

@@ -15,10 +15,10 @@
     "@feathersjs/authentication-client": "^4.5.2",
     "@feathersjs/feathers": "^4.5.2",
     "@feathersjs/socketio-client": "^4.5.2",
-    "@quasar/extras": "^1.0.0",
+    "@quasar/extras": "^1.6.0",
     "axios": "^0.18.1",
     "moment": "^2.24.0",
-    "quasar": "^1.0.0",
+    "quasar": "^1.9.10",
     "socket.io-client": "^2.3.0"
   },
   "devDependencies": {

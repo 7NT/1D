@@ -2,15 +2,12 @@
   <q-page>
     <!-- content -->
     <div>
-      <q-splitter
-        v-model='splitterModel'
-        horizontal
-      >
+      <q-splitter v-model='splitterModel' horizontal>
         <template v-slot:before>
           <div class='q-pa-md'>
             <q-card>
               <q-tabs
-                v-model='roomId'
+                v-model='myRID'
                 align='left'
                 dense
                 no-caps
@@ -30,31 +27,15 @@
 
               <q-separator />
 
-              <q-tab-panels
-                v-model='roomId'
-                animated
-              >
+              <q-tab-panels v-model='myRID' animated>
                 <q-tab-panel name='Lobby'>
-                  <q-list
-                    dense
-                    bordered
-                    separator
-                  >
-                    <myTableList
-                      v-for='t in tables'
-                      :key='t.id'
-                      :myTable='t'
-                      v-on:onSit='onSit'
-                    />
+                  <q-list dense bordered separator>
+                    <myTableList v-for='t in tables' :key='t.id' :myTable='t' v-on:onSit='onSit' />
                   </q-list>
                 </q-tab-panel>
 
                 <q-tab-panel name='My Table'>
-                  <myPlayTable
-                    :myPlayer='myPlayer'
-                    v-on:onSit='onSit'
-                    class='myTable'
-                  />
+                  <myPlayTable :myPlayer='myPlayer' v-on:onSit='onSit' class='myTable' />
                 </q-tab-panel>
               </q-tab-panels>
             </q-card>
@@ -67,16 +48,17 @@
               default-opened
               dense
               icon='chat'
-              label='Messages'
-              header-class='chats'
+              label='Lobby Messages'
+              header-class='myChats'
             >
               <q-separator />
-              <q-card class='full-width chats'>
+              <q-card class='full-width myChats'>
                 <q-chat-message
-                  v-for='chat in lobbyChats'
+                  v-for='chat in myChats'
                   :key='chat.id'
                   :text='[chat.text]'
-                  :avatar='chat.user.avatar'
+                  :name='chat.userId'
+                  :avatar='chat.from.avatar'
                   :stamp='chatDate(chat)'
                   :sent='isSent(chat) ? true : false'
                 />
@@ -88,36 +70,16 @@
     </div>
     <q-footer elevated>
       <q-toolbar class='bg-primary text-white rounded-borders'>
-        <q-btn
-          round
-          dense
-          flat
-          icon='menu'
-          class='q-mr-xs'
-        />
+        <q-btn round dense flat icon='menu' class='q-mr-xs' />
         <q-avatar class='gt-xs'>
-          <img :src='user.avatar' />
+          <img :src='myUser.avatar' />
         </q-avatar>
         <q-space />
         <div class='full-width'>
-          <q-input
-            dark
-            autofocus
-            standout
-            v-model='chat'
-            @keypress='onChat'
-          >
+          <q-input dark autofocus standout v-model='chat' @keypress='onChat'>
             <template v-slot:append>
-              <q-icon
-                v-if="chat === ''"
-                name='chat'
-              />
-              <q-icon
-                v-else
-                name='clear'
-                class='cursor-pointer'
-                @click="chat = ''"
-              />
+              <q-icon v-if='!chat' name='chat' />
+              <q-icon v-else name='clear' class='cursor-pointer' @click='chat = null' />
             </template>
           </q-input>
         </div>
@@ -135,7 +97,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+import moment from 'moment'
 import { playerService, chatService } from 'src/api'
 import myTableList from 'src/components/myTableList'
 import myPlayTable from 'src/components/myPlayTable'
@@ -148,10 +111,10 @@ export default {
   },
   data () {
     return {
-      user: null,
+      myUser: null,
       myPlayer: null,
       splitterModel: 50, // start at 50%
-      roomId: 'Lobby',
+      myRID: 'Lobby',
       rooms: [
         {
           name: 'Lobby',
@@ -178,19 +141,15 @@ export default {
           open: false
         }
       ],
-      mix: ['MP', 'IMP', 'XIMP'],
+      MIX: ['MP', 'IMP', 'XIMP'],
       myBT: null,
-      chat: null
+      chat: null,
+      myChats: []
     }
   },
   computed: {
-    ...mapState('jstore', ['players', 'tables', 'chats']),
-    ...mapGetters('jstore', ['getChats']),
-    lobbyChats: function () {
-      const chats = this.getChats('#Lobby')
-      console.log(chats)
-      return chats
-    }
+    ...mapState('jstore', ['players', 'tables'])
+    // ...mapGetters('jstore', ['getChats']),
   },
   methods: {
     ...mapActions('jstore', [
@@ -212,28 +171,30 @@ export default {
         }
 
         chatService.create(_chat).then(() => {
-          this.chat = ''
+          this.chat = null
         })
       }
     },
     isSent (chat) {
-      return chat.from.userId === this.user._id
+      return chat.from.userId === this.myUser._id
     },
     chatDate (chat) {
       return moment(chat.createdAt).format('MMM Do, hh:mm:ss')
     },
     onSit (seat) {
-      console.log(this.user, seat)
-      playerService.patch(this.user._id, seat)
+      console.log(this.myUser, seat)
+      playerService.patch(this.myUser._id, seat)
     }
   },
   mounted () {
-    // if (!this.user.county) this.$router.push({ name: 'profile' })
+    // if (!this.myUser.county) this.$router.push({ name: 'profile' })
+    chatService.on('created', chat => {
+      if (chat.to === '#Lobby') this.myChats.unshift(chat)
+    })
   },
   created () {
     this.$parent.page = 'Lobby'
-    this.user = this.$attrs.user
-    console.log(this.user)
+    this.myUser = this.$attrs.user
   },
   watch: {}
 }

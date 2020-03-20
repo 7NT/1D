@@ -2,7 +2,10 @@
   <q-page>
     <!-- content -->
     <div>
-      <q-splitter v-model='splitterModel' horizontal>
+      <q-splitter
+        v-model='splitterModel'
+        horizontal
+      >
         <template v-slot:before>
           <div class='q-pa-md'>
             <q-card>
@@ -27,15 +30,31 @@
 
               <q-separator />
 
-              <q-tab-panels v-model='myRID' animated>
+              <q-tab-panels
+                v-model='myRID'
+                animated
+              >
                 <q-tab-panel name='Lobby'>
-                  <q-list dense bordered separator>
-                    <myTableList v-for='t in tables' :key='t.id' :myTable='t' v-on:onSit='onSit' />
+                  <q-list
+                    dense
+                    bordered
+                    separator
+                  >
+                    <myTableList
+                      v-for='t in tables'
+                      :key='t.id'
+                      :myTable='t'
+                      v-on:onSit='onSit'
+                    />
                   </q-list>
                 </q-tab-panel>
 
                 <q-tab-panel name='My Table'>
-                  <myPlayTable :myPlayer='myPlayer' v-on:onSit='onSit' class='myTable' />
+                  <myPlayTable
+                    :myPlayer='myPlayer'
+                    v-on:onSit='onSit'
+                    class='myTable'
+                  />
                 </q-tab-panel>
               </q-tab-panels>
             </q-card>
@@ -70,16 +89,36 @@
     </div>
     <q-footer elevated>
       <q-toolbar class='bg-primary text-white rounded-borders'>
-        <q-btn round dense flat icon='menu' class='q-mr-xs' />
+        <q-btn
+          round
+          dense
+          flat
+          icon='menu'
+          class='q-mr-xs'
+        />
         <q-avatar class='gt-xs'>
           <img :src='myUser.avatar' />
         </q-avatar>
         <q-space />
         <div class='full-width'>
-          <q-input dark autofocus standout v-model='chat' @keypress='onChat'>
+          <q-input
+            dark
+            autofocus
+            standout
+            v-model='chat'
+            @keypress='onChat'
+          >
             <template v-slot:append>
-              <q-icon v-if='!chat' name='chat' />
-              <q-icon v-else name='clear' class='cursor-pointer' @click='chat = null' />
+              <q-icon
+                v-if='!chat'
+                name='chat'
+              />
+              <q-icon
+                v-else
+                name='clear'
+                class='cursor-pointer'
+                @click='chat = null'
+              />
             </template>
           </q-input>
         </div>
@@ -196,6 +235,11 @@ export default {
     this.$parent.page = 'Lobby'
     this.myUser = this.$attrs.user
   },
-  watch: {}
+  watch: {
+    myUser (n, o) {
+      console.log('user', n)
+      if (n.tId) this.myRID = 'My Table'
+    }
+  }
 }
 </script>

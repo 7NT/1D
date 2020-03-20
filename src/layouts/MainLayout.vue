@@ -297,6 +297,10 @@ export default {
       })
     },
     onPlayer (player) {
+      if (this.user._id === player.id) {
+        this.user.tId = player.tId
+        this.user.sId = player.sId
+      }
       this.setPlayer(player)
     },
     onTable (table) {

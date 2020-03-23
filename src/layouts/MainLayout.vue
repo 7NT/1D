@@ -261,12 +261,6 @@ export default {
       this.setUser(user)
     },
     updatePlayer (player) {
-      /*
-      if (this.user._id === player.id) {
-        this.user.tId = player.tId
-        this.user.sId = player.sId
-      }
-      */
       this.setPlayer(player)
     },
     updateTable (table) {
@@ -346,3 +340,6 @@ export default {
   beforeDestroy () { }
 }
 </script>
+<style scoped>
+
+</style>

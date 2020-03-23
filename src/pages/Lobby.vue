@@ -1,13 +1,13 @@
 <template>
-  <q-page>
+  <q-page class="no-padding no-margin">
     <!-- content -->
-    <div>
+    <div class="no-padding no-margin">
       <q-splitter
         v-model='splitterModel'
         horizontal
         :separator-style="{ backgroundColor: '#ff0000' }"
         :unit="'px'"
-        :limits='[393, Infinity]'
+        :limits='[460, Infinity]'
       >
         <template v-slot:before>
           <div class='q-pa-md'>
@@ -23,10 +23,10 @@
               >
                 <q-tab
                   v-for='r in rooms'
-                  :key='r.name'
-                  :name='r.name'
+                  :key='r.value'
+                  :name='r.value'
                   :icon='r.icon'
-                  :label='r.name'
+                  :label='r.label'
                   :disable='!r.open'
                 />
               </q-tabs>
@@ -37,7 +37,7 @@
                 v-model='myRID'
                 animated
               >
-                <q-tab-panel name='Lobby'>
+                <q-tab-panel :name='0'>
                   <q-list
                     dense
                     bordered
@@ -52,7 +52,7 @@
                   </q-list>
                 </q-tab-panel>
 
-                <q-tab-panel name='My Table'>
+                <q-tab-panel :name='1' class="no-margin no-padding">
                   <myPlayTable
                     v-on:onSit='onSit'
                     class='myTable'
@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import moment from 'moment'
 import { playerService, chatService } from 'src/api'
 import myTableList from 'src/components/myTableList'
@@ -153,30 +153,29 @@ export default {
   data () {
     return {
       user: null,
-      myPlayer: null,
       splitterModel: 50, // start at 50%
-      myRID: 'Lobby',
+      myRID: 0,
       rooms: [
         {
-          name: 'Lobby',
+          label: 'Lobby',
           value: 0,
           icon: 'people',
           open: true
         },
         {
-          name: 'My Table',
+          label: 'My Table',
           value: 1,
           icon: 'portrait',
-          open: false
+          open: true
         },
         {
-          name: 'Tourney',
+          label: 'Tourney',
           value: 2,
           icon: 'person_add',
           open: false
         },
         {
-          name: 'Team Game',
+          label: 'Team Game',
           value: 4,
           icon: 'group_add',
           open: false
@@ -189,8 +188,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['players', 'tables'])
-    // ...mapGetters('jstore', ['getChats']),
+    ...mapState('jstore', ['players', 'tables']),
+    ...mapGetters('jstore', ['myPlayer'])
   },
   methods: {
     onChat (event) {
@@ -232,8 +231,13 @@ export default {
     this.user = this.$attrs.user
   },
   watch: {
-    user (n, o) {
-      if (n.tId) this.myRID = 'My Table'
+    myRID (n) {
+      if (n === 1 && !this.myPlayer.tId) {
+        this.onSit({ tId: this.myPlayer.id, sId: 0 })
+      }
+    },
+    myPlayer (n, o) {
+      if (n.tId) this.myRID = 1
     }
   }
 }

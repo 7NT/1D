@@ -1,127 +1,123 @@
 <template>
-  <div class="q-ma-none">
-    <div class="tplay column">
-      <div class="col">
-        <div class="row no-wrap">
-          <div class="col-3 items-start">
-            <myBoard
-              :table="myTable"
-              :cc="$data.cc"
-              v-on:onBT="onBT"
-            ></myBoard>
+  <div class='q-ma-none'>
+    <div class='jbtable column bg-teal'>
+      <div class='col'>
+        <div class='row no-wrap'>
+          <div class='col-3 items-start'>
+            <myBoard :boardInfo='myBoardInfo' v-on:onBT='onBT'></myBoard>
           </div>
-          <div class="col-6 box">
-            <div class="column">
+          <div class='col-6 box'>
+            <div class='column'>
               <myHand
-                :seatX="seatX[0]"
-                :myTable="myTable"
-                v-on:onAction="onAction"
-                class="myHand justify-start"
+                :seatX='seatX[0]'
+                :myTable='myTable'
+                v-on:onAction='onAction'
+                class='myHand justify-start'
               />
             </div>
           </div>
-          <div class="col-3 self-start">
+          <div class='col-3 self-start'>
             <div
-              class="row justify-end"
-              v-if="State > 1"
+              class='row justify-end'
+              v-if='State > 1'
             >
               <myBidBox
-                :seatX3="seatX[2]"
-                :myTable="myTable"
+                :seatX3='seatX[2]'
+                :myTable='myTable'
               />
             </div>
           </div>
         </div>
       </div>
-      <div class="col">
-        <div class="row no-wrap">
-          <div class="col-4 box">
-            <div class="column">
+      <div class='col'>
+        <div class='row no-wrap'>
+          <div class='col-4 box'>
+            <div class='column'>
               <myHand
-                :seatX="seatX[3]"
-                :myTable="myTable"
-                v-on:onAction="onAction"
-                class="myHand justify-end"
+                :seatX='seatX[3]'
+                :myTable='myTable'
+                v-on:onAction='onAction'
+                class='myHand justify-end'
               />
             </div>
           </div>
-          <div class="col-4">
-            <div class="column">
+          <div class='col-4'>
+            <div class='column'>
               <q-card
-                class="bbox cbox"
-                v-if="State === 1"
+                class='bbox cbox'
+                v-if='State === 1'
               >
                 <q-card>
                   <myBidBox
-                    :seatX3="seatX[2]"
-                    :myTable="myTable"
+                    :seatX3='seatX[2]'
+                    :myTable='myTable'
                   />
                 </q-card>
               </q-card>
               <q-card
-                class="cbox transparent"
-                v-if="State === 2"
+                class='cbox transparent'
+                v-if='State === 2'
               >
                 <myPlayBox
-                  :card4="played4"
-                  :seatX="seatX"
+                  :card4='played4'
+                  :seatX='seatX'
                 />
               </q-card>
             </div>
           </div>
-          <div class="col-4 box">
-            <div class="column">
+          <div class='col-4 box'>
+            <div class='column'>
               <myHand
-                :seatX="seatX[1]"
-                :myTable="myTable"
-                v-on:onAction="onAction"
-                class="myHand justify-start"
+                :seatX='seatX[1]'
+                :myTable='myTable'
+                v-on:onAction='onAction'
+                class='myHand justify-start'
               />
             </div>
           </div>
         </div>
       </div>
-      <div class="col">
-        <div class="row no-wrap">
-          <div class="col-3" />
-          <div class="col-6 box">
-            <div class="column">
+      <div class='col'>
+        <div class='row no-wrap'>
+          <div class='col-3' />
+          <div class='col-6 box'>
+            <div class='column'>
               <myHand
-                :seatX="seatX[2]"
-                :myTable="myTable"
-                v-on:onAction="onAction"
-                class="myHand justify-end"
+                :seatX='seatX[2]'
+                :myTable='myTable'
+                v-on:onAction='onAction'
+                class='myHand justify-end'
               />
             </div>
           </div>
-          <div class="col-3">
+          <div class='col-3'>
             <div
-              class="column"
-              v-if="myTurn() === 1"
+              class='column'
+              v-if='myTurn() === 1'
             >
-              <div class="col group items-start">
+              <div class='col group items-start'>
                 <q-btn-group
                   dense
                   outline
                   glossy
-                  v-for="n of 7"
-                  :key="n"
+                  v-for='n of 7'
+                  :key='n'
                 >
                   <q-fab
                     flat
                     glossy
-                    v-if="bidN(n)"
-                    :icon="`mdi-numeric-${n}-box-outline`"
-                    direction="up"
-                    style="width:28pxheight:28pxtop:0px"
+                    v-if='bidN(n)'
+                    :icon='`mdi-numeric-${n}-box-outline`'
+                    direction='up'
+                    style='width:28pxheight:28pxtop:0px'
                   >
                     <q-fab-action
-                      v-for="s in suits"
-                      :key="s.id"
-                      icon=""
-                      v-show="isBid(n, s.id)"
-                      :color="s.color"
-                      @click="onBid(`${n}${s.suit}`)"
+                      v-for='s in suits'
+                      :key='s.id'
+                      icon=''
+                      v-show='isBid(n, s.id)'
+                      :color='s.color'
+                      @click='onBid(`${n}${s.suit}`)'
                     >
                       {{ bidNS(n, s.suit) }}
                     </q-fab-action>
@@ -129,13 +125,13 @@
                 </q-btn-group>
                 <q-separator
                   spaced
-                  color="warning"
+                  color='warning'
                 />
               </div>
-              <div class="col group items-end">
+              <div class='col group items-end'>
                 <q-btn-group
                   dense
-                  class="full-width"
+                  class='full-width'
                 >
                   <q-btn
                     glossy
@@ -431,3 +427,54 @@ export default {
   beforeDestroy () { }
 }
 </script>
+<!-- Notice lang='scss' -->
+<style scapoed lang='scss'>
+
+.q-btn >>> .q-icon {
+  /*float: left*/
+  align-self: flex-start;
+
+}
+.jbtable {
+  min-width:  696px;
+  min-height: 390px;
+  border: 1px solid green;
+  width: 100%;
+  height: 100%;
+  background-image: url('../statics/img/jbbg.jpeg');
+  background-position: center; /* Center the image */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-size: cover; /* Resize the background image to cover the entire container */
+}
+.jbtable > div {
+  border: 1px solid yellow;
+  align-items: flex-end;
+}
+.box {
+  border: 1px solid blue;
+}
+.bbox {
+  min-height: 160px;
+  min-width: 160px;
+}
+.cbox {
+  max-height: 200px;
+  max-width: 240px;
+  border: 1px solid red;
+  margin: auto;
+  overflow-y: auto;
+}
+.popover {
+  overflow: visible;
+}
+.popover >>> .q-btn-fab {
+  height: 28px;
+  width: 28px;
+}
+.myHand {
+  min-height: 100px;
+  max-height: 130px;
+  min-width: 175px;
+}
+
+</style>

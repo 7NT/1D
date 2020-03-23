@@ -51,6 +51,7 @@
 
                 <q-tab-panel name='My Table'>
                   <myPlayTable
+                    :myPlayer='myPlayer'
                     v-on:onSit='onSit'
                     class='myTable'
                   />
@@ -96,7 +97,7 @@
           class='q-mr-xs'
         />
         <q-avatar class='gt-xs'>
-          <img :src='user.avatar' />
+          <img :src='myUser.avatar' />
         </q-avatar>
         <q-space />
         <div class='full-width'>
@@ -135,7 +136,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import moment from 'moment'
 import { playerService, chatService } from 'src/api'
 import myTableList from 'src/components/myTableList'
@@ -149,7 +150,7 @@ export default {
   },
   data () {
     return {
-      user: null,
+      myUser: null,
       myPlayer: null,
       splitterModel: 50, // start at 50%
       myRID: 'Lobby',
@@ -190,6 +191,12 @@ export default {
     // ...mapGetters('jstore', ['getChats']),
   },
   methods: {
+    ...mapActions('jstore', [
+      'setPlayers',
+      'setTables',
+      'setPlayer',
+      'setTable'
+    ]),
     onChat (event) {
       if (event.key === 'Enter') {
         this.send()
@@ -208,28 +215,29 @@ export default {
       }
     },
     isSent (chat) {
-      return chat.from.userId === this.user._id
+      return chat.from.userId === this.myUser._id
     },
     chatDate (chat) {
       return moment(chat.createdAt).format('MMM Do, hh:mm:ss')
     },
     onSit (seat) {
-      // console.log(this.user, seat)
-      playerService.patch(this.user._id, seat)
+      console.log(this.myUser, seat)
+      playerService.patch(this.myUser._id, seat)
     }
   },
   mounted () {
-    // if (!this.user.county) this.$router.push({ name: 'profile' })
+    // if (!this.myUser.county) this.$router.push({ name: 'profile' })
     chatService.on('created', chat => {
       if (chat.to === '#Lobby') this.myChats.unshift(chat)
     })
   },
   created () {
     this.$parent.page = 'Lobby'
-    this.user = this.$attrs.user
+    this.myUser = this.$attrs.user
   },
   watch: {
-    user (n, o) {
+    myUser (n, o) {
+      console.log('user', n)
       if (n.tId) this.myRID = 'My Table'
     }
   }

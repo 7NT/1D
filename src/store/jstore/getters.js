@@ -2,13 +2,6 @@
 export function someGetter (state) {
 }
 */
-export const myPlayer = state => {
-  return state.players.find(player => player.id === state.user._id)
-}
-
-export const myTable = state => {
-  return state.tables.find(table => table._id === state.user.TId)
-}
 
 export const getPlayerById = state => id => {
   let p = state.players.find(player => player.id === id)

@@ -14,7 +14,6 @@
             <div class="column">
               <myHand
                 :seatX="seatX[0]"
-                :myPlayer="myPlayer"
                 :myTable="myTable"
                 v-on:onAction="onAction"
                 class="myHand justify-start"
@@ -40,7 +39,6 @@
             <div class="column">
               <myHand
                 :seatX="seatX[3]"
-                :myPlayer="myPlayer"
                 :myTable="myTable"
                 v-on:onAction="onAction"
                 class="myHand justify-end"
@@ -75,7 +73,6 @@
             <div class="column">
               <myHand
                 :seatX="seatX[1]"
-                :myPlayer="myPlayer"
                 :myTable="myTable"
                 v-on:onAction="onAction"
                 class="myHand justify-start"
@@ -91,7 +88,6 @@
             <div class="column">
               <myHand
                 :seatX="seatX[2]"
-                :myPlayer="myPlayer"
                 :myTable="myTable"
                 v-on:onAction="onAction"
                 class="myHand justify-end"
@@ -185,7 +181,7 @@ import myPlayBox from 'src/components/myPlayBox'
 
 export default {
   name: 'myPlayTable',
-  props: ['myPlayer'],
+  // props: ['myPlayer'],
   data: function () {
     return {
       tableData: null,
@@ -215,7 +211,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['getTableById']),
+    ...mapGetters('jstore', ['myPlayer', 'myTable', 'getTableById']),
     myTable: {
       get: function () {
         return this.$data.tableData
@@ -227,6 +223,11 @@ export default {
         if (t.state === 2) {
           console.log('pi', t.turn, t.play.info.winner, t)
         }
+      }
+    },
+    myUid: {
+      get: function () {
+        return this.myPlayer.id
       }
     },
     myTid: {
@@ -333,8 +334,8 @@ export default {
       // console.log('data', data)
       if (data.action === 'sit') {
         if (!data.uId) {
-          this.$emit('onSit', { tId: this.myTid, sId: data.sId })
-        } else if (data.uId === this.myPlayer.id) {
+          this.$emit('onSit', { tId: this.mTid, sId: data.sId })
+        } else if (data.uId === this.myUid) {
           this.$q.notify({ type: 'info', message: 'Ready' })
         } else {
           this.$q.notify({ type: 'negative', message: 'This seat is taken' })
@@ -416,12 +417,15 @@ export default {
     }
   },
   created () {
-    this.myTable = this.getTableById(this.myTid)
+    // this.$parent.page = 'Lobby'
+    // this.myTable = this.getTableById(this.user.tId)
+    /*
     tableService.on('patched', table => {
-      if (table._id === this.myTid) {
+      if (table._id === this.user.tId) {
         this.myTable = table
       }
     })
+    */
     this.updateView(this.mySid)
   },
   beforeDestroy () { }

@@ -1,0 +1,7 @@
+<svg version="1.1" class="ionic ionic-seat" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="20px" height="20px" viewBox="0 0 20 20" enable-background="new 0 0 20 20" xml:space="preserve">
+  <path class="ionic-seat-base" d="M2,10L10,0L10,20,L2,10z" fill="grey" fill-opacity="0.25"/>
+  <path class="ionic-seat-base" d="M10,0L18,10,L10,20,L10,0z" fill="grey" fill-opacity="0.5"/>
+  <g class="ionic-seat-seats">
+    <circle class="ionic-seat-seats-1" cx="10" cy="4" r="2" fill="red" fill-opacity=".5"/>
+  </g>
+</svg>

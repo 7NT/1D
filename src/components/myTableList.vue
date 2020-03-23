@@ -122,7 +122,7 @@ export default {
     }
   },
   mounted () {
-    console.log('t', this.myTable)
+    // console.log('t', this.myTable)
   }
 }
 </script>

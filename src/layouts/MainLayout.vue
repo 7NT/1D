@@ -223,7 +223,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['chatTo', 'players', 'tables']),
+    ...mapState('jstore', ['players', 'tables']),
     authenticated () {
       return this.user != null
     }
@@ -256,25 +256,43 @@ export default {
           })
         })
     },
+    updateUser (user) {
+      this.user = user
+      this.setUser(user)
+    },
+    updatePlayer (player) {
+      /*
+      if (this.user._id === player.id) {
+        this.user.tId = player.tId
+        this.user.sId = player.sId
+      }
+      */
+      this.setPlayer(player)
+    },
+    updateTable (table) {
+      this.setTable(table)
+    },
     onServices () {
       userService.on('update', user => {
-        this.user = user
+        console.log('user', user)
+        this.updateUser(user)
       })
       playerService.find().then(response => {
         // this.setPlayers(response.data)
       })
       playerService.on('created', player => {
         console.log('create player', player)
-        this.onPlayer(player)
+        this.updatePlayer(player)
       })
       playerService.on('patched', player => {
         console.log('player patched', player)
-        this.onPlayer(player)
+        this.updatePlayer(player)
+        console.log('player patched')
       })
       playerService.on('removed', player => {
         console.log('player removed', player)
         player.state = -1
-        this.onPlayer(player)
+        this.updatePlayer(player)
       })
       tableService.find().then(response => {
         this.setTables(response.data)
@@ -284,27 +302,17 @@ export default {
       })
       tableService.on('created', table => {
         console.log('table created', table)
-        this.onTable(table)
+        this.updateTable(table)
       })
       tableService.on('patched', table => {
         console.log('table patched', table)
-        this.onTable(table)
+        this.updateTable(table)
       })
       tableService.on('removed', table => {
         console.log('table remove', table)
         table.state = -1
-        this.onTable(table)
+        this.updateTable(table)
       })
-    },
-    onPlayer (player) {
-      if (this.user._id === player.id) {
-        this.user.tId = player.tId
-        this.user.sId = player.sId
-      }
-      this.setPlayer(player)
-    },
-    onTable (table) {
-      this.setTable(table)
     }
   },
   mounted () {
@@ -323,7 +331,7 @@ export default {
 
     // On successful login
     auth.onAuthenticated(user => {
-      this.user = user
+      this.updateUser(user)
       this.onServices()
       this.goTo('lobby')
     })

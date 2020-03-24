@@ -177,7 +177,6 @@ import myPlayBox from 'src/components/myPlayBox'
 
 export default {
   name: 'myPlayTable',
-  // props: ['myPlayer'],
   data: function () {
     return {
       tableData: null,
@@ -233,7 +232,6 @@ export default {
     },
     mySid: {
       get: function () {
-        // console.log('p', this.myPlayer)
         return this.myPlayer.sId
       }
     },

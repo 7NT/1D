@@ -4,7 +4,7 @@
       <div class='col'>
         <div class='row no-wrap'>
           <div class='col-3 items-start'>
-            <myBoard :boardInfo='myBoardInfo' v-on:onBT='onBT'></myBoard>
+            <myBoard :myTable='myTable' v-on:onBT='onBT'></myBoard>
           </div>
           <div class='col-6 box'>
             <div class='column'>

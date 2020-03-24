@@ -1,35 +1,52 @@
 <template>
-  <q-list
-    padding
-    bordered
-    class='rounded-borders'
-  >
+  <q-list padding bordered class="rounded-borders">
     <q-select
-      color='grey-3'
+      color="grey-3"
       dense
       outlined
-      label-color='orange'
-      v-model='model_mix'
-      :options='options_mix'
+      label-color="orange"
+      v-model="model_mix"
+      :options="options_mix"
       options-dark
       options-dense
       menu-shrink
-      label='Board'
+      label="Board"
     >
       <template v-slot:append>
-        <q-icon
-          name='games'
-          color='orange'
-        />
+        <q-icon name="games" color="orange" />
       </template>
     </q-select>
+    <q-item dense>
+      <q-item-section>
+        <q-item-label overline>CC:</q-item-label>
+      </q-item-section>
+      <q-item-section side top>
+        <div class="text-orange">
+          <q-btn-group glossy outline dense>
+            <q-btn size="xs" label="SAYC" icon="timeline" />
+            <q-btn size="xs" label="Prec" icon-right="visibility" />
+          </q-btn-group>
+        </div>
+      </q-item-section>
+    </q-item>
+    <q-item dense>
+      <q-item-section>
+        <q-item-label overline>Score:</q-item-label>
+      </q-item-section>
+      <q-item-section side top>
+        <div class="text-orange">
+          <q-badge color="info" text-color="black" label="" />
+          <q-badge color="info" text-color="black" label="" />
+        </div>
+      </q-item-section>
+    </q-item>
   </q-list>
 </template>
 
 <script>
 export default {
   name: 'myBoard',
-  props: ['boardInfo'],
+  props: ['myTable'],
   data () {
     return {
       model_mix: null,
@@ -50,8 +67,8 @@ export default {
     bi: function () {
       try {
         return this.boardInfo.board.bt + ': ' + this.boardInfo.board.bn
-      } catch (err) { }
-      return ''
+      } catch (err) {}
+      return this.model_mix
     }
   },
   methods: {
@@ -67,7 +84,11 @@ export default {
       })
     }
   },
-  created () { }
+  mounted () {
+    console.log('mounted', this.model_mix)
+    const n = Date.now() % 3
+    this.model_mix = this.options_mix[n]
+  }
 }
 </script>
 

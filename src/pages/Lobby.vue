@@ -13,7 +13,7 @@
           <div class='q-pa-md'>
             <q-card>
               <q-tabs
-                v-model='myRID'
+                v-model='model_RID'
                 align='left'
                 dense
                 no-caps
@@ -34,7 +34,8 @@
               <q-separator />
 
               <q-tab-panels
-                v-model='myRID'
+                keep-alive
+                v-model='model_RID'
                 animated
               >
                 <q-tab-panel :name='0'>
@@ -157,7 +158,7 @@ export default {
     return {
       user: null,
       splitterModel: 50, // start at 50%
-      myRID: 0,
+      model_RID: 0,
       rooms: [
         {
           label: 'Lobby',
@@ -230,13 +231,13 @@ export default {
     })
   },
   watch: {
-    myRID (n) {
+    model_RID (n) {
       if (n === 1 && !this.myPlayer.tId) {
         this.onSit({ tId: this.myPlayer.id, sId: 0 })
       }
     },
     myPlayer (n, o) {
-      if (n.tId) this.myRID = 1
+      if (n.tId) this.model_RID = 1
     }
   },
   created () {

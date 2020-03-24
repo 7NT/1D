@@ -52,7 +52,10 @@
                   </q-list>
                 </q-tab-panel>
 
-                <q-tab-panel :name='1' class="no-margin no-padding">
+                <q-tab-panel
+                  :name='1'
+                  class="no-margin no-padding"
+                >
                   <myPlayTable
                     v-on:onSit='onSit'
                     class='myTable'
@@ -226,10 +229,6 @@ export default {
       if (chat.to === '#Lobby') this.myChats.unshift(chat)
     })
   },
-  created () {
-    this.$parent.page = 'Lobby'
-    this.user = this.$attrs.user
-  },
   watch: {
     myRID (n) {
       if (n === 1 && !this.myPlayer.tId) {
@@ -239,6 +238,10 @@ export default {
     myPlayer (n, o) {
       if (n.tId) this.myRID = 1
     }
+  },
+  created () {
+    this.$parent.page = 'Lobby'
+    this.user = this.$attrs.user
   }
 }
 </script>

@@ -49,6 +49,12 @@ export default {
   props: ['myTable'],
   data () {
     return {
+      boardInfo: {
+        bt: '',
+        bn: 0,
+        cc: null,
+        play: null
+      },
       model_mix: null,
       options_mix: ['MP', 'IMP', 'XIMP'],
       boardData: [
@@ -85,7 +91,7 @@ export default {
     }
   },
   mounted () {
-    console.log('mounted', this.model_mix)
+    // console.log('mounted', this.model_mix)
     const n = Date.now() % 3
     this.model_mix = this.options_mix[n]
   }

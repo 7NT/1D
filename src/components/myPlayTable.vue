@@ -10,7 +10,6 @@
             <div class='column'>
               <myHand
                 :seatX='seatX[0]'
-                :myTable='myTable'
                 v-on:onAction='onAction'
                 class='myHand justify-start'
               />
@@ -23,7 +22,6 @@
             >
               <myBidBox
                 :seatX3='seatX[2]'
-                :myTable='myTable'
               />
             </div>
           </div>
@@ -35,7 +33,6 @@
             <div class='column'>
               <myHand
                 :seatX='seatX[3]'
-                :myTable='myTable'
                 v-on:onAction='onAction'
                 class='myHand justify-end'
               />
@@ -50,7 +47,6 @@
                 <q-card>
                   <myBidBox
                     :seatX3='seatX[2]'
-                    :myTable='myTable'
                   />
                 </q-card>
               </q-card>
@@ -69,7 +65,6 @@
             <div class='column'>
               <myHand
                 :seatX='seatX[1]'
-                :myTable='myTable'
                 v-on:onAction='onAction'
                 class='myHand justify-start'
               />
@@ -84,7 +79,6 @@
             <div class='column'>
               <myHand
                 :seatX='seatX[2]'
-                :myTable='myTable'
                 v-on:onAction='onAction'
                 class='myHand justify-end'
               />
@@ -93,7 +87,7 @@
           <div class='col-3'>
             <div
               class='column'
-              v-if='myTurn() === 1'
+              v-if='isMyTurn() === 1'
             >
               <div class='col group items-start'>
                 <q-btn-group
@@ -180,12 +174,6 @@ export default {
   data: function () {
     return {
       tableData: null,
-      boardInfo: {
-        bt: '',
-        bn: 0,
-        cc: null,
-        play: null
-      },
       state: 0,
       seatX: [1, 2, 3, 4],
       suits: [
@@ -206,7 +194,8 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['myPlayer', 'myTable', 'getTableById']),
+    ...mapGetters('jstore', ['myPlayer', 'myTable']),
+    /*
     myTable: {
       get: function () {
         return this.$data.tableData
@@ -235,6 +224,7 @@ export default {
         return this.myPlayer.sId
       }
     },
+    */
     State: {
       get: function () {
         return this.$data.state
@@ -243,7 +233,7 @@ export default {
         this.$data.state = s
       }
     },
-    Turn: {
+    myTurn: {
       get: function () {
         return this.myTable ? this.myTable.turn : 0
       }
@@ -259,10 +249,10 @@ export default {
       }
     },
     X: function () {
-      return jb.bidX(this.myBid.info.by, this.Turn)
+      return jb.bidX(this.myBid.info.by, this.myTurn)
     },
     XX: function () {
-      return jb.bidX(this.myBid.info.X, this.Turn)
+      return jb.bidX(this.myBid.info.X, this.myTurn)
     },
     played4: function () {
       let card4 = [null, null, null, null]
@@ -281,8 +271,8 @@ export default {
     }
   },
   methods: {
-    myTurn () {
-      return this.Turn === this.mySid ? this.State : 0
+    isMyTurn () {
+      return this.myTurn === this.mySid ? this.State : 0
     },
     onBT (bt) {
       switch (bt) {
@@ -317,7 +307,7 @@ export default {
     onBid (bid) {
       // console.log('bid', bid, this.myTable)
       const _bid = this.myBid
-      let _turn = this.Turn
+      let _turn = this.myTurn
       _bid.data.pop()
       _bid.data.push({ seat: _turn, bid: bid })
       _turn = (_turn % 4) + 1

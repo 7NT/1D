@@ -118,11 +118,11 @@ export default {
   },
   watch: {
     myTable (n, o) {
-      console.log('t', n)
+      // console.log('t', n)
     }
   },
   mounted () {
-    // console.log('t', this.myTable)
+    console.log('t', this.myTable)
   }
 }
 </script>

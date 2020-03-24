@@ -14,7 +14,7 @@ export const setPlayers = (state, payload) => {
 export const setTables = (state, payload) => {
   state.tables = payload
   const newTable = {
-    _id: null,
+    id: null,
     name: '#Lobby',
     info: 'Welcome',
     players: 0,

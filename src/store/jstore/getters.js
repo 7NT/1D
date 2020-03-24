@@ -7,7 +7,7 @@ export const myPlayer = state => {
 }
 
 export const myTable = state => {
-  return state.tables.find(table => table._id === state.user.TId)
+  return state.tables.find(table => table.id === state.user.tId)
 }
 
 export const getPlayerById = state => id => {

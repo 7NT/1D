@@ -1,290 +1,352 @@
 <template>
-  <div class='row items-end'>
-    <div class='column'>
-      <div class='mycards self-end'>
-        <q-card flat v-if='visible'>
-          <div class='hand hhand-compact active-hand' style="width:100%">
-            <!--
-              <myCards :cards='myHand.cards' />
-            -->
-            <img :src='cardN2S(c)' v-for='(c, i) of myHand.cards' :key='`${i}`' v-show='isPlayed(c)' @click='play(c)' class='card'>
+  <div class="row items-end">
+    <div class="column">
+      <div class="row self-end no-wrap">
+        <q-card
+          flat
+          v-if="isVisible"
+          class="transparent"
+        >
+          <div class="hand hhand-compact active-hand full-width">
+            <img
+              v-for="(c, i) of myCards"
+              :key="`${i}`"
+              :src="cardImg(c)"
+              @click="onPlay(c)"
+              class="card"
+            />
           </div>
         </q-card>
       </div>
-      <div class='myplayer'>
+      <div class="myplayer">
         <q-btn-group flat>
-            <q-btn
-              push
-              no-caps
-              ellipsis
-              @click='sit'
-              :label=uname
-              :color=ucolor
-              :icon='flag'
-              align='between'
-              class='playerbar'>
-              <q-icon :name='playerBut' :class='uclass'>
-              </q-icon>
-            </q-btn>
-            <q-btn-dropdown split v-if='declarer' :label='contract' color='info'>
-              <q-list link>
-                <q-item>
-                  <q-item-main>
-                    <q-item-tile label>Claim All</q-item-tile>
-                    <q-item-tile label>Concede All</q-item-tile>
-                  </q-item-main>
-                </q-item>
-              </q-list>
-            </q-btn-dropdown>
-          </q-btn-group>
+          <q-btn
+            push
+            no-caps
+            ellipsis
+            @click="onSit"
+            :label="uname"
+            :color="ucolor"
+            :icon="flag"
+            align="between"
+            class="playerbar"
+          >
+            <q-icon
+              :name="playerBut"
+              :class="uclass"
+            />
+          </q-btn>
+          <q-btn-dropdown
+            split
+            v-if="isDeclarer"
+            :label="contract"
+            color="info"
+          >
+            <q-list dense>
+              <q-item
+                clickable
+                v-close-menu
+                @click="onClaim"
+              >
+                <q-item-section>
+                  <q-item-label label>Claim All</q-item-label>
+                  <q-item-label label>Concede All</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </q-btn-group>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
-// import myCards from 'src/components/myCards'
+import { mapGetters } from 'vuex'
+// import myCards from "src/components/myCards";
+// import jb from "src/jb";
 
 export default {
   name: 'myHand',
-  props: ['myPlayer', 'myHand', 'myPlay', 'turn'],
+  props: ['seatX'],
   data () {
-    return {}
+    return {
+      user: null,
+      uname: '[SIT...]',
+      myCards: []
+    }
   },
   components: {
     // myCards
   },
   computed: {
-    ...mapState({
-      players: state => state.jstore.players
-    }),
-    ...mapGetters({}),
-    visible: function () {
-      if (this.dummy) return true
-      else return this.myHand.seatX === this.myPlayer.sId
+    ...mapGetters('jstore', ['myPlayer', 'myTable', 'getPlayerById']),
+
+    isVisible () {
+      if (this.isDummy) return true
+      else return this.seatX === this.myPlayer.sId
     },
-    /*
-    handId: function () {
-      return `hand_${this.myHand.seatX}`
+    uId () {
+      return this.myTable.seats[this.seatX - 1]
     },
-    */
-    uname () {
-      try {
-        const user = this.players.find(p => p.id === this.myHand.uId)
-        return user.username
-      } catch (err) {
-        if (this.myHand.uId) return '[Reserved]'
-        else return 'SIT...' + this.myHand.seatX
-      }
-    },
-    ucolor: function () {
-      if (this.isTurn()) return 'warning'
+    ucolor () {
+      if (this.myTable.turn === this.seatX) return 'warning'
       else return this.myPlayer ? 'secondary' : 'positive'
     },
-    uclass: function () {
-      return 'rotate-' + (this.myHand.seatX - 1) * 90
+    uclass () {
+      return 'rotate-' + (this.seatX - 1) * 90
     },
-    flag: function () {
+    flag () {
       return 'us'
     },
-    playerBut: function () {
+    playerBut () {
       return 'navigation'
     },
-    declarer: function () {
+    isDeclarer () {
       try {
-        return this.myPlays.bid.declarer === this.myHand.seatX
-      } catch (err) {}
+        return this.myTable.bid.info.by === this.seatX
+      } catch (_) {
+        // console.log(err);
+      }
       return false
     },
-    dummy: function () {
+    isDummy () {
       try {
-        if ((this.myPlays.NS + this.myPlays.EW) > 0) {
-          return (this.myPlays.declarer + 2) % 4 === this.myHand.seatX % 4
+        if (this.myTable.play.data.length > 0) {
+          return (this.myTable.bid.info.by + 2) % 4 === this.seatX % 4
         }
-      } catch (err) {}
+      } catch (_) {
+        // console.log(err);
+      }
       return false
     },
-    contract: function () {
-      return this.myPlays.bid.contract
+    contract () {
+      return this.myTable.bid.info.contract
+    },
+    playedCards () {
+      try {
+        return this.myTable.play.data.map(x => x.card)
+      } catch (_) {
+        return []
+      }
     }
   },
   methods: {
-    sit () {
-      const seat = { action: 'sit', uId: this.myHand.uId, sId: this.myHand.seatX }
-      this.$emit('onHand', seat)
+    // ...mapActions("jstore", ["addUser"]),
+    onSit () {
+      const seat = {
+        action: 'sit',
+        uId: this.uId,
+        sId: this.seatX
+      }
+      this.$emit('onAction', seat)
     },
-    play (n) {
-      if (this.isTurn()) {
-        const card = this.getN(n) + this.getSuit(n)
-        this.$emit('onHand', { action: 'play', play: { sId: this.myHand.sId, seatX: this.myHand.seatX, card } })
+    onPlay (n) {
+      if (this.isMyPlay()) {
+        if (this.cardCheck(n)) {
+          this.$emit('onAction', {
+            action: 'play',
+            play: {
+              uId: this.uId,
+              sId: this.seatX,
+              card: n
+            }
+          })
+          this.updateCards()
+        } else {
+          this.$q.notify({
+            type: 'positive',
+            message: 'invalid card...'
+          })
+        }
       } else {
         console.log('play', 'not your turn')
       }
     },
-    cardN2S (n) {
-      const c = this.getN(n) + this.getSuit(n)
-      return `../statics/cards/${c}.svg`
+    cardImg (n52) {
+      if (!n52.suit) console.log('error', n52)
+      return `../statics/cards/${n52.rank + n52.suit}.svg`
     },
-    getN (n) {
-      const n0 = n % 13
-      switch (n0) {
-        case 0: return '2'
-        case 1: return 'A'
-        case 2: return 'K'
-        case 3: return 'Q'
-        case 4: return 'J'
-        default: return 15 - n0
+    updatePlayer () {
+      if (this.uId) {
+        const u = this.getPlayerById(this.uId)
+        this.user = u
       }
     },
-    getSuit (n) {
-      n--
-      const n0 = Math.floor(n / 13)
-      switch (n0) {
-        case 3: return 'C'
-        case 2: return 'D'
-        case 1: return 'H'
-        case 0: return 'S'
-        default: return ''
-      }
-    },
-    isPlayed (c) {
+    updateCards () {
       try {
-        const _plays = this.myPlay.plays || []
-        return !_plays.includes(c)
-      } catch (err) { }
-      return true
+        let playCards = this.myTable.board.cards[this.seatX - 1]
+        const _played = this.playedCards.map(x => x.value)
+        if (_played.length) { playCards = playCards.filter(c => !_played.includes(c.value)) }
+
+        this.$data.myCards = playCards
+      } catch (err) {
+        console.log(err)
+        this.$data.myCards = []
+      }
     },
-    isTurn () {
-      console.log('turn', this.turn, this.myHand.seatX)
-      return this.turn === this.myHand.seatX
+    cardCheck (play) {
+      const lead = this.myTable.play.info.lead
+      if (!lead) return true
+      else {
+        if (lead.card.suit === play.suit) {
+          return true
+        } else {
+          const _suit = this.$data.myCards.filter(c => c.suit === lead.card.suit)
+          console.log(lead.card.suit, _suit)
+          return _suit.length === 0
+        }
+      }
+    },
+    onClaim () {
+      console.log('onClaim')
+    },
+    isMyPlay () {
+      return this.myTable.state === 2 ? this.isMyTurn() : false
+    },
+    isMyTurn () {
+      if (this.myTable.turn === this.seatX) {
+        if (this.isDummy) return this.myPlayer.sId === this.myTable.bid.info.by
+        else return true
+      }
+      return false
     }
   },
   watch: {
-    myPlays: function () {
-      // console.log('myPlays', this.myPlays)
+    user (u) {
+      if (u) {
+        if (u.state < 0) {
+          this.uname = '[' + u.username + ']'
+        } else {
+          this.uname = u.username
+        }
+      } else this.uname = '[SIT...]'
+      this.$forceUpdate()
     },
-    turn: function (t1, t0) {
-      // console.log(t1, t0, this.myHand, this.turn === this.myHand.sId)
+    seatX () {
+      this.updateCards()
     }
   },
+  mounted () {
+    console.log('t', this.seatX, this.myTable)
+  },
   created () {
-    // console.log(this.myHand)
+    this.updatePlayer()
+    this.updateCards()
   }
 }
 </script>
 
 <style scoped>
-  .playerbar {
-    min-width: 175px;
-    height: 32px;
-    text-overflow: ellipsis;
-  }
-  img.card {
-    max-width: 52px;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    vertical-align: initial;
-    box-sizing: initial;
-  }
+.playerbar {
+  min-width: 175px;
+  height: 32px;
+  text-overflow: ellipsis;
+}
+img.card {
+  max-width: 70px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  vertical-align: initial;
+  box-sizing: initial;
+}
+/*
+* A hand is a div containing cards.
+*/
+.hand {
+  padding: 0;
+  margin-bottom: 0;
+}
 
-  /*
-  * A hand is a div containing cards.
-  */
-  .hand {
-    padding: 0;
-    margin-bottom: auto;
-  }
+.active-hand img.card {
+  cursor: pointer;
+}
 
-  .active-hand img.card {
-    cursor: pointer;
-  }
+/*
+* A horizontal hand, class="hand hhand".  The enitire card is visible.
+*/
+.hhand {
+  display: inline-block;
+}
+.hhand img.card {
+  padding-top: 10px;
+}
 
-  /*
-  * A horizontal hand, class="hand hhand".  The enitire card is visible.
-  */
-  .hhand {
-    display: inline-block;
-  }
-  .hhand img.card {
-    padding-top: 10px;
-  }
+.hhand.active-hand img.card:hover {
+  padding-top: 0px;
+  padding-bottom: 10px;
+}
 
-  .hhand.active-hand img.card:hover {
-    padding-top: 0px;
-    padding-bottom: 10px;
-  }
+/*
+* A vertical hand, class="hand vhand".  The enitire card is visible.
+*/
+.vhand {
+  display: block;
+}
+.vhand img.card {
+  padding-right: 10px;
+}
+.vhand.active-hand img.card:hover {
+  padding-right: 0px;
+  padding-left: 10px;
+}
 
-  /*
-  * A vertical hand, class="hand vhand".  The enitire card is visible.
-  */
-  .vhand {
-    display: block;
-  }
-  .vhand img.card {
-    padding-right: 10px;
-  }
-  .vhand.active-hand img.card:hover {
-    padding-right: 0px;
-    padding-left: 10px;
-  }
+/*
+* A compact horizontal hand.  Only the last card is entirely visible.
+*/
+.hhand-compact {
+  display: inline-block;
+}
+.hhand-compact img.card:first-child {
+  margin-left: 0px;
+  padding-top: 10px;
+}
+.hhand-compact img.card {
+  margin-left: -55px;
+  margin-bottom: -40px;
+  padding-top: 10px;
+}
+.hhand-compact.active-hand img.card:hover {
+  padding-top: 0px;
+  padding-bottom: 10px;
+}
 
-  /*
-  * A compact horizontal hand.  Only the last card is entirely visible.
-  */
-  .hhand-compact {
-    display: inline-block;
-  }
-  .hhand-compact img.card:first-child {
-    margin-left: 0px;
-    padding-top: 10px;
-  }
-  .hhand-compact img.card {
-    margin-left: -40px;
-    margin-bottom: -40px;
-    padding-top: 10px;
-  }
-  .hhand-compact.active-hand img.card:hover {
-    padding-top: 0px;
-    padding-bottom: 10px;
-  }
+/*
+* A compact vertical hand.  Only the last card is entirely visible.
+*/
+.vhand-compact {
+  display: inline-block;
+  vertical-align: top;
+}
+.vhand-compact img.card:first-child {
+  display: block;
+  margin-top: 0px;
+  padding-right: 10px;
+}
+.vhand-compact img.card {
+  display: block;
+  margin-top: -80px;
+  padding-right: 10px;
+}
+.vhand-compact.active-hand img.card:hover,
+.active-hand .vhand-compact img.card:hover {
+  display: block;
+  padding-right: 0px;
+  padding-left: 10px;
+}
 
-  /*
-  * A compact vertical hand.  Only the last card is entirely visible.
-  */
-  .vhand-compact {
-    display: inline-block;
-    vertical-align: top;
-  }
-  .vhand-compact img.card:first-child {
-    display: block;
-    margin-top: 0px;
-    padding-right: 10px;
-  }
-  .vhand-compact img.card {
-    display: block;
-    margin-top: -80px;
-    padding-right: 10px;
-  }
-  .vhand-compact.active-hand img.card:hover,
-  .active-hand .vhand-compact img.card:hover {
-    display: block;
-    padding-right: 0px;
-    padding-left: 10px;
-  }
-
-  /*
-  * A fanned hand.  Only the last card is entirely visible.
-  */
-  .fan {
-    display: inline-block;
-    vertical-align: top;
-    position: relative;
-    padding-bottom: 1em;
-  }
-  .fan img.card {
-    position: absolute;
-    width: 90px;
-  }
+/*
+* A fanned hand.  Only the last card is entirely visible.
+*/
+.fan {
+  display: inline-block;
+  vertical-align: top;
+  position: relative;
+  padding-bottom: 1em;
+}
+.fan img.card {
+  position: absolute;
+  width: 90px;
+}
 </style>

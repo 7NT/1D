@@ -9,7 +9,7 @@
           <div class='col-6 box'>
             <div class='column'>
               <myHand
-                :seatX='seatX[0]'
+                :handId=1
                 v-on:onAction='onAction'
                 class='myHand justify-start'
               />
@@ -32,7 +32,7 @@
           <div class='col-4 box'>
             <div class='column'>
               <myHand
-                :seatX='seatX[3]'
+                :handId=4
                 v-on:onAction='onAction'
                 class='myHand justify-end'
               />
@@ -64,7 +64,7 @@
           <div class='col-4 box'>
             <div class='column'>
               <myHand
-                :seatX='seatX[1]'
+                :handId=2
                 v-on:onAction='onAction'
                 class='myHand justify-start'
               />
@@ -78,7 +78,7 @@
           <div class='col-6 box'>
             <div class='column'>
               <myHand
-                :seatX='seatX[2]'
+                :handId=3
                 v-on:onAction='onAction'
                 class='myHand justify-end'
               />
@@ -318,7 +318,7 @@ export default {
       // console.log('data', data)
       if (data.action === 'sit') {
         if (!data.uId) {
-          this.$emit('onSit', { tId: this.mTid, sId: data.sId })
+          this.$emit('onSit', { tId: this.myPlayer.tId, sId: data.sId })
         } else if (data.uId === this.myUid) {
           this.$q.notify({ type: 'info', message: 'Ready' })
         } else {

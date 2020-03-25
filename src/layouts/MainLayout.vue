@@ -278,7 +278,7 @@ export default {
         this.updatePlayer(player)
       })
       playerService.on('patched', player => {
-        // console.log('player patched', player)
+        console.log('player patched', player)
         this.updatePlayer(player)
       })
       playerService.on('removed', player => {
@@ -293,15 +293,15 @@ export default {
         // this.updatePlayer(player)
       })
       tableService.on('created', table => {
-        // console.log('table created', table)
+        console.log('table created', table)
         this.updateTable(table)
       })
       tableService.on('patched', table => {
-        // console.log('table patched', table)
+        console.log('table patched', table)
         this.updateTable(table)
       })
       tableService.on('removed', table => {
-        // console.log('table remove', table)
+        console.log('table remove', table)
         table.state = -1
         this.updateTable(table)
       })

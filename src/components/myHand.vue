@@ -25,7 +25,7 @@
             no-caps
             ellipsis
             @click="onSit"
-            :label="uname"
+            :label="nick"
             :color="ucolor"
             :icon="flag"
             align="between"
@@ -64,15 +64,16 @@
 <script>
 import { mapGetters } from 'vuex'
 // import myCards from "src/components/myCards";
-// import jb from "src/jb";
+import jb from 'src/jb'
 
 export default {
   name: 'myHand',
-  props: ['seatX'],
+  props: ['handId'],
   data () {
     return {
-      user: null,
-      uname: '[SIT...]',
+      seatId: 0,
+      player: null,
+      nick: '[SIT...]',
       myCards: []
     }
   },
@@ -84,17 +85,14 @@ export default {
 
     isVisible () {
       if (this.isDummy) return true
-      else return this.seatX === this.myPlayer.sId
-    },
-    uId () {
-      return this.myTable.seats[this.seatX - 1]
+      else return this.seatId === this.myPlayer.sId
     },
     ucolor () {
-      if (this.myTable.turn === this.seatX) return 'warning'
+      if (this.myTable.turn === this.seatId) return 'warning'
       else return this.myPlayer ? 'secondary' : 'positive'
     },
     uclass () {
-      return 'rotate-' + (this.seatX - 1) * 90
+      return 'rotate-' + (this.seatId - 1) * 90
     },
     flag () {
       return 'us'
@@ -104,7 +102,7 @@ export default {
     },
     isDeclarer () {
       try {
-        return this.myTable.bid.info.by === this.seatX
+        return this.myTable.bid.info.by === this.seatId
       } catch (_) {
         // console.log(err);
       }
@@ -113,7 +111,7 @@ export default {
     isDummy () {
       try {
         if (this.myTable.play.data.length > 0) {
-          return (this.myTable.bid.info.by + 2) % 4 === this.seatX % 4
+          return (this.myTable.bid.info.by + 2) % 4 === this.seatId % 4
         }
       } catch (_) {
         // console.log(err);
@@ -137,7 +135,7 @@ export default {
       const seat = {
         action: 'sit',
         uId: this.uId,
-        sId: this.seatX
+        sId: this.seatId
       }
       this.$emit('onAction', seat)
     },
@@ -148,7 +146,7 @@ export default {
             action: 'play',
             play: {
               uId: this.uId,
-              sId: this.seatX,
+              sId: this.seatId,
               card: n
             }
           })
@@ -168,20 +166,22 @@ export default {
       return `../statics/cards/${n52.rank + n52.suit}.svg`
     },
     updatePlayer () {
-      if (this.uId) {
-        const u = this.getPlayerById(this.uId)
-        this.user = u
-      }
+      const s = this.myPlayer.sId
+      this.seatId = jb.seatX(this.handId, s)
+      const _uId = this.myTable.seats[this.seatId - 1]
+      this.player = this.getPlayerById(_uId)
+      this.nick = this.player ? this.player.nick : '[SIT...]'
+      // this.updateCards()
     },
     updateCards () {
       try {
-        let playCards = this.myTable.board.cards[this.seatX - 1]
+        let playCards = this.myTable.board.cards[this.seatId - 1]
         const _played = this.playedCards.map(x => x.value)
         if (_played.length) { playCards = playCards.filter(c => !_played.includes(c.value)) }
 
         this.$data.myCards = playCards
       } catch (err) {
-        console.log(err)
+        // console.log(err)
         this.$data.myCards = []
       }
     },
@@ -205,7 +205,7 @@ export default {
       return this.myTable.state === 2 ? this.isMyTurn() : false
     },
     isMyTurn () {
-      if (this.myTable.turn === this.seatX) {
+      if (this.myTable.turn === this.seatId) {
         if (this.isDummy) return this.myPlayer.sId === this.myTable.bid.info.by
         else return true
       }
@@ -213,26 +213,18 @@ export default {
     }
   },
   watch: {
-    user (u) {
-      if (u) {
-        if (u.state < 0) {
-          this.uname = '[' + u.username + ']'
-        } else {
-          this.uname = u.username
-        }
-      } else this.uname = '[SIT...]'
-      this.$forceUpdate()
+    myPlayer (x) {
+      this.updatePlayer()
     },
-    seatX () {
-      this.updateCards()
+    myTable (t, o) {
+      this.updatePlayer()
     }
   },
   mounted () {
-    console.log('t', this.seatX, this.myTable)
+    // console.log('t', this.seatId, this.myTable)
+    this.updatePlayer()
   },
   created () {
-    this.updatePlayer()
-    this.updateCards()
   }
 }
 </script>

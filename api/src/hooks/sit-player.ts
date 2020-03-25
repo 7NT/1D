@@ -15,6 +15,7 @@ const sitBefore = (): Hook => {
       const user = connection.user
       const { _id: uId, tId: tId0, sId: sId0 } = user
 
+      // console.log('sit', tId0, tId1, sId0, sId1)
       if (tId0 && tId0 != tId1) {  //leave table
         try {
           let _table0 = await tableService.get(tId0)
@@ -39,6 +40,7 @@ const sitBefore = (): Hook => {
           id: uId,
           name: user.nick,
           state: 0,
+          turn: 0,
           bt: getMIX(),
           players: 1,
           seats: [null, null, null, null]

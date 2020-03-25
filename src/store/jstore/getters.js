@@ -7,13 +7,16 @@ export const myPlayer = state => {
 }
 
 export const myTable = state => {
-  return state.tables.find(table => table.id === state.user.tId)
+  const t = state.tables.find(table => table.id === state.user.tId)
+  return t
 }
 
 export const getPlayerById = state => id => {
   let p = state.players.find(player => player.id === id)
-  if (!p) p = state.users.find(user => user._id === id)
-
+  if (!p) {
+    p = state.users.find(user => user._id === id)
+    // p.state = -1
+  }
   return p
 }
 

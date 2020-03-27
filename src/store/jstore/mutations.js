@@ -43,7 +43,7 @@ export const setTable = (state, payload) => {
   }
 }
 
-export const setChats = (state, payload) => {
+export const setChat = (state, payload) => {
   state.chats.unshift(payload)
   console.log(state.chats)
 }

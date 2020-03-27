@@ -231,7 +231,7 @@ export default {
   methods: {
     ...mapActions('jstore', [
       'setUser',
-      'setChats',
+      'setChat',
       'setPlayer',
       'setTable',
       'setPlayers',
@@ -265,6 +265,9 @@ export default {
     },
     updateTable (table) {
       this.setTable(table)
+    },
+    updateChat (chat) {
+      this.setChat(chat)
     },
     onServices () {
       userService.on('update', user => {
@@ -305,6 +308,12 @@ export default {
         table.state = -1
         this.updateTable(table)
       })
+      /*
+      chatService.on('created', chat => {
+        // if (chat.to === '#Lobby') this.myChats.unshift(chat)
+        this.updateChat(chat)
+      })
+      */
     }
   },
   mounted () {

@@ -26,6 +26,6 @@ export const setTable = (context, payload) => {
   context.commit('setTable', payload)
 }
 
-export const setChats = (context, payload) => {
-  context.commit('setChats', payload)
+export const setChat = (context, payload) => {
+  context.commit('setChat', payload)
 }

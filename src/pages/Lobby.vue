@@ -73,19 +73,19 @@
               default-opened
               dense
               icon='chat'
-              label='Lobby Messages'
+              :label='chatTo'
               header-class='myChats'
             >
               <q-separator />
               <q-card class='full-width myChats'>
                 <q-chat-message
-                  v-for='chat in myChats'
-                  :key='chat.id'
-                  :text='[chat.text]'
-                  :name='chat.userId'
+                  v-for="chat in roomChats"
+                  :key='chat._id'
+                  :name='chat.from.nick'
                   :avatar='chat.from.avatar'
-                  :stamp='chatDate(chat)'
-                  :sent='isSent(chat) ? true : false'
+                  :text='[chat.text]'
+                  :stamp='chatDate(chat.createdAt)'
+                  :sent='isSent(chat.from) ? true : false'
                 />
               </q-card>
             </q-expansion-item>
@@ -188,12 +188,21 @@ export default {
       MIX: ['MP', 'IMP', 'XIMP'],
       myBT: null,
       chat: null,
+      chatTo: '#Lobby',
       myChats: []
     }
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['myPlayer'])
+    ...mapGetters('jstore', ['myPlayer', 'getChats']),
+    getChat () {
+      const c = this.getChats(this.chatTo)
+      console.log('c', this.chatTo, c)
+      return c
+    },
+    roomChats: function () {
+      return this.myChats.filter(chat => chat.to === this.chatTo)
+    }
   },
   methods: {
     onChat (event) {
@@ -213,11 +222,12 @@ export default {
         })
       }
     },
-    isSent (chat) {
-      return chat.from.userId === this.user._id
+    isSent (from) {
+      // return from.userId === this.user._id
+      return from._id === this.user._id
     },
-    chatDate (chat) {
-      return moment(chat.createdAt).format('MMM Do, hh:mm:ss')
+    chatDate (createdAt) {
+      return moment(createdAt).format('MMM Do, hh:mm:ss')
     },
     onSit (seat) {
       // console.log(this.user, seat)
@@ -227,14 +237,21 @@ export default {
   mounted () {
     // if (!this.user.county) this.$router.push({ name: 'profile' })
     chatService.on('created', chat => {
-      if (chat.to === '#Lobby') this.myChats.unshift(chat)
+      // if (chat.to === '#Lobby')
+      this.myChats.unshift(chat)
+      // this.updateChat(chat)
+      console.log('c', this.myChats)
     })
   },
   watch: {
     model_RID (n) {
-      if (n === 1 && !this.myPlayer.tId) {
-        this.onSit({ tId: this.myPlayer.id, sId: 0 })
+      if (n === 1) {
+        if (this.myPlayer.tId) this.chatTo = `#${this.myPlayer.tId}`
+        else this.onSit({ tId: this.myPlayer.id, sId: 0 })
+      } else {
+        this.chatTo = '#Lobby'
       }
+      // this.myChats = this.getChats(this.chatTo)
     },
     myPlayer (n, o) {
       if (n.tId) this.model_RID = 1

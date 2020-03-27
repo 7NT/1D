@@ -18,7 +18,7 @@
           <div class='col-3 self-start'>
             <div
               class='row justify-end'
-              v-if='State > 1'
+              v-if='myState > 1'
             >
               <myBidBox
                 :seatX3='seatX[2]'
@@ -42,7 +42,7 @@
             <div class='column'>
               <q-card
                 class='bbox cbox'
-                v-if='State === 1'
+                v-if='myState === 1'
               >
                 <q-card>
                   <myBidBox
@@ -52,7 +52,7 @@
               </q-card>
               <q-card
                 class='cbox transparent'
-                v-if='State === 2'
+                v-if='myState === 2'
               >
                 <myPlayBox
                   :card4='played4'
@@ -214,6 +214,7 @@ export default {
         return this.myPlayer.id
       }
     },
+    */
     myTid: {
       get: function () {
         return this.myPlayer.tId
@@ -224,8 +225,7 @@ export default {
         return this.myPlayer.sId
       }
     },
-    */
-    State: {
+    myState: {
       get: function () {
         return this.$data.state
       },
@@ -256,7 +256,7 @@ export default {
     },
     played4: function () {
       let card4 = [null, null, null, null]
-      if (this.State > 1) {
+      if (this.myState > 1) {
         try {
           const l4 = this.myTable.play.data.length
           let n4 = l4 % 4
@@ -272,7 +272,7 @@ export default {
   },
   methods: {
     isMyTurn () {
-      return this.myTurn === this.mySid ? this.State : 0
+      return this.myTurn === this.myPlayer.sId ? this.myState : 0
     },
     onBT (bt) {
       switch (bt) {
@@ -366,38 +366,14 @@ export default {
         default:
           return n + s
       }
-    },
-    updateView (v) {
-      const v0 = Math.abs(v)
-      switch (v0) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-          v = v0 - 3
-          break
-        default:
-          v = 0
-      }
-
-      const _seatX = [1, 2, 3, 4]
-      for (const x of [0, 1, 2, 3]) {
-        let _x = ((v + x) % 4) + 1
-        if (_x <= 0) _x += 4
-        _seatX[x] = _x
-      }
-      this.$data.seatX = _seatX
     }
   },
   watch: {
-    State: function (s1, s0) {
+    myState: function (s1, s0) {
       // s0++
       for (let s = s0; s <= s1; s++) {
         this.onState(s)
       }
-    },
-    mySid: function (s0) {
-      this.updateView(s0)
     }
   },
   created () {
@@ -410,7 +386,6 @@ export default {
       }
     })
     */
-    this.updateView(this.mySid)
   },
   beforeDestroy () { }
 }

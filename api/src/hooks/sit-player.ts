@@ -1,12 +1,12 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
-import { isPlayer, getMIX } from '../jb'
+import { isPlayer, getMIX, vulN, N52Suit, N52Rank } from '../jb'
 
 
 const sitBefore = (): Hook => {
   return async (context: HookContext) => {
-    const id = context.id
+    // const id = context.id
     const { tId: tId1, sId: sId1 } = context.data
 
     const { connection } = context.params
@@ -50,11 +50,7 @@ const sitBefore = (): Hook => {
         context.app.channel(`#${_table1.id}`).join(connection)
       } else {  //exist table
         let _table1 = await tableService.get(tId1)
-        let tdata = {
-          players: _table1.players,
-          seats: _table1.seats,
-          state: _table1.state
-        }
+        let _seats = _table1.seats
 
         if (tId1 != tId0) {
           // tdata.players++
@@ -63,19 +59,105 @@ const sitBefore = (): Hook => {
         let n = 0
         _table1.seats.forEach((u: any, i: number) => {
           if (i === sId1 - 1 && u == null) {
-            tdata.seats[i] = uId
+            _seats[i] = uId
           } else if (u == uId) {
-            tdata.seats[i] = null
+            _seats[i] = null
           }
-          if (tdata.seats[i] != null) n++
+          if (_seats[i] != null) n++
         })
 
-        tdata.players = n
-        tableService.patch(_table1.id, tdata)
+        _table1.players = n
+        _table1.seats = _seats
+        if (n > 0 && _table1.state === 0 && isPlayer(sId1)) {
+          let _board = await getBoard(_table1, context.app);
+          _table1.board =  _board;
+        }
+        tableService.patch(_table1.id, _table1)
       }
       return Promise.resolve(context)
     }
   }
+}
+
+async function getBoard (table:any, app:any) {
+  const boardService = app.service("boards");
+  const playedService = app.service("played");
+
+  let _uIds = table.seats.filter((x: any) => x != null);
+  let _played = await playedService.find({
+    query: {
+      $limit: 1,
+      uId: { $nin: _uIds }
+    }
+  })
+
+  let _board: { _id: any; bn: number; bt: any; vulN: any; players: any }
+  try {
+    _board = await boardService.get(_played.data[0].boardId);
+  } catch (err) {
+    _board = await boardService.create({ bn: 0, cards: shuffle() });
+  }
+
+  _uIds.forEach((u: any) => {
+    if (u)
+      playedService.create({
+        boardId: _board._id,
+        uId: u,
+        date: new Date().getTime()
+      });
+  });
+
+  let dealer = (_board.bn - 1) % 4;
+  dealer++;
+
+  _board.bt = table.bt;
+  _board.vulN = vulN(_board.bn);
+  _board.players = table.seats; //_uIds;
+
+  let _bid = {
+    info: { bidN: 0, bidS: 0, by: 0, P: 0, X: 0, XX: 0 },
+    data: [{ seat: dealer, bid: "?" }]
+  };
+  // let _bids = await bids$.create(_bid);
+  return {
+    state: 1,
+    board: _board,
+    bid: _bid,
+    turn: dealer
+  };
+}
+
+const shuffle = function() {
+  /**
+   * Shuffles array in place. ES6 version
+   * @param {Array} n items An array containing the items.
+   */
+  let n = [...Array(52).keys()];  //.map(x => x + 1);
+  for (let i = n.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [n[i], n[j]] = [n[j], n[i]];
+  }
+
+  let sort4 = [];
+  for (let h in [0, 1, 2, 3]) {
+    let h1 = h * 13;
+    sort4.push(n.slice(h1, h1 + 13).sort((a, b) => b - a));
+  }
+
+  let card4 = [[], [], [], []];
+  for (let h in [0, 1, 2, 3]) {
+    for (let i = 0; i < 13; i++) {
+      let c = sort4[h][i] + 1;
+      let card = {
+        value: c,
+        suit: N52Suit(c),
+        rank: N52Rank(c)
+      };
+      card4[h].push(card);
+    }
+  }
+
+  return card4;
 }
 
 const sitAfter = (): Hook => {
@@ -95,7 +177,6 @@ const sitAfter = (): Hook => {
 
 const sitReset = (): Hook => {
   return async (context: HookContext) => {
-    console.log('reset', context.data)
     const { tId, sId } = context.data
     const { connection } = context.params
     if (connection) {
@@ -111,5 +192,6 @@ const sitReset = (): Hook => {
 
 export {
   sitBefore,
-  sitAfter
+  sitAfter,
+  sitReset
 }

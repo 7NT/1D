@@ -7,8 +7,8 @@
       label-color="orange"
       v-model="model_mix"
       :options="options_mix"
-      options-dark
       options-dense
+      options-dark
       menu-shrink
       label="Board"
     >
@@ -91,9 +91,7 @@ export default {
     }
   },
   mounted () {
-    // console.log('mounted', this.model_mix)
-    const n = Date.now() % 3
-    this.model_mix = this.options_mix[n]
+    this.model_mix = this.myTable.bt
   }
 }
 </script>

@@ -22,7 +22,7 @@ export const isPlayer = (seat: number) => {
   }
 }
 
-const vulN = (bn: number) => {
+export const vulN = (bn: number) => {
   switch (bn % 16) {
     case 1:
     case 8:
@@ -48,13 +48,13 @@ const vulN = (bn: number) => {
   }
 }
 
-const N52Suit = (n52: number) => {
+export const N52Suit = (n52: number) => {
   n52--;
   let n13 = Math.floor(n52 / 13);
   return N4Suit(n13);
 }
 
-const N52Rank = (n52: number) => {
+export const N52Rank = (n52: number) => {
   let n13 = n52 % 13;
   switch (n13) {
     case 0:

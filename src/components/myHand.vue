@@ -171,7 +171,7 @@ export default {
       const _uId = this.myTable.seats[this.seatId - 1]
       this.player = this.getPlayerById(_uId)
       this.nick = this.player ? this.player.nick : '[SIT...]'
-      // this.updateCards()
+      this.updateCards()
     },
     updateCards () {
       try {

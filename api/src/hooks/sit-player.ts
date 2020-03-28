@@ -69,8 +69,9 @@ const sitBefore = (): Hook => {
         _table1.players = n
         _table1.seats = _seats
         if (n > 0 && _table1.state === 0 && isPlayer(sId1)) {
-          let _board = await getBoard(_table1, context.app);
-          _table1.board =  _board;
+          let _board = await getBoard(_table1, context.app)
+          _table1 = _board
+          console.log(_table1)
         }
         tableService.patch(_table1.id, _table1)
       }
@@ -79,11 +80,11 @@ const sitBefore = (): Hook => {
   }
 }
 
-async function getBoard (table:any, app:any) {
-  const boardService = app.service("boards");
-  const playedService = app.service("played");
+async function getBoard (table: any, app: any) {
+  const boardService = app.service("boards")
+  const playedService = app.service("played")
 
-  let _uIds = table.seats.filter((x: any) => x != null);
+  let _uIds = table.seats.filter((x: any) => x != null)
   let _played = await playedService.find({
     query: {
       $limit: 1,
@@ -93,9 +94,9 @@ async function getBoard (table:any, app:any) {
 
   let _board: { _id: any; bn: number; bt: any; vulN: any; players: any }
   try {
-    _board = await boardService.get(_played.data[0].boardId);
+    _board = await boardService.get(_played.data[0].boardId)
   } catch (err) {
-    _board = await boardService.create({ bn: 0, cards: shuffle() });
+    _board = await boardService.create({ bn: 0, cards: shuffle() })
   }
 
   _uIds.forEach((u: any) => {
@@ -104,60 +105,61 @@ async function getBoard (table:any, app:any) {
         boardId: _board._id,
         uId: u,
         date: new Date().getTime()
-      });
-  });
+      })
+  })
 
-  let dealer = (_board.bn - 1) % 4;
-  dealer++;
+  let dealer = (_board.bn - 1) % 4
+  dealer++
 
-  _board.bt = table.bt;
-  _board.vulN = vulN(_board.bn);
-  _board.players = table.seats; //_uIds;
+  _board.bt = table.bt
+  _board.vulN = vulN(_board.bn)
+  _board.players = table.seats //_uIds
 
   let _bid = {
     info: { bidN: 0, bidS: 0, by: 0, P: 0, X: 0, XX: 0 },
     data: [{ seat: dealer, bid: "?" }]
-  };
-  // let _bids = await bids$.create(_bid);
-  return {
-    state: 1,
-    board: _board,
-    bid: _bid,
-    turn: dealer
-  };
+  }
+  // let _bids = await bids$.create(_bid)
+  table.state = 1
+  table.board = _board
+  table.bid = _bid
+  table.turn = dealer
+
+  return table
 }
 
-const shuffle = function() {
+const shuffle = function () {
   /**
    * Shuffles array in place. ES6 version
    * @param {Array} n items An array containing the items.
    */
-  let n = [...Array(52).keys()];  //.map(x => x + 1);
+  let n = [...Array(52).keys()]  //.map(x => x + 1)
   for (let i = n.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [n[i], n[j]] = [n[j], n[i]];
+    [n[i], n[j]] = [n[j], n[i]]
   }
 
-  let sort4 = [];
-  for (let h in [0, 1, 2, 3]) {
-    let h1 = h * 13;
-    sort4.push(n.slice(h1, h1 + 13).sort((a, b) => b - a));
+  let sort4 = []
+  // for (let h in [0, 1, 2, 3]) {
+  for (let h = 0; h < 4; h++) {
+    const h1 = h * 13
+    sort4.push(n.slice(h1, h1 + 13).sort((a, b) => b - a))
   }
 
-  let card4 = [[], [], [], []];
+  let card4: any = [[], [], [], []]
   for (let h in [0, 1, 2, 3]) {
     for (let i = 0; i < 13; i++) {
-      let c = sort4[h][i] + 1;
+      let c = sort4[h][i] + 1
       let card = {
         value: c,
         suit: N52Suit(c),
         rank: N52Rank(c)
-      };
-      card4[h].push(card);
+      }
+      card4[h].push(card)
     }
   }
 
-  return card4;
+  return card4
 }
 
 const sitAfter = (): Hook => {

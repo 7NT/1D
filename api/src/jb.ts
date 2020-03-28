@@ -70,7 +70,7 @@ export const N52Rank = (n52: number) => {
   }
 }
 
-const N4Suit = (n4: number) => {
+export const N4Suit = (n4: number) => {
   switch (n4) {
     case 4:
       return 'NT';

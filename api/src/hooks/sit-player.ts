@@ -81,8 +81,8 @@ const sitBefore = (): Hook => {
 }
 
 async function getBoard (table: any, app: any) {
-  const boardService = app.service("boards")
-  const playedService = app.service("played")
+  const boardService = app.service('boards')
+  const playedService = app.service('played')
 
   let _uIds = table.seats.filter((x: any) => x != null)
   let _played = await playedService.find({
@@ -96,7 +96,7 @@ async function getBoard (table: any, app: any) {
   try {
     _board = await boardService.get(_played.data[0].boardId)
   } catch (err) {
-    _board = await boardService.create({ bn: 0, cards: shuffle() })
+    _board = await boardService.create({ bn: 1, cards: shuffle() })
   }
 
   _uIds.forEach((u: any) => {
@@ -117,7 +117,7 @@ async function getBoard (table: any, app: any) {
 
   let _bid = {
     info: { bidN: 0, bidS: 0, by: 0, P: 0, X: 0, XX: 0 },
-    data: [{ seat: dealer, bid: "?" }]
+    data: [{ seat: dealer, bid: '?' }]
   }
   // let _bids = await bids$.create(_bid)
   table.state = 1

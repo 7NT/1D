@@ -1,52 +1,52 @@
 <template>
-  <div class="row items-end">
-    <div class="column">
-      <div class="row self-end no-wrap">
+  <div class='row items-end'>
+    <div class='column'>
+      <div class='row self-end no-wrap'>
         <q-card
           flat
-          v-if="isVisible"
-          class="transparent"
+          v-if='isVisible'
+          class='transparent'
         >
-          <div class="hand hhand-compact active-hand full-width">
+          <div class='hand hhand-compact active-hand full-width'>
             <img
-              v-for="(c, i) of myCards"
-              :key="`${i}`"
-              :src="cardImg(c)"
-              @click="onPlay(c)"
-              class="card"
+              v-for='(c, i) of myCards'
+              :key='`${i}`'
+              :src='cardImg(c)'
+              @click='onPlay(c)'
+              class='card'
             />
           </div>
         </q-card>
       </div>
-      <div class="myplayer">
+      <div class='myplayer'>
         <q-btn-group flat>
           <q-btn
             push
             no-caps
             ellipsis
-            @click="onSit"
-            :label="nick"
-            :color="ucolor"
-            :icon="flag"
-            align="between"
-            class="playerbar"
+            @click='onSit'
+            :label='nick'
+            :color='ucolor'
+            :icon='flag'
+            align='between'
+            class='playerbar'
           >
             <q-icon
-              :name="playerBut"
-              :class="uclass"
+              :name='playerBut'
+              :class='uclass'
             />
           </q-btn>
           <q-btn-dropdown
             split
-            v-if="isDeclarer"
-            :label="contract"
-            color="info"
+            v-if='isDeclarer'
+            :label='contract'
+            color='info'
           >
             <q-list dense>
               <q-item
                 clickable
                 v-close-menu
-                @click="onClaim"
+                @click='onClaim'
               >
                 <q-item-section>
                   <q-item-label label>Claim All</q-item-label>
@@ -63,7 +63,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-// import myCards from "src/components/myCards";
+// import myCards from 'src/components/myCards';
 import jb from 'src/jb'
 
 export default {
@@ -130,7 +130,7 @@ export default {
     }
   },
   methods: {
-    // ...mapActions("jstore", ["addUser"]),
+    // ...mapActions('jstore', ['addUser']),
     onSit () {
       const seat = {
         action: 'sit',
@@ -256,7 +256,7 @@ img.card {
 }
 
 /*
-* A horizontal hand, class="hand hhand".  The enitire card is visible.
+* A horizontal hand, class='hand hhand'.  The enitire card is visible.
 */
 .hhand {
   display: inline-block;
@@ -271,7 +271,7 @@ img.card {
 }
 
 /*
-* A vertical hand, class="hand vhand".  The enitire card is visible.
+* A vertical hand, class='hand vhand'.  The enitire card is visible.
 */
 .vhand {
   display: block;

@@ -4,7 +4,10 @@
       <div class='col'>
         <div class='row no-wrap'>
           <div class='col-3 items-start'>
-            <myBoard :myTable='myTable' v-on:onBT='onBT'></myBoard>
+            <myBoard
+              :myTable='myTable'
+              v-on:onBT='onBT'
+            ></myBoard>
           </div>
           <div class='col-6 box'>
             <div class='column'>
@@ -20,9 +23,7 @@
               class='row justify-end'
               v-if='myState > 1'
             >
-              <myBidBox
-                :seatX3='seatX[2]'
-              />
+              <myBidBox :seatX3='seatX[2]' />
             </div>
           </div>
         </div>
@@ -45,9 +46,7 @@
                 v-if='myState === 1'
               >
                 <q-card>
-                  <myBidBox
-                    :seatX3='seatX[2]'
-                  />
+                  <myBidBox :seatX3='seatX[2]' />
                 </q-card>
               </q-card>
               <q-card
@@ -272,7 +271,9 @@ export default {
   },
   methods: {
     isMyTurn () {
-      return this.myTurn === this.myPlayer.sId ? this.myState : 0
+      const b = this.myTurn === this.myPlayer.sId ? this.myState : 0
+      console.log('turn', this.myTurn, this.myPlayer.sId)
+      return b
     },
     onBT (bt) {
       switch (bt) {
@@ -290,6 +291,7 @@ export default {
     },
     onState (s) {
       console.log('t', s, this.myTable, this.$data.boardInfo)
+      /*
       switch (s) {
         case 0:
           this.$data.boardInfo.bt = this.myTable.bt
@@ -303,6 +305,7 @@ export default {
         default:
         // return
       }
+      */
     },
     onBid (bid) {
       // console.log('bid', bid, this.myTable)
@@ -369,11 +372,16 @@ export default {
     }
   },
   watch: {
+    myTable: function (t) {
+      this.myState = t.state
+    },
     myState: function (s1, s0) {
       // s0++
       for (let s = s0; s <= s1; s++) {
         this.onState(s)
       }
+    },
+    myTurn: function (t1, t0) {
     }
   },
   created () {
@@ -392,19 +400,17 @@ export default {
 </script>
 <!-- Notice lang='scss' -->
 <style scapoed lang='scss'>
-
 .q-btn >>> .q-icon {
   /*float: left*/
   align-self: flex-start;
-
 }
 .jbtable {
-  min-width:  696px;
+  min-width: 696px;
   min-height: 390px;
   border: 1px solid green;
   width: 100%;
   height: 100%;
-  background-image: url('../statics/img/jbbg.jpeg');
+  background-image: url("../statics/img/jbbg.jpeg");
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */
@@ -439,5 +445,4 @@ export default {
   max-height: 130px;
   min-width: 175px;
 }
-
 </style>

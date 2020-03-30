@@ -88,40 +88,50 @@
               class='column'
               v-if='isMyTurn() === 1'
             >
-              <div class='col group items-start'>
-                <q-btn-group
-                  dense
-                  outline
-                  glossy
-                  v-for='n of 7'
-                  :key='n'
-                >
-                  <q-fab
-                    flat
-                    glossy
-                    v-if='bidN(n)'
-                    :icon='`mdi-numeric-${n}-box-outline`'
-                    direction='up'
-                    style='width:28pxheight:28pxtop:0px'
+              <div class='row self-start'>
+                <div style='height:30px'>
+                  <q-btn-group
+                    push
+                    v-for='n of 7'
+                    :key='n'
                   >
-                    <q-fab-action
-                      v-for='s in suits'
-                      :key='s.id'
-                      icon=''
-                      v-show='isBid(n, s.id)'
-                      :color='s.color'
-                      @click='onBid(`${n}${s.suit}`)'
+                    <q-fab
+                      outline
+                      glossy
+                      square
+                      persistent
+                      type='button'
+                      v-if='bidN(n)'
+                      :icon='`filter_${n}`'
+                      label-position='left'
+                      direction='up'
                     >
-                      {{ bidNS(n, s.suit) }}
-                    </q-fab-action>
-                  </q-fab>
-                </q-btn-group>
-                <q-separator
-                  spaced
-                  color='warning'
-                />
+                      <q-fab-action
+                        v-for='s in suits'
+                        :key='s.id'
+                        square
+                        v-show='isBid(n, s.id)'
+                        :color='s.color'
+                        @click='onBid(`${n}${s.suit}`)'
+                      >
+                        {{ bidNS(n, s.suit) }}
+                      </q-fab-action>
+                    </q-fab>
+                  </q-btn-group>
+                  <q-separator
+                    spaced
+                    color='warning'
+                  />
+                </div>
               </div>
-              <div class='col group items-end'>
+              <div class='row'>
+                <q-input dense filled square color='purple-12' v-model='alert' label='Alert'>
+                  <template v-slot:prepend>
+                    <q-icon name='add_alert' />
+                  </template>
+                </q-input>
+              </div>
+              <div class='row'>
                 <q-btn-group
                   dense
                   class='full-width'
@@ -400,9 +410,21 @@ export default {
 </script>
 <!-- Notice lang='scss' -->
 <style scapoed lang='scss'>
+/*
 .q-btn >>> .q-icon {
-  /*float: left*/
+  float: left
   align-self: flex-start;
+}
+*/
+.q-btn {
+  height: 28px;
+  width: 28px;
+  top: 0px;
+}
+.q-btn--fab .q-btn__wrapper {
+  height: 28px;
+  width: 28px;
+  padding: 0px;
 }
 .jbtable {
   min-width: 696px;
@@ -432,13 +454,6 @@ export default {
   border: 1px solid red;
   margin: auto;
   overflow-y: auto;
-}
-.popover {
-  overflow: visible;
-}
-.popover >>> .q-btn-fab {
-  height: 28px;
-  width: 28px;
 }
 .myHand {
   min-height: 100px;

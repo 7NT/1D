@@ -122,7 +122,7 @@ async function getBoard (table: any, app: any) {
   // let _bids = await bids$.create(_bid)
   table.state = 1
   table.board = _board
-  table.bid = _bid
+  table.bids = _bid
   table.turn = dealer
 
   return table

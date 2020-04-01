@@ -19,10 +19,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
+// import jb from 'src/jb'
 
 export default {
   name: 'myBidBox',
-  // props: ['myPlayer', 'myBid'],
+  // props: ['mySid'],
   data: () => ({
     seats: ['N', 'E', 'S', 'W'],
     bData: []
@@ -30,7 +31,12 @@ export default {
   computed: {
     ...mapGetters('jstore', ['myPlayer', 'myTable']),
     // view Id
-    myBid () {
+    mySid () {
+      let x = Math.abs(this.myPlayer.sId)
+      if (x < 1 || x > 4) x = 3
+      return x
+    },
+    myBids () {
       return this.myTable.bids
     },
     columns: function () {
@@ -53,21 +59,16 @@ export default {
     }
   },
   methods: {
-    vId () {
-      let x = Math.abs(this.myPlayer.sId)
-      if (x < 1 || x > 4) x = 3
-      return x
-    },
     seatX (s) {
-      return ((this.vId() + s) % 4) + 1
+      return ((this.mySid + s) % 4) + 1
     },
     colName (s) {
       const c = this.seats[s - 1]
       return `{ seat: ${s}, label: '${c}', field: '${c}' }`
     },
     vul_color (s) {
-      if (this.myBid) {
-        switch (this.myBid.board.vulN) {
+      if (this.myBids) {
+        switch (this.myTable.board.vulN) {
           case 0:
             return 'blue'
           case 3:
@@ -86,15 +87,15 @@ export default {
       }
     },
     loadBids () {
-      console.log('loadbids', this.myBid)
-      if (!this.myBid) return
+      console.log('loadbids', this.myBids)
+      if (!this.myBids) return
       let turn = 0
       const data = []
-      const _bid = this.myBid
+      const _bid = this.myBids
       try {
         let row = 1
         let rBid = { N: null, E: null, S: null, W: null }
-        _bid.bids.forEach(bid => {
+        _bid.data.forEach(bid => {
           switch (bid.seat) {
             case 1: {
               rBid.N = bid.bid
@@ -127,6 +128,7 @@ export default {
           data.push(rBid)
         }
         this.$data.bData = data
+        console.log('bids', data)
       } catch (err) {}
       if (turn) this.$emit('onTurn', { action: 'bid', turn, bid: _bid })
     }

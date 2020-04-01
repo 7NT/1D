@@ -1,5 +1,6 @@
 import * as authentication from '@feathersjs/authentication';
 // Don't remove this comment. It's needed to format import lines nicely.
+import { sitBefore, sitAfter, sitReset } from '../../hooks/autoincrement'
 
 const { authenticate } = authentication.hooks;
 

@@ -1,9 +1,9 @@
-import * as authentication from '@feathersjs/authentication';
-import processMessage from '../../hooks/process-message';
-import populateUser from '../../hooks/populate-user';
+import * as authentication from '@feathersjs/authentication'
+import processMessage from '../../hooks/process-message'
+import populateUser from '../../hooks/populate-user'
 // Don't remove this comment. It's needed to format import lines nicely.
 
-const { authenticate } = authentication.hooks;
+const { authenticate } = authentication.hooks
 
 export default {
   before: {
@@ -35,4 +35,4 @@ export default {
     patch: [],
     remove: []
   }
-};
+}

@@ -13,7 +13,7 @@
           </div>
           <div class='col-3 self-start'>
             <div class='row justify-end' v-if='myState > 1'>
-              <myBidBox :seatX3='seatX[2]' />
+              <myBidBox />
             </div>
           </div>
         </div>
@@ -29,7 +29,7 @@
             <div class='column'>
               <q-card class='bbox cbox' v-if='myState === 1'>
                 <q-card>
-                  <myBidBox :seatX3='seatX[2]' />
+                  <myBidBox />
                 </q-card>
               </q-card>
               <q-card class='cbox transparent' v-if='myState === 2'>
@@ -55,24 +55,25 @@
           <div class='col-3'>
             <div class='column' v-if='isMyTurn() === 1'>
               <div class='row bidrow'>
-                <q-btn-group push v-for='n of 7' :key='n'>
+                <q-btn-group push>
                   <q-fab
+                    v-for='n of 7' :key='n'
                     square
                     persistent
-                    v-if='bidN(n)'
+                    v-show='bidN(n)'
                     type="button"
                     direction='up'
                     :label='n'
                     label-position='left'
                     icon=null
-                    active-icon=null
-                    class="col-1 bidfab"
+                    class="bidfab"
                   >
                     <q-fab-action
                       v-for='s in suits'
                       :key='s.id'
                       square
                       v-show='isBid(n, s.id)'
+                      icon=null
                       :color='s.color'
                       @click='onBid(`${n}${s.suit}`)'
                     >
@@ -127,7 +128,7 @@ import myBidBox from 'src/components/myBidBox'
 import myPlayBox from 'src/components/myPlayBox'
 
 export default {
-  name: 'myPlayTable',
+  name: 'myPlaysTable',
   data: function () {
     return {
       tableData: null,
@@ -140,7 +141,8 @@ export default {
         { id: 4, suit: '♠', color: 'black' },
         { id: 5, suit: 'NT', color: 'warning' }
       ],
-      cc: { name: { NS: 'SAYC', EW: 'SAYC' }, card: { NS: '', EW: '' } }
+      cc: { name: { NS: 'SAYC', EW: 'SAYC' }, card: { NS: '', EW: '' } },
+      alert: null
     }
   },
   components: {
@@ -152,26 +154,6 @@ export default {
   computed: {
     ...mapState('jstore', ['players', 'tables']),
     ...mapGetters('jstore', ['myPlayer', 'myTable']),
-    /*
-    myTable: {
-      get: function () {
-        return this.$data.tableData
-      },
-      set: function (t) {
-        console.log('t', t)
-        this.$data.tableData = t
-        this.State = t.state
-        if (t.state === 2) {
-          console.log('pi', t.turn, t.play.info.winner, t)
-        }
-      }
-    },
-    myUid: {
-      get: function () {
-        return this.myPlayer.id
-      }
-    },
-    */
     myTid: {
       get: function () {
         return this.myPlayer.tId
@@ -195,21 +177,21 @@ export default {
         return this.myTable ? this.myTable.turn : 0
       }
     },
-    myBid: {
+    myBids: {
       get: function () {
-        return this.myTable.bid
+        return this.myTable.bids
       }
     },
-    myPlay: {
+    myPlays: {
       get: function () {
         return this.myTable.play
       }
     },
     X: function () {
-      return jb.bidX(this.myBid.info.by, this.myTurn)
+      return jb.bidX(this.myBids.info.by, this.myTurn)
     },
     XX: function () {
-      return jb.bidX(this.myBid.info.X, this.myTurn)
+      return jb.bidX(this.myBids.info.X, this.myTurn)
     },
     played4: function () {
       let card4 = [null, null, null, null]
@@ -248,7 +230,7 @@ export default {
       }
     },
     onState (s) {
-      console.log('t', s, this.myTable, this.$data.boardInfo)
+      console.log('t', s, this.myTable)
       /*
       switch (s) {
         case 0:
@@ -266,8 +248,8 @@ export default {
       */
     },
     onBid (bid) {
-      // console.log('bid', bid, this.myTable)
-      const _bid = this.myBid
+      console.log('bid', bid, this.myTable)
+      const _bid = this.myBids
       let _turn = this.myTurn
       _bid.data.pop()
       _bid.data.push({ seat: _turn, bid: bid })
@@ -276,7 +258,7 @@ export default {
       tableService.patch(this.myTable._id, { bid: _bid, turn: _turn })
     },
     onAction (data) {
-      // console.log('data', data)
+      console.log('onAction', data)
       if (data.action === 'sit') {
         if (!data.uId) {
           this.$emit('onSit', { tId: this.myPlayer.tId, sId: data.sId })
@@ -296,8 +278,8 @@ export default {
     },
     bidN (n) {
       try {
-        if (n === this.myBid.info.bidN) return this.myBid.info.bidS < 5
-        else return n > this.myBid.info.bidN
+        if (n === this.myBids.info.bidN) return this.myBids.info.bidS < 5
+        else return n > this.myBids.info.bidN
       } catch (_) {
         // console.log(err)
       }
@@ -305,9 +287,9 @@ export default {
     },
     isBid (n, s) {
       try {
-        // console.log(n, s, this.myBid)
+        // console.log(n, s, this.myBids)
         const n1 = n * 10 + s
-        const n0 = this.myBid.info.bidN * 10 + this.myBid.info.bidS
+        const n0 = this.myBids.info.bidN * 10 + this.myBids.info.bidS
         return n1 > n0
       } catch (_) {
         // console.log(err)
@@ -331,6 +313,7 @@ export default {
   },
   watch: {
     myTable: function (t) {
+      console.log('t', t)
       this.myState = t.state
     },
     myState: function (s1, s0) {
@@ -365,7 +348,7 @@ export default {
   align-self: flex-start;
 }
 .bidrow {
-  flex-wrap: wrap;
+  flex-wrap: no-wrap;
 }
 .bidfab {
   width:28px;

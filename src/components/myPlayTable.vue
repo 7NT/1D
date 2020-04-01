@@ -4,25 +4,15 @@
       <div class='col'>
         <div class='row no-wrap'>
           <div class='col-3 items-start'>
-            <myBoard
-              :myTable='myTable'
-              v-on:onBT='onBT'
-            ></myBoard>
+            <myBoard :myTable='myTable' v-on:onBT='onBT'></myBoard>
           </div>
           <div class='col-6 box'>
             <div class='column'>
-              <myHand
-                :handId=1
-                v-on:onAction='onAction'
-                class='myHand justify-start'
-              />
+              <myHand :handId='1' v-on:onAction='onAction' class='myHand justify-start' />
             </div>
           </div>
           <div class='col-3 self-start'>
-            <div
-              class='row justify-end'
-              v-if='myState > 1'
-            >
+            <div class='row justify-end' v-if='myState > 1'>
               <myBidBox :seatX3='seatX[2]' />
             </div>
           </div>
@@ -32,41 +22,24 @@
         <div class='row no-wrap'>
           <div class='col-4 box'>
             <div class='column'>
-              <myHand
-                :handId=4
-                v-on:onAction='onAction'
-                class='myHand justify-end'
-              />
+              <myHand :handId='4' v-on:onAction='onAction' class='myHand justify-end' />
             </div>
           </div>
           <div class='col-4'>
             <div class='column'>
-              <q-card
-                class='bbox cbox'
-                v-if='myState === 1'
-              >
+              <q-card class='bbox cbox' v-if='myState === 1'>
                 <q-card>
                   <myBidBox :seatX3='seatX[2]' />
                 </q-card>
               </q-card>
-              <q-card
-                class='cbox transparent'
-                v-if='myState === 2'
-              >
-                <myPlayBox
-                  :card4='played4'
-                  :seatX='seatX'
-                />
+              <q-card class='cbox transparent' v-if='myState === 2'>
+                <myPlayBox :card4='played4' :seatX='seatX' />
               </q-card>
             </div>
           </div>
           <div class='col-4 box'>
             <div class='column'>
-              <myHand
-                :handId=2
-                v-on:onAction='onAction'
-                class='myHand justify-start'
-              />
+              <myHand :handId='2' v-on:onAction='onAction' class='myHand justify-start' />
             </div>
           </div>
         </div>
@@ -76,53 +49,37 @@
           <div class='col-3' />
           <div class='col-6 box'>
             <div class='column'>
-              <myHand
-                :handId=3
-                v-on:onAction='onAction'
-                class='myHand justify-end'
-              />
+              <myHand :handId='3' v-on:onAction='onAction' class='myHand justify-end' />
             </div>
           </div>
           <div class='col-3'>
-            <div
-              class='column'
-              v-if='isMyTurn() === 1'
-            >
-              <div class='row self-start'>
-                <div style='height:30px'>
-                  <q-btn-group
-                    push
-                    v-for='n of 7'
-                    :key='n'
+            <div class='column' v-if='isMyTurn() === 1'>
+              <div class='row bidrow'>
+                <q-btn-group push v-for='n of 7' :key='n'>
+                  <q-fab
+                    square
+                    persistent
+                    v-if='bidN(n)'
+                    type="button"
+                    direction='up'
+                    :label='n'
+                    label-position='left'
+                    icon=null
+                    active-icon=null
+                    class="col-1 bidfab"
                   >
-                    <q-fab
-                      outline
-                      glossy
+                    <q-fab-action
+                      v-for='s in suits'
+                      :key='s.id'
                       square
-                      persistent
-                      type='button'
-                      v-if='bidN(n)'
-                      :icon='`filter_${n}`'
-                      label-position='left'
-                      direction='up'
+                      v-show='isBid(n, s.id)'
+                      :color='s.color'
+                      @click='onBid(`${n}${s.suit}`)'
                     >
-                      <q-fab-action
-                        v-for='s in suits'
-                        :key='s.id'
-                        square
-                        v-show='isBid(n, s.id)'
-                        :color='s.color'
-                        @click='onBid(`${n}${s.suit}`)'
-                      >
-                        {{ bidNS(n, s.suit) }}
-                      </q-fab-action>
-                    </q-fab>
-                  </q-btn-group>
-                  <q-separator
-                    spaced
-                    color='warning'
-                  />
-                </div>
+                      {{ bidNS(n, s.suit) }}
+                    </q-fab-action>
+                  </q-fab>
+                </q-btn-group>
               </div>
               <div class='row'>
                 <q-input dense filled square color='purple-12' v-model='alert' label='Alert'>
@@ -132,10 +89,7 @@
                 </q-input>
               </div>
               <div class='row'>
-                <q-btn-group
-                  dense
-                  class='full-width'
-                >
+                <q-btn-group dense class='full-width'>
                   <q-btn
                     glossy
                     label='X'
@@ -152,13 +106,7 @@
                     @click="onBid('XX')"
                     style='width:30%'
                   />
-                  <q-btn
-                    glaosy
-                    label='Pass'
-                    color='primary'
-                    @click="onBid('P')"
-                    style='width:50%'
-                  />
+                  <q-btn glaosy label='Pass' color='primary' @click="onBid('P')" style='width:50%' />
                 </q-btn-group>
               </div>
             </div>
@@ -391,8 +339,7 @@ export default {
         this.onState(s)
       }
     },
-    myTurn: function (t1, t0) {
-    }
+    myTurn: function (t1, t0) {}
   },
   created () {
     // this.$parent.page = 'Lobby'
@@ -405,26 +352,26 @@ export default {
     })
     */
   },
-  beforeDestroy () { }
+  beforeDestroy () {}
 }
 </script>
 <!-- Notice lang='scss' -->
-<style scapoed lang='scss'>
-/*
+<style scoped>
+.q-btn >>> .q-fab {
+  height: 28px
+}
 .q-btn >>> .q-icon {
-  float: left
+  float: left;
   align-self: flex-start;
 }
-*/
-.q-btn {
-  height: 28px;
-  width: 28px;
-  top: 0px;
+.bidrow {
+  flex-wrap: wrap;
 }
-.q-btn--fab .q-btn__wrapper {
-  height: 28px;
-  width: 28px;
-  padding: 0px;
+.bidfab {
+  width:28px;
+  height:28px;
+  padding:0px;
+  margin:0px;
 }
 .jbtable {
   min-width: 696px;
@@ -432,7 +379,7 @@ export default {
   border: 1px solid green;
   width: 100%;
   height: 100%;
-  background-image: url("../statics/img/jbbg.jpeg");
+  background-image: url('../statics/img/jbbg.jpeg');
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */

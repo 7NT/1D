@@ -18,15 +18,21 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'myBidBox',
-  props: ['myPlayer', 'myBid'],
+  // props: ['myPlayer', 'myBid'],
   data: () => ({
     seats: ['N', 'E', 'S', 'W'],
     bData: []
   }),
   computed: {
+    ...mapGetters('jstore', ['myPlayer', 'myTable']),
     // view Id
+    myBid () {
+      return this.myTable.bids
+    },
     columns: function () {
       const cols = []
       let i

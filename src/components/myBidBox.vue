@@ -1,6 +1,8 @@
 <template>
   <q-table
     dense
+    bordered
+    square
     hide-bottom
     separator='cell'
     :data='bData'
@@ -8,12 +10,18 @@
     row-key='row'
     class='bbox'
   >
-    <q-tr slot='header' slot-scope='props' :props='props'>
-      <q-th class='col-3' :bgcolor='vul_color(col.seat)' v-for='col in props.cols' :key='col.seat'>
+    <q-tr slot="header" slot-scope="props" :props="props">
+      <q-th :class="vul_bgcolor(col.seat)" v-for="col in props.cols" :key="col.seat">
         {{ props.cols[col.seat - 1].label }}
         <q-tooltip>{{ colName(col.seat) }}</q-tooltip>
       </q-th>
     </q-tr>
+    <template v-slot:body-cell='props'>
+      <q-td :props='props' :class='turn_bgcolor(props)'>
+        {{props.value}}
+        <q-tooltip>{{ props }}</q-tooltip>
+      </q-td>
+    </template>
   </q-table>
 </template>
 
@@ -23,14 +31,12 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'myBidBox',
-  // props: ['mySid'],
   data: () => ({
     seats: ['N', 'E', 'S', 'W'],
     bData: []
   }),
   computed: {
     ...mapGetters('jstore', ['myPlayer', 'myTable']),
-    // view Id
     mySid () {
       let x = Math.abs(this.myPlayer.sId)
       if (x < 1 || x > 4) x = 3
@@ -66,25 +72,30 @@ export default {
       const c = this.seats[s - 1]
       return `{ seat: ${s}, label: '${c}', field: '${c}' }`
     },
-    vul_color (s) {
+    vul_bgcolor (s) {
       if (this.myBids) {
         switch (this.myTable.board.vulN) {
           case 0:
-            return 'blue'
+            return 'bg-info'
           case 3:
-            return 'red'
+            return 'bg-negative'
           case 1: {
-            if (s % 2 === 1) return 'red'
-            else return 'blue'
+            if (s % 2 === 1) return 'bg-negative'
+            else return 'bg-info'
           }
           case 2: {
-            if (s % 2 === 1) return 'blue'
-            else return 'red'
+            if (s % 2 === 1) return 'bg-info'
+            else return 'bg-negative'
           }
           default:
             return null
         }
       }
+    },
+    turn_bgcolor (props) {
+      if (!props.value) return 'bg-grey'
+      else if (props.value === '?') return 'bg-warning'
+      else return 'col-3'
     },
     loadBids () {
       console.log('loadbids', this.myBids)
@@ -115,7 +126,7 @@ export default {
             }
             default:
           }
-          if (bid.seat === this.vId()) {
+          if (bid.seat === this.mySid) {
             rBid.row = row
             data.push(rBid)
             rBid = { N: null, E: null, S: null, W: null }
@@ -129,7 +140,9 @@ export default {
         }
         this.$data.bData = data
         console.log('bids', data)
-      } catch (err) {}
+      } catch (err) {
+        console.log(err)
+      }
       if (turn) this.$emit('onTurn', { action: 'bid', turn, bid: _bid })
     }
   },

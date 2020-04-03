@@ -54,7 +54,7 @@
           </div>
           <div class='col-3'>
             <div class='column' v-if='isMyTurn() === 1'>
-              <div class='row bidrow'>
+              <div class='row bidrow items-start' style='height:30px'>
                 <q-btn-group push>
                   <q-fab
                     v-for='n of 7' :key='n'
@@ -66,6 +66,7 @@
                     :label='n'
                     label-position='left'
                     icon=null
+                    active-icon=null
                     class="bidfab"
                   >
                     <q-fab-action
@@ -82,14 +83,14 @@
                   </q-fab>
                 </q-btn-group>
               </div>
-              <div class='row'>
-                <q-input dense filled square color='purple-12' v-model='alert' label='Alert'>
+              <div class='row items-center' style='height:40px'>
+                <q-input dense standout autofocus clearable color='warning' v-model='alert' label='Alert' class='full-width'>
                   <template v-slot:prepend>
                     <q-icon name='add_alert' />
                   </template>
                 </q-input>
               </div>
-              <div class='row'>
+              <div class='row items-end' style='height:30px'>
                 <q-btn-group dense class='full-width'>
                   <q-btn
                     glossy
@@ -340,7 +341,7 @@ export default {
 </script>
 <!-- Notice lang='scss' -->
 <style scoped>
-.q-btn >>> .q-fab {
+.q-fab >>> .q-btn {
   height: 28px
 }
 .q-btn >>> .q-icon {

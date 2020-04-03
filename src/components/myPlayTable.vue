@@ -84,7 +84,7 @@
                 </q-btn-group>
               </div>
               <div class='row items-center' style='height:40px'>
-                <q-input dense standout autofocus clearable color='warning' v-model='alert' label='Alert' class='full-width'>
+                <q-input dense standout='bg-primary text-negative' autofocus clearable color='warning' v-model='alert' label='Alert' class='full-width'>
                   <template v-slot:prepend>
                     <q-icon name='add_alert' />
                   </template>
@@ -213,7 +213,6 @@ export default {
   methods: {
     isMyTurn () {
       const b = this.myTurn === this.myPlayer.sId ? this.myState : 0
-      console.log('turn', this.myTurn, this.myPlayer.sId)
       return b
     },
     onBT (bt) {
@@ -250,13 +249,16 @@ export default {
     },
     onBid (bid) {
       console.log('bid', bid, this.myTable)
-      const _bid = this.myBids
+      // const _bid = this.myBids
+      const _info = this.myBids.info
+      const _data = this.myBids.data.slice(0)
       let _turn = this.myTurn
-      _bid.data.pop()
-      _bid.data.push({ seat: _turn, bid: bid })
+      _data.pop()
+      _data.push({ seat: _turn, bid: bid })
       _turn = (_turn % 4) + 1
-      _bid.data.push({ seat: _turn, bid: '?' })
-      tableService.patch(this.myTable._id, { bid: _bid, turn: _turn })
+      _data.push({ seat: _turn, bid: '?' })
+      const _bids = { info: _info, data: _data }
+      tableService.patch(this.myTable.id, { bids: _bids, turn: _turn })
     },
     onAction (data) {
       console.log('onAction', data)

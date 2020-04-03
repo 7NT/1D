@@ -56,14 +56,6 @@ export default {
       return cols
     }
   },
-  watch: {
-    myPlayer () {
-      this.loadBids()
-    },
-    myBid () {
-      this.loadBids()
-    }
-  },
   methods: {
     seatX (s) {
       return ((this.mySid + s) % 4) + 1
@@ -146,7 +138,18 @@ export default {
       if (turn) this.$emit('onTurn', { action: 'bid', turn, bid: _bid })
     }
   },
-  created () {
+  watch: {
+    myTable: function (t) {
+      this.loadBids()
+    },
+    myPlayer () {
+      this.loadBids()
+    },
+    myBid () {
+      this.loadBids()
+    }
+  },
+  mounted () {
     this.loadBids()
   }
 }

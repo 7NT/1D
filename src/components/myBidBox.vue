@@ -131,7 +131,7 @@ export default {
           data.push(rBid)
         }
         this.$data.bData = data
-        console.log('bids', data)
+        // console.log('bids', data)
       } catch (err) {
         console.log(err)
       }

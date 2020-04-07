@@ -71,7 +71,7 @@ const sitBefore = (): Hook => {
         if (n > 0 && _table1.state === 0 && isPlayer(sId1)) {
           let _board = await getBoard(_table1, context.app)
           _table1 = _board
-          console.log(_table1)
+          // console.log(_table1)
         }
         tableService.patch(_table1.id, _table1)
       }

@@ -248,34 +248,39 @@ export default {
       */
     },
     onBid (bid) {
-      console.log('bid', bid, this.myTable)
-      // const _bid = this.myBids
-      const _info = this.myBids.info
-      const _data = this.myBids.data.slice(0)
-      let _turn = this.myTurn
-      _data.pop()
-      _data.push({ seat: _turn, bid: bid })
-      _turn = (_turn % 4) + 1
-      _data.push({ seat: _turn, bid: '?' })
-      const _bids = { info: _info, data: _data }
-      tableService.patch(this.myTable.id, { bids: _bids, turn: _turn })
+      const info = this.myBids.info
+      const data = this.myBids.data.slice(0)
+      let seat = this.myTurn
+      data.pop()
+      data.push({ seat, bid })
+      seat = (seat % 4) + 1
+      data.push({ seat, bid: '?' })
+      this.onAction({ action: 'bid', bid: { bids: { info, data }, seat } })
     },
     onAction (data) {
       console.log('onAction', data)
-      if (data.action === 'sit') {
-        if (!data.uId) {
-          this.$emit('onSit', { tId: this.myPlayer.tId, sId: data.sId })
-        } else if (data.uId === this.myUid) {
-          this.$q.notify({ type: 'info', message: 'Ready' })
-        } else {
-          this.$q.notify({ type: 'negative', message: 'This seat is taken' })
+      switch (data.action) {
+        case 'sit': {
+          if (!data.uId) {
+            this.$emit('onSit', { tId: this.myPlayer.tId, sId: data.sId })
+          } else if (data.uId === this.myUid) {
+            this.$q.notify({ type: 'info', message: 'Ready' })
+          } else {
+            this.$q.notify({ type: 'negative', message: 'This seat is taken' })
+          }
+          break
         }
-      } else if (data.action === 'play') {
-        const _play = this.myTable.play || []
-        const _played = _play.data.map(x => x.card) || []
-        if (!_played.includes(data.card)) {
-          _play.data.push(data.play)
-          tableService.patch(this.myTable._id, { play: _play })
+        case 'bid': {
+          tableService.patch(this.myTable.id, { bids: data.bid.bids, turn: data.bid.seat })
+          break
+        }
+        case 'play': {
+          const _play = this.myTable.play || []
+          const _played = _play.data.map(x => x.card) || []
+          if (!_played.includes(data.card)) {
+            _play.data.push(data.play)
+            tableService.patch(this.myTable.id, { play: _play })
+          }
         }
       }
     },
@@ -315,9 +320,9 @@ export default {
     }
   },
   watch: {
-    myTable: function (t) {
-      console.log('t', t)
-      this.myState = t.state
+    myTable: function (t1, t0) {
+      console.log('t', t1, t0)
+      this.myState = t1.state
     },
     myState: function (s1, s0) {
       // s0++

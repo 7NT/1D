@@ -33,7 +33,7 @@
                 </q-card>
               </q-card>
               <q-card class='cbox transparent' v-if='myState === 2'>
-                <myPlayBox :card4='played4' :seatX='seatX' />
+                <myPlayBox />
               </q-card>
             </div>
           </div>
@@ -134,7 +134,6 @@ export default {
     return {
       tableData: null,
       state: 0,
-      seatX: [1, 2, 3, 4],
       suits: [
         { id: 1, suit: '♣', color: 'black' },
         { id: 2, suit: '♦', color: 'red' },
@@ -185,7 +184,7 @@ export default {
     },
     myPlays: {
       get: function () {
-        return this.myTable.play
+        return this.myTable.plays
       }
     },
     X: function () {
@@ -193,21 +192,6 @@ export default {
     },
     XX: function () {
       return jb.bidX(this.myBids.info.X, this.myTurn)
-    },
-    played4: function () {
-      let card4 = [null, null, null, null]
-      if (this.myState > 1) {
-        try {
-          const l4 = this.myTable.play.data.length
-          let n4 = l4 % 4
-          if (!n4) n4 = 4
-          card4 = this.myTable.play.data.slice(-n4)
-          // console.log(l4, n4, this.myTable.play.data)
-        } catch (_) {
-          // console.log(err)
-        }
-      }
-      return card4
     }
   },
   methods: {
@@ -255,31 +239,28 @@ export default {
       data.push({ seat, bid })
       seat = (seat % 4) + 1
       data.push({ seat, bid: '?' })
-      this.onAction({ action: 'bid', bid: { bids: { info, data }, seat } })
+      this.onAction({ action: 'bid', bid: { bids: { info, data } } })
     },
-    onAction (data) {
-      console.log('onAction', data)
-      switch (data.action) {
+    onAction (action) {
+      console.log('onAction', action)
+      switch (action.action) {
         case 'sit': {
-          if (!data.uId) {
-            this.$emit('onSit', { tId: this.myPlayer.tId, sId: data.sId })
-          } else if (data.uId === this.myUid) {
-            this.$q.notify({ type: 'info', message: 'Ready' })
-          } else {
-            this.$q.notify({ type: 'negative', message: 'This seat is taken' })
-          }
+          this.$emit('onSit', { tId: this.myPlayer.tId, sId: action.sit.sId })
           break
         }
         case 'bid': {
-          tableService.patch(this.myTable.id, { bids: data.bid.bids, turn: data.bid.seat })
+          const bids = { bids: action.bid.bids }
+          tableService.patch(this.myTable.id, bids)
           break
         }
         case 'play': {
-          const _play = this.myTable.play || []
-          const _played = _play.data.map(x => x.card) || []
-          if (!_played.includes(data.card)) {
-            _play.data.push(data.play)
-            tableService.patch(this.myTable.id, { play: _play })
+          const _info = this.myPlays.info
+          const _data = this.myPlays.data.slice(0)
+          const _played = _data.map(x => x.card) || []
+          if (!_played.includes(action.play.card)) {
+            _data.push(action.play)
+            const plays = { plays: { info: _info, data: _data } }
+            tableService.patch(this.myTable.id, plays)
           }
         }
       }
@@ -332,16 +313,9 @@ export default {
     },
     myTurn: function (t1, t0) {}
   },
-  created () {
+  mounted () {
     // this.$parent.page = 'Lobby'
-    // this.myTable = this.getTableById(this.user.tId)
-    /*
-    tableService.on('patched', table => {
-      if (table._id === this.user.tId) {
-        this.myTable = table
-      }
-    })
-    */
+    this.myState = this.myTable.state
   },
   beforeDestroy () {}
 }

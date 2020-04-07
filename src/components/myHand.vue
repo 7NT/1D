@@ -82,10 +82,14 @@ export default {
   },
   computed: {
     ...mapGetters('jstore', ['myPlayer', 'myTable', 'getPlayerById']),
-
+    mySid: {
+      get: function () {
+        return this.myPlayer.sId
+      }
+    },
     isVisible () {
       if (this.isDummy) return true
-      else return this.seatId === this.myPlayer.sId
+      else return this.seatId === this.mySid
     },
     ucolor () {
       if (this.myTable.turn === this.seatId) return 'warning'
@@ -102,7 +106,7 @@ export default {
     },
     isDeclarer () {
       try {
-        return this.myTable.bid.info.by === this.seatId
+        return this.myTable.bids.info.by === this.seatId
       } catch (_) {
         // console.log(err);
       }
@@ -110,8 +114,8 @@ export default {
     },
     isDummy () {
       try {
-        if (this.myTable.play.data.length > 0) {
-          return (this.myTable.bid.info.by + 2) % 4 === this.seatId % 4
+        if (this.myTable.plays.data.length > 0) {
+          return (this.myTable.bids.info.by + 2) % 4 === this.seatId % 4
         }
       } catch (_) {
         // console.log(err);
@@ -119,11 +123,11 @@ export default {
       return false
     },
     contract () {
-      return this.myTable.bid.info.contract
+      return this.myTable.bids.info.contract
     },
     playedCards () {
       try {
-        return this.myTable.play.data.map(x => x.card)
+        return this.myTable.plays.data.map(x => x.card)
       } catch (_) {
         return []
       }
@@ -132,12 +136,19 @@ export default {
   methods: {
     // ...mapActions('jstore', ['addUser']),
     onSit () {
-      const seat = {
-        action: 'sit',
-        uId: this.uId,
-        sId: this.seatId
+      if (!this.player) {
+        const seat = {
+          action: 'sit',
+          sit: {
+            sId: this.seatId
+          }
+        }
+        this.$emit('onAction', seat)
+      } else if (this.player.id === this.myPlayer.id) {
+        this.$q.notify({ type: 'info', message: 'Ready' })
+      } else {
+        this.$q.notify({ type: 'negative', message: 'This seat is taken' })
       }
-      this.$emit('onAction', seat)
     },
     onPlay (n) {
       if (this.isMyPlay()) {
@@ -145,7 +156,7 @@ export default {
           this.$emit('onAction', {
             action: 'play',
             play: {
-              uId: this.uId,
+              uId: this.myPlayer.id,
               sId: this.seatId,
               card: n
             }
@@ -166,8 +177,8 @@ export default {
       return `../statics/cards/${n52.rank + n52.suit}.svg`
     },
     updatePlayer () {
-      const s = this.myPlayer.sId
-      this.seatId = jb.seatX(this.handId, s)
+      this.seatId = jb.seatX(this.handId, this.mySid)
+      console.log('h', this.handId, this.mySid, this.seatId)
       const _uId = this.myTable.seats[this.seatId - 1]
       this.player = this.getPlayerById(_uId)
       this.nick = this.player ? this.player.nick : '[SIT...]'
@@ -186,7 +197,7 @@ export default {
       }
     },
     cardCheck (play) {
-      const lead = this.myTable.play.info.lead
+      const lead = this.myTable.plays.info.lead
       if (!lead) return true
       else {
         if (lead.card.suit === play.suit) {
@@ -206,14 +217,14 @@ export default {
     },
     isMyTurn () {
       if (this.myTable.turn === this.seatId) {
-        if (this.isDummy) return this.myPlayer.sId === this.myTable.bid.info.by
+        if (this.isDummy) return this.myPlayer.sId === this.myTable.bids.info.by
         else return true
       }
       return false
     }
   },
   watch: {
-    myPlayer (x) {
+    mySid (x) {
       this.updatePlayer()
     },
     myTable (t, o) {

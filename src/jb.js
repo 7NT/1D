@@ -2,6 +2,7 @@ import { userService } from 'src/api'
 
 const jb = {
   seatX (s, v) {
+    // if (v < 1) v = 3
     const v0 = Math.abs(v)
     switch (v0) {
       case 1:

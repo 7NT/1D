@@ -110,14 +110,14 @@ function bidSuit(b:any) {
 }
 
 function playsUpdate(tdata:any) {
-  let n = tdata.play.data.length
-  let last = tdata.play.data[n - 1]
-  let winner = tdata.play.info.winner
+  let n = tdata.plays.data.length
+  let last = tdata.plays.data[n - 1]
+  let winner = tdata.plays.info.winner
   let turn = last.sId
-  let trump = tdata.play.info.trump
-  let lead = tdata.play.info.lead
-  let NS = tdata.play.info.NS
-  let EW = tdata.play.info.EW
+  let trump = tdata.plays.info.trump
+  let lead = tdata.plays.info.lead
+  let NS = tdata.plays.info.NS
+  let EW = tdata.plays.info.EW
   let n4 = n % 4
 
   switch (n4) {

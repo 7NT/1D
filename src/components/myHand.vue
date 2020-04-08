@@ -158,6 +158,7 @@ export default {
             play: {
               uId: this.myPlayer.id,
               sId: this.seatId,
+              z: this.myTable.plays.data.length || 0,
               card: n
             }
           })
@@ -178,7 +179,7 @@ export default {
     },
     updatePlayer () {
       this.seatId = jb.seatX(this.handId, this.mySid)
-      console.log('h', this.handId, this.mySid, this.seatId)
+      // console.log('h', this.handId, this.mySid, this.seatId, this.myTable)
       const _uId = this.myTable.seats[this.seatId - 1]
       this.player = this.getPlayerById(_uId)
       this.nick = this.player ? this.player.nick : '[SIT...]'
@@ -232,7 +233,7 @@ export default {
     }
   },
   mounted () {
-    // console.log('t', this.seatId, this.myTable)
+    console.log('t', this.seatId, this.myTable)
     this.updatePlayer()
   },
   created () {

@@ -90,7 +90,7 @@ export default {
       else return 'col-3'
     },
     loadBids () {
-      console.log('loadbids', this.myBids)
+      // console.log('loadbids', this.myBids)
       if (!this.myBids) return
       let turn = 0
       const data = []

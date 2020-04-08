@@ -6,7 +6,10 @@ import { isPlayer, getMIX, vulN, N52Suit, N52Rank } from '../jb'
 const state = (): Hook => {
   return async (context: HookContext) => {
     const { board, bids, plays } = context.data
-    if (plays) {
+    // console.log(context)
+    if (board) {
+      // skip
+    } else if (plays) {
       context.data = playsUpdate(context.data)
     } else if (bids) {
       context.data = bidsUpdate(context.data)
@@ -16,14 +19,14 @@ const state = (): Hook => {
 }
 
 function bidsUpdate(tdata:any) {
-  // console.log('b', tdata)
-  let _bid = bidUpdate(tdata.bids)
-  if (_bid.info.P > 3 || (_bid.info.P > 2 && _bid.info.by > 0)) {
-    _bid.data.pop()
+  tdata = bidUpdate(tdata)
+  let bids = tdata.bids
+  if (bids.info.P > 3 || (bids.info.P > 2 && bids.info.by > 0)) {
+    bids.data.pop()
 
     tdata.plays = {
       info: {
-        trump: _bid.info.contract,
+        trump: bids.info.contract,
         lead: null,
         winner: 0,
         NS: 0,
@@ -34,20 +37,22 @@ function bidsUpdate(tdata:any) {
       data: []
     }
     tdata.state = 2
-    tdata.turn = (_bid.info.by % 4) + 1
+    tdata.turn = (bids.info.by % 4) + 1
   }
-  tdata.bids = _bid
+  // tdata.bids = _bids
   return tdata
 }
 
-function bidUpdate(bid:any) {
+function bidUpdate(tdata:any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
   let bidN = 0, bidS = 0, contract
-  let by = 0, P = 0, X = 0, XX = 0
+  let by = 0, P = 0, X = 0, XX = 0, turn = 0
 
-  bid.data.forEach((b:any) => {
+  let bids = tdata.bids
+  bids.data.forEach((b:any) => {
     switch (b.bid) {
     case '?':
+      turn = b.seat
       break
     case 'P':
       P++
@@ -82,15 +87,18 @@ function bidUpdate(bid:any) {
     }
   })
 
-  bid.info.bidN = bidN
-  bid.info.bidS = bidS
-  bid.info.contract = contract
-  bid.info.by = by
-  bid.info.P = P
-  bid.info.X = X
-  bid.info.XX = XX
-  // bid.turn = turn
-  return bid
+  let info = {
+    bidN,
+    bidS,
+    contract,
+    by,
+    P,
+    X,
+    XX
+  }
+  tdata.bids.info = info
+  tdata.turn = turn
+  return tdata
 }
 
 function bidSuit(b:any) {
@@ -111,6 +119,8 @@ function bidSuit(b:any) {
 
 function playsUpdate(tdata:any) {
   let n = tdata.plays.data.length
+  if (n < 1) return tdata
+
   let last = tdata.plays.data[n - 1]
   let winner = tdata.plays.info.winner
   let turn = last.sId

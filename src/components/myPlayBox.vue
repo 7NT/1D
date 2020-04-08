@@ -30,12 +30,12 @@ export default {
   methods: {
     updatePlayed (plays) {
       try {
-        console.log(plays)
         if (this.myTable.state > 1) {
           const l4 = plays.data.length
           let n4 = l4 % 4
           if (!n4) n4 = 4
           this.card4 = plays.data.slice(-n4)
+          console.log('winner', plays.info.winner, this.card4)
         }
       } catch (err) {
         console.log(err)
@@ -48,14 +48,10 @@ export default {
       else return null
     },
     zIndex (n) {
-      let z = 100
-      // const x = this.seatX[n - 1]
       const x = jb.seatX(n, this.mySid)
-      // console.log('z', n, x, this.card4)
-      this.card4.forEach(card => {
-        if (card.sId !== x) z++
-      })
-      return `z-index:${z}`
+      const c = this.card4.filter(c => c.sId === x)[0] || null
+      if (c) return `z-index:${c.z}`
+      else return -1
     }
   },
   watch: {
@@ -90,7 +86,7 @@ export default {
 }
 #playCard3 {
   position: absolute;
-  bottom: 30px;
+  bottom: 20px;
   left: 40px;
 }
 #playCard4 {

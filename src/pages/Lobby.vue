@@ -235,7 +235,8 @@ export default {
     }
   },
   mounted () {
-    // if (!this.user.county) this.$router.push({ name: 'profile' })
+    console.log(this.user)
+    if (!this.user.country) this.$router.push({ name: 'profile' })
     chatService.on('created', chat => {
       // if (chat.to === '#Lobby')
       this.myChats.unshift(chat)

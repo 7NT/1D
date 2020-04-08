@@ -33,6 +33,10 @@ const auth = {
     return api.logout()
   },
 
+  removeAccessToken () {
+    return api.auth.removeAccessToken()
+  },
+
   onLogout (callback) {
     api.on('logout', () => {
       this.user = null

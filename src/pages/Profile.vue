@@ -12,16 +12,16 @@
         <q-card-section>
           <q-input
             v-model='user.nick'
-            filled
+            square filled
+            label="Nick"
             type='text'
-            hint='Nick'
           />
 
           <q-input
             v-model='user.country'
-            filled
+            square filled
+            label="Country"
             type='text'
-            hint='Country'
           >
           </q-input>
         </q-card-section>

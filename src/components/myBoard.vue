@@ -10,7 +10,7 @@
       options-dense
       options-dark
       menu-shrink
-      label="Board"
+      :label='bdata'
     >
       <template v-slot:append>
         <q-icon name="games" color="orange" />
@@ -35,8 +35,19 @@
       </q-item-section>
       <q-item-section side top>
         <div class="text-orange">
-          <q-badge color="info" text-color="black" label="" />
-          <q-badge color="info" text-color="black" label="" />
+          <q-badge color="info" text-color="black" label='' />
+          <q-badge color="info" text-color="black" label='' />
+        </div>
+      </q-item-section>
+    </q-item>
+    <q-item dense>
+      <q-item-section>
+        <q-item-label overline>Tricks:</q-item-label>
+      </q-item-section>
+      <q-item-section side top>
+        <div class="text-orange">
+          <q-badge color="info" text-color="black" :label='tricks(0)' />
+          <q-badge color="info" text-color="black" :label='tricks(1)' />
         </div>
       </q-item-section>
     </q-item>
@@ -49,12 +60,6 @@ export default {
   props: ['myTable'],
   data () {
     return {
-      boardInfo: {
-        bt: '',
-        bn: 0,
-        cc: null,
-        play: null
-      },
       model_mix: null,
       options_mix: ['MP', 'IMP', 'XIMP'],
       boardData: [
@@ -70,16 +75,25 @@ export default {
     }
   },
   computed: {
-    bi: function () {
+    bdata: function () {
       try {
-        return this.boardInfo.board.bt + ': ' + this.boardInfo.board.bn
+        return this.myTable.board.bt + ': ' + this.myTable.board.bn
       } catch (err) {}
-      return this.model_mix
+      return 'Board'
     }
   },
   methods: {
     onBT (bt) {
       this.$emit('onBT', bt)
+    },
+    tricks (n) {
+      try {
+        if (n === 0) return this.myTable.plays.info.NS
+        else if (n === 1) return this.myTable.plays.info.EW
+      } catch (err) {
+        console.log(err)
+      }
+      return null
     }
   },
   watch: {

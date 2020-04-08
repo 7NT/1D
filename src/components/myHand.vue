@@ -31,6 +31,9 @@
             align='between'
             class='playerbar'
           >
+            <q-avatar size="28px">
+              <img :src='myAvatar'>
+            </q-avatar>
             <q-icon
               :name='playerBut'
               :class='uclass'
@@ -87,12 +90,17 @@ export default {
         return this.myPlayer.sId
       }
     },
+    myAvatar: {
+      get: function () {
+        return this.player ? this.player.avatar : null
+      }
+    },
     isVisible () {
       if (this.isDummy) return true
       else return this.seatId === this.mySid
     },
     ucolor () {
-      if (this.myTable.turn === this.seatId) return 'warning'
+      if ((this.myTable.turn || 0) === this.seatId) return 'warning'
       else return this.myPlayer ? 'secondary' : 'positive'
     },
     uclass () {

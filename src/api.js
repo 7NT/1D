@@ -4,7 +4,8 @@ const io = require('socket.io-client')
 const auth = require('@feathersjs/authentication-client')
 
 // Set up Socket.io client with the socket
-const socket = io('http://localhost:3030')
+const host = '192.168.1.72'
+const socket = io(`http://${host}:3030`)
 
 const api = feathers()
 

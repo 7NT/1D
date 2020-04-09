@@ -27,17 +27,12 @@
             @click='onSit'
             :label='nick'
             :color='ucolor'
-            :icon='`img:${myAvatar}`'
+            :icon='seatIcon'
             align='between'
             class='playerbar'
           >
-            <q-avatar size="28px">
-              <img :src='flag'>
-            </q-avatar>
-            <q-icon
-              :name='playerBut'
-              :class='uclass'
-            />
+            <q-avatar left :icon='myAvatar' class='flag' />
+            <q-icon right :name='flag' class='flag' />
           </q-btn>
           <q-btn-dropdown
             split
@@ -92,7 +87,7 @@ export default {
     },
     myAvatar: {
       get: function () {
-        return this.player ? this.player.avatar : null
+        return this.player ? `img:${this.player.avatar}` : null
       }
     },
     isVisible () {
@@ -100,21 +95,24 @@ export default {
       else return this.seatId === this.mySid
     },
     ucolor () {
-      if ((this.myTable.turn || 0) === this.seatId) return 'warning'
+      if (this.isMyTurn()) return 'warning'
       else return this.myPlayer ? 'secondary' : 'positive'
     },
-    uclass () {
-      return 'rotate-' + (this.seatId - 1) * 90
-    },
     flag () {
-      return 'us'
+      if (this.player) {
+        try {
+          const flag = this.player.country.toLowerCase()
+          return `img:statics/flags/1x1/${flag}.svg`
+        } catch (_) {}
+      }
+      return null
     },
-    playerBut () {
-      return 'navigation'
+    seatIcon () {
+      return `img:statics/jbicon/seats/seat${this.seatId}.svg`
     },
     isDeclarer () {
       try {
-        return this.myTable.bids.info.by === this.seatId
+        if (this.myTable.bids) return this.myTable.bids.info.by === this.seatId
       } catch (_) {
         // console.log(err);
       }
@@ -122,8 +120,10 @@ export default {
     },
     isDummy () {
       try {
-        if (this.myTable.plays.data.length > 0) {
-          return (this.myTable.bids.info.by + 2) % 4 === this.seatId % 4
+        if (this.myTable.state > 1) {
+          if (this.myTable.plays.data.length > 0) {
+            return (this.myTable.bids.info.by + 2) % 4 === this.seatId % 4
+          }
         }
       } catch (_) {
         // console.log(err);
@@ -131,14 +131,15 @@ export default {
       return false
     },
     contract () {
-      return this.myTable.bids.info.contract
+      return this.myTable.bids ? this.myTable.bids.info.contract : null
     },
     playedCards () {
       try {
-        return this.myTable.plays.data.map(x => x.card)
-      } catch (_) {
-        return []
-      }
+        if (this.myTable.state > 1) {
+          return this.myTable.plays.data.map(x => x.card)
+        }
+      } catch (_) {}
+      return []
     }
   },
   methods: {
@@ -183,7 +184,7 @@ export default {
     },
     cardImg (n52) {
       if (!n52.suit) console.log('error', n52)
-      return `../statics/cards/${n52.rank + n52.suit}.svg`
+      return `statics/cards/${n52.rank + n52.suit}.svg`
     },
     updatePlayer () {
       this.seatId = jb.seatX(this.handId, this.mySid)
@@ -225,10 +226,12 @@ export default {
       return this.myTable.state === 2 ? this.isMyTurn() : false
     },
     isMyTurn () {
-      if (this.myTable.turn === this.seatId) {
-        if (this.isDummy) return this.myPlayer.sId === this.myTable.bids.info.by
-        else return true
-      }
+      try {
+        if (this.myTable.turn === this.seatId) {
+          if (this.isDummy) return this.myPlayer.sId === this.myTable.bids.info.by
+          else return true
+        }
+      } catch (_) {}
       return false
     }
   },
@@ -262,6 +265,10 @@ img.card {
   border: 0;
   vertical-align: initial;
   box-sizing: initial;
+}
+.flag {
+  width:32px;
+  height:28px;
 }
 /*
 * A hand is a div containing cards.

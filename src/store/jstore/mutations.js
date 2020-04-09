@@ -7,8 +7,7 @@ export const setUser = (state, payload) => {
 }
 
 export const setPlayers = (state, payload) => {
-  // console.log('players', payload)
-  // state.players = payload
+  state.players = payload
 }
 
 export const setTables = (state, payload) => {

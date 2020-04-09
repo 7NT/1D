@@ -19,14 +19,14 @@ const state = (): Hook => {
 }
 
 function bidsUpdate (tdata: any) {
-  tdata = bidUpdate(tdata)
-  let bids = tdata.bids
-  if (bids.info.P > 3 || (bids.info.P > 2 && bids.info.by > 0)) {
-    bids.data.pop()
+  let _tdata = bidUpdate(tdata)
+  let _info = _tdata.bids.info
+  if (_info.P > 3 || (_info.P > 2 && _info.by > 0)) {
+    _tdata.bids.data.pop()
 
-    tdata.plays = {
+    _tdata.plays = {
       info: {
-        trump: bids.info.contract,
+        trump: _info.contract,
         lead: null,
         winner: 0,
         NS: 0,
@@ -36,11 +36,10 @@ function bidsUpdate (tdata: any) {
       },
       data: []
     }
-    tdata.state = 2
-    tdata.turn = (bids.info.by % 4) + 1
+    _tdata.state = 2
+    _tdata.turn = (_info.by % 4) + 1
   }
-  // tdata.bids = _bids
-  return tdata
+  return _tdata
 }
 
 function bidUpdate (tdata: any) {

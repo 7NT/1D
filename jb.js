@@ -1,7 +1,7 @@
 import api from 'src/api'
 
 const jb = {
-  btMIX() {
+  btMIX () {
     const t = new Date().getTime()
     switch (t % 3) {
       case 1:
@@ -12,7 +12,7 @@ const jb = {
         return 'MP'
     }
   },
-  isPlayer(seat) {
+  isPlayer (seat) {
     switch (seat) {
       case 1:
       case 2:
@@ -23,7 +23,7 @@ const jb = {
         return false
     }
   },
-  vulN(bn) {
+  vulN (bn) {
     switch (bn % 16) {
       case 1:
       case 8:
@@ -49,10 +49,10 @@ const jb = {
         return -1
     }
   },
-  dealer(bn) {
+  dealer (bn) {
     return ((bn - 1) % 4) + 1
   },
-  bidNS(n, s) {
+  bidNS (n, s) {
     switch (s) {
       case 'C':
         return n + '♣'
@@ -66,15 +66,15 @@ const jb = {
         return n + s
     }
   },
-  bidX(by, turn) {
+  bidX (by, turn) {
     if (by < 1) return true
     else return (by - turn) % 2 === 0
   },
-  bidXX(X, turn) {
+  bidXX (X, turn) {
     if (X < 1) return true
     else return (X - turn) % 2 === 0
   },
-  N4Suit(n4) {
+  N4Suit (n4) {
     switch (n4) {
       case 4:
         return 'NT'
@@ -90,12 +90,12 @@ const jb = {
         return ''
     }
   },
-  N52Suit(n52) {
+  N52Suit (n52) {
     n52--
     const n13 = Math.floor(n52 / 13)
     return this.N4Suit(n13)
   },
-  RankValue(n52) {
+  RankValue (n52) {
     const n13 = n52 % 13
     switch (n13) {
       case 12:
@@ -110,7 +110,7 @@ const jb = {
         return n13 + 2
     }
   },
-  N52Card(n52) {
+  N52Card (n52) {
     let n13 = n52 % 13
     if (n13) n13 = 13 - n13
     return {
@@ -118,12 +118,12 @@ const jb = {
       rank: n13
     }
   },
-  cardImg(n52) {
+  cardImg (n52) {
     const card = this.N52Card(n52)
-    if (card) return `../statics/cards/${card.rank + card.suit}.svg`
+    if (card) return `statics/cards/${card.rank + card.suit}.svg`
     else return null
   },
-  async findUser(uid) {
+  async findUser (uid) {
     const user = await api.service('users').get(uid)
     return user
   }

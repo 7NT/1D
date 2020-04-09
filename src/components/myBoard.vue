@@ -99,9 +99,11 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
   name: 'myBoard',
-  props: ['myTable'],
+  // props: ['myTable'],
   data () {
     return {
       model_mix: null,
@@ -119,9 +121,10 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('jstore', ['myPlayer', 'myTable']),
     bdata: function () {
       try {
-        return this.myTable.board.bt + ': ' + this.myTable.board.bn
+        if (this.myTable.board) return this.myTable.board.bt + ': ' + this.myTable.board.bn
       } catch (err) { }
       return 'Board'
     }
@@ -132,8 +135,10 @@ export default {
     },
     tricks (n) {
       try {
-        if (n === 0) return this.myTable.plays.info.NS
-        else if (n === 1) return this.myTable.plays.info.EW
+        if (this.myTable.plays) {
+          if (n === 0) return this.myTable.plays.info.NS
+          else if (n === 1) return this.myTable.plays.info.EW
+        }
       } catch (err) {
         // console.log(err)
       }
@@ -149,6 +154,7 @@ export default {
     }
   },
   mounted () {
+    console.log(this.myTable)
     this.model_mix = this.myTable.bt
   }
 }

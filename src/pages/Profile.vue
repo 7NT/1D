@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     onUpdate (update) {
-      if (update) userService.update(this.user._id, this.user)
+      if (update) userService.patch(this.user._id, this.user)
       // this.$router.push({ name: this.page })
       this.$router.go(-1)
     }

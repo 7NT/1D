@@ -7,7 +7,7 @@
         horizontal
         :separator-style="{ backgroundColor: '#ff0000' }"
         :unit="'px'"
-        :limits='[460, Infinity]'
+        :limits='[500, Infinity]'
       >
         <template v-slot:before>
           <div class='q-pa-md'>
@@ -235,7 +235,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.user)
     if (!this.user.country) this.$router.push({ name: 'profile' })
     chatService.on('created', chat => {
       // if (chat.to === '#Lobby')

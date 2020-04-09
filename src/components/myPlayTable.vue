@@ -4,7 +4,7 @@
       <div class='col'>
         <div class='row no-wrap'>
           <div class='col-3 items-start'>
-            <myBoard :myTable='myTable' v-on:onBT='onBT'></myBoard>
+            <myBoard v-on:onBT='onBT'></myBoard>
           </div>
           <div class='col-6 box'>
             <div class='column'>
@@ -46,7 +46,11 @@
       </div>
       <div class='col'>
         <div class='row no-wrap'>
-          <div class='col-3' />
+          <div class='col-3'>
+            <div class='column'>
+              <myTricks />
+            </div>
+          </div>
           <div class='col-6 box'>
             <div class='column'>
               <myHand :handId='3' v-on:onAction='onAction' class='myHand justify-end' />
@@ -127,6 +131,7 @@ import myBoard from 'src/components/myBoard'
 import myHand from 'src/components/myHand'
 import myBidBox from 'src/components/myBidBox'
 import myPlayBox from 'src/components/myPlayBox'
+import myTricks from 'src/components/myTricks'
 
 export default {
   name: 'myPlaysTable',
@@ -149,7 +154,8 @@ export default {
     myBoard,
     myHand,
     myBidBox,
-    myPlayBox
+    myPlayBox,
+    myTricks
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
@@ -344,7 +350,7 @@ export default {
   border: 1px solid green;
   width: 100%;
   height: 100%;
-  background-image: url('../statics/img/jbbg.jpeg');
+  background-image: url('~assets/jbbg.jpeg');
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */

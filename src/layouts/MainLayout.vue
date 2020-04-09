@@ -274,7 +274,8 @@ export default {
         this.updateUser(user)
       })
       playerService.find().then(response => {
-        // this.setPlayers(response.data)
+        console.log('players', response)
+        this.setPlayers(response.data)
       })
       playerService.on('created', player => {
         // console.log('create player', player)
@@ -291,9 +292,6 @@ export default {
       })
       tableService.find().then(response => {
         this.setTables(response.data)
-        // this.setTables(response.data)
-        // let player = players.find(p => p.id === this.user._id)
-        // this.updatePlayer(player)
       })
       tableService.on('created', table => {
         console.log('table created', table)

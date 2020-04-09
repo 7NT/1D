@@ -18,7 +18,7 @@ const state = (): Hook => {
   }
 }
 
-function bidsUpdate(tdata:any) {
+function bidsUpdate (tdata: any) {
   tdata = bidUpdate(tdata)
   let bids = tdata.bids
   if (bids.info.P > 3 || (bids.info.P > 2 && bids.info.by > 0)) {
@@ -43,47 +43,47 @@ function bidsUpdate(tdata:any) {
   return tdata
 }
 
-function bidUpdate(tdata:any) {
+function bidUpdate (tdata: any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
   let bidN = 0, bidS = 0, contract
   let by = 0, P = 0, X = 0, XX = 0, turn = 0
 
   let bids = tdata.bids
-  bids.data.forEach((b:any) => {
+  bids.data.forEach((b: any) => {
     switch (b.bid) {
-    case '?':
-      turn = b.seat
-      break
-    case 'P':
-      P++
-      break
-    case 'X':
-      X = b.seat
-      P = 0
-      XX = 0
-      break
-    case 'XX':
-      XX = b.seat
-      P = 0
-      X = 0
-      break
-    default:
-      let _bN = parseInt(b.bid)
-      let _bS = bidSuit(b.bid)
-      if (_bN >= bidN && _bN < 8 && _bS > 0 && _bS < 6) {
-        bidN = _bN
-        bidS = _bS
+      case '?':
+        turn = b.seat
+        break
+      case 'P':
+        P++
+        break
+      case 'X':
+        X = b.seat
+        P = 0
+        XX = 0
+        break
+      case 'XX':
+        XX = b.seat
         P = 0
         X = 0
-        XX = 0
-        let ne = (b.seat - 1) % 2
-        _bS--
-        if (suits[ne][_bS] === 0) suits[ne][_bS] = b.seat
-        by = suits[ne][_bS]
-        contract = b.bid
-        if (XX) contract =='XX'
-        else if (X) contract =='X'
-      }
+        break
+      default:
+        let _bN = parseInt(b.bid)
+        let _bS = bidSuit(b.bid)
+        if (_bN >= bidN && _bN < 8 && _bS > 0 && _bS < 6) {
+          bidN = _bN
+          bidS = _bS
+          P = 0
+          X = 0
+          XX = 0
+          let ne = (b.seat - 1) % 2
+          _bS--
+          if (suits[ne][_bS] === 0) suits[ne][_bS] = b.seat
+          by = suits[ne][_bS]
+          contract = b.bid
+          if (XX) contract == 'XX'
+          else if (X) contract == 'X'
+        }
     }
   })
 
@@ -101,23 +101,23 @@ function bidUpdate(tdata:any) {
   return tdata
 }
 
-function bidSuit(b:any) {
+function bidSuit (b: any) {
   let s = b.substring(1).trim()
   switch (s) {
-  case '♣':
-  case 'C': return 1
-  case '♦':
-  case 'D': return 2
-  case '♥':
-  case 'H': return 3
-  case '♠':
-  case 'S': return 4
-  case 'NT': return 5
-  default: return 0
+    case '♣':
+    case 'C': return 1
+    case '♦':
+    case 'D': return 2
+    case '♥':
+    case 'H': return 3
+    case '♠':
+    case 'S': return 4
+    case 'NT': return 5
+    default: return 0
   }
 }
 
-function playsUpdate(tdata:any) {
+function playsUpdate (tdata: any) {
   let n = tdata.plays.data.length
   if (n < 1) return tdata
 
@@ -131,25 +131,29 @@ function playsUpdate(tdata:any) {
   let n4 = n % 4
 
   switch (n4) {
-  case 1:
-    lead = last
-    winner = last.sId
-    break
-  case 0:
-  case 2:
-  case 3:
-    // console.log(last.card.suit, lead.card.suit)
-    if (last.card.suit === lead.card.suit) {
-      let v0 = lead.card.value % 13
-      let v1 = last.card.value % 13
-      if (!v0) v0 = 13
-      if (!v1) v1 = 13
-      if (v1 > v0) winner = last.sId
-    } else if (trump.endsWith(last.card.suit)) {
+    case 1:
+      lead = last
       winner = last.sId
-    }
-    break
-  default:
+      break
+    case 0:
+    case 2:
+    case 3:
+      // console.log(last.card.suit, lead.card.suit)
+      if (last.card.suit === lead.card.suit) {
+        let v0 = lead.card.value // % 13
+        let v1 = last.card.value // % 13
+        // if (!v0) v0 = 13
+        // if (!v1) v1 = 13
+        if (v1 > v0) {
+          lead = last
+          winner = last.sId
+        }
+        // console.log(v0, v1, winner)
+      } else if (trump.endsWith(last.card.suit)) {
+        winner = last.sId
+      }
+      break
+    default:
   }
   if (n4 === 0) {
     lead = null

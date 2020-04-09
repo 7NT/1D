@@ -53,7 +53,7 @@ export default function (app: Application) {
   });
 
   app.on('disconnect', (connection: any) => {
-    console.log('disconnect', connection);
+    // console.log('disconnect', connection);
   })
 
   app.on('login', (authResult: any, { connection }: any) => {

@@ -27,12 +27,12 @@
             @click='onSit'
             :label='nick'
             :color='ucolor'
-            :icon='flag'
+            :icon='`img:${myAvatar}`'
             align='between'
             class='playerbar'
           >
             <q-avatar size="28px">
-              <img :src='myAvatar'>
+              <img :src='flag'>
             </q-avatar>
             <q-icon
               :name='playerBut'
@@ -241,7 +241,7 @@ export default {
     }
   },
   mounted () {
-    console.log('t', this.seatId, this.myTable)
+    // console.log('t', this.seatId, this.myTable)
     this.updatePlayer()
   },
   created () {

@@ -1,5 +1,9 @@
 <template>
-  <q-list padding bordered class="rounded-borders">
+  <q-list
+    padding
+    bordered
+    class="rounded-borders"
+  >
     <q-select
       color="grey-3"
       dense
@@ -13,18 +17,36 @@
       :label='bdata'
     >
       <template v-slot:append>
-        <q-icon name="games" color="orange" />
+        <q-icon
+          name="games"
+          color="orange"
+        />
       </template>
     </q-select>
     <q-item dense>
       <q-item-section>
         <q-item-label overline>CC:</q-item-label>
       </q-item-section>
-      <q-item-section side top>
+      <q-item-section
+        side
+        top
+      >
         <div class="text-orange">
-          <q-btn-group glossy outline dense>
-            <q-btn size="xs" label="SAYC" icon="timeline" />
-            <q-btn size="xs" label="Prec" icon-right="visibility" />
+          <q-btn-group
+            glossy
+            outline
+            dense
+          >
+            <q-btn
+              size="xs"
+              label="SAYC"
+              icon="timeline"
+            />
+            <q-btn
+              size="xs"
+              label="Prec"
+              icon-right="visibility"
+            />
           </q-btn-group>
         </div>
       </q-item-section>
@@ -33,10 +55,21 @@
       <q-item-section>
         <q-item-label overline>Score:</q-item-label>
       </q-item-section>
-      <q-item-section side top>
+      <q-item-section
+        side
+        top
+      >
         <div class="text-orange">
-          <q-badge color="info" text-color="black" label='' />
-          <q-badge color="info" text-color="black" label='' />
+          <q-badge
+            color="info"
+            text-color="black"
+            label=''
+          />
+          <q-badge
+            color="info"
+            text-color="black"
+            label=''
+          />
         </div>
       </q-item-section>
     </q-item>
@@ -44,10 +77,21 @@
       <q-item-section>
         <q-item-label overline>Tricks:</q-item-label>
       </q-item-section>
-      <q-item-section side top>
+      <q-item-section
+        side
+        top
+      >
         <div class="text-orange">
-          <q-badge color="info" text-color="black" :label='tricks(0)' />
-          <q-badge color="info" text-color="black" :label='tricks(1)' />
+          <q-badge
+            color="info"
+            text-color="black"
+            :label='tricks(0)'
+          />
+          <q-badge
+            color="info"
+            text-color="black"
+            :label='tricks(1)'
+          />
         </div>
       </q-item-section>
     </q-item>
@@ -78,7 +122,7 @@ export default {
     bdata: function () {
       try {
         return this.myTable.board.bt + ': ' + this.myTable.board.bn
-      } catch (err) {}
+      } catch (err) { }
       return 'Board'
     }
   },
@@ -91,7 +135,7 @@ export default {
         if (n === 0) return this.myTable.plays.info.NS
         else if (n === 1) return this.myTable.plays.info.EW
       } catch (err) {
-        console.log(err)
+        // console.log(err)
       }
       return null
     }

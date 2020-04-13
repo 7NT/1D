@@ -1,5 +1,8 @@
 <template>
-  <div class='q-ma-none'>
+  <div
+    class='q-ma-none'
+    v-if='myTable'
+  >
     <div class='jbtable column bg-teal'>
       <div class='col'>
         <div class='row no-wrap'>
@@ -8,11 +11,18 @@
           </div>
           <div class='col-6 box'>
             <div class='column'>
-              <myHand :handId='1' v-on:onAction='onAction' class='myHand justify-start' />
+              <myHand
+                :handId='1'
+                v-on:onAction='onAction'
+                class='myHand justify-start'
+              />
             </div>
           </div>
           <div class='col-3 self-start'>
-            <div class='row justify-end' v-if='myState > 1'>
+            <div
+              class='row justify-end'
+              v-if='myState > 1'
+            >
               <myBidBox />
             </div>
           </div>
@@ -22,24 +32,38 @@
         <div class='row no-wrap'>
           <div class='col-4 box'>
             <div class='column'>
-              <myHand :handId='4' v-on:onAction='onAction' class='myHand justify-end' />
+              <myHand
+                :handId='4'
+                v-on:onAction='onAction'
+                class='myHand justify-end'
+              />
             </div>
           </div>
           <div class='col-4'>
             <div class='column'>
-              <q-card class='bbox cbox' v-if='myState === 1'>
+              <q-card
+                class='bbox cbox'
+                v-if='myState === 1'
+              >
                 <q-card>
                   <myBidBox />
                 </q-card>
               </q-card>
-              <q-card class='cbox transparent' v-if='myState === 2'>
+              <q-card
+                class='cbox transparent'
+                v-if='myState === 2'
+              >
                 <myPlayBox />
               </q-card>
             </div>
           </div>
           <div class='col-4 box'>
             <div class='column'>
-              <myHand :handId='2' v-on:onAction='onAction' class='myHand justify-start' />
+              <myHand
+                :handId='2'
+                v-on:onAction='onAction'
+                class='myHand justify-start'
+              />
             </div>
           </div>
         </div>
@@ -47,21 +71,35 @@
       <div class='col'>
         <div class='row no-wrap'>
           <div class='col-3'>
-            <div class='column'>
+            <div
+              class='column'
+              v-if='myState > 1'
+            >
               <myTricks />
             </div>
           </div>
           <div class='col-6 box'>
             <div class='column'>
-              <myHand :handId='3' v-on:onAction='onAction' class='myHand justify-end' />
+              <myHand
+                :handId='3'
+                v-on:onAction='onAction'
+                class='myHand justify-end'
+              />
             </div>
           </div>
-          <div class='col-3'>
-            <div class='column' v-if='isMyTurn() === 1'>
-              <div class='row bidrow items-start' style='height:30px'>
+          <div class='col-3 bidbox'>
+            <div
+              class='column'
+              v-if='isMyTurn() === 1'
+            >
+              <div
+                class='row bidrow'
+                style='height:30px'
+              >
                 <q-btn-group push>
                   <q-fab
-                    v-for='n of 7' :key='n'
+                    v-for='n of 7'
+                    :key='n'
                     square
                     persistent
                     v-show='bidN(n)'
@@ -87,15 +125,36 @@
                   </q-fab>
                 </q-btn-group>
               </div>
-              <div class='row items-center' style='height:40px'>
-                <q-input dense standout='bg-primary text-negative' autofocus clearable color='warning' v-model='alert' label='Alert' class='full-width'>
+              <div
+                class='row items-center'
+                style='height:40px'
+              >
+                <!--
+                <q-input
+                  dense
+                  standout='bg-primary text-negative'
+                  autofocus
+                  clearable
+                  color='warning'
+                  v-model='alert'
+                  label='Alert'
+                  class='full-width'
+                >
                   <template v-slot:prepend>
                     <q-icon name='add_alert' />
                   </template>
                 </q-input>
+              -->
+                <q-space></q-space>
               </div>
-              <div class='row items-end' style='height:30px'>
-                <q-btn-group dense class='full-width'>
+              <div
+                class='row'
+                style='height:30px'
+              >
+                <q-btn-group
+                  dense
+                  class='full-width'
+                >
                   <q-btn
                     glossy
                     label='X'
@@ -110,9 +169,15 @@
                     color='warning'
                     :disable='XX'
                     @click="onBid('XX')"
-                    style='width:30%'
+                    style='width:25%'
                   />
-                  <q-btn glaosy label='Pass' color='primary' @click="onBid('P')" style='width:50%' />
+                  <q-btn
+                    glaosy
+                    label='Pass'
+                    color='primary'
+                    @click="onBid('P')"
+                    style='width:45%'
+                  />
                 </q-btn-group>
               </div>
             </div>
@@ -308,7 +373,7 @@ export default {
   },
   watch: {
     myTable: function (t1, t0) {
-      console.log('t', t1, t0)
+      // console.log('t', t1, t0)
       this.myState = t1.state
     },
     myState: function (s1, s0) {
@@ -317,54 +382,56 @@ export default {
         this.onState(s)
       }
     },
-    myTurn: function (t1, t0) {}
+    myTurn: function (t1, t0) { }
   },
   mounted () {
     // this.$parent.page = 'Lobby'
-    this.myState = this.myTable.state
+    this.myState = this.myTable.state || 0
   },
-  beforeDestroy () {}
+  beforeDestroy () { }
 }
 </script>
 <!-- Notice lang='scss' -->
 <style scoped>
 .q-fab >>> .q-btn {
-  height: 28px
+  height: 28px;
 }
 .q-btn >>> .q-icon {
   float: left;
   align-self: flex-start;
 }
+.bidbox {
+  margin: 10px;
+  align-items: flex-end;
+}
 .bidrow {
   flex-wrap: no-wrap;
 }
 .bidfab {
-  width:28px;
-  height:28px;
-  padding:0px;
-  margin:0px;
+  width: 28px;
+  height: 28px;
+  padding: 0px;
+  margin: 0px;
 }
 .jbtable {
   min-width: 696px;
   min-height: 390px;
+  max-height: 480px;
   border: 1px solid green;
+  margin: 2px;
   width: 100%;
   height: 100%;
-  background-image: url('~assets/jbbg.jpeg');
+  background-image: url("~assets/jbbg.jpeg");
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */
-}
-.jbtable > div {
-  border: 1px solid yellow;
-  align-items: flex-end;
 }
 .box {
   border: 1px solid blue;
 }
 .bbox {
-  min-height: 160px;
-  min-width: 160px;
+  min-height: 120px;
+  min-width: 120px;
 }
 .cbox {
   max-height: 200px;
@@ -377,5 +444,6 @@ export default {
   min-height: 100px;
   max-height: 130px;
   min-width: 175px;
+  margin-right: 16px;
 }
 </style>

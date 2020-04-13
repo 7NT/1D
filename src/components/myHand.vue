@@ -18,7 +18,11 @@
           </div>
         </q-card>
       </div>
-      <div class='myplayer'>
+      <div class='playerbar'>
+        <q-icon
+          :name='flag'
+          class='flag'
+        />
         <q-btn-group flat>
           <q-btn
             push
@@ -29,10 +33,12 @@
             :color='ucolor'
             :icon='seatIcon'
             align='between'
-            class='playerbar'
           >
-            <q-avatar left :icon='myAvatar' class='flag' />
-            <q-icon right :name='flag' class='flag' />
+            <q-avatar
+              square
+              :icon='myAvatar'
+              size='sm'
+            />
           </q-btn>
           <q-btn-dropdown
             split
@@ -103,7 +109,7 @@ export default {
         try {
           const flag = this.player.country.toLowerCase()
           return `img:statics/flags/1x1/${flag}.svg`
-        } catch (_) {}
+        } catch (_) { }
       }
       return null
     },
@@ -138,7 +144,7 @@ export default {
         if (this.myTable.state > 1) {
           return this.myTable.plays.data.map(x => x.card)
         }
-      } catch (_) {}
+      } catch (_) { }
       return []
     }
   },
@@ -167,6 +173,7 @@ export default {
             play: {
               uId: this.myPlayer.id,
               sId: this.seatId,
+              winner: 0,
               z: this.myTable.plays.data.length || 0,
               card: n
             }
@@ -231,7 +238,7 @@ export default {
           if (this.isDummy) return this.myPlayer.sId === this.myTable.bids.info.by
           else return true
         }
-      } catch (_) {}
+      } catch (_) { }
       return false
     }
   },
@@ -254,8 +261,10 @@ export default {
 
 <style scoped>
 .playerbar {
-  min-width: 175px;
+  min-width: 250px;
   height: 32px;
+  margin: 0px;
+  align-items: flex-start;
   text-overflow: ellipsis;
 }
 img.card {
@@ -267,8 +276,14 @@ img.card {
   box-sizing: initial;
 }
 .flag {
-  width:32px;
-  height:28px;
+  width: 30px;
+  height: 20px;
+  margin: 0px;
+}
+.avatar {
+  width: 24px;
+  height: 24px;
+  margin: 0px;
 }
 /*
 * A hand is a div containing cards.

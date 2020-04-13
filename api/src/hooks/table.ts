@@ -157,6 +157,7 @@ function playsUpdate (tdata: any) {
   if (n4 === 0) {
     lead = null
     if (winner > 0) {
+      last.winner = winner
       if (winner % 2) EW++
       else NS++
     }

@@ -1,9 +1,29 @@
 <template>
   <div id="playBox">
-    <img id="playCard1" class="card" :src="cardImg(1)" :style="zIndex(1)" />
-    <img id="playCard4" class="card" :src="cardImg(4)" :style="zIndex(4)" />
-    <img id="playCard2" class="card" :src="cardImg(2)" :style="zIndex(2)" />
-    <img id="playCard3" class="card" :src="cardImg(3)" :style="zIndex(3)" />
+    <img
+      id="playCard1"
+      class="card"
+      :src="cardImg(1)"
+      :style="zIndex(1)"
+    />
+    <img
+      id="playCard4"
+      class="card"
+      :src="cardImg(4)"
+      :style="zIndex(4)"
+    />
+    <img
+      id="playCard2"
+      class="card"
+      :src="cardImg(2)"
+      :style="zIndex(2)"
+    />
+    <img
+      id="playCard3"
+      class="card"
+      :src="cardImg(3)"
+      :style="zIndex(3)"
+    />
   </div>
 </template>
 
@@ -70,28 +90,28 @@ export default {
 #playBox {
   position: relative;
   width: 120px;
-  height: 160px;
+  height: 120px;
   margin: auto;
   overflow: visible;
 }
 #playCard1 {
   position: absolute;
   top: 0px;
-  left: 30px;
+  left: 20px;
 }
 #playCard2 {
   position: absolute;
-  top: 30px;
-  left: 60px;
+  top: 20px;
+  right: 0px;
 }
 #playCard3 {
   position: absolute;
-  bottom: 20px;
+  bottom: 0px;
   left: 40px;
 }
 #playCard4 {
   position: absolute;
-  top: 40px;
+  top: 30px;
   left: 0px;
 }
 img.card {

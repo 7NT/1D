@@ -29,7 +29,7 @@ const sitBefore = (): Hook => {
             if (isPlayer(sId0)) {
               if (tdata.seats[sId0 - 1] === uId) tdata.seats[sId0 - 1] = null
             }
-            tableService.patch(tId0, tdata)
+            await tableService.patch(tId0, tdata)
           }
           context.app.channel(`#${_table0.id}`).leave(connection)
         } catch (err) { }

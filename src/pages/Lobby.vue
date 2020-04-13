@@ -59,7 +59,7 @@
                 >
                   <myPlayTable
                     v-on:onSit='onSit'
-                    class='myTable'
+                    class='jbtable full-width'
                   />
                 </q-tab-panel>
               </q-tab-panels>
@@ -263,3 +263,13 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.jbtable > div {
+  border: 1px solid yellow;
+  margin: 2px;
+  overflow-x: hidden;
+  white-space: nowrap;
+  align-items: flex-end;
+}
+</style>

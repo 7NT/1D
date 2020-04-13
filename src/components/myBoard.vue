@@ -1,101 +1,108 @@
 <template>
-  <q-list
-    padding
-    bordered
-    class="rounded-borders"
+  <div
+    class='boardBox'
+    v-if='myTable.board'
   >
-    <q-select
-      color="grey-3"
+    <q-list
+      padding
       dense
-      outlined
-      label-color="orange"
-      v-model="model_mix"
-      :options="options_mix"
-      options-dense
-      options-dark
-      menu-shrink
-      :label='bdata'
+      bordered
+      class="rounded-borders"
     >
-      <template v-slot:append>
-        <q-icon
-          name="games"
-          color="orange"
-        />
-      </template>
-    </q-select>
-    <q-item dense>
-      <q-item-section>
-        <q-item-label overline>CC:</q-item-label>
-      </q-item-section>
-      <q-item-section
-        side
-        top
+      <q-select
+        color="grey-3"
+        dense
+        square
+        outlined
+        label-color="orange"
+        v-model="model_mix"
+        :options="options_mix"
+        options-dense
+        options-dark
+        menu-shrink
+        :label='bdata'
       >
-        <div class="text-orange">
-          <q-btn-group
-            glossy
-            outline
-            dense
-          >
-            <q-btn
-              size="xs"
-              label="SAYC"
-              icon="timeline"
+        <template v-slot:append>
+          <q-icon
+            name="games"
+            color="orange"
+          />
+        </template>
+      </q-select>
+      <q-item dense>
+        <q-item-section>
+          <q-item-label overline>CC:</q-item-label>
+        </q-item-section>
+        <q-item-section
+          side
+          top
+        >
+          <div class="text-orange">
+            <q-btn-group
+              glossy
+              outline
+              dense
+            >
+              <q-btn
+                size="xs"
+                label="SAYC"
+                icon="timeline"
+              />
+              <q-btn
+                size="xs"
+                label="Prec"
+                icon-right="visibility"
+              />
+            </q-btn-group>
+          </div>
+        </q-item-section>
+      </q-item>
+      <q-item dense>
+        <q-item-section>
+          <q-item-label overline>Score:</q-item-label>
+        </q-item-section>
+        <q-item-section
+          side
+          top
+        >
+          <div class="text-orange">
+            <q-badge
+              color="info"
+              text-color="black"
+              label=''
             />
-            <q-btn
-              size="xs"
-              label="Prec"
-              icon-right="visibility"
+            <q-badge
+              color="info"
+              text-color="black"
+              label=''
             />
-          </q-btn-group>
-        </div>
-      </q-item-section>
-    </q-item>
-    <q-item dense>
-      <q-item-section>
-        <q-item-label overline>Score:</q-item-label>
-      </q-item-section>
-      <q-item-section
-        side
-        top
-      >
-        <div class="text-orange">
-          <q-badge
-            color="info"
-            text-color="black"
-            label=''
-          />
-          <q-badge
-            color="info"
-            text-color="black"
-            label=''
-          />
-        </div>
-      </q-item-section>
-    </q-item>
-    <q-item dense>
-      <q-item-section>
-        <q-item-label overline>Tricks:</q-item-label>
-      </q-item-section>
-      <q-item-section
-        side
-        top
-      >
-        <div class="text-orange">
-          <q-badge
-            color="info"
-            text-color="black"
-            :label='tricks(0)'
-          />
-          <q-badge
-            color="info"
-            text-color="black"
-            :label='tricks(1)'
-          />
-        </div>
-      </q-item-section>
-    </q-item>
-  </q-list>
+          </div>
+        </q-item-section>
+      </q-item>
+      <q-item dense>
+        <q-item-section>
+          <q-item-label overline>Tricks:</q-item-label>
+        </q-item-section>
+        <q-item-section
+          side
+          top
+        >
+          <div class="text-orange">
+            <q-badge
+              color="info"
+              text-color="black"
+              :label='tricks(0)'
+            />
+            <q-badge
+              color="info"
+              text-color="black"
+              :label='tricks(1)'
+            />
+          </div>
+        </q-item-section>
+      </q-item>
+    </q-list>
+  </div>
 </template>
 
 <script>
@@ -160,5 +167,9 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.boardBox {
+  width: 160px;
+  height: 120px;
+}
 </style>

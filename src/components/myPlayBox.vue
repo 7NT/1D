@@ -33,6 +33,7 @@ import jb from 'src/jb'
 
 export default {
   name: 'myPlayBox',
+  props: ['review'],
   data: function () {
     return {
       card4: []
@@ -54,8 +55,8 @@ export default {
           const l4 = plays.data.length
           let n4 = l4 % 4
           if (!n4) n4 = 4
-          this.card4 = plays.data.slice(-n4)
-          console.log('winner', plays.info.winner, this.card4)
+          if (this.review) this.card4 = plays.data.slice(-4 - n4, -n4)
+          else this.card4 = plays.data.slice(-n4)
         }
       } catch (err) {
         console.log(err)
@@ -80,7 +81,7 @@ export default {
     }
   },
   mounted () {
-    console.log('card4x', this.card4, this.myPlayer)
+    // console.log('card4x', this.card4, this.myPlayer)
     this.updatePlayed(this.myPlays)
   }
 }

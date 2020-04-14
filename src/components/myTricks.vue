@@ -7,13 +7,16 @@
         class="transparent"
       >
         <div class="hand hhand-compact active-hand full-width">
-          <img
-            v-for="(c, i) of playedCards"
-            :key="`${i}`"
-            :src="cardback(c)"
-            :class="trickClass(c)"
-            :style='`z-index:${i}`'
-          />
+          <span v-for="(c, i) of playedCards" :key="`${i}`" class="card">
+            <img
+              :src="cardback(c)"
+              :class="trickClass(c, i)"
+              :style='`z-index:${i}`'
+            />
+            <q-tooltip content-class="bg-info" anchor="top right" self="bottom left">
+              <myPlayBox :review='true' />
+            </q-tooltip>
+          </span>
         </div>
       </q-card>
     </div>
@@ -24,6 +27,8 @@
 import { mapGetters } from 'vuex'
 import jb from 'src/jb'
 
+import myPlayBox from 'src/components/myPlayBox'
+
 export default {
   name: 'myTricks',
   data () {
@@ -32,18 +37,19 @@ export default {
       // myPlayedCards: []
     }
   },
+  components: { myPlayBox },
   computed: {
     ...mapGetters('jstore', ['myPlayer', 'myTable']),
     isVisible () {
       return this.myTable.state > 1
     },
     playedCards () {
-      return this.myTable.plays.data.slice(0).filter(c => c.winner > 0)
+      return this.myTable.plays.data.slice(0).filter(c => c.winner > 0).map(c => c.winner)
     }
   },
   methods: {
-    isWinner (c) {
-      const w = c.winner
+    isWinner (w) {
+      // const w = c.winner
       const sId = Math.abs(this.myPlayer.sId)
 
       if (jb.isPlayer(sId)) {
@@ -57,13 +63,10 @@ export default {
       card = this.isWinner(c) ? 'Blue' : 'Red'
       return `statics/cards/${card}_Back.svg`
     },
-    trickClass (c) {
-      // return this.isWinner(c) ? 'card rotate-180' : 'cardh rotate-90'
-      return this.isWinner(c) ? 'card cardv' : 'card cardh'
-    },
-    trickStyle (c) {
-      const r = this.isWinner(c) ? '' : "{ transform: 'rotate(90deg)' }"
-      return r
+    trickClass (c, i) {
+      const w = this.isWinner(c)
+      const t = w ? 'card cardv' : 'card cardh'
+      return t
     }
   },
   watch: {}
@@ -81,10 +84,14 @@ img.cardv {
   transform: rotate(180deg)
 }
 img.cardh {
-  transform: rotate(90deg)
+  transform-origin: botton;
+  transform: translateX(10px) rotate(90deg);
 }
-img.offset {
-  margin-left: -50px;
+img.offset1 {
+  margin-left: -20px;
+}
+img.offset2 {
+  margin-left: 10px;
 }
 /*
   * A hand is a div containing cards.

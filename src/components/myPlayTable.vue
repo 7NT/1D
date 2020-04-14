@@ -50,7 +50,7 @@
                 class='cbox transparent'
                 v-if='myState === 2'
               >
-                <myPlayBox />
+                <myPlayBox :review='false' />
               </q-card>
             </div>
           </div>
@@ -184,6 +184,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
+// import say from 'say'
 import { tableService } from 'src/api'
 import jb from 'src/jb'
 import myBoard from 'src/components/myBoard'
@@ -265,6 +266,8 @@ export default {
       return b
     },
     onBT (bt) {
+      const message = `Board will switch to ${bt} next`
+      // say.speak(message)
       switch (bt) {
         case 'MP':
         case 'IMP':
@@ -272,7 +275,7 @@ export default {
           this.$data.tableData.bt = bt
           this.$q.notify({
             type: 'positive',
-            message: `Board will switch to ${bt} next`
+            message
           })
           break
         default:
@@ -305,6 +308,8 @@ export default {
       seat = (seat % 4) + 1
       data.push({ seat, bid: '?' })
       this.onAction({ action: 'bid', bid: { bids: { info, data } } })
+      // const tts = jb.jbVoiceName(bid)
+      // say.speak(tts)
     },
     onAction (action) {
       console.log('onAction', action)

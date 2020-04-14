@@ -254,7 +254,7 @@ export default {
       // this.myChats = this.getChats(this.chatTo)
     },
     myTable (n, o) {
-      console.log(n)
+      // console.log(n)
       this.model_RID = n ? 1 : 0
     }
   },

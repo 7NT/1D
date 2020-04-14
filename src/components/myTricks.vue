@@ -1,5 +1,5 @@
 <template>
-  <div class="column">
+  <div class="column q-pa-md">
     <div class="row self-start justify-end no-wrap">
       <q-card
         flat
@@ -11,8 +11,8 @@
             v-for="(c, i) of playedCards"
             :key="`${i}`"
             :src="cardback(c)"
-            :class='winner12(c)'
-            :style='`z-index:${i++}`'
+            :class="trickClass(c)"
+            :style='`z-index:${i}`'
           />
         </div>
       </q-card>
@@ -28,6 +28,7 @@ export default {
   name: 'myTricks',
   data () {
     return {
+      offset: 0
       // myPlayedCards: []
     }
   },
@@ -41,23 +42,29 @@ export default {
     }
   },
   methods: {
-    cardback (n) {
-      return 'statics/cards/Blue_Back.svg'
-    },
-    winner12 (c) {
+    isWinner (c) {
       const w = c.winner
       const sId = Math.abs(this.myPlayer.sId)
-      const card = 'card'
-      let r = ''
 
       if (jb.isPlayer(sId)) {
-        r = (w % 2) === (sId % 2) ? '' : ' rotate-90'
+        return (w % 2) === (sId % 2)
       } else {
-        r = w % 2 ? '' : ' rotate-90'
+        return w % 2
       }
-      return card + r
+    },
+    cardback (c) {
+      let card = ''
+      card = this.isWinner(c) ? 'Blue' : 'Red'
+      return `statics/cards/${card}_Back.svg`
+    },
+    trickClass (c) {
+      // return this.isWinner(c) ? 'card rotate-180' : 'cardh rotate-90'
+      return this.isWinner(c) ? 'card cardv' : 'card cardh'
+    },
+    trickStyle (c) {
+      const r = this.isWinner(c) ? '' : "{ transform: 'rotate(90deg)' }"
+      return r
     }
-
   },
   watch: {}
 }
@@ -66,10 +73,18 @@ export default {
 img.card {
   max-height: 70px;
   margin: 0;
-  padding: 10;
   border: 0;
   vertical-align: initial;
   box-sizing: initial;
+}
+img.cardv {
+  transform: rotate(180deg)
+}
+img.cardh {
+  transform: rotate(90deg)
+}
+img.offset {
+  margin-left: -50px;
 }
 /*
   * A hand is a div containing cards.
@@ -108,8 +123,8 @@ img.card {
   padding-top: 10px;
 }
 .hhand-compact img.card {
-  margin-left: -40px;
-  margin-bottom: -40px;
+  margin-right: -40px;
+  margin-bottom: 0px;
   padding-top: 10px;
 }
 .hhand-compact.active-hand img.card:hover {

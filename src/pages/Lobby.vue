@@ -194,7 +194,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['myPlayer', 'getChats']),
+    ...mapGetters('jstore', ['myPlayer', 'myTable', 'getChats']),
     getChat () {
       const c = this.getChats(this.chatTo)
       console.log('c', this.chatTo, c)
@@ -253,8 +253,9 @@ export default {
       }
       // this.myChats = this.getChats(this.chatTo)
     },
-    myPlayer (n, o) {
-      if (n.tId) this.model_RID = 1
+    myTable (n, o) {
+      console.log(n)
+      this.model_RID = n ? 1 : 0
     }
   },
   created () {

@@ -1,8 +1,5 @@
 <template>
-  <div
-    class='q-ma-none'
-    v-if='myTable'
-  >
+  <div class='q-ma-none'>
     <div class='jbtable column bg-teal'>
       <div class='col'>
         <div class='row no-wrap'>
@@ -71,10 +68,7 @@
       <div class='col'>
         <div class='row no-wrap'>
           <div class='col-3'>
-            <div
-              class='column'
-              v-if='myState > 1'
-            >
+            <div class='column'>
               <myTricks />
             </div>
           </div>
@@ -386,7 +380,7 @@ export default {
   },
   mounted () {
     // this.$parent.page = 'Lobby'
-    this.myState = this.myTable.state || 0
+    // this.myState = this.myTable.state || 0
   },
   beforeDestroy () { }
 }

@@ -198,6 +198,9 @@ export default {
     },
     roomChats: function () {
       return this.myChats.filter(chat => chat.to === this.chatTo)
+    },
+    myTid () {
+      return this.myPlayer.tId
     }
   },
   methods: {
@@ -249,8 +252,7 @@ export default {
       }
       // this.myChats = this.getChats(this.chatTo)
     },
-    myTable (n, o) {
-      // console.log(n)
+    myTid (n, o) {
       this.model_RID = n ? 1 : 0
     }
   },
@@ -265,8 +267,13 @@ export default {
 .jbtable > div {
   border: 1px solid yellow;
 }
+/*
 .q-tab-panel {
-  padding: 0px;
-  overflow-x: hidden;
+    padding: 0px;
+    margin-left: 0px;
+    margin-right: 0px;
+    margin-bottom: 10px;
+    overflow-x: hidden;
 }
+*/
 </style>

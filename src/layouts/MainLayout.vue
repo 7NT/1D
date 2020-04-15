@@ -8,7 +8,7 @@
           round
           icon='menu'
           aria-label='Menu'
-          @click='leftDrawerOpen = !leftDrawerOpen'
+          @click='playerDrawer = !playerDrawer'
         />
 
         <q-toolbar-title>
@@ -83,46 +83,22 @@
     </q-header>
 
     <q-drawer
-      v-model='leftDrawerOpen'
-      show-if-above
-      bordered
-      content-class='bg-grey-1'
-    >
-      <q-list>
-        <q-item-label
-          header
-          class='text-grey-8'
-        >
-          Essential Links
-        </q-item-label>
-        <EssentialLink
-          v-for='link in essentialLinks'
-          :key='link.title'
-          v-bind='link'
-        />
-      </q-list>
-    </q-drawer>
-    <q-drawer
-      side='right'
-      overlay
+      v-model='playerDrawer'
       bordered
       elevated
-      v-model='playerList'
-      v-show='authenticated'
-      :content-class="$q.theme === 'mat' ? 'bg-grey-3' : null"
-      :content-style="{ fontSize: '16px' }"
+      content-class='bg-grey-1'
     >
-      <q-toolbar
-        inset
-        class='bg-info text-white shadow-2'
-      >
-        <q-btn
-          flat
-          dense
-        >
-          <q-icon name='mdi-account-search' />
-        </q-btn>
-        <q-toolbar-title>Players:</q-toolbar-title>
+      <q-toolbar class="bg-primary text-white rounded-borders">
+        <q-btn round dense flat icon="group" class="q-mr-xs" />
+
+        <q-space />
+
+        <q-input dark dense standout v-model="playerWho" input-class="text-right" class="q-ml-md">
+          <template v-slot:append>
+            <q-icon v-if="playerWho === ''" name="search" />
+            <q-icon v-else name="clear" class="cursor-pointer" @click="text = ''" />
+          </template>
+        </q-input>
       </q-toolbar>
 
       <q-list bordered>
@@ -133,6 +109,9 @@
           clickable
           v-ripple
         >
+          <q-item-section avatar>
+            <q-icon :name='`img:statics/jbicon/seats/seat${p.sId}.svg`' class='seat' />
+          </q-item-section>
           <q-item-section avatar>
             <q-avatar
               color='secondary'
@@ -157,6 +136,30 @@
         </q-item>
       </q-list>
     </q-drawer>
+    <q-drawer
+      side='right'
+      overlay
+      bordered
+      elevated
+      v-model='playerList'
+      v-show='authenticated'
+      :content-class="$q.theme === 'mat' ? 'bg-grey-3' : null"
+      :content-style="{ fontSize: '16px' }"
+    >
+    <q-list>
+        <q-item-label
+          header
+          class='text-grey-8'
+        >
+          Essential Links
+        </q-item-label>
+        <EssentialLink
+          v-for='link in essentialLinks'
+          :key='link.title'
+          v-bind='link'
+        />
+      </q-list>
+    </q-drawer>
     <q-page-container>
       <router-view :user='user'></router-view>
     </q-page-container>
@@ -178,7 +181,7 @@ export default {
 
   data () {
     return {
-      leftDrawerOpen: false,
+      playerDrawer: false,
       essentialLinks: [],
       /*
         {
@@ -221,7 +224,8 @@ export default {
       */
       playerList: this.$q.platform.is.desktop,
       page: '',
-      user: null
+      user: null,
+      playerWho: null
     }
   },
   computed: {
@@ -276,7 +280,7 @@ export default {
         this.updateUser(user)
       })
       playerService.find().then(response => {
-        console.log('players', response)
+        // console.log('players', response)
         this.setPlayers(response.data)
       })
       playerService.on('created', player => {
@@ -334,13 +338,14 @@ export default {
     auth.onAuthenticated(user => {
       this.updateUser(user)
       this.onServices()
+      this.playerDrawer = true
       this.goTo('lobby')
     })
 
     // On logout
     auth.onLogout(() => {
-      this.user = null
       this.goTo('home')
+      this.user = null
     })
   },
   watch: {},
@@ -348,5 +353,9 @@ export default {
 }
 </script>
 <style scoped>
-
+  .seat {
+    width: 24px;
+    height: 30px;
+    margin: 0px;
+  }
 </style>

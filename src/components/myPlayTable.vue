@@ -38,20 +38,23 @@
           </div>
           <div class='col-4'>
             <div class='column'>
-              <q-card
-                class='bbox cbox'
-                v-if='myState === 1'
-              >
-                <q-card>
-                  <myBidBox />
+              <div>
+                <q-card
+                  class='bbox pbox'
+                  v-if='myState === 1'
+                >
+                  <q-card>
+                    <myBidBox />
+                  </q-card>
                 </q-card>
-              </q-card>
-              <q-card
-                class='cbox transparent'
-                v-if='myState === 2'
-              >
-                <myPlayBox :review='false' />
-              </q-card>
+                <q-card
+                  class='pbox transparent'
+                  v-if='myState === 2'
+                >
+                  <myPlayBox :review='false' />
+                </q-card>
+                <q-space />
+              </div>
             </div>
           </div>
           <div class='col-4 box'>
@@ -200,11 +203,11 @@ export default {
       tableData: null,
       state: 0,
       suits: [
-        { id: 1, suit: '♣', color: 'black' },
-        { id: 2, suit: '♦', color: 'red' },
+        { id: 1, suit: '♣', color: 'green' },
+        { id: 2, suit: '♦', color: 'orange' },
         { id: 3, suit: '♥', color: 'red' },
         { id: 4, suit: '♠', color: 'black' },
-        { id: 5, suit: 'NT', color: 'warning' }
+        { id: 5, suit: 'NT', color: 'purple' }
       ],
       cc: { name: { NS: 'SAYC', EW: 'SAYC' }, card: { NS: '', EW: '' } },
       alert: null
@@ -420,7 +423,7 @@ export default {
   margin: 2px;
   width: 100%;
   height: 100%;
-  background-image: url("/statics/jbbg.jpeg");
+  background-image: url("/statics/imgs/jbbg.jpeg");
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */
@@ -432,10 +435,9 @@ export default {
   min-height: 120px;
   min-width: 120px;
 }
-.cbox {
+.pbox {
   max-height: 200px;
   max-width: 240px;
-  border: 1px solid red;
   margin: auto;
   overflow-y: auto;
 }

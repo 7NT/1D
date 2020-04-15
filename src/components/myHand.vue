@@ -18,28 +18,28 @@
           </div>
         </q-card>
       </div>
-      <div class='playerbar'>
-        <q-icon
-          :name='flag'
-          class='flag'
-        />
-        <q-btn-group flat>
+      <div>
+        <q-btn-group flat spread class='playerbar'>
+          <q-icon
+            :name='seatIcon'
+            class='seat'
+          />
+          <q-icon
+            :name='flag'
+            class='flag'
+          />
           <q-btn
-            push
+            flat
+            outline
+            dense
             no-caps
             ellipsis
             @click='onSit'
             :label='nick'
             :color='ucolor'
-            :icon='seatIcon'
-            align='between'
-          >
-            <q-avatar
-              square
-              :icon='myAvatar'
-              size='sm'
-            />
-          </q-btn>
+            :icon='myAvatar'
+            align='left'
+          />
           <q-btn-dropdown
             split
             v-if='isDeclarer'
@@ -108,7 +108,7 @@ export default {
       if (this.player) {
         try {
           const flag = this.player.country.toLowerCase()
-          return `img:statics/flags/1x1/${flag}.svg`
+          return `img:statics/flags/4x3/${flag}.svg`
         } catch (_) { }
       }
       return null
@@ -266,6 +266,7 @@ export default {
   margin: 0px;
   align-items: flex-start;
   text-overflow: ellipsis;
+  background-image: url("/statics/imgs/jbpbar.png");
 }
 img.card {
   max-width: 70px;
@@ -275,9 +276,14 @@ img.card {
   vertical-align: initial;
   box-sizing: initial;
 }
+.seat {
+  width: 24px;
+  height: 30px;
+  margin: 0px;
+}
 .flag {
-  width: 30px;
-  height: 20px;
+  width: 32px;
+  height: 24px;
   margin: 0px;
 }
 .avatar {

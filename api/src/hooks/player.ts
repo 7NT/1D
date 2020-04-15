@@ -96,7 +96,10 @@ async function getBoard (table: any, app: any) {
   try {
     _board = await boardService.get(_played.data[0].boardId)
   } catch (err) {
-    _board = await boardService.create({ bn: 1, cards: shuffle() })
+    const time = new Date().getTime();
+    const bn = time % 128
+    const cards = shuffle()
+    _board = await boardService.create({ bn, cards, time })
   }
 
   _uIds.forEach((u: any) => {

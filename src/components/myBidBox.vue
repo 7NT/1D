@@ -13,13 +13,12 @@
     <q-tr slot="header" slot-scope="props" :props="props">
       <q-th :class="vul_bgcolor(col.seat)" v-for="col in props.cols" :key="col.seat">
         {{ props.cols[col.seat - 1].label }}
-        <q-tooltip>{{ colName(col.seat) }}</q-tooltip>
+        <q-tooltip>{{ playerName(col.seat) }}</q-tooltip>
       </q-th>
     </q-tr>
     <template v-slot:body-cell='props'>
       <q-td :props='props' :class='turn_bgcolor(props)'>
         {{props.value}}
-        <q-tooltip>{{ props }}</q-tooltip>
       </q-td>
     </template>
   </q-table>
@@ -36,7 +35,7 @@ export default {
     bData: []
   }),
   computed: {
-    ...mapGetters('jstore', ['myPlayer', 'myTable']),
+    ...mapGetters('jstore', ['myPlayer', 'myTable', 'getPlayerById']),
     mySid () {
       let x = Math.abs(this.myPlayer.sId)
       if (x < 1 || x > 4) x = 3
@@ -60,9 +59,11 @@ export default {
     seatX (s) {
       return ((this.mySid + s) % 4) + 1
     },
-    colName (s) {
-      const c = this.seats[s - 1]
-      return `{ seat: ${s}, label: '${c}', field: '${c}' }`
+    playerName (s) {
+      const pId = this.myTable.seats[s - 1]
+      const p = this.getPlayerById(pId)
+      if (p) return p.nick
+      else return this.seats[s - 1]
     },
     vul_bgcolor (s) {
       if (this.myBids) {
@@ -159,6 +160,7 @@ export default {
 .bbox {
   min-width: 160px;
   min-height: 160px;
+  /*border: 1px solid silver;*/
 }
 table thead {
   font-size: medium;

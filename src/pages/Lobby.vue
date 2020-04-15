@@ -1,7 +1,7 @@
 <template>
   <q-page class="no-padding no-margin">
     <!-- content -->
-    <div class="no-padding no-margin">
+    <div>
       <q-splitter
         v-model='splitterModel'
         horizontal
@@ -10,12 +10,13 @@
         :limits='[500, Infinity]'
       >
         <template v-slot:before>
-          <div class='q-pa-md'>
+          <div>
             <q-card>
               <q-tabs
                 v-model='model_RID'
                 align='left'
                 dense
+                shrink
                 no-caps
                 inline-label
                 indicator-color='yellow'
@@ -30,13 +31,11 @@
                   :disable='!r.open'
                 />
               </q-tabs>
-
-              <q-separator />
-
               <q-tab-panels
                 keep-alive
                 v-model='model_RID'
                 animated
+                class="bg-teal"
               >
                 <q-tab-panel :name='0'>
                   <q-list
@@ -53,13 +52,10 @@
                   </q-list>
                 </q-tab-panel>
 
-                <q-tab-panel
-                  :name='1'
-                  class="no-margin no-padding"
-                >
+                <q-tab-panel :name='1'>
                   <myPlayTable
                     v-on:onSit='onSit'
-                    class='jbtable full-width'
+                    class='jbtable'
                   />
                 </q-tab-panel>
               </q-tab-panels>
@@ -268,9 +264,9 @@ export default {
 <style scoped>
 .jbtable > div {
   border: 1px solid yellow;
-  margin: 2px;
+}
+.q-tab-panel {
+  padding: 0px;
   overflow-x: hidden;
-  white-space: nowrap;
-  align-items: flex-end;
 }
 </style>

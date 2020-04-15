@@ -1,6 +1,6 @@
 <template>
   <div
-    class='boardBox'
+    class='boardBox full-width'
     v-if='myTable.board'
   >
     <q-list
@@ -19,19 +19,20 @@
         :options="options_mix"
         options-dense
         options-dark
+        behavior="menu"
         menu-shrink
         :label='bdata'
       >
         <template v-slot:append>
           <q-icon
-            name="games"
+            name="img:statics/jbicon/svg/mix.svg"
             color="orange"
           />
         </template>
       </q-select>
       <q-item dense>
         <q-item-section>
-          <q-item-label overline>CC:</q-item-label>
+          <q-item-label overline>System:</q-item-label>
         </q-item-section>
         <q-item-section
           side
@@ -46,12 +47,12 @@
               <q-btn
                 size="xs"
                 label="SAYC"
-                icon="timeline"
+                icon="img:statics/jbicon/seats/seat13.svg"
               />
               <q-btn
                 size="xs"
                 label="Prec"
-                icon-right="visibility"
+                icon-right="img:statics/jbicon/seats/seat24.svg"
               />
             </q-btn-group>
           </div>

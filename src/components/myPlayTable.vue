@@ -414,13 +414,13 @@ export default {
 }
 .jbtable {
   min-width: 696px;
-  min-height: 390px;
+  min-height: 393px;
   max-height: 480px;
-  border: 1px solid green;
+  /*border: 1px solid green;*/
   margin: 2px;
   width: 100%;
   height: 100%;
-  background-image: url("~assets/jbbg.jpeg");
+  background-image: url("/statics/jbbg.jpeg");
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */

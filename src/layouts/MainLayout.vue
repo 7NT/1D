@@ -179,7 +179,8 @@ export default {
   data () {
     return {
       leftDrawerOpen: false,
-      essentialLinks: [
+      essentialLinks: [],
+      /*
         {
           title: 'Docs',
           caption: 'quasar.dev',
@@ -217,6 +218,7 @@ export default {
           link: 'https://facebook.quasar.dev'
         }
       ],
+      */
       playerList: this.$q.platform.is.desktop,
       page: '',
       user: null

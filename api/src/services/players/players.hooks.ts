@@ -1,18 +1,18 @@
 import * as authentication from '@feathersjs/authentication'
 // Don't remove this comment. It's needed to format import lines nicely.
-import { sitBefore, sitAfter, sitReset } from '../../hooks/player'
+import { sitBefore, sitAfter, logout } from '../../hooks/player'
 
 const { authenticate } = authentication.hooks
 
 export default {
   before: {
-    all: [ authenticate('jwt') ],
+    all: [authenticate('jwt')],
     find: [],
     get: [],
     create: [],
     update: [],
     patch: [sitBefore()],
-    remove: []
+    remove: [logout()]
   },
 
   after: {
@@ -22,7 +22,7 @@ export default {
     create: [],
     update: [],
     patch: [sitAfter()],
-    remove: [sitReset()]
+    remove: []
   },
 
   error: {

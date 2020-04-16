@@ -180,16 +180,18 @@ const sitAfter = (): Hook => {
   }
 }
 
-const sitReset = (): Hook => {
+const logout = (): Hook => {
   return async (context: HookContext) => {
-    const { tId, sId } = context.data
-    const { connection } = context.params
-    if (connection) {
-      const userService = context.app.service('users')
-      const user = connection.user
+    //const playerService = context.app.service('players')
+    const pId = context.id
+    let player
+    if (pId) {
+      player = context.service.store[pId]
+      const { tId, sId } = player
+      const userData = { tId, sId }
 
-      let userData = { tId, sId }
-      userService.patch(user._id, userData)
+      const userService = context.app.service('users')
+      userService.patch(pId, userData)
     }
     return Promise.resolve(context)
   }
@@ -198,5 +200,5 @@ const sitReset = (): Hook => {
 export {
   sitBefore,
   sitAfter,
-  sitReset
+  logout
 }

@@ -198,9 +198,6 @@ export default {
     },
     roomChats: function () {
       return this.myChats.filter(chat => chat.to === this.chatTo)
-    },
-    myTid () {
-      return this.myPlayer.tId
     }
   },
   methods: {
@@ -252,7 +249,7 @@ export default {
       }
       // this.myChats = this.getChats(this.chatTo)
     },
-    myTid (n, o) {
+    myPlayer (n, o) {
       this.model_RID = n ? 1 : 0
     }
   },

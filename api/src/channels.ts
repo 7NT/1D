@@ -7,6 +7,7 @@ export default function (app: Application) {
     // If no real-time functionality has been configured just return
     return;
   }
+  // const userService = app.service('users')
   const playerService = app.service('players')
 
   // Join a channel given a user and connection
@@ -53,7 +54,7 @@ export default function (app: Application) {
   });
 
   app.on('disconnect', (connection: any) => {
-    // console.log('disconnect', connection);
+    console.log('disconnect', connection);
   })
 
   app.on('login', (authResult: any, { connection }: any) => {
@@ -100,12 +101,13 @@ export default function (app: Application) {
     if (connection) {
       const user = connection.user;
       //When logging out, leave all channels before joining anonymous channel
-      console.log('logout', app.channels);
-      // app.channel(app.channels).leave(connection);
+      console.log('logout...', app.channels, user);
+      if (app.channels.length) app.channel(app.channels).leave(connection);
       //app.channel('anonymous').join(connection);
-      app.channel('#Anonymous').join(connection);
+      //app.channel('#Anonymous').join(connection);
 
       playerService.remove(user._id);
+
     }
   });
 

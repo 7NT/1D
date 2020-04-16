@@ -79,6 +79,12 @@
             :offset='[0, 20]'
           >Signout</q-tooltip>
         </q-btn>
+        <q-btn
+          color="secondary"
+          @click="$q.fullscreen.toggle()"
+          :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+          :label="$q.fullscreen.isActive ? 'Exit Fullscreen' : 'Go Fullscreen'"
+        />
       </q-toolbar>
     </q-header>
 
@@ -89,14 +95,35 @@
       content-class='bg-grey-1'
     >
       <q-toolbar class="bg-primary text-white rounded-borders">
-        <q-btn round dense flat icon="group" class="q-mr-xs" />
+        <q-btn
+          round
+          dense
+          flat
+          icon="group"
+          class="q-mr-xs"
+        />
 
         <q-space />
 
-        <q-input dark dense standout v-model="playerWho" input-class="text-right" class="q-ml-md">
+        <q-input
+          dark
+          dense
+          standout
+          v-model="playerWho"
+          input-class="text-right"
+          class="q-ml-md"
+        >
           <template v-slot:append>
-            <q-icon v-if="playerWho === ''" name="search" />
-            <q-icon v-else name="clear" class="cursor-pointer" @click="text = ''" />
+            <q-icon
+              v-if="playerWho === ''"
+              name="search"
+            />
+            <q-icon
+              v-else
+              name="clear"
+              class="cursor-pointer"
+              @click="text = ''"
+            />
           </template>
         </q-input>
       </q-toolbar>
@@ -110,7 +137,10 @@
           v-ripple
         >
           <q-item-section avatar>
-            <q-icon :name='`img:statics/jbicon/seats/seat${p.sId}.svg`' class='seat' />
+            <q-icon
+              :name='`img:statics/jbicon/seats/seat${p.sId}.svg`'
+              class='seat'
+            />
           </q-item-section>
           <q-item-section avatar>
             <q-avatar
@@ -146,7 +176,7 @@
       :content-class="$q.theme === 'mat' ? 'bg-grey-3' : null"
       :content-style="{ fontSize: '16px' }"
     >
-    <q-list>
+      <q-list>
         <q-item-label
           header
           class='text-grey-8'
@@ -255,7 +285,8 @@ export default {
             message: 'You are now logged out, sign in again to continue to play'
           })
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err)
           this.$q.notify({
             type: 'positive',
             message: 'Cannot logout, please check again in a few minutes'
@@ -292,7 +323,7 @@ export default {
         this.updatePlayer(player)
       })
       playerService.on('removed', player => {
-        // console.log('player removed', player)
+        console.log('player removed', player)
         player.state = -1
         this.updatePlayer(player)
       })
@@ -353,9 +384,9 @@ export default {
 }
 </script>
 <style scoped>
-  .seat {
-    width: 24px;
-    height: 30px;
-    margin: 0px;
-  }
+.seat {
+  width: 24px;
+  height: 30px;
+  margin: 0px;
+}
 </style>

@@ -226,7 +226,7 @@ export default {
       return moment(createdAt).format('MMM Do, hh:mm:ss')
     },
     onSit (seat) {
-      // console.log(this.user, seat)
+      console.log(this.user, seat)
       playerService.patch(this.user._id, seat)
     }
   },
@@ -243,13 +243,20 @@ export default {
     model_RID (n) {
       if (n === 1) {
         if (this.myPlayer.tId) this.chatTo = `#${this.myPlayer.tId}`
-        else this.onSit({ tId: this.myPlayer.id, sId: 0 })
+        // else this.onSit({ tId: this.myPlayer.id, sId: 0 })
       } else {
         this.chatTo = '#Lobby'
       }
       // this.myChats = this.getChats(this.chatTo)
     },
+    /*
     myPlayer (n, o) {
+      console.log('p', n, o, this.myTable)
+      this.model_RID = n.tId ? 1 : 0
+    },
+    */
+    myTable (n, o) {
+      console.log('t', n, o, this.myPlayer)
       this.model_RID = n ? 1 : 0
     }
   },

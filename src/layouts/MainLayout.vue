@@ -8,6 +8,7 @@
           round
           icon='menu'
           aria-label='Menu'
+          v-if='authenticated'
           @click='playerDrawer = !playerDrawer'
         />
 
@@ -83,13 +84,17 @@
           color="secondary"
           @click="$q.fullscreen.toggle()"
           :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-          :label="$q.fullscreen.isActive ? 'Exit Fullscreen' : 'Go Fullscreen'"
-        />
+        >
+          <q-tooltip>
+            Full Screen
+          </q-tooltip>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer
       v-model='playerDrawer'
+      v-if='authenticated'
       bordered
       elevated
       content-class='bg-grey-1'
@@ -198,7 +203,7 @@
 
 <script>
 import EssentialLink from 'components/EssentialLink'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { userService, playerService, tableService } from 'src/api'
 import auth from 'src/auth'
 
@@ -260,6 +265,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
+    ...mapGetters('jstore', ['myTable']),
     authenticated () {
       return this.user != null
     }
@@ -315,8 +321,14 @@ export default {
         this.setPlayers(response.data)
       })
       playerService.on('created', player => {
-        // console.log('create player', player)
+        console.log('create player', player)
         this.updatePlayer(player)
+        if (player.id === this.user._id) {
+          if (this.myTable && this.user.sId) {
+            console.log('rejoin player', player, this.user)
+            playerService.patch(this.user._id, { tId: this.user.tId, sId: this.user.sId })
+          }
+        }
       })
       playerService.on('patched', player => {
         console.log('player patched', player)
@@ -339,7 +351,7 @@ export default {
         this.updateTable(table)
       })
       tableService.on('removed', table => {
-        console.log('table remove', table)
+        console.log('table removed', table)
         table.state = -1
         this.updateTable(table)
       })

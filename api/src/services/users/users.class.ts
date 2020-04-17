@@ -16,6 +16,7 @@ interface UserData {
   nick: string;
   avatar?: string;
   netId?: string;
+  createdAt: number;
 }
 
 export class Users extends Service<UserData> {
@@ -37,7 +38,8 @@ export class Users extends Service<UserData> {
       password,
       nick,
       avatar,
-      netId
+      netId,
+      createdAt: new Date().getTime()
     };
 
     // Call the original `create` method with existing `params` and new data

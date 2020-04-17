@@ -21,7 +21,7 @@ export const getPlayerById = state => id => {
 }
 
 export const getTableById = state => id => {
-  return state.tables.find(table => table._id === id)
+  return state.tables.find(table => table.id === id)
 }
 
 export const getChats = state => id => {

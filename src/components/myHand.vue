@@ -18,8 +18,8 @@
           </div>
         </q-card>
       </div>
-      <div>
-        <q-btn-group flat spread class='playerbar'>
+      <div class='pbar'>
+        <q-btn-group flat spread>
           <q-icon
             :name='seatIcon'
             class='seat'
@@ -102,7 +102,7 @@ export default {
     },
     ucolor () {
       if (this.isMyTurn()) return 'warning'
-      else return this.myPlayer ? 'secondary' : 'positive'
+      else return this.myPlayer ? 'indigo' : 'positive'
     },
     flag () {
       if (this.player) {
@@ -260,13 +260,15 @@ export default {
 </script>
 
 <style scoped>
-.playerbar {
+.pbar {
   min-width: 250px;
   height: 32px;
   margin: 0px;
   align-items: flex-start;
   text-overflow: ellipsis;
   background-image: url("/statics/imgs/jbpbar.png");
+  opacity: 1;
+  z-index: 1000;
 }
 img.card {
   max-width: 70px;
@@ -279,17 +281,17 @@ img.card {
 .seat {
   width: 24px;
   height: 30px;
-  margin: 0px;
+  margin: auto;
 }
 .flag {
   width: 32px;
   height: 24px;
-  margin: 0px;
+  margin: auto;
 }
 .avatar {
   width: 24px;
   height: 24px;
-  margin: 0px;
+  margin: auto;
 }
 /*
 * A hand is a div containing cards.

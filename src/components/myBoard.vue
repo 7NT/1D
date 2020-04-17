@@ -1,8 +1,5 @@
 <template>
-  <div
-    class='boardBox full-width'
-    v-if='myTable.board'
-  >
+  <div class='boardBox full-width'>
     <q-list
       padding
       dense
@@ -111,7 +108,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'myBoard',
-  // props: ['myTable'],
+  props: ['myTable'],
   data () {
     return {
       model_mix: null,
@@ -129,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('jstore', ['myPlayer', 'myTable']),
+    ...mapGetters('jstore', ['myPlayer']),
     bdata: function () {
       try {
         if (this.myTable.board) return this.myTable.board.bt + ': ' + this.myTable.board.bn

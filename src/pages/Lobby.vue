@@ -54,6 +54,8 @@
 
                 <q-tab-panel :name='1'>
                   <myPlayTable
+                    :myPlayer='myPlayer'
+                    :myTable='myTable'
                     v-on:onSit='onSit'
                     class='jbtable'
                   />
@@ -190,7 +192,10 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['myPlayer', 'myTable', 'getChats']),
+    ...mapGetters('jstore', ['myPlayer', 'getTableById', 'getChats']),
+    myTable () {
+      return this.getTableById(this.myPlayer.tId)
+    },
     getChat () {
       const c = this.getChats(this.chatTo)
       console.log('c', this.chatTo, c)
@@ -226,6 +231,8 @@ export default {
       return moment(createdAt).format('MMM Do, hh:mm:ss')
     },
     onSit (seat) {
+      seat.tId0 = this.myPlayer.tId
+      seat.sId0 = this.myPlayer.sId
       console.log(this.user, seat)
       playerService.patch(this.user._id, seat)
     }
@@ -251,9 +258,9 @@ export default {
     },
     /*
     myPlayer (n, o) {
-      console.log('p', n, o, this.myTable)
+      console.log('p', n, o)
       this.model_RID = n.tId ? 1 : 0
-    },
+    }
     */
     myTable (n, o) {
       console.log('t', n, o, this.myPlayer)

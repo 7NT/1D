@@ -114,13 +114,13 @@
           dark
           dense
           standout
-          v-model="playerWho"
+          v-model="uId"
           input-class="text-right"
           class="q-ml-md"
         >
           <template v-slot:append>
             <q-icon
-              v-if="playerWho === ''"
+              v-if="uId === ''"
               name="search"
             />
             <q-icon
@@ -160,7 +160,7 @@
             <q-item-label
               caption
               lines='1'
-            >@{{ p.tId }}</q-item-label>
+            >@{{ p.tId || 'Lobby'}}</q-item-label>
           </q-item-section>
           <q-item-section side>
             <q-icon
@@ -203,7 +203,7 @@
 
 <script>
 import EssentialLink from 'components/EssentialLink'
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { userService, playerService, tableService } from 'src/api'
 import auth from 'src/auth'
 
@@ -260,12 +260,12 @@ export default {
       playerList: this.$q.platform.is.desktop,
       page: '',
       user: null,
-      playerWho: null
+      player: null
     }
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['myTable']),
+    // ...mapGetters('jstore', ['myTable']),
     authenticated () {
       return this.user != null
     }
@@ -299,18 +299,18 @@ export default {
           })
         })
     },
-    updateUser (user) {
-      this.user = user
-      this.setUser(user)
+    updateUser (u) {
+      this.user = u
+      this.setUser(u)
     },
-    updatePlayer (player) {
-      this.setPlayer(player)
+    updatePlayer (p) {
+      this.setPlayer(p)
     },
-    updateTable (table) {
-      this.setTable(table)
+    updateTable (t) {
+      this.setTable(t)
     },
-    updateChat (chat) {
-      this.setChat(chat)
+    updateChat (c) {
+      this.setChat(c)
     },
     onServices () {
       userService.on('update', user => {
@@ -320,40 +320,41 @@ export default {
         // console.log('players', response)
         this.setPlayers(response.data)
       })
-      playerService.on('created', player => {
-        console.log('create player', player)
-        this.updatePlayer(player)
-        if (player.id === this.user._id) {
+      playerService.on('created', p => {
+        console.log('create player', p)
+        this.updatePlayer(p)
+        /*
+        if (p.id === this.user._id) {
           if (this.myTable && this.user.sId) {
-            console.log('rejoin player', player, this.user)
             playerService.patch(this.user._id, { tId: this.user.tId, sId: this.user.sId })
           }
         }
+        */
       })
-      playerService.on('patched', player => {
-        console.log('player patched', player)
-        this.updatePlayer(player)
+      playerService.on('patched', p => {
+        console.log('player patched', p)
+        this.updatePlayer(p)
       })
-      playerService.on('removed', player => {
-        console.log('player removed', player)
-        player.state = -1
-        this.updatePlayer(player)
+      playerService.on('removed', p => {
+        console.log('player removed', p)
+        p.state = -1
+        this.updatePlayer(p)
       })
       tableService.find().then(response => {
         this.setTables(response.data)
       })
-      tableService.on('created', table => {
-        console.log('table created', table)
-        this.updateTable(table)
+      tableService.on('created', t => {
+        console.log('table created', t)
+        this.updateTable(t)
       })
-      tableService.on('patched', table => {
-        console.log('table patched', table)
-        this.updateTable(table)
+      tableService.on('patched', t => {
+        console.log('table patched', t)
+        this.updateTable(t)
       })
-      tableService.on('removed', table => {
-        console.log('table removed', table)
-        table.state = -1
-        this.updateTable(table)
+      tableService.on('removed', t => {
+        console.log('table removed', t)
+        t.state = -1
+        this.updateTable(t)
       })
       /*
       chatService.on('created', chat => {

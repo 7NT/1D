@@ -8,10 +8,10 @@ const beforeSit = (): Hook => {
     const { connection } = context.params
     if (connection) {
       const tableService = context.app.service('tables')
-      const user = connection.user
-      const { _id: uId, tId: tId0, sId: sId0 } = user
-      const { tId: tId1, sId: sId1 } = context.data
-      console.log('beforeSit', context.data)
+      const { user } = connection
+      const uId = user._id
+      const { tId: tId1, sId: sId1, tId0, sId0 } = context.data
+      console.log('beforeSit', context.data, user)
 
       if (tId0 && tId0 != tId1) {  //leave table
         let t0 = await tableService.get(tId0)
@@ -98,14 +98,14 @@ const afterSit = (): Hook => {
     const { connection } = context.params
     if (connection) {
       // const userService = context.app.service('users')
-      // const user = connection.user
-      const pId = context.id
+      const { user } = connection
+      const uId = context.id
 
       let player
-      if (pId) {
-        player = context.service.store[pId]
+      if (uId) {
+        player = context.service.store[uId]
       }
-      console.log('after', player)
+      console.log('after', context.data, player)
     }
     return Promise.resolve(context)
   }
@@ -198,14 +198,14 @@ const shuffle = function () {
 
 const logout = (): Hook => {
   return async (context: HookContext) => {
-    const pId = context.id
-    if (pId) {
+    const uId = context.id
+    if (uId) {
       const userService = context.app.service('users')
       const playerService = context.app.service('players')
       const tableService = context.app.service('tables')
 
-      console.log('remove', pId)
-      let player = await playerService.get(pId)
+      console.log('remove', uId)
+      let player = await playerService.get(uId)
       console.log('player', player)
       if (player) {
         const { id: uId, tId, sId } = player
@@ -215,7 +215,7 @@ const logout = (): Hook => {
           leaveTable(tableService, t, uId, sId)
         }
         const userData = { tId, sId, state: 0, logoutAt: new Date().getTime()}
-        userService.patch(pId, userData)
+        userService.patch(uId, userData)
       }
     }
     return Promise.resolve(context)

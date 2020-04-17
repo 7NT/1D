@@ -10,6 +10,8 @@
             <div class='column'>
               <myHand
                 :handId='1'
+                :myPlayer='myPlayer'
+                :myTable='myTable'
                 v-on:onAction='onAction'
                 class='myHand justify-start'
               />
@@ -20,7 +22,7 @@
               class='row justify-end'
               v-if='myState > 1'
             >
-              <myBidBox />
+              <myBidBox :myPlayer='myPlayer' :myTable='myTable' />
             </div>
           </div>
         </div>
@@ -31,6 +33,8 @@
             <div class='column'>
               <myHand
                 :handId='4'
+                :myPlayer='myPlayer'
+                :myTable='myTable'
                 v-on:onAction='onAction'
                 class='myHand justify-end'
               />
@@ -44,14 +48,14 @@
                   v-if='myState === 1'
                 >
                   <q-card>
-                    <myBidBox />
+                    <myBidBox :myPlayer='myPlayer' :myTable='myTable' />
                   </q-card>
                 </q-card>
                 <q-card
                   class='pbox transparent'
                   v-if='myState === 2'
                 >
-                  <myPlayBox :review='false' />
+                  <myPlayBox :myPlayer='myPlayer' :myTable='myTable' :review='false' />
                 </q-card>
                 <q-space />
               </div>
@@ -61,6 +65,8 @@
             <div class='column'>
               <myHand
                 :handId='2'
+                :myPlayer='myPlayer'
+                :myTable='myTable'
                 v-on:onAction='onAction'
                 class='myHand justify-start'
               />
@@ -72,13 +78,15 @@
         <div class='row no-wrap'>
           <div class='col-3'>
             <div class='column'>
-              <myTricks />
+              <myTricks :myPlayer='myPlayer' :myTable='myTable' />
             </div>
           </div>
           <div class='col-6 box'>
             <div class='column'>
               <myHand
                 :handId='3'
+                :myPlayer='myPlayer'
+                :myTable='myTable'
                 v-on:onAction='onAction'
                 class='myHand justify-end'
               />
@@ -186,7 +194,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState } from 'vuex'
 // import say from 'say'
 import { tableService } from 'src/api'
 import jb from 'src/jb'
@@ -198,6 +206,7 @@ import myTricks from 'src/components/myTricks'
 
 export default {
   name: 'myPlaysTable',
+  props: ['myPlayer', 'myTable'],
   data: function () {
     return {
       tableData: null,
@@ -222,7 +231,6 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['myPlayer', 'myTable']),
     myTid: {
       get: function () {
         return this.myPlayer.tId
@@ -389,6 +397,7 @@ export default {
   mounted () {
     // this.$parent.page = 'Lobby'
     // this.myState = this.myTable.state || 0
+    console.log('t', this.myTable)
   },
   beforeDestroy () { }
 }
@@ -405,6 +414,7 @@ export default {
 .bidbox {
   margin: 10px;
   align-items: flex-end;
+  z-index: 200
 }
 .bidrow {
   flex-wrap: no-wrap;

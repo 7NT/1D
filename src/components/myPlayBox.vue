@@ -28,19 +28,19 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+// import { mapGetters } from 'vuex'
 import jb from 'src/jb'
 
 export default {
   name: 'myPlayBox',
-  props: ['review'],
+  props: ['myPlayer', 'myTable', 'review'],
   data: function () {
     return {
       card4: []
     }
   },
   computed: {
-    ...mapGetters('jstore', ['myPlayer', 'myTable']),
+    // ...mapGetters('jstore', ['myPlayer', 'myTable']),
     mySid () {
       return this.myPlayer.sId
     },

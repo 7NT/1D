@@ -96,17 +96,17 @@ export default {
   methods: {
     // ...mapActions('jstore', ['addUser']),
     nickName (n) {
-      const _uId = this.myTable.seats[n - 1]
-      if (!_uId) {
+      const pId = this.myTable.seats[n - 1]
+      if (!pId) {
         return 'SIT...'
       } else {
-        const p = this.getPlayerById(_uId)
+        const p = this.getPlayerById(pId)
         return p ? p.nick || p._id : 'SIT...'
       }
     },
     scolor (n) {
-      const _uId = this.myTable.seats[n - 1]
-      return _uId ? 'info' : 'positive'
+      const pId = this.myTable.seats[n - 1]
+      return pId ? 'info' : 'positive'
     },
     sit (sId) {
       if (!this.myTable.seats[sId - 1]) {

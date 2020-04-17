@@ -24,13 +24,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+// import { mapGetters } from 'vuex'
 import jb from 'src/jb'
 
 import myPlayBox from 'src/components/myPlayBox'
 
 export default {
   name: 'myTricks',
+  props: ['myPlayer', 'myTable'],
   data () {
     return {
       offset: 0
@@ -39,7 +40,7 @@ export default {
   },
   components: { myPlayBox },
   computed: {
-    ...mapGetters('jstore', ['myPlayer', 'myTable']),
+    // ...mapGetters('jstore', ['myPlayer', 'myTable']),
     isVisible () {
       return this.myTable.state > 1
     },
@@ -69,7 +70,10 @@ export default {
       return t
     }
   },
-  watch: {}
+  watch: {},
+  mounted () {
+    console.log('t', this.myTable)
+  }
 }
 </script>
 <style scoped>

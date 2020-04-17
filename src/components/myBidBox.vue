@@ -30,12 +30,13 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'myBidBox',
+  props: ['myPlayer', 'myTable'],
   data: () => ({
     seats: ['N', 'E', 'S', 'W'],
     bData: []
   }),
   computed: {
-    ...mapGetters('jstore', ['myPlayer', 'myTable', 'getPlayerById']),
+    ...mapGetters('jstore', ['getPlayerById']),
     mySid () {
       let x = Math.abs(this.myPlayer.sId)
       if (x < 1 || x > 4) x = 3

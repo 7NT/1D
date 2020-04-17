@@ -114,20 +114,20 @@
           dark
           dense
           standout
-          v-model="uId"
+          v-model="who"
           input-class="text-right"
           class="q-ml-md"
         >
           <template v-slot:append>
             <q-icon
-              v-if="uId === ''"
+              v-if="who === ''"
               name="search"
             />
             <q-icon
               v-else
               name="clear"
               class="cursor-pointer"
-              @click="text = ''"
+              @click="who = ''"
             />
           </template>
         </q-input>
@@ -260,7 +260,8 @@ export default {
       playerList: this.$q.platform.is.desktop,
       page: '',
       user: null,
-      player: null
+      player: null,
+      who: ''
     }
   },
   computed: {
@@ -323,13 +324,12 @@ export default {
       playerService.on('created', p => {
         console.log('create player', p)
         this.updatePlayer(p)
-        /*
         if (p.id === this.user._id) {
-          if (this.myTable && this.user.sId) {
-            playerService.patch(this.user._id, { tId: this.user.tId, sId: this.user.sId })
-          }
+          this.player = p
+          // if (this.myTable && this.user.sId) {
+          //  playerService.patch(this.user._id, { tId: this.user.tId, sId: this.user.sId })
+          // }
         }
-        */
       })
       playerService.on('patched', p => {
         console.log('player patched', p)

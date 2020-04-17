@@ -45,6 +45,7 @@
             v-if='isDeclarer'
             :label='contract'
             color='info'
+            class='declarer'
           >
             <q-list dense>
               <q-item
@@ -72,7 +73,7 @@ import jb from 'src/jb'
 
 export default {
   name: 'myHand',
-  props: ['handId'],
+  props: ['handId', 'myPlayer', 'myTable'],
   data () {
     return {
       seatId: 0,
@@ -85,7 +86,7 @@ export default {
     // myCards
   },
   computed: {
-    ...mapGetters('jstore', ['myPlayer', 'myTable', 'getPlayerById']),
+    ...mapGetters('jstore', ['getPlayerById']),
     mySid: {
       get: function () {
         return this.myPlayer.sId
@@ -196,8 +197,8 @@ export default {
     updatePlayer () {
       this.seatId = jb.seatX(this.handId, this.mySid)
       // console.log('h', this.handId, this.mySid, this.seatId, this.myTable)
-      const _uId = this.myTable.seats[this.seatId - 1]
-      this.player = this.getPlayerById(_uId)
+      const pId = this.myTable.seats[this.seatId - 1]
+      this.player = this.getPlayerById(pId)
       this.nick = this.player ? this.player.nick : '[SIT...]'
       this.updateCards()
     },
@@ -268,7 +269,7 @@ export default {
   text-overflow: ellipsis;
   background-image: url("/statics/imgs/jbpbar.png");
   opacity: 1;
-  z-index: 1000;
+  z-index: 100;
 }
 img.card {
   max-width: 70px;
@@ -292,6 +293,9 @@ img.card {
   width: 24px;
   height: 24px;
   margin: auto;
+}
+.declarer {
+  height: 24px;
 }
 /*
 * A hand is a div containing cards.

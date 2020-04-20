@@ -45,8 +45,13 @@
                 size="xs"
                 label="SAYC"
                 icon="img:statics/jbicon/seats/seat13.svg"
-              />
-              <q-btn
+            >
+              <q-badge
+                color="orange"
+                align="top"
+              >SAYC</q-badge>
+            </q-btn>
+            <q-btn
                 size="xs"
                 label="Prec"
                 icon-right="img:statics/jbicon/seats/seat24.svg"
@@ -59,10 +64,7 @@
         <q-item-section>
           <q-item-label overline>Score:</q-item-label>
         </q-item-section>
-        <q-item-section
-          side
-          top
-        >
+        <q-item-section>
           <div class="text-orange">
             <q-badge
               color="info"

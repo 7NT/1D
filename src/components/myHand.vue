@@ -19,7 +19,10 @@
         </q-card>
       </div>
       <div class='pbar'>
-        <q-btn-group flat spread>
+        <q-btn-group
+          flat
+          spread
+        >
           <q-icon
             :name='seatIcon'
             class='seat'
@@ -41,6 +44,7 @@
             align='left'
           />
           <q-btn-dropdown
+            push
             split
             v-if='isDeclarer'
             :label='contract'
@@ -296,6 +300,7 @@ img.card {
 }
 .declarer {
   height: 24px;
+  margin: auto;
 }
 /*
 * A hand is a div containing cards.

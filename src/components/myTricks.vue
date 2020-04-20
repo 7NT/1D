@@ -7,14 +7,26 @@
         class="transparent"
       >
         <div class="hand hhand-compact active-hand full-width">
-          <span v-for="(c, i) of playedCards" :key="`${i}`" class="card">
+          <span
+            v-for="(c, i) of playedCards"
+            :key="`${i}`"
+            class="card"
+          >
             <img
               :src="cardback(c)"
               :class="trickClass(c, i)"
               :style='`z-index:${i}`'
             />
-            <q-tooltip content-class="bg-info" anchor="top right" self="bottom left">
-              <myPlayBox :review='true' />
+            <q-tooltip
+              content-class="bg-info"
+              anchor="top right"
+              self="bottom left"
+            >
+              <myPlayBox
+                :myPlayer='myPlayer'
+                :myTable='myTable'
+                :review='true'
+              />
             </q-tooltip>
           </span>
         </div>
@@ -85,7 +97,7 @@ img.card {
   box-sizing: initial;
 }
 img.cardv {
-  transform: rotate(180deg)
+  transform: rotate(180deg);
 }
 img.cardh {
   transform-origin: botton;

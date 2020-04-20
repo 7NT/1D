@@ -45,7 +45,7 @@ export default {
       return this.myPlayer.sId
     },
     myPlays () {
-      return this.myTable.plays
+      return this.myTable.plays || null
     }
   },
   methods: {

@@ -1,7 +1,6 @@
 <template>
   <div class='boardBox full-width'>
     <q-list
-      padding
       dense
       bordered
       class="rounded-borders"
@@ -27,24 +26,21 @@
           />
         </template>
       </q-select>
-      <q-item dense>
+      <q-item
+        dense
+        class='boardItem'
+      >
         <q-item-section>
-          <q-item-label overline>System:</q-item-label>
+          <q-item-label caption>System:</q-item-label>
         </q-item-section>
         <q-item-section
           side
           top
         >
-          <div class="text-orange">
-            <q-btn-group
-              glossy
-              outline
-              dense
-            >
-              <q-btn
-                size="xs"
-                label="SAYC"
-                icon="img:statics/jbicon/seats/seat13.svg"
+          <div class="q-pa-xs q-gutter-xs">
+            <q-btn
+              size='xs'
+              icon="img:statics/jbicon/seats/seat13.svg"
             >
               <q-badge
                 color="orange"
@@ -52,41 +48,25 @@
               >SAYC</q-badge>
             </q-btn>
             <q-btn
-                size="xs"
-                label="Prec"
-                icon-right="img:statics/jbicon/seats/seat24.svg"
-              />
-            </q-btn-group>
+              size='xs'
+              icon="img:statics/jbicon/seats/seat24.svg"
+            >
+              <q-badge
+                color="orange"
+                align="top"
+              >Prec</q-badge>
+            </q-btn>
           </div>
         </q-item-section>
       </q-item>
-      <q-item dense>
+      <q-item
+        dense
+        class='boardItem'
+      >
         <q-item-section>
-          <q-item-label overline>Score:</q-item-label>
+          <q-item-label caption>Tricks:</q-item-label>
         </q-item-section>
         <q-item-section>
-          <div class="text-orange">
-            <q-badge
-              color="info"
-              text-color="black"
-              label=''
-            />
-            <q-badge
-              color="info"
-              text-color="black"
-              label=''
-            />
-          </div>
-        </q-item-section>
-      </q-item>
-      <q-item dense>
-        <q-item-section>
-          <q-item-label overline>Tricks:</q-item-label>
-        </q-item-section>
-        <q-item-section
-          side
-          top
-        >
           <div class="text-orange">
             <q-badge
               color="info"
@@ -97,6 +77,28 @@
               color="info"
               text-color="black"
               :label='tricks(1)'
+            />
+          </div>
+        </q-item-section>
+      </q-item>
+      <q-item
+        dense
+        class='boardItem'
+      >
+        <q-item-section>
+          <q-item-label caption>Score:</q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <div class="text-orange">
+            <q-badge
+              color="info"
+              text-color="black"
+              :label='score(0)'
+            />
+            <q-badge
+              color="info"
+              text-color="black"
+              :label='score(1)'
             />
           </div>
         </q-item-section>
@@ -150,6 +152,17 @@ export default {
         // console.log(err)
       }
       return null
+    },
+    score (n) {
+      try {
+        if (this.myTable.plays) {
+          if (n === 0) return this.myTable.plays.info.ScoreNS
+          else if (n === 1) return this.myTable.plays.info.ScoreEW
+        }
+      } catch (err) {
+        // console.log(err)
+      }
+      return null
     }
   },
   watch: {
@@ -171,5 +184,8 @@ export default {
 .boardBox {
   width: 160px;
   height: 120px;
+}
+.boardItem {
+  height: 30px;
 }
 </style>

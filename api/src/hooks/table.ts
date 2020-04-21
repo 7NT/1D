@@ -18,8 +18,97 @@ const state = (): Hook => {
   }
 }
 
-function bidsUpdate (tdata: any) {
-  let _tdata = bidUpdate(tdata)
+function onReady (tdata: any) {
+
+}
+
+async function getBoard (table: any, app: any) {
+  const boardService = app.service('boards')
+  const playedService = app.service('played')
+
+  let _uIds = table.seats.filter((x: any) => x != null)
+  let _played = await playedService.find({
+    query: {
+      $limit: 1,
+      uId: { $nin: _uIds }
+    }
+  })
+
+  let _board: { _id: any; bn: number; bt: any; vulN: any; players: any }
+  try {
+    _board = await boardService.get(_played.data[0].boardId)
+  } catch (err) {
+    const time = new Date().getTime();
+    const bn = time % 128
+    const cards = shuffle()
+    _board = await boardService.create({ bn, cards, time })
+  }
+
+  _uIds.forEach((u: any) => {
+    if (u)
+      playedService.create({
+        boardId: _board._id,
+        uId: u,
+        date: new Date().getTime()
+      })
+  })
+
+  let dealer = (_board.bn - 1) % 4
+  dealer++
+
+  _board.bt = table.bt
+  _board.vulN = vulN(_board.bn)
+  _board.players = table.seats //_uIds
+
+  let _bid = {
+    info: { bidN: 0, bidS: 0, by: 0, P: 0, X: 0, XX: 0 },
+    data: [{ seat: dealer, bid: '?' }]
+  }
+  // let _bids = await bids$.create(_bid)
+  table.state = 1
+  table.board = _board
+  table.bids = _bid
+  table.turn = dealer
+
+  return table
+}
+
+const shuffle = function () {
+  /**
+   * Shuffles array in place. ES6 version
+   * @param {Array} n items An array containing the items.
+   */
+  let n = [...Array(52).keys()]  //.map(x => x + 1)
+  for (let i = n.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [n[i], n[j]] = [n[j], n[i]]
+  }
+
+  let sort4 = []
+  // for (let h in [0, 1, 2, 3]) {
+  for (let h = 0; h < 4; h++) {
+    const h1 = h * 13
+    sort4.push(n.slice(h1, h1 + 13).sort((a, b) => b - a))
+  }
+
+  let card4: any = [[], [], [], []]
+  for (let h in [0, 1, 2, 3]) {
+    for (let i = 0; i < 13; i++) {
+      let c = sort4[h][i] + 1
+      let card = {
+        value: c,
+        suit: N52Suit(c),
+        rank: N52Rank(c)
+      }
+      card4[h].push(card)
+    }
+  }
+
+  return card4
+}
+
+function onBid (tdata: any) {
+  let _tdata = updateBid(tdata)
   let _info = _tdata.bids.info
   if (_info.P > 3 || (_info.P > 2 && _info.by > 0)) {
     _tdata.bids.data.pop()

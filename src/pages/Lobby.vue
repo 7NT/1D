@@ -47,7 +47,7 @@
                       v-for='t in tables'
                       :key='t.id'
                       :myTable='t'
-                      v-on:onSit='onSit'
+                      v-on:onPlayer='onPlayer'
                     />
                   </q-list>
                 </q-tab-panel>
@@ -56,7 +56,7 @@
                   <myPlayTable
                     :myPlayer='myPlayer'
                     :myTable='myTable'
-                    v-on:onSit='onSit'
+                    v-on:onPlayer='onPlayer'
                     class='jbtable'
                   />
                 </q-tab-panel>
@@ -198,7 +198,6 @@ export default {
     },
     getChat () {
       const c = this.getChats(this.chatTo)
-      console.log('c', this.chatTo, c)
       return c
     },
     roomChats: function () {
@@ -230,10 +229,10 @@ export default {
     chatDate (createdAt) {
       return moment(createdAt).format('MMM Do, hh:mm:ss')
     },
-    onSit (seat) {
+    onPlayer (seat) {
+      // seat.uId = this.myPlayer.id
       seat.tId0 = this.myPlayer.tId
       seat.sId0 = this.myPlayer.sId
-      console.log(this.user, seat)
       playerService.patch(this.user._id, seat)
     }
   },
@@ -250,7 +249,7 @@ export default {
     model_RID (n) {
       if (n === 1) {
         if (this.myPlayer.tId) this.chatTo = `#${this.myPlayer.tId}`
-        // else this.onSit({ tId: this.myPlayer.id, sId: 0 })
+        // else this.onPlayer({ tId: this.myPlayer.id, sId: 0 })
       } else {
         this.chatTo = '#Lobby'
       }
@@ -263,7 +262,7 @@ export default {
     }
     */
     myTable (n, o) {
-      console.log('t', n, o, this.myPlayer)
+      // console.log('t', n, o, this.myPlayer)
       this.model_RID = n ? 1 : 0
     }
   },

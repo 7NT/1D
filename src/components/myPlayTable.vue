@@ -4,7 +4,7 @@
       <div class='col'>
         <div class='row no-wrap'>
           <div class='col-3 items-start'>
-            <myBoard :myTable='myTable' v-on:onBT='onBT'></myBoard>
+            <myBoard :myTable='myTable' :mySid='mySid' v-on:onTable='onTable'></myBoard>
           </div>
           <div class='col-6 box'>
             <div class='column'>
@@ -12,7 +12,7 @@
                 :handId='1'
                 :myPlayer='myPlayer'
                 :myTable='myTable'
-                v-on:onAction='onAction'
+                v-on:onTable='onTable'
                 class='myHand justify-start'
               />
             </div>
@@ -35,7 +35,7 @@
                 :handId='4'
                 :myPlayer='myPlayer'
                 :myTable='myTable'
-                v-on:onAction='onAction'
+                v-on:onTable='onTable'
                 class='myHand justify-end'
               />
             </div>
@@ -67,7 +67,7 @@
                 :handId='2'
                 :myPlayer='myPlayer'
                 :myTable='myTable'
-                v-on:onAction='onAction'
+                v-on:onTable='onTable'
                 class='myHand justify-start'
               />
             </div>
@@ -87,7 +87,7 @@
                 :handId='3'
                 :myPlayer='myPlayer'
                 :myTable='myTable'
-                v-on:onAction='onAction'
+                v-on:onTable='onTable'
                 class='myHand justify-end'
               />
             </div>
@@ -180,7 +180,7 @@
                     glaosy
                     label='Pass'
                     color='primary'
-                    @click="onBid('P')"
+                    @click="onBid('Pass')"
                     style='width:45%'
                   />
                 </q-btn-group>
@@ -276,22 +276,6 @@ export default {
       const b = this.myTurn === this.myPlayer.sId ? this.myState : 0
       return b
     },
-    onBT (bt) {
-      const message = `Board will switch to ${bt} next`
-      // say.speak(message)
-      switch (bt) {
-        case 'MP':
-        case 'IMP':
-        case 'XIMP':
-          this.$data.tableData.bt = bt
-          this.$q.notify({
-            type: 'positive',
-            message
-          })
-          break
-        default:
-      }
-    },
     onState (s) {
       console.log('t', s, this.myTable)
       /*
@@ -318,15 +302,30 @@ export default {
       data.push({ seat, bid })
       seat = (seat % 4) + 1
       data.push({ seat, bid: '?' })
-      this.onAction({ action: 'bid', bid: { bids: { info, data } } })
+      this.onTable({ action: 'bid', bid: { bids: { info, data } } })
       // const tts = jb.jbVoiceName(bid)
       // say.speak(tts)
     },
-    onAction (action) {
-      console.log('onAction', action)
+    onTable (action) {
+      console.log('onTable', action)
       switch (action.action) {
         case 'sit': {
-          this.$emit('onSit', { tId: this.myPlayer.tId, sId: action.sit.sId })
+          this.$emit('onPlayer', { tId: this.myPlayer.tId, sId: action.sit.sId })
+          break
+        }
+        case 'ready': {
+          // tableService.patch(this.myPlayer.tId, { state: action.ready.state, ready: action.ready.ready })
+          tableService.patch(this.myPlayer.tId, { state: action.state, ready: action.ready })
+          break
+        }
+        case 'bt': {
+          // tableService.patch(this.myPlayer.tId, { state: action.ready.state, ready: action.ready.ready })
+          tableService.patch(this.myPlayer.tId, { bt: action.bt })
+          break
+        }
+        case 'cc': {
+          // tableService.patch(this.myPlayer.tId, { state: action.ready.state, ready: action.ready.ready })
+          tableService.patch(this.myPlayer.tId, { cc: action.cc })
           break
         }
         case 'bid': {

@@ -84,7 +84,7 @@ export default {
   },
   watch: {},
   mounted () {
-    console.log('t', this.myTable)
+    // console.log('t', this.myTable)
   }
 }
 </script>

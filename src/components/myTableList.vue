@@ -27,15 +27,7 @@
             icon='event_seat'
             :color='scolor(n)'
             style='width:100px'
-          >
-            <q-tooltip>{{ sname[n-1] }}</q-tooltip>
-          </q-btn>
-          <!--
-          <q-separator
-            vertical
-            inset
           />
-          -->
         </q-btn-group>
         <q-btn
           flat
@@ -69,8 +61,8 @@ export default {
 
   data () {
     return {
-      sname: ['North', 'East', 'South', 'West'],
-      pname: [null, null, null, null]
+      sname: ['North', 'East', 'South', 'West']
+      // pname: [null, null, null, null]
     }
   },
   computed: {
@@ -96,33 +88,35 @@ export default {
   methods: {
     // ...mapActions('jstore', ['addUser']),
     nickName (n) {
-      const pId = this.myTable.seats[n - 1]
-      if (!pId) {
+      const s = this.myTable.seats[n - 1]
+      if (!s) {
         return 'SIT...'
       } else {
-        const p = this.getPlayerById(pId)
-        return p ? p.nick || p._id : 'SIT...'
+        const p = this.getPlayerById(s)
+        return p ? p.nick : 'SIT...'
       }
     },
     scolor (n) {
-      const pId = this.myTable.seats[n - 1]
-      return pId ? 'info' : 'positive'
+      const s = this.myTable.seats[n - 1]
+      return s ? 'info' : 'positive'
     },
     sit (sId) {
       if (!this.myTable.seats[sId - 1]) {
-        this.$emit('onSit', { tId: this.myTable.id, sId })
+        this.$emit('onPlayer', { tId: this.myTable.id, sId })
       } else {
         this.$q.notify({ type: 'negative', message: 'This seat is taken' })
       }
     }
   },
   watch: {
+    /*
     myTable (n, o) {
-      // console.log('t', n)
+      console.log('t', n)
     }
+    */
   },
   mounted () {
-    console.log('t', this.myTable)
+    // console.log('t', this.myTable)
   }
 }
 </script>

@@ -47,9 +47,9 @@
           flat
           round
           dense
-          icon='contacts'
+          icon='menu_book'
           @click='playerList = !playerList'
-          aria-label='Player List...'
+          aria-label='ScoreBook'
           v-show='authenticated'
         />
         <q-btn
@@ -186,8 +186,9 @@
           header
           class='text-grey-8'
         >
-          Essential Links
+          My ScoreBook:
         </q-item-label>
+        <q-separator />
         <EssentialLink
           v-for='link in essentialLinks'
           :key='link.title'

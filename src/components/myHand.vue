@@ -1,62 +1,58 @@
 <template>
-  <div class='row items-end'>
-    <div class='column'>
-      <div class='row self-end no-wrap'>
-        <q-card
-          flat
-          v-if='isVisible'
-          class='transparent'
-        >
-          <div class='hand hhand-compact active-hand full-width'>
+  <div class="row items-end">
+    <div class="column">
+      <div class="row self-end no-wrap">
+        <q-card flat v-if="isVisible" class="transparent">
+          <div class="hand hhand-compact active-hand full-width">
             <img
-              v-for='(c, i) of myCards'
-              :key='`${i}`'
-              :src='cardImg(c)'
-              @click='onPlay(c)'
-              class='card'
+              v-for="(c, i) of myCards"
+              :key="`${i}`"
+              :src="cardImg(c)"
+              @click="onPlay(c)"
+              class="card"
             />
           </div>
         </q-card>
       </div>
-      <div class='pbar'>
-        <q-btn-group
-          flat
-          spread
-        >
-          <q-icon
-            :name='seatIcon'
-            class='seat'
-          />
-          <q-icon
-            :name='flag'
-            class='flag'
-          />
+      <div class="pbar">
+        <q-btn-group flat dense spread>
+          <q-icon :name="seatIcon" class="seat" />
+          <q-icon :name="flag" class="flag" />
           <q-btn
             flat
             outline
             dense
             no-caps
+            no-wrap
             ellipsis
-            @click='onSit'
-            :label='nick'
-            :color='ucolor'
-            :icon='myAvatar'
-            align='left'
+            :label="nick"
+            :color="ucolor"
+            :icon="myAvatar"
+            align="left"
+            class="player"
+          />
+          <q-space />
+          <q-btn
+            dense
+            push
+            ripple
+            color="primary"
+            :icon="player ? 'check' : 'hourglass_full'"
+            :label="player ? 'Ready' : 'Sit'"
+            v-show="!player || isReady === 0"
+            class="ready"
+            @click="onReady"
           />
           <q-btn-dropdown
             push
             split
-            v-if='isDeclarer'
-            :label='contract'
-            color='info'
-            class='declarer'
+            v-if="isDeclarer"
+            :label="contract"
+            color="info"
+            class="declarer"
           >
             <q-list dense>
-              <q-item
-                clickable
-                v-close-menu
-                @click='onClaim'
-              >
+              <q-item clickable v-close-menu @click="onClaim">
                 <q-item-section>
                   <q-item-label label>Claim All</q-item-label>
                   <q-item-label label>Concede All</q-item-label>
@@ -81,8 +77,9 @@ export default {
   data () {
     return {
       seatId: 0,
+      NESW: ['North', 'East', 'South', 'West'],
       player: null,
-      nick: '[SIT...]',
+      nick: null,
       myCards: []
     }
   },
@@ -114,12 +111,15 @@ export default {
         try {
           const flag = this.player.country.toLowerCase()
           return `img:statics/flags/4x3/${flag}.svg`
-        } catch (_) { }
+        } catch (_) {}
       }
       return null
     },
     seatIcon () {
       return `img:statics/jbicon/seats/seat${this.seatId}.svg`
+    },
+    isReady () {
+      return this.myTable.ready[this.seatId - 1]
     },
     isDeclarer () {
       try {
@@ -144,28 +144,46 @@ export default {
     contract () {
       return this.myTable.bids ? this.myTable.bids.info.contract : null
     },
+    playerBtn () {
+      if (!this.player) return 'Ready...'
+      else if (this.isDeclarer) return this.contract
+      return null
+    },
     playedCards () {
       try {
         if (this.myTable.state > 1) {
           return this.myTable.plays.data.map(x => x.card)
         }
-      } catch (_) { }
+      } catch (_) {}
       return []
     }
   },
   methods: {
     // ...mapActions('jstore', ['addUser']),
-    onSit () {
+    onReady () {
       if (!this.player) {
         const seat = {
           action: 'sit',
+          state: this.myTable.state,
           sit: {
-            sId: this.seatId
+            // uId: this.player.id,
+            tId: this.myPlayer.tId,
+            sId: this.seatId,
+            tId0: this.myPlayer.tId,
+            sId0: this.myPlayer.sId
           }
         }
-        this.$emit('onAction', seat)
+        this.$emit('onTable', seat)
       } else if (this.player.id === this.myPlayer.id) {
-        this.$q.notify({ type: 'info', message: 'Ready' })
+        const _ready = this.myTable.ready.slice(0) || [null, null, null, null]
+        _ready[this.seatId - 1] = this.seatId
+        const ready = {
+          action: 'ready',
+          state: this.myTable.state,
+          ready: _ready
+        }
+        this.$emit('onTable', ready)
+        this.$q.notify({ type: 'info', message: 'I am Ready' })
       } else {
         this.$q.notify({ type: 'negative', message: 'This seat is taken' })
       }
@@ -173,7 +191,7 @@ export default {
     onPlay (n) {
       if (this.isMyPlay()) {
         if (this.cardCheck(n)) {
-          this.$emit('onAction', {
+          this.$emit('onTable', {
             action: 'play',
             play: {
               uId: this.myPlayer.id,
@@ -200,17 +218,18 @@ export default {
     },
     updatePlayer () {
       this.seatId = jb.seatX(this.handId, this.mySid)
-      // console.log('h', this.handId, this.mySid, this.seatId, this.myTable)
       const pId = this.myTable.seats[this.seatId - 1]
       this.player = this.getPlayerById(pId)
-      this.nick = this.player ? this.player.nick : '[SIT...]'
+      this.nick = this.player ? this.player.nick : this.NESW[this.seatId - 1]
       this.updateCards()
     },
     updateCards () {
       try {
         let playCards = this.myTable.board.cards[this.seatId - 1]
         const _played = this.playedCards.map(x => x.value)
-        if (_played.length) { playCards = playCards.filter(c => !_played.includes(c.value)) }
+        if (_played.length) {
+          playCards = playCards.filter(c => !_played.includes(c.value))
+        }
 
         this.$data.myCards = playCards
       } catch (err) {
@@ -225,7 +244,9 @@ export default {
         if (lead.card.suit === play.suit) {
           return true
         } else {
-          const _suit = this.$data.myCards.filter(c => c.suit === lead.card.suit)
+          const _suit = this.$data.myCards.filter(
+            c => c.suit === lead.card.suit
+          )
           console.log(lead.card.suit, _suit)
           return _suit.length === 0
         }
@@ -240,10 +261,9 @@ export default {
     isMyTurn () {
       try {
         if (this.myTable.turn === this.seatId) {
-          if (this.isDummy) return this.myPlayer.sId === this.myTable.bids.info.by
-          else return true
+          if (this.isDummy) { return this.myPlayer.sId === this.myTable.bids.info.by } else return true
         }
-      } catch (_) { }
+      } catch (_) {}
       return false
     }
   },
@@ -259,19 +279,20 @@ export default {
     // console.log('t', this.seatId, this.myTable)
     this.updatePlayer()
   },
-  created () {
-  }
+  created () {}
 }
 </script>
 
 <style scoped>
 .pbar {
-  min-width: 250px;
+  min-width: 275px;
   height: 32px;
-  margin: 0px;
+  margin-bottom: 0px;
   align-items: flex-start;
   text-overflow: ellipsis;
   background-image: url("/statics/imgs/jbpbar.png");
+  background-repeat: no-repeat;
+  background-size: cover;
   opacity: 1;
   z-index: 100;
 }
@@ -286,22 +307,29 @@ img.card {
 .seat {
   width: 24px;
   height: 30px;
-  margin: auto;
+  margin-top: 1px;
 }
 .flag {
   width: 32px;
   height: 24px;
-  margin: auto;
+  margin-top: 2px;
 }
 .avatar {
   width: 24px;
   height: 24px;
-  margin: auto;
+  margin-top: 1px;
 }
-.declarer {
+.ready {
   height: 24px;
-  margin: auto;
+  width: 50px;
+  margin-top: 2px;
+  margin-right: 5px;
 }
+.player .declarer {
+  height: 24px;
+  margin-top: 1px;
+}
+
 /*
 * A hand is a div containing cards.
 */

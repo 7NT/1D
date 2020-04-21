@@ -2,30 +2,46 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
 import { isPlayer, getMIX, vulN, N52Suit, N52Rank } from '../jb'
+// import tablesHooks from '../services/tables/tables.hooks'
 
 const state = (): Hook => {
   return async (context: HookContext) => {
-    const { board, bids, plays } = context.data
-    // console.log(context)
-    if (board) {
-      // skip
+    const { ready, bids, plays } = context.data
+    // console.log('table', context)
+    if (ready) {
+      // console.log('ready0', context.data)
+      context.data = await onReady(context)
     } else if (plays) {
-      context.data = playsUpdate(context.data)
+      context.data = onPlay(context.data)
     } else if (bids) {
-      context.data = bidsUpdate(context.data)
+      context.data = onBid(context.data)
     }
     return Promise.resolve(context)
   }
 }
 
-function onReady (tdata: any) {
-
+async function onReady (context:any) {
+  const { state, ready } = context.data
+  switch (state) {
+    case -1:
+    case 0:
+      {
+        let sum = ready.reduce((acc: number, val: number) => {
+          return acc + val
+        })
+        // if (sum === 10) await getBoard(context)
+        if (sum > 0) return await getBoard(context)
+      }
+    default: return context.data
+  }
 }
 
-async function getBoard (table: any, app: any) {
-  const boardService = app.service('boards')
-  const playedService = app.service('played')
+async function getBoard (context: any) {
+  const tableService = context.app.service('tables')
+  const boardService = context.app.service('boards')
+  const playedService = context.app.service('played')
 
+  let table = await tableService.get(context.id)
   let _uIds = table.seats.filter((x: any) => x != null)
   let _played = await playedService.find({
     query: {
@@ -69,7 +85,8 @@ async function getBoard (table: any, app: any) {
   table.board = _board
   table.bids = _bid
   table.turn = dealer
-
+  table.ready = [1,2,3,4]
+  // return await tableService.patch(context.id, table)
   return table
 }
 
@@ -131,7 +148,7 @@ function onBid (tdata: any) {
   return _tdata
 }
 
-function bidUpdate (tdata: any) {
+function updateBid (tdata: any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
   let bidN = 0, bidS = 0, contract
   let by = 0, P = 0, X = 0, XX = 0, turn = 0
@@ -143,6 +160,7 @@ function bidUpdate (tdata: any) {
         turn = b.seat
         break
       case 'P':
+      case 'Pass':
         P++
         break
       case 'X':
@@ -205,7 +223,7 @@ function bidSuit (b: any) {
   }
 }
 
-function playsUpdate (tdata: any) {
+function onPlay (tdata: any) {
   let n = tdata.plays.data.length
   if (n < 1) return tdata
 

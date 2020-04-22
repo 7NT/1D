@@ -3,30 +3,38 @@
 import { Hook, HookContext } from '@feathersjs/feathers'
 import { isPlayer, getMIX, vulN, N52Suit, N52Rank } from '../jb'
 
-const beforeSit = (): Hook => {
+const status = (): Hook => {
   return async (context: HookContext) => {
-    const { connection } = context.params
-    if (connection) {
-      const tableService = context.app.service('tables')
-      const { user } = connection
-      // const uId = user._id
-      const { tId: tId1, sId: sId1, tId0, sId0 } = context.data
-      // console.log('beforeSit', context.data, user)
-
-      if (tId0 !== tId1) {  //leave table
-        if (tId0) {
-          leaveTable(tableService, user, tId0, sId0)
-          context.app.channel(`#${tId0}`).leave(connection)
-        }
-      }
-
-      let t1 = await getTable(tableService, user, tId1, sId1)
-      context.data.tId = t1.id
-      context.app.channel(`#${t1.id}`).join(connection);
-
-      return Promise.resolve(context)
+    const { sId } = context.data
+    if (sId) {
+      context.data = await beforeSit(context)
     }
+    return Promise.resolve(context)
   }
+}
+
+async function beforeSit (context:any) {
+  const { connection } = context.params
+  if (connection) {
+    const tableService = context.app.service('tables')
+    const { user } = connection
+    // const uId = user._id
+    const { tId: tId1, sId: sId1, tId0, sId0 } = context.data
+    // console.log('beforeSit', context.data, user)
+
+    if (tId0 !== tId1) {  //leave table
+      if (tId0) {
+        leaveTable(tableService, user, tId0, sId0)
+        context.app.channel(`#${tId0}`).leave(connection)
+      }
+    }
+
+    let t1 = await getTable(tableService, user, tId1, sId1)
+    context.data.tId = t1.id
+    context.app.channel(`#${t1.id}`).join(connection);
+    //return Promise.resolve(context)
+  }
+  return context.data
 }
 
 async function getTable (tservice$: any, user: any, tId: any, sId: number) {
@@ -139,7 +147,6 @@ const logout = (): Hook => {
 }
 
 export {
-  beforeSit,
-  afterSit,
+  status,
   logout
 }

@@ -71,7 +71,7 @@
               default-opened
               dense
               icon='chat'
-              :label='chatTo'
+              :label='getTableName'
               header-class='myChats'
             >
               <q-separator />
@@ -195,6 +195,12 @@ export default {
     ...mapGetters('jstore', ['myPlayer', 'getTableById', 'getChats']),
     myTable () {
       return this.getTableById(this.myPlayer.tId)
+    },
+    getTableName () {
+      const tId = this.chatTo.substring(1)
+      const t = this.getTableById(tId)
+      if (t) return t.name
+      else return '#Lobby'
     },
     getChat () {
       const c = this.getChats(this.chatTo)

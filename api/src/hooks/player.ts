@@ -9,9 +9,9 @@ const beforeSit = (): Hook => {
     if (connection) {
       const tableService = context.app.service('tables')
       const { user } = connection
-      const uId = user._id
+      // const uId = user._id
       const { tId: tId1, sId: sId1, tId0, sId0 } = context.data
-      console.log('beforeSit', context.data, user)
+      // console.log('beforeSit', context.data, user)
 
       if (tId0 !== tId1) {  //leave table
         if (tId0) {
@@ -20,7 +20,7 @@ const beforeSit = (): Hook => {
         }
       }
 
-      let t1 = await getTable (tableService, user, tId1, sId1)
+      let t1 = await getTable(tableService, user, tId1, sId1)
       context.data.tId = t1.id
       context.app.channel(`#${t1.id}`).join(connection);
 
@@ -32,7 +32,7 @@ const beforeSit = (): Hook => {
 async function getTable (tservice$: any, user: any, tId: any, sId: number) {
   let table
   if (!tId) {  //new table
-    table = await newTable (tservice$, user, getMIX(), sId)
+    table = await newTable(tservice$, user, getMIX(), sId)
   } else {
     table = await tservice$.get(tId)
     let seats = table.seats
@@ -57,20 +57,20 @@ async function getTable (tservice$: any, user: any, tId: any, sId: number) {
 async function newTable (tservice$: any, user: any, mix: any, sId: number) {
   const tdata = {
     id: user._id,
-    name: user.nick,
+    name: '#' + user.nick,
     state: 0,
     turn: 0,
     bt: mix,
     players: 1,
-    seats: [null,null,null,null],
-    ready: [0,0,0,0]
+    seats: [null, null, null, null],
+    ready: [0, 0, 0, 0]
   }
   tdata.seats[sId - 1] = user._id
   // tdata.ready[sId - 1] = sId
   return await tservice$.create(tdata)
 }
 
-async function leaveTable(tservice$: any, user: any, tId: any, sId: number) {
+async function leaveTable (tservice$: any, user: any, tId: any, sId: number) {
   let table = await tservice$.get(tId)
   // free seat
   if (table.players < 2) {
@@ -96,10 +96,11 @@ async function leaveTable(tservice$: any, user: any, tId: any, sId: number) {
 
 const afterSit = (): Hook => {
   return async (context: HookContext) => {
+    /*
     const { connection } = context.params
     if (connection) {
       // const userService = context.app.service('users')
-      const { user } = connection
+      // const { user } = connection
       const uId = context.id
 
       let player
@@ -108,6 +109,7 @@ const afterSit = (): Hook => {
       }
       // console.log('after', context.data, player)
     }
+    */
     return Promise.resolve(context)
   }
 }
@@ -128,7 +130,7 @@ const logout = (): Hook => {
           let t = await tableService.get(tId)
           leaveTable(tableService, t, uId, sId)
         }
-        const userData = { tId, sId, state: 0, logoutAt: new Date().getTime()}
+        const userData = { tId, sId, state: 0, logoutAt: new Date().getTime() }
         userService.patch(uId, userData)
       }
     }

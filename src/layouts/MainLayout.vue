@@ -160,7 +160,7 @@
             <q-item-label
               caption
               lines='1'
-            >@{{ p.tId || 'Lobby'}}</q-item-label>
+            >{{ getTableName(p.tId) }}</q-item-label>
           </q-item-section>
           <q-item-section side>
             <q-icon
@@ -204,7 +204,7 @@
 
 <script>
 import EssentialLink from 'components/EssentialLink'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { userService, playerService, tableService } from 'src/api'
 import auth from 'src/auth'
 
@@ -267,7 +267,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
-    // ...mapGetters('jstore', ['myTable']),
+    ...mapGetters('jstore', ['getTableById']),
     authenticated () {
       return this.user != null
     }
@@ -300,6 +300,11 @@ export default {
             message: 'Cannot logout, please check again in a few minutes'
           })
         })
+    },
+    getTableName (tId) {
+      const t = this.getTableById(tId)
+      if (t) return t.name
+      else return '#Lobby'
     },
     updateUser (u) {
       this.user = u

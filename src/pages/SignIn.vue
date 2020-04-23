@@ -14,14 +14,14 @@
             v-model='email'
             filled
             type='email'
-            hint='Email'
+            label='Email'
           />
 
           <q-input
             v-model='password'
             filled
             :type="isPwd ? 'password' : 'text'"
-            hint='Password'
+            label='Password'
           >
             <template v-slot:append>
               <q-icon

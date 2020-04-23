@@ -25,9 +25,9 @@
             no-caps
             no-wrap
             ellipsis
-            :label="nick"
+            :label="pNick"
             :color="ucolor"
-            :icon="myAvatar"
+            :icon="pAvatar"
             align="left"
             class="player"
           />
@@ -78,7 +78,7 @@ export default {
     return {
       seatId: 0,
       NESW: ['North', 'East', 'South', 'West'],
-      player: null,
+      // player: null,
       nick: null,
       myCards: []
     }
@@ -88,19 +88,36 @@ export default {
   },
   computed: {
     ...mapGetters('jstore', ['getPlayerById']),
-    mySid: {
+    mySeat: {
       get: function () {
-        return this.myPlayer.sId
+        return this.myPlayer.seat
       }
     },
-    myAvatar: {
+    seatX: {
       get: function () {
-        return this.player ? `img:${this.player.avatar}` : null
+        return jb.seatX(this.handId, this.mySeat.sId)
       }
     },
+    player: {
+      get: function () {
+        const pId = this.myTable.seats[this.seatX - 1]
+        return this.getPlayerById(pId)
+      }
+    },
+    pNick: {
+      get: function () {
+        return this.player ? this.player.nick : this.NESW[this.seatX - 1]
+      }
+    },
+    pAvatar: {
+      get: function () {
+        return this.player ? `img:${this.player.profile.avatar}` : null
+      }
+    },
+
     isVisible () {
       if (this.isDummy) return true
-      else return this.seatId === this.mySid
+      else return this.seatX === this.mySeat.sId
     },
     ucolor () {
       if (this.isMyTurn()) return 'warning'
@@ -109,21 +126,21 @@ export default {
     flag () {
       if (this.player) {
         try {
-          const flag = this.player.country.toLowerCase()
-          return `img:statics/flags/4x3/${flag}.svg`
+          const flag2 = this.player.profile.flag.toLowerCase()
+          return `img:statics/flags/4x3/${flag2}.svg`
         } catch (_) {}
       }
       return null
     },
     seatIcon () {
-      return `img:statics/jbicon/seats/seat${this.seatId}.svg`
+      return `img:statics/jbicon/seats/seat${this.seatX}.svg`
     },
     isReady () {
-      return this.myTable.ready[this.seatId - 1]
+      return this.myTable.ready[this.seatX - 1]
     },
     isDeclarer () {
       try {
-        if (this.myTable.bids) return this.myTable.bids.info.by === this.seatId
+        if (this.myTable.bids) return this.myTable.bids.info.by === this.seatX
       } catch (_) {
         // console.log(err);
       }
@@ -133,7 +150,7 @@ export default {
       try {
         if (this.myTable.state > 1) {
           if (this.myTable.plays.data.length > 0) {
-            return (this.myTable.bids.info.by + 2) % 4 === this.seatId % 4
+            return (this.myTable.bids.info.by + 2) % 4 === this.seatX % 4
           }
         }
       } catch (_) {
@@ -165,18 +182,15 @@ export default {
         const seat = {
           action: 'sit',
           state: this.myTable.state,
-          sit: {
-            // uId: this.player.id,
-            tId: this.myPlayer.tId,
-            sId: this.seatId,
-            tId0: this.myPlayer.tId,
-            sId0: this.myPlayer.sId
+          seat: {
+            tId: this.myTable.id,
+            sId: this.seatX
           }
         }
         this.$emit('onTable', seat)
       } else if (this.player.id === this.myPlayer.id) {
         const _ready = this.myTable.ready.slice(0) || [null, null, null, null]
-        _ready[this.seatId - 1] = this.seatId
+        _ready[this.seatX - 1] = this.seatX
         const ready = {
           action: 'ready',
           state: this.myTable.state,
@@ -195,7 +209,7 @@ export default {
             action: 'play',
             play: {
               uId: this.myPlayer.id,
-              sId: this.seatId,
+              sId: this.seatX,
               winner: 0,
               z: this.myTable.plays.data.length || 0,
               card: n
@@ -217,15 +231,11 @@ export default {
       return `statics/cards/${n52.rank + n52.suit}.svg`
     },
     updatePlayer () {
-      this.seatId = jb.seatX(this.handId, this.mySid)
-      const pId = this.myTable.seats[this.seatId - 1]
-      this.player = this.getPlayerById(pId)
-      this.nick = this.player ? this.player.nick : this.NESW[this.seatId - 1]
       this.updateCards()
     },
     updateCards () {
       try {
-        let playCards = this.myTable.board.cards[this.seatId - 1]
+        let playCards = this.myTable.board.cards[this.seatX - 1]
         const _played = this.playedCards.map(x => x.value)
         if (_played.length) {
           playCards = playCards.filter(c => !_played.includes(c.value))
@@ -260,23 +270,26 @@ export default {
     },
     isMyTurn () {
       try {
-        if (this.myTable.turn === this.seatId) {
-          if (this.isDummy) { return this.myPlayer.sId === this.myTable.bids.info.by } else return true
+        if (this.myTable.turn === this.seatX) {
+          if (this.isDummy) { return this.myPlayer.seat.sId === this.myTable.bids.info.by } else return true
         }
       } catch (_) {}
       return false
     }
   },
   watch: {
-    mySid (x) {
+    mySeat (x) {
       this.updatePlayer()
     },
     myTable (t, o) {
       this.updatePlayer()
+    },
+    myPlayer (n, o) {
+      this.updatePlayer()
     }
   },
   mounted () {
-    // console.log('t', this.seatId, this.myTable)
+    // console.log('t', this.seatX, this.myTable)
     this.updatePlayer()
   },
   created () {}

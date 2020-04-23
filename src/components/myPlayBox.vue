@@ -41,8 +41,8 @@ export default {
   },
   computed: {
     // ...mapGetters('jstore', ['myPlayer', 'myTable']),
-    mySid () {
-      return this.myPlayer.sId
+    mySeat () {
+      return this.myPlayer.seat
     },
     myPlays () {
       return this.myTable.plays || null
@@ -63,13 +63,13 @@ export default {
       }
     },
     cardImg (n) {
-      const x = jb.seatX(n, this.mySid)
+      const x = jb.seatX(n, this.mySeat.sId)
       const c = this.card4.filter(c => c.sId === x)[0] || null
       if (c) return `statics/cards/${c.card.rank + c.card.suit}.svg`
       else return null
     },
     zIndex (n) {
-      const x = jb.seatX(n, this.mySid)
+      const x = jb.seatX(n, this.mySeat.sId)
       const c = this.card4.filter(c => c.sId === x)[0] || null
       if (c) return `z-index:${c.z}`
       else return -1

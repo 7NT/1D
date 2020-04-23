@@ -55,7 +55,6 @@
                 <q-tab-panel :name='1'>
                   <myPlayTable
                     :myPlayer='myPlayer'
-                    :myTable='myTable'
                     v-on:onPlayer='onPlayer'
                     class='jbtable'
                   />
@@ -80,7 +79,7 @@
                   v-for="chat in roomChats"
                   :key='chat._id'
                   :name='chat.from.nick'
-                  :avatar='chat.from.avatar'
+                  :avatar='chat.from.profile.avatar'
                   :text='[chat.text]'
                   :stamp='chatDate(chat.createdAt)'
                   :sent='isSent(chat.from) ? true : false'
@@ -101,7 +100,7 @@
           class='q-mr-xs'
         />
         <q-avatar class='gt-xs'>
-          <img :src='user.avatar' />
+          <img :src='user.profile.avatar' />
         </q-avatar>
         <q-space />
         <div class='full-width'>
@@ -193,8 +192,9 @@ export default {
   computed: {
     ...mapState('jstore', ['players', 'tables']),
     ...mapGetters('jstore', ['myPlayer', 'getTableById', 'getChats']),
-    myTable () {
-      return this.getTableById(this.myPlayer.tId)
+
+    mySeat () {
+      return this.myPlayer.seat
     },
     getTableName () {
       const tId = this.chatTo.substring(1)
@@ -229,47 +229,36 @@ export default {
       }
     },
     isSent (from) {
-      // return from.userId === this.user._id
       return from._id === this.user._id
     },
     chatDate (createdAt) {
       return moment(createdAt).format('MMM Do, hh:mm:ss')
     },
     onPlayer (seat) {
-      // seat.uId = this.myPlayer.id
-      seat.tId0 = this.myPlayer.tId
-      seat.sId0 = this.myPlayer.sId
-      playerService.patch(this.user._id, seat)
+      seat.tId0 = this.mySeat.tId
+      seat.sId0 = this.mySeat.sId
+      playerService.patch(this.user._id, { seat })
     }
   },
   mounted () {
-    if (!this.user.country) this.$router.push({ name: 'profile' })
+    console.log('u', this.user)
+    if (!this.user.profile.flag) this.$router.push({ name: 'profile' })
     chatService.on('created', chat => {
-      // if (chat.to === '#Lobby')
       this.myChats.unshift(chat)
-      // this.updateChat(chat)
-      console.log('c', this.myChats)
     })
   },
   watch: {
     model_RID (n) {
       if (n === 1) {
-        if (this.myPlayer.tId) this.chatTo = `#${this.myPlayer.tId}`
+        if (this.myPlayer.seat.tId) this.chatTo = `#${this.myPlayer.seat.tId}`
         // else this.onPlayer({ tId: this.myPlayer.id, sId: 0 })
       } else {
         this.chatTo = '#Lobby'
       }
       // this.myChats = this.getChats(this.chatTo)
     },
-    /*
-    myPlayer (n, o) {
-      console.log('p', n, o)
+    mySeat (n, o) {
       this.model_RID = n.tId ? 1 : 0
-    }
-    */
-    myTable (n, o) {
-      // console.log('t', n, o, this.myPlayer)
-      this.model_RID = n ? 1 : 0
     }
   },
   created () {

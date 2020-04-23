@@ -6,11 +6,9 @@ import { Params } from 'express-serve-static-core';
 interface PlayerData {
   id: string;
   nick?: string;
-  avatar?: string;
-  country?: string;
+  profile?: { avatar?: string; flag?: string };
   state: number,
-  tId?: string;
-  sId?: number;
+  seat: { tId?: string; sId?: number }
 }
 
 export class Players extends Service {
@@ -20,16 +18,14 @@ export class Players extends Service {
 
   create (data: PlayerData, params?: Params) {
     // This is the information we want from the player enter lobby
-    const { id, nick, avatar, country, state, tId, sId } = data;
+    const { id, nick, profile, state, seat } = data;
     // The complete player
     const playerData = {
       id,
       nick,
-      avatar,
-      country,
+      profile,
       state,
-      tId,
-      sId
+      seat
     };
 
     return super.create(playerData, params);

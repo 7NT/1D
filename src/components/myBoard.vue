@@ -173,7 +173,7 @@ import jb from 'src/jb'
 
 export default {
   name: 'myBoard',
-  props: ['myTable', 'mySid'],
+  props: ['myTable', 'mySeat'],
 
   data () {
     return {
@@ -205,8 +205,8 @@ export default {
       return this.myTable.cc || ['SAYC', 'SAYC']
     },
     isMyCC: function () {
-      if (jb.isPlayer(this.mySid)) {
-        return (this.mySid - 1) % 2
+      if (jb.isPlayer(this.mySeat.sId)) {
+        return (this.mySeat.sId - 1) % 2
       }
       return null
     }

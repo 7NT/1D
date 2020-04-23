@@ -7,7 +7,7 @@ export const myPlayer = state => {
 }
 
 export const getPlayerById = state => id => {
-  let p = state.players.find(player => player.id === id)
+  let p = state.players.find(p => p.id === id)
   if (!p) {
     p = state.users.find(user => user._id === id)
     // p.state = -1
@@ -16,9 +16,9 @@ export const getPlayerById = state => id => {
 }
 
 export const getTableById = state => id => {
-  return state.tables.find(table => table.id === id)
+  return state.tables.find(t => t.id === id)
 }
 
 export const getChats = state => id => {
-  return state.chats.find(chat => chat.to === id)
+  return state.chats.find(c => c.to === id)
 }

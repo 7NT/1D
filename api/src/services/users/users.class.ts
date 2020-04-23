@@ -11,11 +11,11 @@ const query = 's=60';
 // A type interface for our user (it does not validate any data)
 interface UserData {
   _id?: string;
+  id?: string;
+  nick: string,
   email: string;
   password: string;
-  nick: string;
-  avatar?: string;
-  netId?: string;
+  profile: { avatar?: string, flag?: string };
   createdAt: number;
 }
 
@@ -26,19 +26,20 @@ export class Users extends Service<UserData> {
 
   create (data: UserData, params?: Params) {
     // This is the information we want from the user signup data
-    const { email, password, netId } = data;
+    const { email, password, id } = data;
     const nick = email.split('@')[0];
     // Gravatar uses MD5 hashes from an email address (all lowercase) to get the image
     const hash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
     // The full avatar URL
     const avatar = `${gravatarUrl}/${hash}?${query}`;
     // The complete user
+    const flag = 'us'
     const userData = {
+      id,
+      nick,
       email,
       password,
-      nick,
-      avatar,
-      netId,
+      profile: { avatar, flag },
       createdAt: new Date().getTime()
     };
 

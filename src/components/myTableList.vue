@@ -23,7 +23,7 @@
             no-caps
             no-wrap
             @click='sit(n)'
-            :label='nickName(n)'
+            :label='pNick(n)'
             icon='event_seat'
             :color='scolor(n)'
             style='width:100px'
@@ -87,7 +87,7 @@ export default {
   },
   methods: {
     // ...mapActions('jstore', ['addUser']),
-    nickName (n) {
+    pNick (n) {
       const s = this.myTable.seats[n - 1]
       if (!s) {
         return 'SIT...'
@@ -102,7 +102,11 @@ export default {
     },
     sit (sId) {
       if (!this.myTable.seats[sId - 1]) {
-        this.$emit('onPlayer', { tId: this.myTable.id, sId })
+        const seat = {
+          tId: this.myTable.id,
+          sId
+        }
+        this.$emit('onPlayer', seat)
       } else {
         this.$q.notify({ type: 'negative', message: 'This seat is taken' })
       }

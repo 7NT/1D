@@ -76,17 +76,18 @@ export default function (app: Application) {
 
       joinChannels(user, connection)
 
-      const playerData = {
+      const player = {
         id: user._id,
         nick: user.nick,
-        avatar: user.avatar,
-        country: user.country,
+        profile: user.profile,
         state: 0,
-        sId: 0
+        seat: { sId: 0 }
       }
-
-      playerService.create(playerData)
+      playerService.create(player)
       /*
+      .then (p => {
+        console.log(p)
+      })
       .then (player => {
         if (user.tId) {
           console.log('rejoin', user, connection)

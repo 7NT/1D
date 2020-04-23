@@ -37,8 +37,8 @@ export default {
   }),
   computed: {
     ...mapGetters('jstore', ['getPlayerById']),
-    mySid () {
-      let x = Math.abs(this.myPlayer.sId)
+    mySeat () {
+      let x = Math.abs(this.myPlayer.seat)
       if (x < 1 || x > 4) x = 3
       return x
     },
@@ -58,7 +58,7 @@ export default {
   },
   methods: {
     seatX (s) {
-      return ((this.mySid + s) % 4) + 1
+      return ((this.mySeat.sId + s) % 4) + 1
     },
     playerName (s) {
       const pId = this.myTable.seats[s - 1]
@@ -100,8 +100,9 @@ export default {
       try {
         let row = 1
         let rBid = { N: null, E: null, S: null, W: null }
+        console.log('b', _bid, this.mySeat)
         _bid.data.forEach(bid => {
-          switch (bid.seat) {
+          switch (bid.sId) {
             case 1: {
               rBid.N = bid.bid
               break
@@ -120,20 +121,19 @@ export default {
             }
             default:
           }
-          if (bid.seat === this.mySid) {
+          if (bid.sId === this.mySeat.sId) {
             rBid.row = row
             data.push(rBid)
             rBid = { N: null, E: null, S: null, W: null }
             row++
           }
-          if (bid.bid === '?') turn = bid.seat
+          if (bid.bid === '?') turn = bid.sId
         })
         if (rBid) {
           rBid.row = row
           data.push(rBid)
         }
         this.$data.bData = data
-        // console.log('bids', data)
       } catch (err) {
         console.log(err)
       }

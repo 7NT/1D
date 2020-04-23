@@ -63,7 +63,7 @@ export default {
   methods: {
     isWinner (w) {
       // const w = c.winner
-      const sId = Math.abs(this.myPlayer.sId)
+      const sId = Math.abs(this.myPlayer.seat.sId)
 
       if (jb.isPlayer(sId)) {
         return (w % 2) === (sId % 2)

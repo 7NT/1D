@@ -59,7 +59,7 @@
           v-if='authenticated'
         >
           <q-avatar class='gt-xs'>
-            <img :src='user.avatar' />
+            <img :src='user.profile.avatar' />
           </q-avatar>
           <q-tooltip
             anchor='bottom middle'
@@ -143,7 +143,7 @@
         >
           <q-item-section avatar>
             <q-icon
-              :name='`img:statics/jbicon/seats/seat${p.sId}.svg`'
+              :name='`img:statics/jbicon/seats/seat${p.seat.sId}.svg`'
               class='seat'
             />
           </q-item-section>
@@ -152,7 +152,7 @@
               color='secondary'
               text-color='white'
             >
-              <img :src='p.avatar' />
+              <img :src='p.profile.avatar' />
             </q-avatar>
           </q-item-section>
           <q-item-section>
@@ -160,7 +160,7 @@
             <q-item-label
               caption
               lines='1'
-            >{{ getTableName(p.tId) }}</q-item-label>
+            >{{ getTableName(p) }}</q-item-label>
           </q-item-section>
           <q-item-section side>
             <q-icon
@@ -301,8 +301,8 @@ export default {
           })
         })
     },
-    getTableName (tId) {
-      const t = this.getTableById(tId)
+    getTableName (p) {
+      const t = this.getTableById(p.seat.tId)
       if (t) return t.name
       else return '#Lobby'
     },
@@ -320,11 +320,10 @@ export default {
       this.setChat(c)
     },
     onServices () {
-      userService.on('update', user => {
+      userService.on('patched', user => {
         this.updateUser(user)
       })
       playerService.find().then(response => {
-        // console.log('players', response)
         this.setPlayers(response.data)
       })
       playerService.on('created', p => {
@@ -332,8 +331,8 @@ export default {
         this.updatePlayer(p)
         if (p.id === this.user._id) {
           this.player = p
-          // if (this.myTable && this.user.sId) {
-          //  playerService.patch(this.user._id, { tId: this.user.tId, sId: this.user.sId })
+          // if (this.myTable && this.user.seat.sId) {
+          //  playerService.patch(this.user._id, { tId: this.user.tId, sId: this.user.seat.sId })
           // }
         }
       })

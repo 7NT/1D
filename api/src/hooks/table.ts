@@ -78,7 +78,7 @@ async function getBoard (context: any) {
 
   let _bid = {
     info: { bidN: 0, bidS: 0, by: 0, P: 0, X: 0, XX: 0 },
-    data: [{ seat: dealer, bid: '?' }]
+    data: [{ sId: dealer, bid: '?' }]
   }
   // let _bids = await bids$.create(_bid)
   table.state = 1

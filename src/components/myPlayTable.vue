@@ -4,7 +4,7 @@
       <div class='col'>
         <div class='row no-wrap'>
           <div class='col-3 items-start'>
-            <myBoard :myTable='myTable' :mySid='mySid' v-on:onTable='onTable'></myBoard>
+            <myBoard :myTable='myTable' :mySeat='mySeat' v-on:onTable='onTable'></myBoard>
           </div>
           <div class='col-6 box'>
             <div class='column'>
@@ -194,7 +194,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 // import say from 'say'
 import { tableService } from 'src/api'
 import jb from 'src/jb'
@@ -206,7 +206,7 @@ import myTricks from 'src/components/myTricks'
 
 export default {
   name: 'myPlaysTable',
-  props: ['myPlayer', 'myTable'],
+  props: ['myPlayer'],
   data: function () {
     return {
       tableData: null,
@@ -231,14 +231,14 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
-    myTid: {
-      get: function () {
-        return this.myPlayer.tId
-      }
+    ...mapGetters('jstore', ['getTableById']),
+
+    myTable () {
+      return this.getTableById(this.myPlayer.seat.tId)
     },
-    mySid: {
+    mySeat: {
       get: function () {
-        return this.myPlayer.sId
+        return this.myPlayer.seat
       }
     },
     myState: {
@@ -273,7 +273,7 @@ export default {
   },
   methods: {
     isMyTurn () {
-      const b = this.myTurn === this.myPlayer.sId ? this.myState : 0
+      const b = this.myTurn === this.myPlayer.seat.sId ? this.myState : 0
       return b
     },
     onState (s) {
@@ -310,22 +310,19 @@ export default {
       console.log('onTable', action)
       switch (action.action) {
         case 'sit': {
-          this.$emit('onPlayer', { tId: this.myPlayer.tId, sId: action.sit.sId })
+          this.$emit('onPlayer', action.seat)
           break
         }
         case 'ready': {
-          // tableService.patch(this.myPlayer.tId, { state: action.ready.state, ready: action.ready.ready })
-          tableService.patch(this.myPlayer.tId, { state: action.state, ready: action.ready })
+          tableService.patch(this.myTable.id, { state: action.state, ready: action.ready })
           break
         }
         case 'bt': {
-          // tableService.patch(this.myPlayer.tId, { state: action.ready.state, ready: action.ready.ready })
-          tableService.patch(this.myPlayer.tId, { bt: action.bt })
+          tableService.patch(this.myTable.id, { bt: action.bt })
           break
         }
         case 'cc': {
-          // tableService.patch(this.myPlayer.tId, { state: action.ready.state, ready: action.ready.ready })
-          tableService.patch(this.myPlayer.tId, { cc: action.cc })
+          tableService.patch(this.myTable.id, { cc: action.cc })
           break
         }
         case 'bid': {

@@ -5,8 +5,8 @@ import { isPlayer, getMIX, vulN, N52Suit, N52Rank } from '../jb'
 
 const status = (): Hook => {
   return async (context: HookContext) => {
-    const { sId } = context.data
-    if (sId) {
+    const { seat } = context.data
+    if (seat) {
       context.data = await beforeSit(context)
     }
     return Promise.resolve(context)
@@ -19,35 +19,35 @@ async function beforeSit (context:any) {
     const tableService = context.app.service('tables')
     const { user } = connection
     // const uId = user._id
-    const { tId: tId1, sId: sId1, tId0, sId0 } = context.data
+    const { seat } = context.data
     // console.log('beforeSit', context.data, user)
 
-    if (tId0 !== tId1) {  //leave table
-      if (tId0) {
-        leaveTable(tableService, user, tId0, sId0)
-        context.app.channel(`#${tId0}`).leave(connection)
+    if (seat.tId0 !== seat.tId) {  //leave table
+      if (seat.tId0) {
+        leaveTable(tableService, user, seat)
+        context.app.channel(`#${seat.tId0}`).leave(connection)
       }
     }
 
-    let t1 = await getTable(tableService, user, tId1, sId1)
-    context.data.tId = t1.id
+    let t1 = await getTable(tableService, user, seat)
+    context.data.seat.tId = t1.id
     context.app.channel(`#${t1.id}`).join(connection);
     //return Promise.resolve(context)
   }
   return context.data
 }
 
-async function getTable (tservice$: any, user: any, tId: any, sId: number) {
+async function getTable (tservice$: any, user: any, seat: any) {
   let table
-  if (!tId) {  //new table
-    table = await newTable(tservice$, user, getMIX(), sId)
+  if (!seat.tId1) {  //new table
+    table = await newTable(tservice$, user, getMIX(), seat)
   } else {
-    table = await tservice$.get(tId)
+    table = await tservice$.get(seat.tId)
     let seats = table.seats
     let ready = table.ready
     let players = 0
     table.seats.forEach((p: any, i: number) => {
-      if (i == sId - 1 && p == null) {
+      if (i == seat.sId - 1 && p == null) {
         seats[i] = user._id
         // ready[i] = sId
       } else if (p == user._id) {
@@ -62,7 +62,7 @@ async function getTable (tservice$: any, user: any, tId: any, sId: number) {
   return table
 }
 
-async function newTable (tservice$: any, user: any, mix: any, sId: number) {
+async function newTable (tservice$: any, user: any, mix: any, seat: any) {
   const tdata = {
     id: user._id,
     name: '#' + user.nick,
@@ -73,13 +73,13 @@ async function newTable (tservice$: any, user: any, mix: any, sId: number) {
     seats: [null, null, null, null],
     ready: [0, 0, 0, 0]
   }
-  tdata.seats[sId - 1] = user._id
+  tdata.seats[seat.sId - 1] = user._id
   // tdata.ready[sId - 1] = sId
   return await tservice$.create(tdata)
 }
 
-async function leaveTable (tservice$: any, user: any, tId: any, sId: number) {
-  let table = await tservice$.get(tId)
+async function leaveTable (tservice$: any, user: any, seat: any) {
+  let table = await tservice$.get(seat.tId0)
   // free seat
   if (table.players < 2) {
     tservice$.remove(table.id)
@@ -89,22 +89,21 @@ async function leaveTable (tservice$: any, user: any, tId: any, sId: number) {
       seats: table.seats,
       ready: table.ready
     }
-    if (isPlayer(sId)) {
-      let p = tdata.seats[sId - 1]
+    if (isPlayer(seat.sId0)) {
+      let p = tdata.seats[seat.sId0 - 1]
       if (p) {
         if (p.pId === user._id) {
-          tdata.seats[sId - 1] = null
-          tdata.ready[sId - 1] = 0
+          tdata.seats[seat.sId0 - 1] = null
+          tdata.ready[seat.sId0 - 1] = 0
         }
       }
     }
     tservice$.patch(table.id, tdata)
   }
 }
-
+/*
 const afterSit = (): Hook => {
   return async (context: HookContext) => {
-    /*
     const { connection } = context.params
     if (connection) {
       // const userService = context.app.service('users')
@@ -117,11 +116,10 @@ const afterSit = (): Hook => {
       }
       // console.log('after', context.data, player)
     }
-    */
     return Promise.resolve(context)
   }
 }
-
+*/
 const logout = (): Hook => {
   return async (context: HookContext) => {
     const uId = context.id

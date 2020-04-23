@@ -20,7 +20,7 @@ const state = (): Hook => {
   }
 }
 
-async function onReady (context:any) {
+async function onReady (context: any) {
   const { state, ready } = context.data
   switch (state) {
     case -1:
@@ -85,7 +85,7 @@ async function getBoard (context: any) {
   table.board = _board
   table.bids = _bid
   table.turn = dealer
-  table.ready = [1,2,3,4]
+  table.ready = [1, 2, 3, 4]
   // return await tableService.patch(context.id, table)
   return table
 }
@@ -157,19 +157,19 @@ function updateBid (tdata: any) {
   bids.data.forEach((b: any) => {
     switch (b.bid) {
       case '?':
-        turn = b.seat
+        turn = b.sId
         break
       case 'P':
       case 'Pass':
         P++
         break
       case 'X':
-        X = b.seat
+        X = b.sId
         P = 0
         XX = 0
         break
       case 'XX':
-        XX = b.seat
+        XX = b.sId
         P = 0
         X = 0
         break
@@ -182,9 +182,9 @@ function updateBid (tdata: any) {
           P = 0
           X = 0
           XX = 0
-          let ne = (b.seat - 1) % 2
+          let ne = (b.sId - 1) % 2
           _bS--
-          if (suits[ne][_bS] === 0) suits[ne][_bS] = b.seat
+          if (suits[ne][_bS] === 0) suits[ne][_bS] = b.sId
           by = suits[ne][_bS]
           contract = b.bid
           if (XX) contract == 'XX'

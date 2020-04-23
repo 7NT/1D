@@ -2,7 +2,11 @@
   <div class="row items-end">
     <div class="column">
       <div class="row self-end no-wrap">
-        <q-card flat v-if="isVisible" class="transparent">
+        <q-card
+          flat
+          v-if="isVisible"
+          class="transparent"
+        >
           <div class="hand hhand-compact active-hand full-width">
             <img
               v-for="(c, i) of myCards"
@@ -15,9 +19,19 @@
         </q-card>
       </div>
       <div class="pbar">
-        <q-btn-group flat dense spread>
-          <q-icon :name="seatIcon" class="seat" />
-          <q-icon :name="flag" class="flag" />
+        <q-btn-group
+          flat
+          dense
+          spread
+        >
+          <q-icon
+            :name="seatIcon"
+            class="seat"
+          />
+          <q-icon
+            :name="flag"
+            class="flag"
+          />
           <q-btn
             flat
             outline
@@ -46,13 +60,19 @@
           <q-btn-dropdown
             push
             split
-            v-if="isDeclarer"
+            auto-close
+            v-if='isDeclarer'
             :label="contract"
             color="info"
             class="declarer"
+            :disable='seatX!==mySeat.sId'
           >
             <q-list dense>
-              <q-item clickable v-close-menu @click="onClaim">
+              <q-item
+                clickable
+                v-close-popup
+                @click="onClaim"
+              >
                 <q-item-section>
                   <q-item-label label>Claim All</q-item-label>
                   <q-item-label label>Concede All</q-item-label>
@@ -128,7 +148,7 @@ export default {
         try {
           const flag2 = this.player.profile.flag.toLowerCase()
           return `img:statics/flags/4x3/${flag2}.svg`
-        } catch (_) {}
+        } catch (_) { }
       }
       return null
     },
@@ -171,7 +191,7 @@ export default {
         if (this.myTable.state > 1) {
           return this.myTable.plays.data.map(x => x.card)
         }
-      } catch (_) {}
+      } catch (_) { }
       return []
     }
   },
@@ -273,7 +293,7 @@ export default {
         if (this.myTable.turn === this.seatX) {
           if (this.isDummy) { return this.myPlayer.seat.sId === this.myTable.bids.info.by } else return true
         }
-      } catch (_) {}
+      } catch (_) { }
       return false
     }
   },
@@ -292,7 +312,7 @@ export default {
     // console.log('t', this.seatX, this.myTable)
     this.updatePlayer()
   },
-  created () {}
+  created () { }
 }
 </script>
 

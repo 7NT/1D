@@ -10,14 +10,25 @@
     row-key='row'
     class='bbox'
   >
-    <q-tr slot="header" slot-scope="props" :props="props">
-      <q-th :class="vul_bgcolor(col.seat)" v-for="col in props.cols" :key="col.seat">
+    <q-tr
+      slot="header"
+      slot-scope="props"
+      :props="props"
+    >
+      <q-th
+        :class="vul_bgcolor(col.seat)"
+        v-for="col in props.cols"
+        :key="col.seat"
+      >
         {{ props.cols[col.seat - 1].label }}
         <q-tooltip>{{ playerName(col.seat) }}</q-tooltip>
       </q-th>
     </q-tr>
     <template v-slot:body-cell='props'>
-      <q-td :props='props' :class='turn_bgcolor(props)'>
+      <q-td
+        :props='props'
+        :class='turn_bgcolor(props)'
+      >
         {{props.value}}
       </q-td>
     </template>
@@ -37,8 +48,8 @@ export default {
   }),
   computed: {
     ...mapGetters('jstore', ['getPlayerById']),
-    mySeat () {
-      let x = Math.abs(this.myPlayer.seat)
+    mySeatX () {
+      let x = Math.abs(this.myPlayer.seat.sId)
       if (x < 1 || x > 4) x = 3
       return x
     },
@@ -58,7 +69,7 @@ export default {
   },
   methods: {
     seatX (s) {
-      return ((this.mySeat.sId + s) % 4) + 1
+      return ((this.mySeatX + s) % 4) + 1
     },
     playerName (s) {
       const pId = this.myTable.seats[s - 1]
@@ -94,13 +105,12 @@ export default {
     loadBids () {
       // console.log('loadbids', this.myBids)
       if (!this.myBids) return
-      let turn = 0
+      // let turn = 0
       const data = []
       const _bid = this.myBids
       try {
         let row = 1
         let rBid = { N: null, E: null, S: null, W: null }
-        console.log('b', _bid, this.mySeat)
         _bid.data.forEach(bid => {
           switch (bid.sId) {
             case 1: {
@@ -121,13 +131,13 @@ export default {
             }
             default:
           }
-          if (bid.sId === this.mySeat.sId) {
+          if (bid.sId === this.mySeatX) {
             rBid.row = row
             data.push(rBid)
             rBid = { N: null, E: null, S: null, W: null }
             row++
           }
-          if (bid.bid === '?') turn = bid.sId
+          // if (bid.bid === '?') turn = bid.sId
         })
         if (rBid) {
           rBid.row = row
@@ -137,7 +147,7 @@ export default {
       } catch (err) {
         console.log(err)
       }
-      if (turn) this.$emit('onTurn', { action: 'bid', turn, bid: _bid })
+      // if (turn) this.$emit('onAction', { action: 'bid', turn, bid: _bid })
     }
   },
   watch: {

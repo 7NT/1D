@@ -13,14 +13,14 @@ const status = (): Hook => {
   }
 }
 
-async function beforeSit (context:any) {
+async function beforeSit (context: any) {
   const { connection } = context.params
   if (connection) {
     const tableService = context.app.service('tables')
     const { user } = connection
     // const uId = user._id
     const { seat } = context.data
-    // console.log('beforeSit', context.data, user)
+    console.log('beforeSit', context.data, user)
 
     if (seat.tId0 !== seat.tId) {  //leave table
       if (seat.tId0) {
@@ -38,8 +38,8 @@ async function beforeSit (context:any) {
 }
 
 async function getTable (tservice$: any, user: any, seat: any) {
-  let table
-  if (!seat.tId1) {  //new table
+  let table: { seats: any[]; ready: any[]; state: number; id: any }
+  if (!seat.tId) {  //new table
     table = await newTable(tservice$, user, getMIX(), seat)
   } else {
     table = await tservice$.get(seat.tId)
@@ -52,7 +52,7 @@ async function getTable (tservice$: any, user: any, seat: any) {
         // ready[i] = sId
       } else if (p == user._id) {
         seats[i] = null
-        ready[i] = 0
+        if (table.state < 1) ready[i] = 0
       }
       if (seats[i] != null) players++
     })
@@ -130,13 +130,13 @@ const logout = (): Hook => {
 
       let player = await playerService.get(uId)
       if (player) {
-        const { id: uId, tId, sId } = player
+        const { id: uId, seat } = player
 
-        if (tId) {
-          let t = await tableService.get(tId)
-          leaveTable(tableService, t, uId, sId)
+        if (seat.tId) {
+          let t = await tableService.get(seat.tId)
+          leaveTable(tableService, t, seat)
         }
-        const userData = { tId, sId, state: 0, logoutAt: new Date().getTime() }
+        const userData = { seat, state: 0, logoutAt: new Date().getTime() }
         userService.patch(uId, userData)
       }
     }

@@ -4,7 +4,11 @@
       <div class='col'>
         <div class='row no-wrap'>
           <div class='col-3 items-start'>
-            <myBoard :myTable='myTable' :mySeat='mySeat' v-on:onTable='onTable'></myBoard>
+            <myBoard
+              :myTable='myTable'
+              :mySeat='mySeat'
+              v-on:onTable='onTable'
+            ></myBoard>
           </div>
           <div class='col-6 box'>
             <div class='column'>
@@ -22,7 +26,10 @@
               class='row justify-end'
               v-if='myState > 1'
             >
-              <myBidBox :myPlayer='myPlayer' :myTable='myTable' />
+              <myBidBox
+                :myPlayer='myPlayer'
+                :myTable='myTable'
+              />
             </div>
           </div>
         </div>
@@ -48,14 +55,21 @@
                   v-if='myState === 1'
                 >
                   <q-card>
-                    <myBidBox :myPlayer='myPlayer' :myTable='myTable' />
+                    <myBidBox
+                      :myPlayer='myPlayer'
+                      :myTable='myTable'
+                    />
                   </q-card>
                 </q-card>
                 <q-card
                   class='pbox transparent'
                   v-if='myState === 2'
                 >
-                  <myPlayBox :myPlayer='myPlayer' :myTable='myTable' :review='false' />
+                  <myPlayBox
+                    :myPlayer='myPlayer'
+                    :myTable='myTable'
+                    :review='false'
+                  />
                 </q-card>
                 <q-space />
               </div>
@@ -78,7 +92,10 @@
         <div class='row no-wrap'>
           <div class='col-3'>
             <div class='column'>
-              <myTricks :myPlayer='myPlayer' :myTable='myTable' />
+              <myTricks
+                :myPlayer='myPlayer'
+                :myTable='myTable'
+              />
             </div>
           </div>
           <div class='col-6 box'>
@@ -297,11 +314,11 @@ export default {
     onBid (bid) {
       const info = this.myBids.info
       const data = this.myBids.data.slice(0)
-      let seat = this.myTurn
+      let sId = this.myTurn
       data.pop()
-      data.push({ seat, bid })
-      seat = (seat % 4) + 1
-      data.push({ seat, bid: '?' })
+      data.push({ sId, bid })
+      sId = (sId % 4) + 1
+      data.push({ sId, bid: '?' })
       this.onTable({ action: 'bid', bid: { bids: { info, data } } })
       // const tts = jb.jbVoiceName(bid)
       // say.speak(tts)
@@ -410,7 +427,7 @@ export default {
 .bidbox {
   margin: 10px;
   align-items: flex-end;
-  z-index: 200
+  z-index: 200;
 }
 .bidrow {
   flex-wrap: no-wrap;

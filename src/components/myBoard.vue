@@ -240,8 +240,7 @@ export default {
     tricks (n) {
       try {
         if (this.myTable.plays) {
-          if (n === 0) return this.myTable.plays.info.NS
-          else if (n === 1) return this.myTable.plays.info.EW
+          return this.myTable.plays.info.tricks[n]
         }
       } catch (err) {
         // console.log(err)
@@ -251,8 +250,7 @@ export default {
     score (n) {
       try {
         if (this.myTable.plays) {
-          if (n === 0) return this.myTable.plays.info.ScoreNS
-          else if (n === 1) return this.myTable.plays.info.ScoreEW
+          return this.myTable.plays.info.scores[n]
         }
       } catch (err) {
         // console.log(err)

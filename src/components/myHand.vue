@@ -71,12 +71,16 @@
               <q-item
                 clickable
                 v-close-popup
-                @click="onClaim"
               >
                 <q-item-section>
-                  <q-item-label label>Claim Just Make</q-item-label>
-                  <q-item-label label>Claim All</q-item-label>
-                  <q-item-label label>Concede All</q-item-label>
+                  <q-item-label
+                    label
+                    v-for='c in claims'
+                    :key='c'
+                    @click='onClaim(c)'
+                  >
+                    {{c}}
+                  </q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -100,8 +104,20 @@
 
         <q-card-actions align="right">
           <q-separator />
-          <q-btn push label="Accept" color="positive" v-close-popup @click='onClaimR(true)' />
-          <q-btn push label="Decline" color="negative" v-close-popup @click='onClaimR(false)' />
+          <q-btn
+            push
+            label="Accept"
+            color="positive"
+            v-close-popup
+            @click='onClaimR(true)'
+          />
+          <q-btn
+            push
+            label="Decline"
+            color="negative"
+            v-close-popup
+            @click='onClaimR(false)'
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -121,7 +137,8 @@ export default {
       seatId: 0,
       NESW: ['North', 'East', 'South', 'West'],
       myCards: [],
-      dialog: false
+      claims: ['Concede All', 'Claim Just Make', 'Claim All'],
+      isClaim: false
     }
   },
   components: {
@@ -156,7 +173,8 @@ export default {
       }
     },
     isVisible () {
-      if (this.isDummy) return true
+      if (this.myTable.state < 1) return true
+      else if (this.isDummy) return true
       else return this.seatX === this.mySeat.sId
     },
     pColor () {
@@ -218,13 +236,6 @@ export default {
         }
       } catch (_) { }
       return []
-    },
-    isClaim () {
-      const { state, claim } = this.myTable
-      if (state === 2 && claim) {
-        return this.mySeat.sId === -claim.r1 || this.mySeat.sId === -claim.r2
-      }
-      return false
     },
     myClaim () {
       return this.myTable.claim
@@ -296,7 +307,8 @@ export default {
       this.$q.notify({ type: 'info', message: `${this.contract}: ${claim}` })
     },
     onClaimR (r) {
-      let claim = this.myClaim
+      let claim
+      claim = Object.assign({}, claim, this.myClaim)
       if (r) {
         if (this.myClaim.r1 === -this.mySeat.sId) {
           claim.r1 = -claim.r1
@@ -321,6 +333,10 @@ export default {
     },
     updateTable () {
       this.updatePlay()
+      const { state, claim } = this.myTable
+      if (state === 2 && claim) {
+        this.isClaim = this.mySeat.sId === -claim.r1 || this.mySeat.sId === -claim.r2
+      }
     },
     updatePlay () {
       try {
@@ -336,43 +352,6 @@ export default {
         this.$data.myCards = []
       }
     },
-    /*
-    myClaim (claim) {
-      // const { claim } = this.myTable
-      const dialog = this.$q.dialog({
-        title: 'Declarer Claims:',
-        message: `${claim.contract}: ${claim.claim}`,
-        position: 'bottom',
-        ok: {
-          push: true,
-          label: 'Accept'
-        },
-        cancel: {
-          push: true,
-          label: 'Decline',
-          color: 'negative'
-        },
-        persistent: true
-      }).onOk(() => {
-        // console.log('OK')
-        if (claim.r1 === -this.mySeat.sId) {
-          claim.r1 = -claim.r1
-        } else {
-          claim.r2 = -claim.r2
-        }
-        this.onRClaim(claim)
-        dialog.hide()
-      }).onCancel(() => {
-        // console.log('Cancel')
-        this.onRClaim(null)
-        dialog.hide()
-      }).onDismiss(() => {
-        // console.log('I am triggered on both OK and Cancel')
-        this.onRClaim(null)
-        dialog.hide()
-      })
-    },
-    */
     cardCheck (play) {
       const lead = this.myTable.plays.info.lead
       if (!lead) return true
@@ -406,8 +385,8 @@ export default {
     },
     myTable (t, o) {
       this.updateTable()
-      console.log('t', this.seatX, t.myClaim)
-      if (this.isClaim) this.myClaim(t.claim)
+      // console.log('t', this.seatX, t.myClaim)
+      // if (this.isClaim) this.myClaim(t.claim)
     }
   },
   mounted () {

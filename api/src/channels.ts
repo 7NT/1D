@@ -54,7 +54,7 @@ export default function (app: Application) {
   })
 
   app.on('disconnect', (connection: any) => {
-    console.log('disconnect', connection)
+    // console.log('disconnect', connection)
     const user = connection.user
     if (user) {
       //When logging out, leave all channels before joining anonymous channel

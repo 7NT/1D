@@ -2,19 +2,16 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
 import { isPlayer, getMIX, vulN, N52Suit, N52Rank } from '../jb'
-// import tablesHooks from '../services/tables/tables.hooks'
 
 const state = (): Hook => {
   return async (context: HookContext) => {
     const { ready, bids, plays, claim } = context.data
-    // console.log('table', context)
     if (ready) {
-      // console.log('ready', context.data)
       context.data = await onReady(context)
     } else if (claim) {
-        console.log('claim', context.data)
+      if (claim.r1 > 0 && claim.r2 > 0) onClaim(context, claim)
     } else if (plays) {
-        context.data = onPlay(context.data)
+      context.data = onPlay(context.data)
     } else if (bids) {
       context.data = onBid(context.data)
     }
@@ -132,15 +129,20 @@ function onBid (tdata: any) {
   if (_info.P > 3 || (_info.P > 2 && _info.by > 0)) {
     _tdata.bids.data.pop()
 
+    let scores = [0, 0]
+    try {
+      scores = _tdata.plays.info.scores
+    } catch (err) {
+      // scores = [0, 0]
+    }
+
     _tdata.plays = {
       info: {
         trump: _info.contract,
         lead: null,
         winner: 0,
-        NS: 0,
-        EW: 0,
-        Score_NS: 0,
-        Score_EW: 0
+        tricks: [0, 0],
+        scores
       },
       data: []
     }
@@ -235,8 +237,8 @@ function onPlay (tdata: any) {
   let turn = last.sId
   let trump = tdata.plays.info.trump
   let lead = tdata.plays.info.lead
-  let NS = tdata.plays.info.NS
-  let EW = tdata.plays.info.EW
+  let tricks = tdata.plays.info.tricks
+  let scores = tdata.plays.info.score
   let n4 = n % 4
 
   switch (n4) {
@@ -268,8 +270,8 @@ function onPlay (tdata: any) {
     lead = null
     if (winner > 0) {
       last.winner = winner
-      if (winner % 2) EW++
-      else NS++
+      if ((winner % 2) === 1) tricks[0]++
+      else tricks[1]++
     }
     turn = winner - 1
   }
@@ -278,15 +280,29 @@ function onPlay (tdata: any) {
     trump,
     lead,
     winner,
-    NS,
-    EW,
-    Score_NS: 0,
-    Score_EW: 0
+    tricks,
+    scores
   }
   tdata.turn = (turn % 4) + 1
   tdata.claim = null
-  if (NS + EW === 13) tdata.state = -1
+  if (tricks[0] + tricks[1] === 13) tdata.state = -1
   return tdata
+}
+
+async function onClaim (context: any, claim: any) {
+  const tableService = context.app.service('tables')
+
+  let table = await tableService.get(context.id)
+  let d = table.bids.info.by % 2
+
+  switch (claim.claim) {
+    case 'Concede All':
+
+    case 'Claim Just Make':
+    case 'Claim All':
+    default:
+  }
+  table.state = -1
 }
 
 export {

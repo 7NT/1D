@@ -15,12 +15,13 @@ const status = (): Hook => {
 
 async function beforeSit (context: any) {
   const { connection } = context.params
+  // console.log('beforeSit', context.params, connection)
   if (connection) {
     const tableService = context.app.service('tables')
     const { user } = connection
     // const uId = user._id
     const { seat } = context.data
-    // console.log('beforeSit', context.data, user)
+    console.log('beforeSit', context.data, user)
 
     if (seat.tId0 !== seat.tId) {  //leave table
       if (seat.tId0) {
@@ -78,7 +79,7 @@ async function newTable (tservice$: any, user: any, mix: any, seat: any) {
   return await tservice$.create(tdata)
 }
 
-async function leaveTable (tservice$: any, uId: any, seat: any) {
+async function leaveTable (tservice$: any, pId: any, seat: any) {
   let table = await tservice$.get(seat.tId0)
   // free seat
   if (table.players < 2) {
@@ -92,7 +93,7 @@ async function leaveTable (tservice$: any, uId: any, seat: any) {
     if (isPlayer(seat.sId0)) {
       let p = tdata.seats[seat.sId0 - 1]
       if (p) {
-        if (p.pId === uId) {
+        if (p === pId) {
           tdata.seats[seat.sId0 - 1] = null
           if (table.state < 1) tdata.ready[seat.sId0 - 1] = 0
         }
@@ -122,29 +123,30 @@ const afterSit = (): Hook => {
 */
 const logout = (): Hook => {
   return async (context: HookContext) => {
-    const uId = context.id
-    if (uId) {
+    const pId = context.id
+    if (pId) {
       const userService = context.app.service('users')
       const playerService = context.app.service('players')
       const tableService = context.app.service('tables')
 
-      let player = await playerService.get(uId)
-      // console.log('logout', context, player)
+      let player = await playerService.get(pId)
+      // console.log('logout', context.id, player)
       if (player) {
         const { seat } = player
 
         if (seat.tId) {
           let t = await tableService.get(seat.tId)
+          console.log('logout', t)
           if (t.players < 2) {
             tableService.remove(t.id)
           } else {
             seat.tId0 = seat.tId
             seat.sId0 = seat.sId
-            leaveTable(tableService, uId, seat)
+            leaveTable(tableService, pId, seat)
           }
         }
         const userData = { seat, state: 0, logoutAt: new Date().getTime() }
-        userService.patch(uId, userData)
+        userService.patch(pId, userData)
       }
     }
     return Promise.resolve(context)

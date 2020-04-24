@@ -12,7 +12,6 @@ export default function (app: Application) {
 
   // Join a channel given a user and connection
   const joinChannels = (user: any, connection: any) => {
-    //app.channel('authenticated').join(connection)
     app.channel('#Lobby').join(connection)
     // Assuming that the chat room/user assignment is stored
     // on an array of the user
@@ -50,7 +49,7 @@ export default function (app: Application) {
 
   app.on('connection', (connection: any) => {
     // On a new real-time connection, add it to the anonymous channel
-    // app.channel('#anonymous').join(connection)
+    app.channel('#Anonymous').join(connection)
   })
 
   app.on('disconnect', (connection: any) => {
@@ -59,8 +58,7 @@ export default function (app: Application) {
     if (user) {
       //When logging out, leave all channels before joining anonymous channel
       if (app.channels.length) app.channel(app.channels).leave(connection)
-      //app.channel('anonymous').join(connection)
-      //app.channel('#Anonymous').join(connection)
+      // app.channel('#Anonymous').join(connection)
 
       playerService.remove(user._id)
     }
@@ -122,9 +120,7 @@ export default function (app: Application) {
 
       //When logging out, leave all channels before joining anonymous channel
       if (app.channels.length) app.channel(app.channels).leave(connection)
-      //app.channel('anonymous').join(connection)
       //app.channel('#Anonymous').join(connection)
-
       playerService.remove(user._id)
     }
   })
@@ -152,8 +148,8 @@ export default function (app: Application) {
   //     app.channel(`emails/${data.recipientEmail}`)
   //   ]
   // })
-  app.service('players').on('updated', updateChannels)
-  app.service('players').on('patched', updateChannels)
+  // app.service('players').on('updated', updateChannels)
+  // app.service('players').on('patched', updateChannels)
   // On `removed`, remove the connection from all channels
   app.service('players').on('removed', leaveChannels)
 }

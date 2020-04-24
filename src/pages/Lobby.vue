@@ -241,11 +241,11 @@ export default {
     }
   },
   mounted () {
-    console.log('u', this.user)
     if (!this.user.profile.flag) this.$router.push({ name: 'profile' })
     chatService.on('created', chat => {
       this.myChats.unshift(chat)
     })
+    console.log('u', this.user, this.myPlayer)
   },
   watch: {
     model_RID (n) {
@@ -256,6 +256,9 @@ export default {
         this.chatTo = '#Lobby'
       }
       // this.myChats = this.getChats(this.chatTo)
+    },
+    myPlayer (n, o) {
+      console.log(n, o)
     },
     mySeat (n, o) {
       this.model_RID = n.tId ? 1 : 0

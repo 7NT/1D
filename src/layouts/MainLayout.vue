@@ -321,7 +321,9 @@ export default {
     },
     onServices () {
       userService.on('patched', user => {
-        this.updateUser(user)
+        if (user._id === this.user._id) {
+          this.updateUser(user)
+        }
       })
       playerService.find().then(response => {
         this.setPlayers(response.data)
@@ -331,10 +333,19 @@ export default {
         this.updatePlayer(p)
         if (p.id === this.user._id) {
           this.player = p
-          // if (this.myTable && this.user.seat.sId) {
-          //  playerService.patch(this.user._id, { tId: this.user.tId, sId: this.user.seat.sId })
-          // }
+          if (this.user.seat.tId) { // rejoin
+            const t = this.getTableById(this.user.seat.tId) // if table still exists
+            if (t) {
+              const seat = this.user.seat
+              seat.tId0 = null
+              playerService.patch(p.id, { seat })
+            }
+          }
         }
+        this.$q.notify({
+          color: 'into',
+          message: `[JOIN]: ${p.nick}`
+        })
       })
       playerService.on('patched', p => {
         console.log('player patched', p)
@@ -344,6 +355,10 @@ export default {
         console.log('player removed', p)
         p.state = -1
         this.updatePlayer(p)
+        this.$q.notify({
+          color: 'into',
+          message: `[EXIT]: ${p.nick}`
+        })
       })
       tableService.find().then(response => {
         this.setTables(response.data)

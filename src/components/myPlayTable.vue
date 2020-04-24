@@ -356,7 +356,13 @@ export default {
             const plays = { plays: { info: _info, data: _data } }
             tableService.patch(this.myTable.id, plays)
           }
+          break
         }
+        case 'claim': {
+          tableService.patch(this.myTable.id, { claim: action.claim })
+          break
+        }
+        default: {}
       }
     },
     bidN (n) {

@@ -20,11 +20,11 @@ async function beforeSit (context: any) {
     const { user } = connection
     // const uId = user._id
     const { seat } = context.data
-    console.log('beforeSit', context.data, user)
+    // console.log('beforeSit', context.data, user)
 
     if (seat.tId0 !== seat.tId) {  //leave table
       if (seat.tId0) {
-        leaveTable(tableService, user, seat)
+        leaveTable(tableService, user._id, seat)
         context.app.channel(`#${seat.tId0}`).leave(connection)
       }
     }
@@ -78,7 +78,7 @@ async function newTable (tservice$: any, user: any, mix: any, seat: any) {
   return await tservice$.create(tdata)
 }
 
-async function leaveTable (tservice$: any, user: any, seat: any) {
+async function leaveTable (tservice$: any, uId: any, seat: any) {
   let table = await tservice$.get(seat.tId0)
   // free seat
   if (table.players < 2) {
@@ -92,9 +92,9 @@ async function leaveTable (tservice$: any, user: any, seat: any) {
     if (isPlayer(seat.sId0)) {
       let p = tdata.seats[seat.sId0 - 1]
       if (p) {
-        if (p.pId === user._id) {
+        if (p.pId === uId) {
           tdata.seats[seat.sId0 - 1] = null
-          tdata.ready[seat.sId0 - 1] = 0
+          if (table.state < 1) tdata.ready[seat.sId0 - 1] = 0
         }
       }
     }
@@ -129,12 +129,19 @@ const logout = (): Hook => {
       const tableService = context.app.service('tables')
 
       let player = await playerService.get(uId)
+      // console.log('logout', context, player)
       if (player) {
-        const { id: uId, seat } = player
+        const { seat } = player
 
         if (seat.tId) {
           let t = await tableService.get(seat.tId)
-          leaveTable(tableService, t, seat)
+          if (t.players < 2) {
+            tableService.remove(t.id)
+          } else {
+            seat.tId0 = seat.tId
+            seat.sId0 = seat.sId
+            leaveTable(tableService, uId, seat)
+          }
         }
         const userData = { seat, state: 0, logoutAt: new Date().getTime() }
         userService.patch(uId, userData)

@@ -18,6 +18,11 @@ const jb = {
     if (x <= 0) x += 4
     return x
   },
+  seat1234 (s) {
+    let s1234 = s % 4
+    if (s1234 < 1) s1234 += 4
+    return s1234
+  },
   btMIX () {
     const t = new Date().getTime()
     switch (t % 3) {

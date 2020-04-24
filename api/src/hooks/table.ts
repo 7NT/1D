@@ -6,13 +6,15 @@ import { isPlayer, getMIX, vulN, N52Suit, N52Rank } from '../jb'
 
 const state = (): Hook => {
   return async (context: HookContext) => {
-    const { ready, bids, plays } = context.data
+    const { ready, bids, plays, claim } = context.data
     // console.log('table', context)
     if (ready) {
-      // console.log('ready0', context.data)
+      // console.log('ready', context.data)
       context.data = await onReady(context)
+    } else if (claim) {
+        console.log('claim', context.data)
     } else if (plays) {
-      context.data = onPlay(context.data)
+        context.data = onPlay(context.data)
     } else if (bids) {
       context.data = onBid(context.data)
     }
@@ -145,6 +147,7 @@ function onBid (tdata: any) {
     _tdata.state = 2
     _tdata.turn = (_info.by % 4) + 1
   }
+  _tdata.claim = null
   return _tdata
 }
 
@@ -281,7 +284,8 @@ function onPlay (tdata: any) {
     Score_EW: 0
   }
   tdata.turn = (turn % 4) + 1
-  if (NS + EW === 13) tdata.state = 3
+  tdata.claim = null
+  if (NS + EW === 13) tdata.state = -1
   return tdata
 }
 

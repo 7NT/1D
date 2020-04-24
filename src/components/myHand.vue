@@ -84,7 +84,11 @@
         </q-btn-group>
       </div>
     </div>
-    <q-dialog v-if='myClaim' v-model="isClaim" position="bottom">
+    <q-dialog
+      v-if='myClaim'
+      v-model="isClaim"
+      position="bottom"
+    >
       <q-card>
         <q-card-section>
           <div class="text-h6">Declarer is claiming:</div>

@@ -19,6 +19,6 @@ export const getTableById = state => id => {
   return state.tables.find(t => t.id === id)
 }
 
-export const getChats = state => id => {
+export const getChatById = state => id => {
   return state.chats.find(c => c.to === id)
 }

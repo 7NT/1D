@@ -10,10 +10,20 @@
         </q-card-section>
 
         <q-card-section>
-          <q-list bordered padding>
+          <q-list
+            bordered
+            padding
+          >
             <q-item>
-              <q-item-section top avatar>
-                <q-btn round color="info" @click='gavatar()'>
+              <q-item-section
+                top
+                avatar
+              >
+                <q-btn
+                  round
+                  color="info"
+                  @click='gavatar()'
+                >
                   <q-avatar rounded>
                     <img :src='user.profile.avatar'>
                     <q-tooltip>
@@ -26,17 +36,24 @@
               <q-item-section>
                 <q-input
                   v-model='nick'
-                  square filled
+                  square
+                  filled
                   label="Nick:"
                   type='text'
                 />
               </q-item-section>
-              <q-item-section side top>
+              <q-item-section
+                side
+                top
+              >
                 <q-badge :label='`Join: ${joinedDate(user.createdAt)}`' />
               </q-item-section>
             </q-item>
             <q-item>
-              <q-item-section top avatar>
+              <q-item-section
+                top
+                avatar
+              >
                 <q-icon :name='`img:statics/flags/4x3/${flag}.svg`' />
                 <q-tooltip>
                   2 letter ISO 3166 country flag codes
@@ -45,12 +62,13 @@
               <q-item-section>
                 <q-input
                   v-model='flag'
-                  square filled
+                  square
+                  filled
                   label="Country:"
                   mask="AA"
                   type='text'
                 >
-              </q-input>
+                </q-input>
               </q-item-section>
             </q-item>
           </q-list>
@@ -104,7 +122,7 @@ export default {
     },
     onUpdate (update) {
       if (update) {
-        const profile = { nick: this.nick, flag: this.flag }
+        const profile = { nick: this.nick, profile: { flag: this.flag, avatar: this.user.profile.avatar } }
         userService.patch(this.user._id, profile)
         playerService.patch(this.user._id, profile)
         // .then(p => { console.log(p) })

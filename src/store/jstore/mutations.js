@@ -43,6 +43,5 @@ export const setTable = (state, payload) => {
 }
 
 export const setChat = (state, payload) => {
-  state.chats.unshift(payload)
-  console.log(state.chats)
+  state.chats.push(payload)
 }

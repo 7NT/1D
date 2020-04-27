@@ -1,238 +1,141 @@
 <template>
-  <q-page class="no-padding no-margin">
+  <q-page
+    class="no-padding no-margin"
+    v-if='myPlayer'
+  >
     <!-- content -->
-    <div>
-      <q-splitter
-        v-model='splitterModel'
-        horizontal
-        :separator-style="{ backgroundColor: '#ff0000' }"
-        :unit="'px'"
-        :limits='[500, Infinity]'
-      >
-        <template v-slot:before>
-          <div>
-            <q-card>
-              <q-tabs
-                v-model='model_RID'
-                align='left'
-                dense
-                shrink
-                no-caps
-                inline-label
-                indicator-color='yellow'
-                class='bg-secondary text-white shadow-2'
-              >
-                <q-tab
-                  v-for='r in rooms'
-                  :key='r.value'
-                  :name='r.value'
-                  :icon='r.icon'
-                  :label='r.label'
-                  :disable='!r.open'
-                />
-              </q-tabs>
-              <q-tab-panels
-                keep-alive
-                v-model='model_RID'
-                animated
-                class="bg-teal"
-              >
-                <q-tab-panel :name='0'>
-                  <q-list
-                    dense
-                    bordered
-                    separator
-                  >
-                    <myTableList
-                      v-for='t in tables'
-                      :key='t.id'
-                      :myTable='t'
-                      v-on:onPlayer='onPlayer'
-                    />
-                  </q-list>
-                </q-tab-panel>
-
-                <q-tab-panel :name='1'>
-                  <myPlayTable
-                    :myPlayer='myPlayer'
+    <div class='column'>
+      <div class='col-8'>
+        <q-card>
+          <q-tabs
+            v-model='rId'
+            align='left'
+            dense
+            shrink
+            no-caps
+            inline-label
+            indicator-color='yellow'
+            class='bg-secondary text-white shadow-2'
+          >
+            <q-tab
+              v-for='r in rooms'
+              :key='r.value'
+              :name='r.value'
+              :icon='r.icon'
+              :label='r.name'
+              :disable='!r.open'
+            />
+          </q-tabs>
+          <q-tab-panels
+            keep-alive
+            v-model='rId'
+            animated
+            class="bg-teal"
+          >
+            <q-tab-panel :name='0'>
+              <div class='fit'>
+                <q-list
+                  dense
+                  bordered
+                  separator
+                >
+                  <myTableList
+                    v-for='t in tables'
+                    :key='t.id'
+                    :myTable='t'
                     v-on:onPlayer='onPlayer'
-                    class='jbtable'
                   />
-                </q-tab-panel>
-              </q-tab-panels>
-            </q-card>
-          </div>
-        </template>
+                </q-list>
+              </div>
+            </q-tab-panel>
 
-        <template v-slot:after>
-          <div class='q-pa-md'>
-            <q-expansion-item
-              default-opened
-              dense
-              icon='chat'
-              :label='getTableName'
-              header-class='myChats'
-            >
-              <q-separator />
-              <q-card class='full-width myChats'>
-                <q-chat-message
-                  v-for="chat in roomChats"
-                  :key='chat._id'
-                  :name='chat.from.nick'
-                  :avatar='chat.from.profile.avatar'
-                  :text='[chat.text]'
-                  :stamp='chatDate(chat.createdAt)'
-                  :sent='isSent(chat.from) ? true : false'
+            <q-tab-panel :name='1'>
+              <div class='fit'>
+                <myPlayTable
+                  :myPlayer='myPlayer'
+                  v-on:onPlayer='onPlayer'
+                  class='jbtable'
                 />
-              </q-card>
-            </q-expansion-item>
-          </div>
-        </template>
-      </q-splitter>
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
+        </q-card>
+      </div>
+      <div class='col-4'>
+        <myMessages :to='rooms[rId]' />
+      </div>
     </div>
     <q-footer elevated>
-      <q-toolbar class='bg-primary text-white rounded-borders'>
-        <q-btn
-          round
-          dense
-          flat
-          icon='menu'
-          class='q-mr-xs'
-        />
-        <q-avatar class='gt-xs'>
-          <img :src='user.profile.avatar' />
-        </q-avatar>
-        <q-space />
-        <div class='full-width'>
-          <q-input
-            dark
-            autofocus
-            standout
-            v-model='chat'
-            @keypress='onChat'
-          >
-            <template v-slot:append>
-              <q-icon
-                v-if='!chat'
-                name='chat'
-              />
-              <q-icon
-                v-else
-                name='clear'
-                class='cursor-pointer'
-                @click='chat = null'
-              />
-            </template>
-          </q-input>
-        </div>
-        <q-btn
-          flat
-          round
-          dense
-          icon='menu'
-          @click='right = !right'
-          aria-label='Toggle menu on right side'
-        />
-      </q-toolbar>
+      <myChat :to='rooms[rId]' />
     </q-footer>
   </q-page>
 </template>
 
 <script>
-import moment from 'moment'
-import { playerService, chatService } from 'src/api'
+import { mapState, mapGetters } from 'vuex'
+import { playerService } from 'src/api'
 import myTableList from 'src/components/myTableList'
 import myPlayTable from 'src/components/myPlayTable'
+import myMessages from 'src/components/myMessages'
+import myChat from 'src/components/myChat'
 
 export default {
   name: 'Lobby',
   components: {
     myTableList,
-    myPlayTable
+    myPlayTable,
+    myMessages,
+    myChat
   },
   data () {
     return {
       user: null,
       splitterModel: 50, // start at 50%
-      model_RID: 0,
+      rId: 0,
       rooms: [
         {
-          label: 'Lobby',
+          name: 'Lobby',
           value: 0,
           icon: 'people',
-          open: true
+          open: true,
+          id: '#Lobby'
         },
         {
-          label: 'My Table',
+          name: 'My Table',
           value: 1,
           icon: 'portrait',
-          open: true
+          open: false,
+          id: '#Lobby'
         },
         {
-          label: 'Tourney',
+          name: 'Tourney',
           value: 2,
           icon: 'person_add',
-          open: false
+          open: false,
+          id: '#Lobby'
         },
         {
-          label: 'Team Game',
+          name: 'Team Game',
           value: 4,
           icon: 'group_add',
-          open: false
+          open: false,
+          id: '#Lobby'
         }
       ],
       MIX: ['MP', 'IMP', 'XIMP'],
-      myBT: null,
-      chat: null,
-      chatTo: '#Lobby',
-      myChats: []
+      myBT: null
     }
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['myPlayer', 'getTableById', 'getChats']),
+    ...mapGetters('jstore', ['myPlayer', 'getTableById']),
 
     mySeat () {
       return this.myPlayer.seat
-    },
-    getTableName () {
-      const tId = this.chatTo.substring(1)
-      const t = this.getTableById(tId)
-      if (t) return t.name
-      else return '#Lobby'
-    },
-    getChat () {
-      const c = this.getChats(this.chatTo)
-      return c
-    },
-    roomChats: function () {
-      return this.myChats.filter(chat => chat.to === this.chatTo)
     }
   },
   methods: {
-    onChat (event) {
-      if (event.key === 'Enter') {
-        this.send()
-      }
-    },
-    send () {
-      if (this.chat) {
-        const _chat = {
-          to: this.chatTo || '#Lobby',
-          text: this.chat
-        }
-
-        chatService.create(_chat).then(() => {
-          this.chat = null
-        })
-      }
-    },
-    isSent (from) {
-      return from._id === this.user._id
-    },
-    chatDate (createdAt) {
-      return moment(createdAt).format('MMM Do, hh:mm:ss')
-    },
+    // ...mapActions('jstore', ['setChat']),
     onPlayer (seat) {
       seat.tId0 = this.mySeat.tId
       seat.sId0 = this.mySeat.sId
@@ -241,26 +144,12 @@ export default {
   },
   mounted () {
     if (!this.user.profile.flag) this.$router.push({ name: 'profile' })
-    chatService.on('created', chat => {
-      this.myChats.unshift(chat)
-    })
-    console.log('u', this.user, this.myPlayer)
   },
   watch: {
-    model_RID (n) {
-      if (n === 1) {
-        if (this.myPlayer.seat.tId) this.chatTo = `#${this.myPlayer.seat.tId}`
-        // else this.onPlayer({ tId: this.myPlayer.id, sId: 0 })
-      } else {
-        this.chatTo = '#Lobby'
-      }
-      // this.myChats = this.getChats(this.chatTo)
-    },
-    myPlayer (n, o) {
-      console.log(n, o)
-    },
     mySeat (n, o) {
-      this.model_RID = n.tId ? 1 : 0
+      this.rooms[1].open = !!n.tId
+      this.rooms[1].id = n.tId
+      this.rId = n.tId ? 1 : 0
     }
   },
   created () {
@@ -274,13 +163,8 @@ export default {
 .jbtable > div {
   border: 1px solid yellow;
 }
-/*
-.q-tab-panel {
-    padding: 0px;
-    margin-left: 0px;
-    margin-right: 0px;
-    margin-bottom: 10px;
-    overflow-x: hidden;
+.messages {
+  min-height: 200px;
+  max-height: 400px;
 }
-*/
 </style>

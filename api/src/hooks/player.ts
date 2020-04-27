@@ -21,7 +21,7 @@ async function beforeSit (context: any) {
     const { user } = connection
     // const uId = user._id
     const { seat } = context.data
-    console.log('beforeSit', context.data, user)
+    // console.log('beforeSit', context.data, user)
 
     if (seat.tId0 !== seat.tId) {  //leave table
       if (seat.tId0) {
@@ -136,7 +136,7 @@ const logout = (): Hook => {
 
         if (seat.tId) {
           let t = await tableService.get(seat.tId)
-          console.log('logout', t)
+          // console.log('logout', t)
           if (t.players < 2) {
             tableService.remove(t.id)
           } else {

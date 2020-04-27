@@ -4,6 +4,5 @@ export default {
   users: [],
   players: [],
   tables: [],
-  chats: [],
-  chatTo: null
+  chats: []
 }

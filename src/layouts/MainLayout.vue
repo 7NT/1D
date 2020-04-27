@@ -134,6 +134,82 @@
       </q-toolbar>
 
       <q-list bordered>
+        <q-expansion-item
+          dense
+          dense-toggle
+          expand-separator
+          v-for='p in players'
+          :key='p.id'
+        >
+          <template v-slot:header>
+            <q-item-section side>
+              <div class="row items-center">
+                <q-icon
+                  :name='`img:statics/jbicon/seats/seat${p.seat.sId}.svg`'
+                  size="24px"
+                />
+                <q-avatar size="24px">
+                  <img :src='p.profile.avatar' />
+                </q-avatar>
+              </div>
+            </q-item-section>
+
+            <q-item-section>
+              {{p.nick}}
+            </q-item-section>
+
+            <q-item-section
+              avatar
+              side
+            >
+              <q-btn
+                dense
+                round
+                icon="chat"
+                class="q-ml-md"
+                size='sm'
+              >
+                <q-badge
+                  color="red"
+                  floating
+                  transparent
+                >.</q-badge>
+              </q-btn>
+            </q-item-section>
+          </template>
+          <q-card>
+            <q-card-actions>
+              <q-btn
+                dense
+                flat
+                size='sm'
+              >Watch</q-btn>
+              <q-btn
+                dense
+                flat
+                size='sm'
+              >Join</q-btn>
+              <q-btn
+                dense
+                flat
+                size='sm'
+              >Chat</q-btn>
+            </q-card-actions>
+            <q-separator dark />
+            <q-card-section>
+              <myMessages :to='p' />
+            </q-card-section>
+            <q-card-section>
+              <div
+                class='full-width'
+                style='height:24px'
+              >
+                <myChat :to='p' />
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-expansion-item>
+        <!--
         <q-item
           v-for='p in players'
           :key='p.id'
@@ -319,7 +395,23 @@ export default {
     updateChat (c) {
       this.setChat(c)
     },
-    onServices () {
+    async onServices () {
+      await tableService.find().then(response => {
+        this.setTables(response.data)
+      })
+      tableService.on('created', t => {
+        console.log('table created', t)
+        this.updateTable(t)
+      })
+      tableService.on('patched', t => {
+        console.log('table patched', t)
+        this.updateTable(t)
+      })
+      tableService.on('removed', t => {
+        console.log('table removed', t)
+        t.state = -1
+        this.updateTable(t)
+      })
       userService.on('patched', user => {
         if (user._id === this.user._id) {
           this.updateUser(user)

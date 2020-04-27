@@ -139,7 +139,6 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
 import moment from 'moment'
 import { playerService, chatService } from 'src/api'
 import myTableList from 'src/components/myTableList'

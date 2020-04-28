@@ -382,7 +382,7 @@ export default {
       })
       tableService.on('removed', t => {
         console.log('table removed', t)
-        t.state = -1
+        t.state = -2
         this.updateTable(t)
       })
       userService.on('patched', user => {

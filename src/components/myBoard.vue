@@ -1,5 +1,5 @@
-<template>
-  <div class="boardBox full-width">
+<template padding>
+  <div class="boardBox full-width bg-blue-grey-4">
     <q-select
       color="grey-3"
       dense
@@ -30,9 +30,7 @@
         dense
         class="boardItem"
       >
-        <q-item-section>
-          <q-item-label caption>System:</q-item-label>
-        </q-item-section>
+        <q-item-label caption>System:</q-item-label>
         <q-item-section
           side
           top
@@ -121,31 +119,7 @@
         dense
         class="boardItem"
       >
-        <q-item-section>
-          <q-item-label caption>Tricks:</q-item-label>
-        </q-item-section>
-        <q-item-section>
-          <div class="text-orange">
-            <q-badge
-              color="info"
-              text-color="black"
-              :label="tricks(0)"
-            />
-            <q-badge
-              color="info"
-              text-color="black"
-              :label="tricks(1)"
-            />
-          </div>
-        </q-item-section>
-      </q-item>
-      <q-item
-        dense
-        class="boardItem"
-      >
-        <q-item-section>
-          <q-item-label caption>Score:</q-item-label>
-        </q-item-section>
+        <q-item-label caption>Score:</q-item-label>
         <q-item-section>
           <div class="text-orange">
             <q-badge
@@ -237,16 +211,6 @@ export default {
       const cc = this.cc[n]
       openURL(`http://localhost:8080/statics/cc/${cc}.pdf`)
     },
-    tricks (n) {
-      try {
-        if (this.myTable.plays) {
-          return this.myTable.plays.info.tricks[n]
-        }
-      } catch (err) {
-        // console.log(err)
-      }
-      return null
-    },
     score (n) {
       try {
         if (this.myTable.plays) {
@@ -279,7 +243,7 @@ export default {
   height: 120px;
 }
 .boardItem {
-  height: 30px;
+  height: 26px;
 }
 .cc {
   text-transform: none;

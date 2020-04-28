@@ -307,7 +307,7 @@ export default {
       this.$emit('onTable', {
         action: 'claim',
         claim: {
-          contract: this.contract,
+          info: this.contract,
           claim: c,
           by: this.mySeat.sId,
           r1: -jb.seat1234(this.mySeat.sId - 1),

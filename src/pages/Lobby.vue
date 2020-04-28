@@ -146,6 +146,9 @@ export default {
     if (!this.user.profile.flag) this.$router.push({ name: 'profile' })
   },
   watch: {
+    myPlayer (p) {
+      if (!p) this.goTo('home')
+    },
     mySeat (n, o) {
       this.rooms[1].open = !!n.tId
       this.rooms[1].id = n.tId

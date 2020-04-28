@@ -35,7 +35,7 @@ export const setPlayer = (state, payload) => {
 export const setTable = (state, payload) => {
   const i = state.tables.findIndex(t => t.id === payload.id)
   if (i >= 0) {
-    if (payload.state < 0) state.tables.splice(i, 1)
+    if (payload.state < -1) state.tables.splice(i, 1)
     else state.tables.splice(i, 1, payload)
   } else if (payload.state >= 0) {
     state.tables.splice(1, 0, payload)

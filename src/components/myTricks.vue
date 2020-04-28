@@ -1,35 +1,56 @@
 <template>
-  <div class="column q-pa-md">
+  <div class="column q-pa-md trickbox">
     <div class="row self-start justify-end no-wrap">
       <q-card
         flat
         v-if="isVisible"
-        class="transparent"
+        class="full-width transparent"
       >
-        <div class="hand hhand-compact active-hand full-width">
-          <span
-            v-for="(c, i) of playedCards"
-            :key="`${i}`"
-            class="card"
-          >
-            <img
-              :src="cardback(c)"
-              :class="trickClass(c, i)"
-              :style='`z-index:${i}`'
-            />
-            <q-tooltip
-              content-class="bg-info"
-              anchor="top right"
-              self="bottom left"
+        <q-card-section>
+          <div class="hand hhand-compact active-hand full-width">
+            <span
+              v-for="(c, i) of playedCards"
+              :key="`${i}`"
+              class="card"
             >
-              <myPlayBox
-                :myPlayer='myPlayer'
-                :myTable='myTable'
-                :review='true'
+              <img
+                :src="cardback(c)"
+                :class="trickClass(c, i)"
+                :style='`z-index:${i}`'
               />
-            </q-tooltip>
-          </span>
-        </div>
+              <q-tooltip
+                content-class="bg-info"
+                anchor="top right"
+                self="bottom left"
+              >
+                <myPlayBox
+                  :myPlayer='myPlayer'
+                  :myTable='myTable'
+                  :review='true'
+                />
+              </q-tooltip>
+            </span>
+          </div>
+        </q-card-section>
+        <q-card-section>
+          <q-list>
+            <q-item-label caption>Tricks:</q-item-label>
+            <q-item-section>
+              <div class="text-orange">
+                <q-badge
+                  color="info"
+                  text-color="black"
+                  :label="tricks(0)"
+                />
+                <q-badge
+                  color="info"
+                  text-color="black"
+                  :label="tricks(1)"
+                />
+              </div>
+            </q-item-section>
+          </q-list>
+        </q-card-section>
       </q-card>
     </div>
   </div>
@@ -61,6 +82,16 @@ export default {
     }
   },
   methods: {
+    tricks (n) {
+      try {
+        if (this.myTable.plays) {
+          return this.myTable.plays.info.tricks[n]
+        }
+      } catch (err) {
+        // console.log(err)
+      }
+      return null
+    },
     isWinner (w) {
       // const w = c.winner
       const sId = Math.abs(this.myPlayer.seat.sId)
@@ -89,6 +120,9 @@ export default {
 }
 </script>
 <style scoped>
+.trickbox {
+  max-height: 60px;
+}
 img.card {
   max-height: 70px;
   margin: 0;

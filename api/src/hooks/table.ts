@@ -9,10 +9,8 @@ const state = (): Hook => {
     if (ready) {
       context.data = await onReady(context)
     } else if (claim) {
-      console.log(context.data)
       if (claim.r1 > 0 && claim.r2 > 0) {
-        context.data = onClaim(claim)
-        console.log(context.data)
+        context.data = onClaim(context.data)
       }
     } else if (plays) {
       context.data = onPlay(context.data)
@@ -293,11 +291,12 @@ function onPlay (tdata: any) {
   return tdata
 }
 
-async function onClaim (claim: any) {
-  let d = (claim.by -1) % 2
+function onClaim (tdata: any) {
+  let claim = tdata.claim
+  let d = (claim.by - 1) % 2
   let o = (d + 1) % 2
 
-  let tricks = claim.tricks.slice(0)
+  let tricks = claim.tricks // .slice(0)
   switch (claim.claim) {
     case 'Concede All':
       // claim.tricks[o] = 13 - claim.tricks[d]
@@ -312,13 +311,10 @@ async function onClaim (claim: any) {
       return
   }
   tricks[o] = 13 - tricks[d]
-  // claim.tricks = tricks
-  const tdata = {
-    claim,
-    state: -1,
-    turn: 0
-  }
-  console.log(tdata)
+  tdata.plays.info.tricks = tricks
+  tdata.state = -1
+  tdata.turn = 0
+
   return tdata
 }
 

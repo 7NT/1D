@@ -1,6 +1,6 @@
 <template>
   <div class='q-ma-none'>
-    <div class='jbtable column bg-teal'>
+    <div class='column jbtable'>
       <div class='col'>
         <div class='row no-wrap'>
           <div class='col-3 items-start'>
@@ -18,6 +18,7 @@
                 :myTable='myTable'
                 v-on:onTable='onTable'
                 class='myHand justify-start'
+                offset='[10, 10]'
               />
             </div>
           </div>
@@ -111,7 +112,7 @@
           </div>
           <div class='col-3 bidbox'>
             <div
-              class='column'
+              class='column bg-blue-grey-6'
               v-if='isMyTurn() === 1'
             >
               <div
@@ -222,7 +223,7 @@ import myPlayBox from 'src/components/myPlayBox'
 import myTricks from 'src/components/myTricks'
 
 export default {
-  name: 'myPlaysTable',
+  name: 'myPlayTable',
   props: ['myPlayer'],
   data: function () {
     return {
@@ -362,7 +363,7 @@ export default {
           tableService.patch(this.myTable.id, { claim: action.claim })
           break
         }
-        default: {}
+        default: { }
       }
     },
     bidN (n) {
@@ -401,8 +402,11 @@ export default {
     }
   },
   watch: {
+    myPlayer (n, o) {
+      console.log('p', n, o)
+    },
     myTable: function (t1, t0) {
-      // console.log('t', t1, t0)
+      console.log('t', t1, t0)
       this.myState = t1.state
     },
     myState: function (s1, s0) {
@@ -445,7 +449,7 @@ export default {
   margin: 0px;
 }
 .jbtable {
-  min-width: 696px;
+  min-width: 694px;
   min-height: 393px;
   max-height: 480px;
   /*border: 1px solid green;*/
@@ -458,7 +462,8 @@ export default {
   background-size: cover; /* Resize the background image to cover the entire container */
 }
 .box {
-  border: 1px solid blue;
+  /* border: 1px solid blue; */
+  margin: 5px;
 }
 .bbox {
   min-height: 120px;

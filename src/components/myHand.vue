@@ -40,7 +40,7 @@
             no-wrap
             ellipsis
             :label="pNick"
-            :color="pColor"
+            :color="pTurn"
             :icon="pAvatar"
             align="left"
             class="player"
@@ -89,7 +89,7 @@
       </div>
     </div>
     <q-dialog
-      v-if='myClaim'
+      v-if='myClaimR'
       v-model="isClaim"
       position="bottom"
     >
@@ -146,6 +146,11 @@ export default {
   },
   computed: {
     ...mapGetters('jstore', ['getPlayerById']),
+    myState: {
+      get: function () {
+        return this.myTable.state
+      }
+    },
     mySeat: {
       get: function () {
         return this.myPlayer.seat
@@ -174,10 +179,11 @@ export default {
     },
     isVisible () {
       if (this.myTable.state < 1) return true
+      else if (this.myTable.state === 0) return false
       else if (this.isDummy) return true
       else return this.seatX === this.mySeat.sId
     },
-    pColor () {
+    pTurn () {
       if (this.isMyTurn()) return 'warning'
       else return this.myPlayer ? 'indigo' : 'positive'
     },
@@ -239,6 +245,10 @@ export default {
     },
     myClaim () {
       return this.myTable.claim
+    },
+    myClaimR () {
+      if (this.myClaim) return this.myClaim.r1 === -this.mySeat.sId || this.myClaim.r2 === -this.mySeat.sId
+      else return false
     }
   },
   methods: {
@@ -292,19 +302,19 @@ export default {
         console.log('play', 'not your turn')
       }
     },
-    onClaim (e) {
-      const claim = e.target.textContent
+    onClaim (c) {
+      // const claim = this.claimName[c]
       this.$emit('onTable', {
         action: 'claim',
         claim: {
           contract: this.contract,
-          claim: claim,
+          claim: c,
           by: this.mySeat.sId,
           r1: -jb.seat1234(this.mySeat.sId - 1),
-          r2: -jb.seat1234(this.mySeat.sId + 1)
+          r2: -jb.seat1234(this.mySeat.sId + 1),
+          tricks: this.myTable.plays.info.tricks
         }
       })
-      this.$q.notify({ type: 'info', message: `${this.contract}: ${claim}` })
     },
     onClaimR (r) {
       let claim
@@ -318,7 +328,6 @@ export default {
       } else {
         claim = null
       }
-      console.log('claimR', this.seatX, claim)
       this.$emit('onTable', {
         action: 'claim',
         claim
@@ -371,12 +380,17 @@ export default {
       return this.myTable.state === 2 ? this.isMyTurn() : false
     },
     isMyTurn () {
+      if (this.myState > 0) return this.myTable.turn === this.seatX
+      else return false
+      /*
       try {
         if (this.myTable.turn === this.seatX) {
-          if (this.isDummy) { return this.myPlayer.seat.sId === this.myTable.bids.info.by } else return true
+          if (this.isDummy) { return this.myPlayer.seat.sId === this.myTable.bids.info.by }
+          else return true
         }
       } catch (_) { }
       return false
+      */
     }
   },
   watch: {
@@ -390,7 +404,7 @@ export default {
     }
   },
   mounted () {
-    // console.log('t', this.seatX, this.myTable)
+    console.log('t', this.seatX, this.myTable)
     this.updateTable()
   },
   created () { }

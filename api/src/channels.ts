@@ -49,11 +49,12 @@ export default function (app: Application) {
 
   app.on('connection', (connection: any) => {
     // On a new real-time connection, add it to the anonymous channel
+    console.log('connect', connection)
     app.channel('#Anonymous').join(connection)
   })
 
   app.on('disconnect', (connection: any) => {
-    // console.log('disconnect', connection)
+    console.log('disconnect', connection)
     const user = connection.user
     if (user) {
       //When logging out, leave all channels before joining anonymous channel
@@ -71,7 +72,7 @@ export default function (app: Application) {
       // Obtain the logged in user from the connection
       const user = connection.user
       user.state = 1
-
+      console.log('login', user)
       joinChannels(user, connection)
 
       const player = {
@@ -118,6 +119,7 @@ export default function (app: Application) {
       const user = connection.user
       user.state = 0
 
+      console.log('logout', user)
       //When logging out, leave all channels before joining anonymous channel
       if (app.channels.length) app.channel(app.channels).leave(connection)
       //app.channel('#Anonymous').join(connection)

@@ -9,7 +9,11 @@ const state = (): Hook => {
     if (ready) {
       context.data = await onReady(context)
     } else if (claim) {
-      if (claim.r1 > 0 && claim.r2 > 0) onClaim(context, claim)
+      console.log(context.data)
+      if (claim.r1 > 0 && claim.r2 > 0) {
+        context.data = onClaim(claim)
+        console.log(context.data)
+      }
     } else if (plays) {
       context.data = onPlay(context.data)
     } else if (bids) {
@@ -289,20 +293,33 @@ function onPlay (tdata: any) {
   return tdata
 }
 
-async function onClaim (context: any, claim: any) {
-  const tableService = context.app.service('tables')
+async function onClaim (claim: any) {
+  let d = (claim.by -1) % 2
+  let o = (d + 1) % 2
 
-  let table = await tableService.get(context.id)
-  let d = table.bids.info.by % 2
-
+  let tricks = claim.tricks.slice(0)
   switch (claim.claim) {
     case 'Concede All':
-
+      // claim.tricks[o] = 13 - claim.tricks[d]
+      break
     case 'Claim Just Make':
+      tricks[d] = 6 + parseInt(claim.contract)
+      break
     case 'Claim All':
+      tricks[d] = 13 - tricks[o]
+      break
     default:
+      return
   }
-  table.state = -1
+  tricks[o] = 13 - tricks[d]
+  // claim.tricks = tricks
+  const tdata = {
+    claim,
+    state: -1,
+    turn: 0
+  }
+  console.log(tdata)
+  return tdata
 }
 
 export {

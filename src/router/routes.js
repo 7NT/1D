@@ -8,7 +8,7 @@ const routes = [{
   {
     path: '/home',
     name: 'home',
-    component: () => import('pages/Index')
+    component: () => import('pages/Home')
   },
   {
     path: '/signin',

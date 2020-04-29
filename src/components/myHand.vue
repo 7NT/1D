@@ -90,7 +90,6 @@
     </div>
     <q-dialog
       v-if='myClaimR'
-      v-model="isClaim"
       position="bottom"
     >
       <q-card>
@@ -99,7 +98,7 @@
         </q-card-section>
 
         <q-card-section class="q-pt-none">
-          {{ myClaim.contract }}: {{ myClaim.claim }}
+          {{ myClaim.info }}: {{ myClaim.claim }}
         </q-card-section>
 
         <q-card-actions align="right">
@@ -247,8 +246,12 @@ export default {
       return this.myTable.claim
     },
     myClaimR () {
-      if (this.myClaim) return this.myClaim.r1 === -this.mySeat.sId || this.myClaim.r2 === -this.mySeat.sId
-      else return false
+      if (this.isClaim) {
+        if (jb.isPlayer(this.mySeat.sId)) {
+          return this.mySeat.sId === -this.myClaim.r1 || this.mySeat.sId === -this.myClaim.r2
+        }
+      }
+      return false
     }
   },
   methods: {
@@ -342,10 +345,6 @@ export default {
     },
     updateTable () {
       this.updatePlay()
-      const { state, claim } = this.myTable
-      if (state === 2 && claim) {
-        this.isClaim = this.mySeat.sId === -claim.r1 || this.mySeat.sId === -claim.r2
-      }
     },
     updatePlay () {
       try {
@@ -377,20 +376,13 @@ export default {
       }
     },
     isMyPlay () {
-      return this.myTable.state === 2 ? this.isMyTurn() : false
+      if (this.myTable.state === 2) {
+        return this.isDummy ? this.myPlayer.seat.sId === this.myTable.bids.info.by : this.isMyTurn()
+      } else return false
     },
     isMyTurn () {
       if (this.myState > 0) return this.myTable.turn === this.seatX
       else return false
-      /*
-      try {
-        if (this.myTable.turn === this.seatX) {
-          if (this.isDummy) { return this.myPlayer.seat.sId === this.myTable.bids.info.by }
-          else return true
-        }
-      } catch (_) { }
-      return false
-      */
     }
   },
   watch: {
@@ -399,8 +391,9 @@ export default {
     },
     myTable (t, o) {
       this.updateTable()
-      // console.log('t', this.seatX, t.myClaim)
-      // if (this.isClaim) this.myClaim(t.claim)
+    },
+    myClaim (claim) {
+      this.isClaim = claim && this.myTable.state === 2
     }
   },
   mounted () {

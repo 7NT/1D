@@ -1,57 +1,36 @@
 <template>
-  <div class="column q-pa-md trickbox">
-    <div class="row self-start justify-end no-wrap">
-      <q-card
-        flat
-        v-if="isVisible"
-        class="full-width transparent"
-      >
-        <q-card-section>
-          <div class="hand hhand-compact active-hand full-width">
-            <span
-              v-for="(c, i) of playedCards"
-              :key="`${i}`"
-              class="card"
-            >
-              <img
-                :src="cardback(c)"
-                :class="trickClass(c, i)"
-                :style='`z-index:${i}`'
-              />
-              <q-tooltip
-                content-class="bg-info"
-                anchor="top right"
-                self="bottom left"
-              >
-                <myPlayBox
-                  :myPlayer='myPlayer'
-                  :myTable='myTable'
-                  :review='true'
-                />
-              </q-tooltip>
-            </span>
-          </div>
-        </q-card-section>
-        <q-card-section>
-          <q-list>
-            <q-item-label caption>Tricks:</q-item-label>
-            <q-item-section>
-              <div class="text-orange">
-                <q-badge
-                  color="info"
-                  text-color="black"
-                  :label="tricks(0)"
-                />
-                <q-badge
-                  color="info"
-                  text-color="black"
-                  :label="tricks(1)"
-                />
-              </div>
-            </q-item-section>
-          </q-list>
-        </q-card-section>
-      </q-card>
+  <div class="row items-end" v-if="isVisible">
+    <div class="column">
+      <div class="row self-start no-wrap">
+        <q-card
+          flat
+          class="transparent"
+        >
+          <q-card-section>
+            <div class="hand hhand-compact active-hand full-width">
+              <span v-for="(c, i) of playedCards" :key="`${i}`" class="card">
+                <img :src="cardback(c)" :class="trickClass(c, i)" :style="`z-index:${i}`" />
+                <q-tooltip content-class="bg-info" anchor="top right" self="bottom left">
+                  <myPlayBox :myPlayer="myPlayer" :myTable="myTable" :review="true" />
+                </q-tooltip>
+              </span>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+      <div class="pbar">
+        <q-list>
+          <q-item-section>
+            <div class="row items-end justify-around">
+              <q-icon size='sm' name='img:statics/jbicon/seats/seat13.svg' left />
+              <q-badge outline color="black" :label="tricks(0)" align="middle" />
+              <q-separator vertical />
+              <q-icon size='sm' name='img:statics/jbicon/seats/seat24.svg' right />
+              <q-badge outline color="black" :label="tricks(1)" align="middle" />
+            </div>
+          </q-item-section>
+        </q-list>
+      </div>
     </div>
   </div>
 </template>
@@ -78,7 +57,10 @@ export default {
       return this.myTable.state > 1
     },
     playedCards () {
-      return this.myTable.plays.data.slice(0).filter(c => c.winner > 0).map(c => c.winner)
+      return this.myTable.plays.data
+        .slice(0)
+        .filter(c => c.winner > 0)
+        .map(c => c.winner)
     }
   },
   methods: {
@@ -97,7 +79,7 @@ export default {
       const sId = Math.abs(this.myPlayer.seat.sId)
 
       if (jb.isPlayer(sId)) {
-        return (w % 2) === (sId % 2)
+        return w % 2 === sId % 2
       } else {
         return w % 2
       }
@@ -122,6 +104,16 @@ export default {
 <style scoped>
 .trickbox {
   max-height: 60px;
+}
+.pbar {
+  min-width: 275px;
+  height: 32px;
+  margin-top: -50px;
+  align-items: flex-start;
+  text-overflow: ellipsis;
+  background:bisque;
+  opacity: 1;
+  z-index: 100;
 }
 img.card {
   max-height: 70px;

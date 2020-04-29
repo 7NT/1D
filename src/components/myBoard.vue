@@ -1,121 +1,88 @@
 <template padding>
-  <div class="boardBox full-width bg-blue-grey-4">
-    <q-select
-      color="grey-3"
-      dense
-      square
-      outlined
-      label-color="orange"
-      v-model="model_mix"
-      :options="options_mix"
-      options-dense
-      options-dark
-      behavior="menu"
-      menu-shrink
-      :label="bdata"
-    >
-      <template v-slot:append>
-        <q-icon
-          name="img:statics/jbicon/svg/mix.svg"
-          color="orange"
-        />
-      </template>
-    </q-select>
-    <q-list dense bordered separator class="rounded-borders">
-      <q-item dense class="row boardItem">
-        <q-item-section class="col-2 gt-sm">
-          <q-item-label class="q-mt-sm">System:</q-item-label>
-        </q-item-section>
-        <q-item-section side class="gt-sm">
-          <div class="row q-pa-xs q-gutter-xs no-wrap">
-            <div class="col">
-              <q-btn dense size="xs" icon="img:statics/jbicon/seats/seat13.svg">
-                <q-badge class="cc" color="orange" text-color="black" align="top" :label="cc[0]" />
-                <q-menu dense auto-close>
-                  <q-list dense>
-                  <template v-if='isMyCC===0'>
-                    <q-item
-                      clickable
-                      v-for="c in CCs"
-                      :key="c"
-                      @click="onCC(0,c)"
-                    >
-                      <q-item-section>{{c}}</q-item-section>
-                    </q-item>
-                    <q-separator />
-                  </template>
-                  <q-item
-                    clickable
-                    @click="onCCView(0)"
-                  >
-                    <q-item-section>view...</q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-btn>
-            <q-btn
-              dense
-              size="xs"
-              icon="img:statics/jbicon/seats/seat24.svg"
-            >
-              <q-badge
-                class='cc'
-                color="orange"
-                text-color="black"
-                align='top'
-                :label="cc[1]"
-              />
-              <q-menu
-                dense
-                auto-close
-              >
-                <q-list dense>
-                  <template v-if='isMyCC===1'>
-                    <q-item
-                      clickable
-                      v-for="c in CCs"
-                      :key="c"
-                      @click="onCC(1,c)"
-                    >
-                      <q-item-section>{{c}}</q-item-section>
-                    </q-item>
-                    <q-separator />
-                  </template>
-                  <q-item
-                    clickable
-                    @click="onCCView(1)"
-                  >
-                    <q-item-section>view...</q-item-section>
-                  </q-item>
-
-                </q-list>
-              </q-menu>
-            </q-btn>
-          </div>
-        </q-item-section>
-      </q-item>
-
-      <q-item
+  <div class="boardBox">
+    <div class=" full-width">
+      <q-select
+        color="grey-3"
         dense
-        class="boardItem"
+        square
+        outlined
+        label-color="orange"
+        v-model="model_mix"
+        :options="options_mix"
+        options-dense
+        options-dark
+        behavior="menu"
+        menu-shrink
+        :label="bdata"
       >
-        <q-item-label caption>Score:</q-item-label>
-        <q-item-section>
-          <div class="text-orange">
-            <q-badge
-              color="info"
-              text-color="black"
-              :label="score(0)"
-            />
-            <q-badge
-              color="info"
-              text-color="black"
-              :label="score(1)"
-            />
-          </div>
-        </q-item-section>
-      </q-item>
-    </q-list>
+        <template v-slot:append>
+          <q-icon name="img:statics/jbicon/svg/mix.svg" color="orange" />
+        </template>
+      </q-select>
+      <q-list dense bordered separator class="rounded-borders">
+        <q-item dense class="row boardItem">
+          <q-item-section class="col-2 gt-sm">
+            <q-item-label class="q-mt-sm">System:</q-item-label>
+          </q-item-section>
+          <q-item-section side class="col-10 gt-sm">
+            <div class="row q-pa-xs q-gutter-xs no-wrap full-width">
+              <div class="col-6">
+                <q-btn dense size="xs" icon="img:statics/jbicon/seats/seat13.svg">
+                  <q-badge class="cc" color="orange" text-color="black" align="top" :label="cc[0]" />
+                  <q-menu dense auto-close>
+                    <q-list dense>
+                      <template v-if="isMyCC===0">
+                        <q-item clickable v-for="c in CCs" :key="c" @click="onCC(0,c)">
+                          <q-item-section>{{c}}</q-item-section>
+                        </q-item>
+                        <q-separator />
+                      </template>
+                      <q-item clickable @click="onCCView(0)">
+                        <q-item-section>view...</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </q-btn>
+              </div>
+              <div class="col-6">
+                <q-btn dense size="xs" icon="img:statics/jbicon/seats/seat24.svg">
+                  <q-badge class="cc" color="orange" text-color="black" align="top" :label="cc[1]" />
+                  <q-menu dense auto-close>
+                    <q-list dense>
+                      <template v-if="isMyCC===1">
+                        <q-item clickable v-for="c in CCs" :key="c" @click="onCC(1,c)">
+                          <q-item-section>{{c}}</q-item-section>
+                        </q-item>
+                        <q-separator />
+                      </template>
+                      <q-item clickable @click="onCCView(1)">
+                        <q-item-section>view...</q-item-section>
+                      </q-item>
+                    </q-list>
+                  </q-menu>
+                </q-btn>
+              </div>
+            </div>
+          </q-item-section>
+        </q-item>
+
+        <q-item dense class="row boardItem">
+          <q-item-section top class="col-2 gt-sm">
+            <q-item-label class="q-mt-sm">Score:</q-item-label>
+          </q-item-section>
+          <q-item-section side class="col-10 gt-sm">
+            <div class="row q-pa-xs q-gutter-xs no-wrap text-orange full-width">
+              <div class='col-6'>
+                <q-badge color="info" text-color="black" :label="score(0)" />
+              </div>
+              <div class='col-6'>
+                <q-badge color="info" text-color="black" :label="score(1)" />
+              </div>
+            </div>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </div>
   </div>
 </template>
 
@@ -151,8 +118,10 @@ export default {
     ...mapGetters('jstore', ['myPlayer']),
     bdata: function () {
       try {
-        if (this.myTable.board) { return this.myTable.board.bt + ': ' + this.myTable.board.bn }
-      } catch (err) { }
+        if (this.myTable.board) {
+          return this.myTable.board.bt + ': ' + this.myTable.board.bn
+        }
+      } catch (err) {}
       return 'Board'
     },
     cc: function () {
@@ -219,8 +188,10 @@ export default {
 
 <style scoped>
 .boardBox {
-  width: 160px;
+  max-width: 240px;
   height: 120px;
+  margin: 4px;
+  background: bisque;
 }
 .boardItem {
   height: 26px;

@@ -310,7 +310,7 @@ export default {
       playerList: this.$q.platform.is.desktop,
       page: '',
       user: null,
-      player: null,
+      myPlayer: null,
       who: ''
     }
   },
@@ -396,7 +396,6 @@ export default {
       playerService.on('created', p => {
         console.log('create player', p, this.user)
         if (p.id === this.user._id) {
-          this.player = p
           if (this.user.seat.tId) { // rejoin
             const t = this.getTableById(this.user.seat.tId) // if table still exists
             console.log('rejoin player', p, t)
@@ -407,9 +406,9 @@ export default {
                 tId0: null
               }
               playerService.patch(p.id, { seat })
-              return
             }
           }
+          this.myPlayer = p
         }
         this.updatePlayer(p)
         this.$q.notify({
@@ -459,6 +458,7 @@ export default {
 
     // On successful login
     auth.onAuthenticated(user => {
+      console.log('onAuth', user)
       this.updateUser(user)
       this.onServices()
       this.playerDrawer = true
@@ -469,9 +469,16 @@ export default {
     auth.onLogout(() => {
       this.goTo('home')
       this.user = null
+      this.myPlayer = null
     })
   },
-  watch: {},
+  watch: {
+    myPlayer (p) {
+      console.log('p', p)
+      if (p) this.goTo('lobby')
+      else this.goTo('home')
+    }
+  },
   beforeDestroy () { }
 }
 </script>

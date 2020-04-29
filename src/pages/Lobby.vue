@@ -49,12 +49,11 @@
               </div>
             </q-tab-panel>
 
-            <q-tab-panel :name='1'>
+            <q-tab-panel :name='1' class='panel'>
               <div class='fit'>
                 <myPlayTable
                   :myPlayer='myPlayer'
                   v-on:onPlayer='onPlayer'
-                  class='jbtable'
                 />
               </div>
             </q-tab-panel>
@@ -139,11 +138,12 @@ export default {
     onPlayer (seat) {
       seat.tId0 = this.mySeat.tId
       seat.sId0 = this.mySeat.sId
-      playerService.patch(this.user._id, { seat })
+      playerService.patch(this.myPlayer.id, { seat })
     }
   },
   mounted () {
-    if (!this.user.profile.flag) this.$router.push({ name: 'profile' })
+    this.$parent.page = 'Lobby'
+    if (!this.myPlayer.profile.flag) this.$router.push({ name: 'profile' })
   },
   watch: {
     myPlayer (p) {
@@ -156,15 +156,15 @@ export default {
     }
   },
   created () {
-    this.$parent.page = 'Lobby'
     this.user = this.$attrs.user
+    console.log('u', this.user)
   }
 }
 </script>
 
 <style scoped>
-.jbtable > div {
-  border: 1px solid yellow;
+.panel {
+  overflow-x: hidden;
 }
 .messages {
   min-height: 200px;

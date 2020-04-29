@@ -21,38 +21,18 @@
         />
       </template>
     </q-select>
-    <q-list
-      dense
-      bordered
-      class="rounded-borders"
-    >
-      <q-item
-        dense
-        class="boardItem"
-      >
-        <q-item-label caption>System:</q-item-label>
-        <q-item-section
-          side
-          top
-        >
-          <div class="q-pa-xs q-gutter-xs no-wrap">
-            <q-btn
-              dense
-              size="xs"
-              icon="img:statics/jbicon/seats/seat13.svg"
-            >
-              <q-badge
-                class='cc'
-                color="orange"
-                text-color="black"
-                align='top'
-                :label="cc[0]"
-              />
-              <q-menu
-                dense
-                auto-close
-              >
-                <q-list dense>
+    <q-list dense bordered separator class="rounded-borders">
+      <q-item dense class="row boardItem">
+        <q-item-section class="col-2 gt-sm">
+          <q-item-label class="q-mt-sm">System:</q-item-label>
+        </q-item-section>
+        <q-item-section side class="gt-sm">
+          <div class="row q-pa-xs q-gutter-xs no-wrap">
+            <div class="col">
+              <q-btn dense size="xs" icon="img:statics/jbicon/seats/seat13.svg">
+                <q-badge class="cc" color="orange" text-color="black" align="top" :label="cc[0]" />
+                <q-menu dense auto-close>
+                  <q-list dense>
                   <template v-if='isMyCC===0'>
                     <q-item
                       clickable

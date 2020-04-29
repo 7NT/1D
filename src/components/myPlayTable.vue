@@ -111,43 +111,12 @@
             </div>
           </div>
           <div class='col-3 bidbox'>
-            <div
-              class='column bg-blue-grey-6'
-              v-if='isMyTurn() === 1'
-            >
-              <div
-                class='row bidrow'
-                style='height:30px'
-              >
-                <q-btn-group push>
-                  <q-fab
-                    v-for='n of 7'
-                    :key='n'
-                    square
-                    persistent
-                    v-show='bidN(n)'
-                    type="button"
-                    direction='up'
-                    :label='n'
-                    label-position='left'
-                    icon=null
-                    active-icon=null
-                    class="bidfab"
-                  >
-                    <q-fab-action
-                      v-for='s in suits'
-                      :key='s.id'
-                      square
-                      v-show='isBid(n, s.id)'
-                      icon=null
-                      :color='s.color'
-                      @click='onBid(`${n}${s.suit}`)'
-                    >
-                      {{ bidNS(n, s.suit) }}
-                    </q-fab-action>
-                  </q-fab>
-                </q-btn-group>
-              </div>
+            <div class='column bg-blue-grey-6'>
+              <myBid v-if='isMyTurn() === 1'
+                :myPlayer='myPlayer'
+                :myTable='myTable'
+                class='justify-center'>
+            </div>
               <div
                 class='row items-center'
                 style='height:40px'

@@ -344,10 +344,58 @@ async function onScore (tdata: any) {
   return tdata
 }
 
-function getScore(bid: any, result: number) {
-  if (result < 0 ) return getScoreDown(bid, result)
-  else return getScorePlus(bid, result)
+function getScore (bid: any, result: number) {
+  const v = V12(bid.vulN, bid.by)
+  const x = bid.X % 2 === bid.by % 2
+  const xx = bid.XX % 2 === bid.by % 2
+
+  if (result < 0) return getScoreDown(bid, result, v, x, xx)
+  else return getScorePlus(bid, result, v, x, xx)
 }
+
+function V12 (v: number, d: number) {
+  switch (v) {
+    case 0: return false
+    case 3: return true
+    case 1: return (d % 2) === 1
+    case 2: return (d % 2) === 0
+    default: return false
+  }
+}
+
+function getScorePlus (bid: any, result: number, v: boolean, x: boolean, xx: boolean) {
+  let base = contractScore(bid)
+  //overtricks
+  base += overtricks(bid, result)
+
+  //game score
+  if (base < 100) base += 50
+  else base += v ? 500 : 300
+}
+
+function contractScore (bid: any) {
+  switch (bid.bidS) {
+    case 5: return 40 + 30 * (bid.bidN - 1)
+    case 4:
+    case 3:
+      return 30 * bid.bidN
+    case 2:
+    case 1:
+      return 20 * bid.bidN
+    default: return 0
+  }
+
+  function contractScore (bid: any) {
+    switch (bid.bidS) {
+      case 5: return 40 + 30 * (bid.bidN - 1)
+      case 4:
+      case 3:
+        return 30 * bid.bidN
+      case 2:
+      case 1:
+        return 20 * bid.bidN
+      default: return 0
+    }
 
 function getScoreDown(bid: any, result: number) {
   const score = result * 50

@@ -324,7 +324,7 @@ async function onClaim (tdata: any) {
 async function onScore (tdata: any) {
   const contractN = 6 + parseInt(tdata.bids.info.contract)
   let result = 0
-  let score = [0, 0]
+  let score = 0
   if (tdata.bids.info.by > 0) { //passed
     const by01 = (tdata.bids.info.by - 1) % 2
     const playedN = tdata.plays.info.tricks[by01]
@@ -364,47 +364,84 @@ function V12 (v: number, d: number) {
 }
 
 function getScorePlus (bid: any, result: number, v: boolean, x: boolean, xx: boolean) {
-  let base = contractScore(bid)
-  //overtricks
-  base += overtricks(bid, result)
+  let base = contractScore(bid, x, xx)
 
   //game score
   if (base < 100) base += 50
   else base += v ? 500 : 300
+  //slam
+  base += (bid.bidN === 7) ? (v ? 1500 : 1000) : ((bid.bidN === 6) ? (v ? 750 : 500) : 0)
+
+  //X
+  base += xx ? 100 : (x ? 50 : 0)
+
+  //overtricks
+  base += overTricks(bid, result, v, x, xx)
+
+  return base
 }
 
-function contractScore (bid: any) {
+function contractScore (bid: any, x: boolean, xx: boolean) {
+  const n = bid.bidN * (xx ? 4 : (x ? 2 : 1))
   switch (bid.bidS) {
-    case 5: return 40 + 30 * (bid.bidN - 1)
+    case 5: return 40 + 30 * (n - 1)
     case 4:
     case 3:
-      return 30 * bid.bidN
+      return 30 * n
     case 2:
     case 1:
-      return 20 * bid.bidN
+      return 20 * n
     default: return 0
   }
-
-  function contractScore (bid: any) {
-    switch (bid.bidS) {
-      case 5: return 40 + 30 * (bid.bidN - 1)
-      case 4:
-      case 3:
-        return 30 * bid.bidN
-      case 2:
-      case 1:
-        return 20 * bid.bidN
-      default: return 0
-    }
-
-function getScoreDown(bid: any, result: number) {
-  const score = result * 50
-  else return getScorePlus(bid, result)
 }
 
-function getScorePlus(bid: any, result: number) {
-  if (result < 0 ) return getScoreDown(bid, result)
-  else return getScorePlus(bid, result)
+function overTricks (bid: any, result: number, v: boolean, x: boolean, xx: boolean) {
+  if (xx) {
+    return (v ? 400 : 200) * (result - bid.bidN)
+  } else if (x) {
+    return (v ? 200 : 100) * (result - bid.bidN)
+  } else {
+    switch (bid.bidS) {
+      case 5:
+      case 4:
+      case 3:
+        return 30 * (result - bid.bidN)
+      case 2:
+      case 1:
+        return 20 * (result - bid.bidN)
+      default: return 0
+    }
+  }
+  return 0
+}
+
+function gameScore (bid: any, v: boolean, x: boolean, xx: boolean) {
+
+}
+
+function getScoreDown (bid: any, result: number, v: boolean, x: boolean, xx: boolean) {
+  if (XX || X) {
+    return downScore(result, v, x, xx)
+  } else {
+    return result * 50 * (v ? 2 : 1)
+  }
+}
+
+function downScore (n: number, v: boolean, x: boolean, xx: boolean) {
+  switch (n) {
+    case -1: {
+      if (v) return 100 * (xx ? 4 : (x ? 2 : 1))
+      else return 50 * (xx ? 4 : (x ? 2 : 1))
+    }
+    case -2:
+    case -3: {
+      if (v) return 100 * (xx ? 4 : (x ? 2 : 1)) + (-n - 2) * 150 * (xx ? 4 : (x ? 2 : 1))
+      else return 50 * (xx ? 4 : (x ? 2 : 1)) + (-n - 2) * 100 * (xx ? 4 : (x ? 2 : 1))
+    }
+    default:
+      if (v) return 100 * (xx ? 4 : (x ? 2 : 1)) + (-n - 2) * 150 * (xx ? 4 : (x ? 2 : 1))
+      else return (-n - 2) * 150 * (xx ? 4 : (x ? 2 : 1))
+  }
 }
 
 export {

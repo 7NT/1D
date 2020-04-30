@@ -4,5 +4,6 @@ export default {
   users: [],
   players: [],
   tables: [],
-  chats: []
+  chats: [],
+  roomId: null
 }

@@ -1,38 +1,26 @@
 <template>
-  <q-table
-    dense
-    bordered
-    square
-    hide-bottom
-    separator='cell'
-    :data='bData'
-    :columns='columns'
-    row-key='row'
-    class='bbox'
-  >
-    <q-tr
-      slot="header"
-      slot-scope="props"
-      :props="props"
+  <div :class='`bidbox ${myVul}`'>
+    <q-table
+      dense
+      bordered
+      square
+      hide-bottom
+      separator="cell"
+      :data="bData"
+      :columns="columns"
+      row-key="row"
     >
-      <q-th
-        :class="vul_bgcolor(col.seat)"
-        v-for="col in props.cols"
-        :key="col.seat"
-      >
-        {{ props.cols[col.seat - 1].label }}
-        <q-tooltip>{{ playerName(col.seat) }}</q-tooltip>
-      </q-th>
-    </q-tr>
-    <template v-slot:body-cell='props'>
-      <q-td
-        :props='props'
-        :class='turn_bgcolor(props)'
-      >
-        {{props.value}}
-      </q-td>
-    </template>
-  </q-table>
+      <q-tr slot="header" slot-scope="props" :props="props">
+        <q-th :class="vul_bgcolor(col.seat)" v-for="col in props.cols" :key="col.seat">
+          {{ props.cols[col.seat - 1].label }}
+          <q-tooltip>{{ playerName(col.seat) }}</q-tooltip>
+        </q-th>
+      </q-tr>
+      <template v-slot:body-cell="props">
+        <q-td :props="props" :class="turn_bgcolor(props)">{{props.value}}</q-td>
+      </template>
+    </q-table>
+  </div>
 </template>
 
 <script>
@@ -56,7 +44,7 @@ export default {
     myBids () {
       return this.myTable.bids
     },
-    columns: function () {
+    columns () {
       const cols = []
       let i
       for (i of [0, 1, 2, 3]) {
@@ -65,6 +53,21 @@ export default {
         cols.push({ seat: i + 1, label: c, field: c, align: 'center' })
       }
       return cols
+    },
+    myVul () {
+      const s0 = (this.mySeatX - 1) % 2
+      switch (this.myTable.board.vulN) {
+        case 0:
+          return 'vul0'
+        case 3:
+          return 'vul3'
+        case 1:
+          return s0 === 0 ? 'vul1' : 'vul2'
+        case 2:
+          return s0 === 0 ? 'vul2' : 'vul1'
+        default:
+          return ''
+      }
     }
   },
   methods: {
@@ -103,7 +106,7 @@ export default {
       else return 'col-3'
     },
     loadBids () {
-      // console.log('loadbids', this.myBids)
+      // console.log('loadbids', this.myVul)
       if (!this.myBids) return
       // let turn = 0
       const data = []
@@ -168,10 +171,27 @@ export default {
 </script>
 
 <style>
-.bbox {
+.bidbox {
   min-width: 160px;
   min-height: 160px;
-  /*border: 1px solid silver;*/
+}
+.vul0 {
+  border: 2px solid silver;
+}
+.vul1 {
+  border-top: 2px solid red;
+  border-bottom: 2px solid red;
+  border-left: 2px solid silver;
+  border-right: 2px solid silver;
+}
+.vul2 {
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+  border-left: 2px solid red;
+  border-right: 2px solid red;
+}
+.vul3 {
+  border: 2px solid red;
 }
 table thead {
   font-size: medium;

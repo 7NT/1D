@@ -51,7 +51,7 @@
             push
             ripple
             color="primary"
-            :icon="player ? 'check' : 'hourglass_full'"
+            :icon="player ? 'check' : 'event_seat'"
             :label="player ? 'Ready' : 'Sit'"
             v-show="!player || isReady === 0"
             class="ready"
@@ -88,38 +88,6 @@
         </q-btn-group>
       </div>
     </div>
-    <q-dialog
-      v-if='myClaimR'
-      position="bottom"
-    >
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">Declarer is claiming:</div>
-        </q-card-section>
-
-        <q-card-section class="q-pt-none">
-          {{ myClaim.info }}: {{ myClaim.claim }}
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <q-separator />
-          <q-btn
-            push
-            label="Accept"
-            color="positive"
-            v-close-popup
-            @click='onClaimR(true)'
-          />
-          <q-btn
-            push
-            label="Decline"
-            color="negative"
-            v-close-popup
-            @click='onClaimR(false)'
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </div>
 </template>
 
@@ -244,14 +212,6 @@ export default {
     },
     myClaim () {
       return this.myTable.claim
-    },
-    myClaimR () {
-      if (this.isClaim) {
-        if (jb.isPlayer(this.mySeat.sId)) {
-          return this.mySeat.sId === -this.myClaim.r1 || this.mySeat.sId === -this.myClaim.r2
-        }
-      }
-      return false
     }
   },
   methods: {
@@ -306,11 +266,10 @@ export default {
       }
     },
     onClaim (c) {
-      // const claim = this.claimName[c]
       this.$emit('onTable', {
         action: 'claim',
         claim: {
-          info: this.contract,
+          contract: this.contract,
           claim: c,
           by: this.mySeat.sId,
           r1: -jb.seat1234(this.mySeat.sId - 1),
@@ -335,9 +294,6 @@ export default {
         action: 'claim',
         claim
       })
-
-      const message = r ? 'Claim is accepted' : 'Claim is declined'
-      this.$q.notify({ type: 'info', message })
     },
     cardImg (n52) {
       if (!n52.suit) console.log('error', n52)
@@ -383,6 +339,23 @@ export default {
     isMyTurn () {
       if (this.myState > 0) return this.myTable.turn === this.seatX
       else return false
+    },
+    isMyClaim (claim) {
+      const notification = {
+        message: 'Declarer is claiming:',
+        caption: `Contract ${claim.contract}: ${claim.claim}`,
+        color: 'primary',
+        icon: 'live_help'
+      }
+      if (jb.isPlayer(this.mySeat.sId)) {
+        if (this.mySeat.sId === -claim.r1 || this.mySeat.sId === -claim.r2) {
+          notification.actions = [
+            { label: 'Accept', color: 'yellow', handler: (this.onClaimR(true)) },
+            { label: 'Decline', color: 'white', handler: (this.onClaimR(false)) }
+          ]
+        }
+      }
+      this.$q.notify(notification)
     }
   },
   watch: {
@@ -393,11 +366,10 @@ export default {
       this.updateTable()
     },
     myClaim (claim) {
-      this.isClaim = claim && this.myTable.state === 2
+      if (claim && this.myTable.state === 2) this.isMyClaim(claim)
     }
   },
   mounted () {
-    console.log('t', this.seatX, this.myTable)
     this.updateTable()
   },
   created () { }

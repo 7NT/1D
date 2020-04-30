@@ -114,31 +114,33 @@
           dark
           dense
           standout
-          v-model="who"
+          v-model="player_search"
           input-class="text-right"
           class="q-ml-md"
         >
           <template v-slot:append>
             <q-icon
-              v-if="who === ''"
+              v-if="!player_search"
               name="search"
             />
             <q-icon
               v-else
               name="clear"
               class="cursor-pointer"
-              @click="who = ''"
+              @click="player_search = null"
             />
           </template>
         </q-input>
       </q-toolbar>
 
       <q-list bordered>
+        <q-item-label header>{{room}} Players:</q-item-label>
+        <q-separator />
         <q-expansion-item
           dense
           dense-toggle
           expand-separator
-          v-for='p in players'
+          v-for='p in myPlayers'
           :key='p.id'
         >
           <template v-slot:header>
@@ -310,15 +312,19 @@ export default {
       playerList: this.$q.platform.is.desktop,
       page: '',
       user: null,
-      myPlayer: null,
-      who: ''
+      room: '#Lobby',
+      player_search: null
     }
   },
   computed: {
-    ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['getTableById']),
+    ...mapState('jstore', ['players', 'tables', 'roomId']),
+    ...mapGetters('jstore', ['myPlayer', 'getTableById']),
     authenticated () {
       return this.user != null
+    },
+    myPlayers () {
+      if (this.roomId) return this.players.filter(p => p.seat.tId === this.roomId)
+      else return this.players
     }
   },
   methods: {
@@ -332,6 +338,13 @@ export default {
     ]),
     goTo (route) {
       if (this.$route.name !== route) this.$router.push({ name: route }).catch(e => { })
+    },
+    signin (user) {
+      console.log('signin', user)
+      this.updateUser(user)
+      this.onServices()
+      this.playerDrawer = true
+      // this.goTo('lobby')
     },
     signout () {
       auth
@@ -447,6 +460,7 @@ export default {
     auth
       .login()
       .then(user => {
+        this.signin(user.user)
         this.$q.notify({
           type: 'positive',
           message: 'Restoring previous session'
@@ -458,11 +472,7 @@ export default {
 
     // On successful login
     auth.onAuthenticated(user => {
-      console.log('onAuth', user)
-      this.updateUser(user)
-      this.onServices()
-      this.playerDrawer = true
-      this.goTo('lobby')
+      this.signin(user)
     })
 
     // On logout
@@ -473,10 +483,16 @@ export default {
     })
   },
   watch: {
+    user (u, o) {
+      console.log(u, o)
+      if (!u) this.goTo('home')
+    },
     myPlayer (p) {
-      console.log('p', p)
       if (p) this.goTo('lobby')
       else this.goTo('home')
+    },
+    roomId (n, o) {
+      this.room = n ? 'My Table' : '#Lobby'
     }
   },
   beforeDestroy () { }

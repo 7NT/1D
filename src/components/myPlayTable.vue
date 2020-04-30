@@ -25,11 +25,12 @@
           <div class='col-3 self-start'>
             <div
               class='row justify-end'
-              v-if='myState > 1'
+              v-if='myState === 2'
             >
               <myBidBox
                 :myPlayer='myPlayer'
                 :myTable='myTable'
+                class='fit bbox'
               />
             </div>
           </div>
@@ -248,11 +249,13 @@ export default {
           break
         }
         case 'claim': {
+          /*
           const alert = {
             type: 'info',
-            message: `Declarer is claiming: ${action.claim.info}: ${action.claim.claim}`
+            message: `Declarer is claiming: ${action.claim.contract}: ${action.claim.claim}`
           }
           tableService.patch(this.myTable.id, { alert, claim: action.claim })
+          */
           break
         }
         default: { }
@@ -305,6 +308,10 @@ export default {
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */
+}
+.bbox {
+  margin: 4px;
+  z-index: 100;
 }
 .pbox {
   max-height: 200px;

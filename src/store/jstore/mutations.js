@@ -45,3 +45,7 @@ export const setTable = (state, payload) => {
 export const setChat = (state, payload) => {
   state.chats.push(payload)
 }
+
+export const setRoomId = (state, payload) => {
+  state.roomId = payload
+}

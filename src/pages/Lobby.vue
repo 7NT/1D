@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { playerService } from 'src/api'
 import myTableList from 'src/components/myTableList'
 import myPlayTable from 'src/components/myPlayTable'
@@ -134,7 +134,7 @@ export default {
     }
   },
   methods: {
-    // ...mapActions('jstore', ['setChat']),
+    ...mapActions('jstore', ['setRoomId']),
     onPlayer (seat) {
       seat.tId0 = this.mySeat.tId
       seat.sId0 = this.mySeat.sId
@@ -153,11 +153,15 @@ export default {
       this.rooms[1].open = !!n.tId
       this.rooms[1].id = n.tId
       this.rId = n.tId ? 1 : 0
+      // this.$parent.player_filter = this.rId
+    },
+    rId (r) {
+      console.log('r', r)
+      this.setRoomId(r ? this.mySeat.tId : null)
     }
   },
   created () {
     this.user = this.$attrs.user
-    console.log('u', this.user)
   }
 }
 </script>

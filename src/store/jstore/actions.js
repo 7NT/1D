@@ -29,3 +29,7 @@ export const setTable = (context, payload) => {
 export const setChat = (context, payload) => {
   context.commit('setChat', payload)
 }
+
+export const setRoomId = (context, payload) => {
+  context.commit('setRoomId', payload)
+}

@@ -63,7 +63,7 @@ async function getTable (tservice$: any, user: any, seat: any) {
   return table
 }
 
-async function newTable (tservice$: any, user: any, mix: any, seat: any) {
+async function newTable(tservice$: any, user: any, mix: any, seat: any) {
   const tdata = {
     id: user._id,
     name: '#' + user.nick,

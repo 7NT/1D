@@ -22,7 +22,7 @@ const state = (): Hook => {
   }
 }
 
-async function onReady (context: any) {
+async function onReady(context: any) {
   const { state, ready } = context.data
   switch (state) {
     case -1:
@@ -38,10 +38,10 @@ async function onReady (context: any) {
   }
 }
 
-async function getBoard (context: any) {
-  const tableService = context.app.service('tables')
-  const boardService = context.app.service('boards')
-  const playedService = context.app.service('played')
+async function getBoard(context: any) {
+  const tables$ = context.app.service('tables')
+  const boards$ = context.app.service('boards')
+  const played$ = context.app.service('played')
 
   let table = await tableService.get(context.id)
   let uIds = table.seats.filter((x: any) => x != null)
@@ -126,7 +126,7 @@ const shuffle = function () {
   return card4
 }
 
-function onBid (tdata: any) {
+function onBid(tdata: any) {
   tdata = updateBid(tdata)
   let info = tdata.bids.info
   if (info.P > 3 || (info.P > 2 && info.by > 0)) {

@@ -2,11 +2,7 @@
   <div class="row items-end">
     <div class="column">
       <div class="row self-end no-wrap">
-        <q-card
-          flat
-          v-if="isVisible"
-          class="transparent"
-        >
+        <q-card flat v-if="isVisible" class="transparent">
           <div class="hand hhand-compact active-hand full-width">
             <img
               v-for="(c, i) of myCards"
@@ -19,19 +15,9 @@
         </q-card>
       </div>
       <div class="pbar">
-        <q-btn-group
-          flat
-          dense
-          spread
-        >
-          <q-icon
-            :name="seatIcon"
-            class="seat"
-          />
-          <q-icon
-            :name="flag"
-            class="flag"
-          />
+        <q-btn-group flat dense spread>
+          <q-icon :name="seatIcon" class="seat" />
+          <q-icon :name="flag" class="flag" />
           <q-btn
             flat
             outline
@@ -61,26 +47,16 @@
             push
             split
             auto-close
-            v-if='isDeclarer'
+            v-if="isDeclarer"
             :label="contract"
             color="info"
             class="declarer"
-            :disable='showDeclarer'
+            :disable="showDeclarer"
           >
             <q-list dense>
-              <q-item
-                clickable
-                v-close-popup
-              >
+              <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label
-                    label
-                    v-for='c in claims'
-                    :key='c'
-                    @click='onClaim(c)'
-                  >
-                    {{c}}
-                  </q-item-label>
+                  <q-item-label label v-for="c in claims" :key="c" @click="onClaim(c)">{{c}}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -266,9 +242,12 @@ export default {
       }
     },
     onClaim (c) {
+      console.log(this.myTable)
       this.$emit('onTable', {
         action: 'claim',
         claim: {
+          bId: this.myTable.board._id,
+          info: this.myTable.bids.info,
           contract: this.contract,
           claim: c,
           by: this.mySeat.sId,
@@ -349,9 +328,10 @@ export default {
       }
       if (jb.isPlayer(this.mySeat.sId)) {
         if (this.mySeat.sId === -claim.r1 || this.mySeat.sId === -claim.r2) {
+          notification.timeout = 5000
           notification.actions = [
-            { label: 'Accept', color: 'yellow', handler: (this.onClaimR(true)) },
-            { label: 'Decline', color: 'white', handler: (this.onClaimR(false)) }
+            { label: 'Accept', color: 'yellow', handler: () => { this.onClaimR(true) } },
+            { label: 'Decline', color: 'white', handler: () => { this.onClaimR(true) } }
           ]
         }
       }

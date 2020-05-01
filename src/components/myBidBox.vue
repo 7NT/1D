@@ -170,7 +170,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .bidbox {
   min-width: 160px;
   min-height: 160px;

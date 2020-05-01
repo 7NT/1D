@@ -112,7 +112,7 @@
               />
             </div>
           </div>
-          <div class='col-3 bidbox'>
+          <div class='col-3'>
             <div class='fit'>
               <myBid
                 :myPlayer='myPlayer'
@@ -196,7 +196,7 @@ export default {
   },
   methods: {
     onState (s) {
-      console.log('t', s, this.myTable)
+      // console.log('t', s, this.myTable)
       /*
       switch (s) {
         case 0:
@@ -249,13 +249,7 @@ export default {
           break
         }
         case 'claim': {
-          /*
-          const alert = {
-            type: 'info',
-            message: `Declarer is claiming: ${action.claim.contract}: ${action.claim.claim}`
-          }
-          tableService.patch(this.myTable.id, { alert, claim: action.claim })
-          */
+          tableService.patch(this.myTable.id, { claim: action.claim })
           break
         }
         default: { }

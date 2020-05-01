@@ -183,6 +183,7 @@ export default {
   margin: 0px;
 }
 .bidbox {
+  height: 120px;
   width: 220px;
   margin: 5px;
   border: 1px solid tomato;
@@ -190,7 +191,7 @@ export default {
   z-index: 200;
 }
 .bbox {
-  min-height: 120px;
+  min-height: 100px;
   min-width: 120px;
 }
 .bidrow {

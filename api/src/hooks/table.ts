@@ -2,6 +2,7 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
 import { isPlayer, getMIX, vulN, N52Suit, N52Rank } from '../jb'
+import { getScore } from '../jbScore'
 
 const state = (): Hook => {
   return async (context: HookContext) => {
@@ -10,18 +11,18 @@ const state = (): Hook => {
       context.data = await onReady(context)
     } else if (claim) {
       if (claim.r1 > 0 && claim.r2 > 0) {
-        context.data = onClaim(context.data)
+        context.data = onClaim(context)
       }
     } else if (plays) {
-      context.data = onPlay(context.data)
+      context.data = onPlay(context)
     } else if (bids) {
-      context.data = onBid(context.data)
+      context.data = onBid(context)
     }
     return Promise.resolve(context)
   }
 }
 
-async function onReady (context: any) {
+async function onReady(context: any) {
   const { state, ready } = context.data
   switch (state) {
     case -1:
@@ -37,54 +38,54 @@ async function onReady (context: any) {
   }
 }
 
-async function getBoard (context: any) {
+async function getBoard(context: any) {
   const tableService = context.app.service('tables')
   const boardService = context.app.service('boards')
   const playedService = context.app.service('played')
 
   let table = await tableService.get(context.id)
   let uIds = table.seats.filter((x: any) => x != null)
-  let _played = await playedService.find({
+  let played = await playedService.find({
     query: {
       $limit: 1,
       uId: { $nin: uIds }
     }
   })
 
-  let _board: { _id: any; bn: number; bt: any; vulN: any; players: any }
+  let board: { _id: any; bn: number; bt: any; vulN: any; players: any }
   try {
-    _board = await boardService.get(_played.data[0].boardId)
+    board = await boardService.get(played.data[0].boardId)
   } catch (err) {
     const time = new Date().getTime();
     const bn = time % 128
     const cards = shuffle()
-    _board = await boardService.create({ bn, played: 0, cards, time })
+    board = await boardService.create({ bn, played: 0, cards, time })
   }
 
   uIds.forEach((u: any) => {
     if (u)
       playedService.create({
-        boardId: _board._id,
+        boardId: board._id,
         uId: u,
         date: new Date().getTime()
       })
   })
 
-  let dealer = (_board.bn - 1) % 4
+  let dealer = (board.bn - 1) % 4
   dealer++
 
-  _board.bt = table.bt
-  _board.vulN = vulN(_board.bn)
-  _board.players = table.seats //uIds
+  board.bt = table.bt
+  board.vulN = vulN(board.bn)
+  board.players = table.seats //uIds
 
-  let _bid = {
+  let bids = {
     info: { bidN: 0, bidS: 0, by: 0, P: 0, X: 0, XX: 0 },
     data: [{ sId: dealer, bid: '?' }]
   }
   // let _bids = await bids$.create(_bid)
   table.state = 1
-  table.board = _board
-  table.bids = _bid
+  table.board = board
+  table.bids = bids
   table.turn = dealer
   table.ready = [1, 2, 3, 4]
   // return await tableService.patch(context.id, table)
@@ -125,35 +126,35 @@ const shuffle = function () {
   return card4
 }
 
-function onBid (tdata: any) {
-  let _tdata = updateBid(tdata)
-  let _info = _tdata.bids.info
-  if (_info.P > 3 || (_info.P > 2 && _info.by > 0)) {
-    _tdata.bids.data.pop()
+function onBid(context: any) {
+  let tdata = updateBid(context.data)
+  let info = tdata.bids.info
+  if (info.P > 3 || (info.P > 2 && info.by > 0)) {
+    tdata.bids.data.pop()
 
-    _tdata.plays = {
+    tdata.plays = {
       info: {
-        trump: _info.contract,
+        trump: info.contract,
         lead: null,
         winner: 0,
         tricks: [0, 0],
       },
       data: []
     }
-    if (_info.P > 3) {
-      _tdata.state = -1
-      _tdata.turn = 0
-      _tdata = getScore(_tdata, 0)
+    if (info.P > 3) {
+      tdata.state = -1
+      tdata.turn = 0
+      tdata = getScore(context.app, tdata, 0)
     } else {
-      _tdata.state = 2
-      _tdata.turn = (_info.by % 4) + 1
+      tdata.state = 2
+      tdata.turn = (info.by % 4) + 1
     }
   }
-  _tdata.claim = null
-  return _tdata
+  tdata.claim = null
+  return tdata
 }
 
-function updateBid (tdata: any) {
+function updateBid(tdata: any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
   let bidN = 0, bidS = 0, contract
   let by = 0, P = 0, X = 0, XX = 0, turn = 0
@@ -212,7 +213,7 @@ function updateBid (tdata: any) {
   return tdata
 }
 
-function bidSuit (b: any) {
+function bidSuit(b: any) {
   let s = b.substring(1).trim()
   switch (s) {
     case '♣':
@@ -228,7 +229,8 @@ function bidSuit (b: any) {
   }
 }
 
-async function onPlay (tdata: any) {
+function onPlay(context: any) {
+  let tdata = context.data
   let n = tdata.plays.data.length
   if (n < 1) return tdata
 
@@ -238,7 +240,7 @@ async function onPlay (tdata: any) {
   let trump = tdata.plays.info.trump
   let lead = tdata.plays.info.lead
   let tricks = tdata.plays.info.tricks
-  let scores = tdata.plays.info.score
+  let scores = tdata.plays.info.scores
   let n4 = n % 4
 
   switch (n4) {
@@ -288,12 +290,13 @@ async function onPlay (tdata: any) {
   if (tricks[0] + tricks[1] === 13) {
     tdata.state = -1
     tdata.turn = 0
-    tdata = await onScore(tdata)
+    tdata = onScore(context.app, tdata)
   }
   return tdata
 }
 
-async function onClaim (tdata: any) {
+function onClaim(context: any) {
+  let tdata = context.data
   let claim = tdata.claim
   let d = (claim.by - 1) % 2
   let o = (d + 1) % 2
@@ -313,135 +316,40 @@ async function onClaim (tdata: any) {
       return
   }
   tricks[o] = 13 - tricks[d]
-  tdata.plays.info.tricks = tricks
+  // tdata.claim.tricks = tricks
   tdata.state = -1
   tdata.turn = 0
-  tdata = await onScore(tdata)
+  tdata.claim = onScore(context, claim)
 
   return tdata
 }
 
-async function onScore (tdata: any) {
-  const contractN = 6 + parseInt(tdata.bids.info.contract)
+function onScore(context:any, claim: any) {
+  console.log('score', claim)
+  const contractN = 6 + parseInt(claim.info.contract)
   let result = 0
-  let score = 0
-  if (tdata.bids.info.by > 0) { //passed
-    const by01 = (tdata.bids.info.by - 1) % 2
-    const playedN = tdata.plays.info.tricks[by01]
-    result = playedN - contractN
-    score = getScore(tdata.bids.info, result)
+  let scores = [0, 0]
+  if (claim.info.by > 0) { //passed
+    const by0 = (claim.info.by - 1) % 2
+    const by1 = (by0 + 1) % 2
+    result = claim.tricks[by0] - contractN
+    let score = getScore(claim.info, result)
+    scores[by0] = score
+    scores[by1] = -score
   }
 
-  const rData = {
-    players: tdata.seats,
-    board: tdata.board,
-    bids: tdata.bids,
-    plays: tdata.plays,
-    time: new Date().getTime(),
+  claim.result = result
+  claim.scores = scores
+
+  const rdata = {
+    bId: claim.bId,
     result,
-    score
+    scores
   }
-  return tdata
-}
 
-function getScore (bid: any, result: number) {
-  const v = V12(bid.vulN, bid.by)
-  const x = bid.X % 2 === bid.by % 2
-  const xx = bid.XX % 2 === bid.by % 2
-
-  if (result < 0) return getScoreDown(bid, result, v, x, xx)
-  else return getScorePlus(bid, result, v, x, xx)
-}
-
-function V12 (v: number, d: number) {
-  switch (v) {
-    case 0: return false
-    case 3: return true
-    case 1: return (d % 2) === 1
-    case 2: return (d % 2) === 0
-    default: return false
-  }
-}
-
-function getScorePlus (bid: any, result: number, v: boolean, x: boolean, xx: boolean) {
-  let base = contractScore(bid, x, xx)
-
-  //game score
-  if (base < 100) base += 50
-  else base += v ? 500 : 300
-  //slam
-  base += (bid.bidN === 7) ? (v ? 1500 : 1000) : ((bid.bidN === 6) ? (v ? 750 : 500) : 0)
-
-  //X
-  base += xx ? 100 : (x ? 50 : 0)
-
-  //overtricks
-  base += overTricks(bid, result, v, x, xx)
-
-  return base
-}
-
-function contractScore (bid: any, x: boolean, xx: boolean) {
-  const n = bid.bidN * (xx ? 4 : (x ? 2 : 1))
-  switch (bid.bidS) {
-    case 5: return 40 + 30 * (n - 1)
-    case 4:
-    case 3:
-      return 30 * n
-    case 2:
-    case 1:
-      return 20 * n
-    default: return 0
-  }
-}
-
-function overTricks (bid: any, result: number, v: boolean, x: boolean, xx: boolean) {
-  if (xx) {
-    return (v ? 400 : 200) * (result - bid.bidN)
-  } else if (x) {
-    return (v ? 200 : 100) * (result - bid.bidN)
-  } else {
-    switch (bid.bidS) {
-      case 5:
-      case 4:
-      case 3:
-        return 30 * (result - bid.bidN)
-      case 2:
-      case 1:
-        return 20 * (result - bid.bidN)
-      default: return 0
-    }
-  }
-  return 0
-}
-
-function gameScore (bid: any, v: boolean, x: boolean, xx: boolean) {
-
-}
-
-function getScoreDown (bid: any, result: number, v: boolean, x: boolean, xx: boolean) {
-  if (XX || X) {
-    return downScore(result, v, x, xx)
-  } else {
-    return result * 50 * (v ? 2 : 1)
-  }
-}
-
-function downScore (n: number, v: boolean, x: boolean, xx: boolean) {
-  switch (n) {
-    case -1: {
-      if (v) return 100 * (xx ? 4 : (x ? 2 : 1))
-      else return 50 * (xx ? 4 : (x ? 2 : 1))
-    }
-    case -2:
-    case -3: {
-      if (v) return 100 * (xx ? 4 : (x ? 2 : 1)) + (-n - 2) * 150 * (xx ? 4 : (x ? 2 : 1))
-      else return 50 * (xx ? 4 : (x ? 2 : 1)) + (-n - 2) * 100 * (xx ? 4 : (x ? 2 : 1))
-    }
-    default:
-      if (v) return 100 * (xx ? 4 : (x ? 2 : 1)) + (-n - 2) * 150 * (xx ? 4 : (x ? 2 : 1))
-      else return (-n - 2) * 150 * (xx ? 4 : (x ? 2 : 1))
-  }
+  context.app.service('results').create(rdata)
+  console.log('score', rdata)
+  return claim
 }
 
 export {

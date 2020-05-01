@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { chatService } from 'src/api'
+import { chats$ } from 'src/api'
 
 export default {
   name: 'myChat',
@@ -57,7 +57,7 @@ export default {
           to: this.to.name || this.to.nick,
           text: this.chat
         }
-        chatService.create(chatData).then(() => {
+        chats$.create(chatData).then(() => {
           this.chat = null
         })
       }

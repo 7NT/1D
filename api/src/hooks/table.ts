@@ -4,7 +4,7 @@ import { Hook, HookContext } from '@feathersjs/feathers'
 import { vulN, N52Suit, N52Rank } from '../jb'
 import { getScore } from '../jbScore'
 
-const state = (): Hook => {
+const onTable = (): Hook => {
   return async (context: HookContext) => {
     const { ready, bids, plays, claim } = context.data
     if (ready) {
@@ -43,30 +43,55 @@ async function getBoard(context: any) {
   const boards$ = context.app.service('boards')
   const played$ = context.app.service('played')
 
-  let table = await tableService.get(context.id)
+  let table = await tables$.get(context.id)
   let uIds = table.seats.filter((x: any) => x != null)
-  let played = await playedService.find({
+  let played = await played$.find({
     query: {
-      $limit: 1,
-      uId: { $nin: uIds }
+      $select: ['uId'],
+      bt: table.bt,
+      uId: { $in: uIds }
     }
   })
 
   let board: { _id: any; bn: number; bt: any; vulN: any; players: any }
   try {
-    board = await boardService.get(played.data[0].boardId)
+    const boardIds = played.data.map((x: { uId: any }) => x.uId)
+    let notplayed = await played$.find({
+      query: {
+        $limit: 1,
+        $select: ['boardId'],
+        bt: table.bt,
+        boardId: { $nin: boardIds }
+      }
+    })
+    const boardId = notplayed.data.map((x: { boardId: any }) => x.boardId)
+    board = await boards$.get(boardId[0])
   } catch (err) {
+    let bnx: any = await boards$.find({
+      query: {
+        $limit: 1,
+        $select: ['bn'],
+        bt: table.bt,
+        $sort: {
+          bn: -1
+        }
+      }
+    })
+    let bn: number = bnx.data.map((x: { bn: any }) => x.bn)[0]
+    if (typeof bn === 'undefined') bn = 1
+    else bn++
     const time = new Date().getTime();
-    const bn = time % 128
     const cards = shuffle()
-    board = await boardService.create({ bn, played: 0, cards, time })
+    board = await boards$.create({ bn, bt: table.bt, played: 0, cards, time })
   }
 
-  uIds.forEach((u: any) => {
+  table.seats.forEach((u: any, index: number) => {
     if (u)
-      playedService.create({
+      played$.create({
         boardId: board._id,
+        bt: table.bt,
         uId: u,
+        sId: index + 1,
         date: new Date().getTime()
       })
   })
@@ -88,7 +113,7 @@ async function getBoard(context: any) {
   table.bids = bids
   table.turn = dealer
   table.ready = [1, 2, 3, 4]
-  // return await tableService.patch(context.id, table)
+  // return await tables$.patch(context.id, table)
   return table
 }
 
@@ -159,7 +184,7 @@ function onBid(tdata: any) {
   return tdata
 }
 
-function updateBid (tdata: any) {
+function updateBid(tdata: any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
   let bidN = 0, bidS = 0, contract
   let by = 0, P = 0, X = 0, XX = 0, turn = 0
@@ -218,7 +243,7 @@ function updateBid (tdata: any) {
   return tdata
 }
 
-function bidSuit (b: any) {
+function bidSuit(b: any) {
   let s = b.substring(1).trim()
   switch (s) {
     case '♣':
@@ -234,7 +259,7 @@ function bidSuit (b: any) {
   }
 }
 
-function onPlay (tdata: any) {
+function onPlay(tdata: any) {
   let n = tdata.plays.data.length
   if (n < 1) return tdata
 
@@ -300,7 +325,7 @@ function onPlay (tdata: any) {
   return tdata
 }
 
-function onClaim (tdata: any) {
+function onClaim(tdata: any) {
   let claim = tdata.claim
   let d = (claim.declarer - 1) % 2
   let o = (d + 1) % 2
@@ -333,7 +358,7 @@ function onClaim (tdata: any) {
   return tdata
 }
 
-function onScore (sdata: any) {
+function onScore(sdata: any) {
   // const contractN = 6 + info.contract.bidN
   let result = 0
   let scores = [0, 0]
@@ -353,6 +378,18 @@ function onScore (sdata: any) {
   return rdata
 }
 
+const onResult = (): Hook => {
+  return async (context: HookContext) => {
+    const { result } = context.data
+    if (result) {
+      const results$ = context.app.service('results')
+      results$.create({ tId: context.id, result })
+    }
+    return Promise.resolve(context)
+  }
+}
+
 export {
-  state
+  onTable,
+  onResult
 }

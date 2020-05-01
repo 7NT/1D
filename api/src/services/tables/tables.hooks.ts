@@ -2,7 +2,7 @@
 // Don't remove this comment. It's needed to format import lines nicely.
 
 // const { authenticate } = authentication.hooks;
-import { state } from '../../hooks/table'
+import { onTable, onResult } from '../../hooks/table'
 
 export default {
   before: {
@@ -11,7 +11,7 @@ export default {
     get: [],
     create: [],
     update: [],
-    patch: [ state() ],
+    patch: [ onTable() ],
     remove: []
   },
 
@@ -21,7 +21,7 @@ export default {
     get: [],
     create: [],
     update: [],
-    patch: [],
+    patch: [onResult()],
     remove: []
   },
 

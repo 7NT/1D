@@ -72,7 +72,7 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
-import { playerService } from 'src/api'
+import { players$ } from 'src/api'
 import myTableList from 'src/components/myTableList'
 import myPlayTable from 'src/components/myPlayTable'
 import myMessages from 'src/components/myMessages'
@@ -138,7 +138,7 @@ export default {
     onPlayer (seat) {
       seat.tId0 = this.mySeat.tId
       seat.sId0 = this.mySeat.sId
-      playerService.patch(this.myPlayer.id, { seat })
+      players$.patch(this.myPlayer.id, { seat })
     }
   },
   mounted () {

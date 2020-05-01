@@ -22,3 +22,9 @@ export const getTableById = state => id => {
 export const getChatById = state => id => {
   return state.chats.find(c => c.to === id)
 }
+
+/*
+export const myResults = state => {
+  return state.results.find(result => result.players.includes(state.user._id))
+}
+*/

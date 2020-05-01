@@ -18,12 +18,20 @@ export const setTables = (context, payload) => {
   context.commit('setTables', payload)
 }
 
-export const setPlayer = (context, payload) => {
-  context.commit('setPlayer', payload)
+export const addPlayer = (context, payload) => {
+  context.commit('addPlayer', payload)
 }
 
-export const setTable = (context, payload) => {
-  context.commit('setTable', payload)
+export const addTable = (context, payload) => {
+  context.commit('addTable', payload)
+}
+
+export const setResults = (context, payload) => {
+  context.commit('setResults', payload)
+}
+
+export const addResult = (context, payload) => {
+  context.commit('addResult', payload)
 }
 
 export const setChat = (context, payload) => {

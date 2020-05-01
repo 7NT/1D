@@ -131,7 +131,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 // import say from 'say'
-import { tableService } from 'src/api'
+import { tables$ } from 'src/api'
 import myBoard from 'src/components/myBoard'
 import myHand from 'src/components/myHand'
 import myBid from 'src/components/myBid'
@@ -221,20 +221,20 @@ export default {
           break
         }
         case 'ready': {
-          tableService.patch(this.myTable.id, { state: action.state, ready: action.ready })
+          tables$.patch(this.myTable.id, { state: action.state, ready: action.ready })
           break
         }
         case 'bt': {
-          tableService.patch(this.myTable.id, { bt: action.bt })
+          tables$.patch(this.myTable.id, { bt: action.bt })
           break
         }
         case 'cc': {
-          tableService.patch(this.myTable.id, { cc: action.cc })
+          tables$.patch(this.myTable.id, { cc: action.cc })
           break
         }
         case 'bid': {
           const bids = { bids: action.bid.bids }
-          tableService.patch(this.myTable.id, bids)
+          tables$.patch(this.myTable.id, bids)
           break
         }
         case 'play': {
@@ -244,12 +244,12 @@ export default {
           if (!_played.includes(action.play.card)) {
             _data.push(action.play)
             const plays = { plays: { info: _info, data: _data } }
-            tableService.patch(this.myTable.id, plays)
+            tables$.patch(this.myTable.id, plays)
           }
           break
         }
         case 'claim': {
-          tableService.patch(this.myTable.id, { claim: action.claim })
+          tables$.patch(this.myTable.id, { claim: action.claim })
           break
         }
         default: { }

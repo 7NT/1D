@@ -8,7 +8,7 @@ export default function (app: Application) {
     return
   }
   // const userService = app.service('users')
-  const playerService = app.service('players')
+  const players$ = app.service('players')
 
   // Join a channel given a user and connection
   const joinChannels = (user: any, connection: any) => {
@@ -49,19 +49,19 @@ export default function (app: Application) {
 
   app.on('connection', (connection: any) => {
     // On a new real-time connection, add it to the anonymous channel
-    console.log('connect', connection)
+    // console.log('connect', connection)
     app.channel('#Anonymous').join(connection)
   })
 
   app.on('disconnect', (connection: any) => {
-    console.log('disconnect', connection)
+    // console.log('disconnect', connection)
     const user = connection.user
     if (user) {
       //When logging out, leave all channels before joining anonymous channel
       if (app.channels.length) app.channel(app.channels).leave(connection)
       // app.channel('#Anonymous').join(connection)
 
-      playerService.remove(user._id)
+      players$.remove(user._id)
     }
   })
 
@@ -72,7 +72,7 @@ export default function (app: Application) {
       // Obtain the logged in user from the connection
       const user = connection.user
       user.state = 1
-      console.log('login', user)
+      // console.log('login', user)
       joinChannels(user, connection)
 
       const player = {
@@ -82,7 +82,7 @@ export default function (app: Application) {
         state: 0,
         seat: { sId: 0 }
       }
-      playerService.create(player)
+      players$.create(player)
       /*
       .then (p => {
         console.log(p)
@@ -90,7 +90,7 @@ export default function (app: Application) {
       .then (player => {
         if (user.tId) {
           console.log('rejoin', user, connection)
-          playerService.patch(user._id, { tId: user.tId, sId: user.sId}, connection)
+          players$.patch(user._id, { tId: user.tId, sId: user.sId}, connection)
         }
       })
       */
@@ -119,11 +119,11 @@ export default function (app: Application) {
       const user = connection.user
       user.state = 0
 
-      console.log('logout', user)
+      // console.log('logout', user)
       //When logging out, leave all channels before joining anonymous channel
       if (app.channels.length) app.channel(app.channels).leave(connection)
       //app.channel('#Anonymous').join(connection)
-      playerService.remove(user._id)
+      players$.remove(user._id)
     }
   })
 
@@ -153,5 +153,5 @@ export default function (app: Application) {
   // app.service('players').on('updated', updateChannels)
   // app.service('players').on('patched', updateChannels)
   // On `removed`, remove the connection from all channels
-  app.service('players').on('removed', leaveChannels)
+  players$.on('removed', leaveChannels)
 }

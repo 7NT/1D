@@ -7,7 +7,7 @@
         square
         outlined
         label-color="orange"
-        v-model="model_mix"
+        v-model="mix"
         :options="options_mix"
         options-dense
         options-dark
@@ -160,7 +160,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+// import { mapGetters } from 'vuex'
 
 import { openURL } from 'quasar'
 import jb from 'src/jb'
@@ -171,7 +171,7 @@ export default {
 
   data () {
     return {
-      model_mix: null,
+      mix: null,
       options_mix: ['MP', 'IMP', 'XIMP'],
       boardData: [
         { name: 'System:', ns: 'NS: ...', ew: 'EW: ...' },
@@ -188,7 +188,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('jstore', ['myPlayer']),
+    // ...mapGetters('jstore', ['myPlayer']),
     bdata: function () {
       try {
         if (this.myTable.board) {
@@ -210,7 +210,8 @@ export default {
   methods: {
     onBT (bt) {
       let message
-      if (this.isPlayer) {
+      console.log('bt', this.mySeat)
+      if (jb.isPlayer(this.mySeat.sId)) {
         this.$emit('onTable', { action: 'bt', bt })
         message = `Board will switch to ${bt} next`
         // say.speak(message)
@@ -245,16 +246,13 @@ export default {
     }
   },
   watch: {
-    model_mix (n) {
-      this.$q.notify({
-        color: 'positive',
-        message: `Board will be switched to ${this.model_mix} next`
-      })
+    mix (bt) {
+      this.onBT(bt)
     }
   },
   mounted () {
     // console.log(this.myTable)
-    this.model_mix = this.myTable.bt
+    this.mix = this.myTable.bt
   }
 }
 </script>

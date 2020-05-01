@@ -380,7 +380,7 @@ export default {
 <style scoped>
 .pbar {
   min-width: 275px;
-  /*height: 32px;*/
+  height: 34px;
   margin-bottom: 0px;
   align-items: flex-start;
   text-overflow: ellipsis;

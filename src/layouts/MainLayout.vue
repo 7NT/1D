@@ -13,10 +13,10 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          1D App
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>1D v{{ $q.version }}</div>
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
         -->
@@ -235,10 +235,9 @@
           My ScoreBook:
         </q-item-label>
         <q-separator />
-        <EssentialLink
-          v-for='link in essentialLinks'
-          :key='link.title'
-          v-bind='link'
+        <q-item
+          v-for='r in results'
+          :key='r._id'
         />
       </q-list>
     </q-drawer>
@@ -249,9 +248,9 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink'
+// import EssentialLink from 'components/EssentialLink'
 import { mapState, mapGetters, mapActions } from 'vuex'
-import { userService, playerService, tableService, chatService } from 'src/api'
+import { users$, players$, tables$, chats$, results$ } from 'src/api'
 import auth from 'src/auth'
 
 import myMessages from 'src/components/myMessages'
@@ -261,7 +260,7 @@ export default {
   name: 'MainLayout',
 
   components: {
-    EssentialLink,
+    // EssentialLink,
     myMessages,
     myChat
   },
@@ -317,7 +316,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['players', 'tables', 'roomId']),
+    ...mapState('jstore', ['players', 'tables', 'results', 'roomId']),
     ...mapGetters('jstore', ['myPlayer', 'getTableById']),
     authenticated () {
       return this.user != null
@@ -331,10 +330,12 @@ export default {
     ...mapActions('jstore', [
       'setUser',
       'setChat',
-      'setPlayer',
-      'setTable',
+      'addPlayer',
+      'addTable',
       'setPlayers',
-      'setTables'
+      'setTables',
+      'setResults',
+      'addResult'
     ]),
     goTo (route) {
       if (this.$route.name !== route) this.$router.push({ name: route }).catch(e => { })
@@ -372,41 +373,35 @@ export default {
       this.user = u
       this.setUser(u)
     },
-    updatePlayer (p) {
-      this.setPlayer(p)
-    },
-    updateTable (t) {
-      this.setTable(t)
-    },
     updateChat (c) {
       this.setChat(c)
     },
     async onServices () {
-      await tableService.find().then(response => {
+      await tables$.find().then(response => {
         this.setTables(response.data)
       })
-      tableService.on('created', t => {
+      tables$.on('created', t => {
         console.log('table created', t)
-        this.updateTable(t)
+        this.addTable(t)
       })
-      tableService.on('patched', t => {
+      tables$.on('patched', t => {
         console.log('table patched', t)
-        this.updateTable(t)
+        this.addTable(t)
       })
-      tableService.on('removed', t => {
+      tables$.on('removed', t => {
         console.log('table removed', t)
         t.state = -2
-        this.updateTable(t)
+        this.addTable(t)
       })
-      userService.on('patched', user => {
+      users$.on('patched', user => {
         if (user._id === this.user._id) {
           this.updateUser(user)
         }
       })
-      await playerService.find().then(response => {
+      await players$.find().then(response => {
         this.setPlayers(response.data)
       })
-      playerService.on('created', p => {
+      players$.on('created', p => {
         console.log('create player', p, this.user)
         if (p.id === this.user._id) {
           if (this.user.seat.tId) { // rejoin
@@ -418,33 +413,44 @@ export default {
                 sId: this.user.seat.sId,
                 tId0: null
               }
-              playerService.patch(p.id, { seat })
+              players$.patch(p.id, { seat })
             }
           }
           this.myPlayer = p
         }
-        this.updatePlayer(p)
+        this.addPlayer(p)
         this.$q.notify({
           color: 'into',
           message: `[JOIN]: ${p.nick}`
         })
       })
-      playerService.on('patched', p => {
+      players$.on('patched', p => {
         console.log('player patched', p)
-        this.updatePlayer(p)
+        this.addPlayer(p)
       })
-      playerService.on('removed', p => {
+      players$.on('removed', p => {
         console.log('player removed', p)
         p.state = -1
-        this.updatePlayer(p)
+        this.addPlayer(p)
         this.$q.notify({
           color: 'into',
           message: `[EXIT]: ${p.nick}`
         })
       })
-      chatService.on('created', chat => {
+      chats$.on('created', chat => {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
         this.updateChat(chat)
+      })
+      results$.find({
+        query: {
+          players: { $in: this.user._id }
+        }
+      }).then(response => {
+        this.setResults(response.data)
+      })
+      results$.on('created', r => {
+        console.log('create result', r)
+        if (r.players.includes(this.user._id)) this.addResult(r)
       })
     },
     flag (p) {

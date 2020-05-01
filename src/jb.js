@@ -1,4 +1,4 @@
-import { userService } from 'src/api'
+import { users$ } from 'src/api'
 
 const jb = {
   seatX (s, v) {
@@ -178,7 +178,7 @@ const jb = {
     else return null
   },
   async findUser (uid) {
-    const user = await userService.get(uid)
+    const user = await users$.get(uid)
     return user
   }
 }

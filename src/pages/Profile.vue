@@ -99,7 +99,7 @@
 <script>
 import moment from 'moment'
 import { openURL } from 'quasar'
-import { userService, playerService } from 'src/api'
+import { users$, players$ } from 'src/api'
 
 const gravatarUrl = 'http://www.gravatar.com'
 
@@ -123,8 +123,8 @@ export default {
     onUpdate (update) {
       if (update) {
         const profile = { nick: this.nick, profile: { flag: this.flag, avatar: this.user.profile.avatar } }
-        userService.patch(this.user._id, profile)
-        playerService.patch(this.user._id, profile)
+        users$.patch(this.user._id, profile)
+        players$.patch(this.user._id, profile)
         // .then(p => { console.log(p) })
       }
       // this.$router.push({ name: this.page })

@@ -126,8 +126,8 @@ const shuffle = function () {
   return card4
 }
 
-function onBid(context: any) {
-  let tdata = updateBid(context.data)
+function onBid (tdata: any) {
+  tdata = updateBid(tdata)
   let info = tdata.bids.info
   if (info.P > 3 || (info.P > 2 && info.by > 0)) {
     tdata.bids.data.pop()

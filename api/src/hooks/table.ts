@@ -1,7 +1,7 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
-import { isPlayer, getMIX, vulN, N52Suit, N52Rank } from '../jb'
+import { vulN, N52Suit, N52Rank } from '../jb'
 import { getScore } from '../jbScore'
 
 const state = (): Hook => {
@@ -10,19 +10,19 @@ const state = (): Hook => {
     if (ready) {
       context.data = await onReady(context)
     } else if (claim) {
-      if (claim.r1 > 0 && claim.r2 > 0) {
-        context.data = onClaim(context)
+      if (claim.o1 > 0 && claim.o2 > 0) {
+        context.data = onClaim(context.data)
       }
     } else if (plays) {
-      context.data = onPlay(context)
+      context.data = onPlay(context.data)
     } else if (bids) {
-      context.data = onBid(context)
+      context.data = onBid(context.data)
     }
     return Promise.resolve(context)
   }
 }
 
-async function onReady(context: any) {
+async function onReady (context: any) {
   const { state, ready } = context.data
   switch (state) {
     case -1:
@@ -38,7 +38,7 @@ async function onReady(context: any) {
   }
 }
 
-async function getBoard(context: any) {
+async function getBoard (context: any) {
   const tableService = context.app.service('tables')
   const boardService = context.app.service('boards')
   const playedService = context.app.service('played')
@@ -144,7 +144,12 @@ function onBid (tdata: any) {
     if (info.P > 3) {
       tdata.state = -1
       tdata.turn = 0
-      tdata = getScore(context.app, tdata, 0)
+      const result = {
+        vul: tdata.board.vulN,
+        contract: tdata.bids.info,
+        tricks: [0, 0]
+      }
+      tdata.result = onScore(result)
     } else {
       tdata.state = 2
       tdata.turn = (info.by % 4) + 1
@@ -154,7 +159,7 @@ function onBid (tdata: any) {
   return tdata
 }
 
-function updateBid(tdata: any) {
+function updateBid (tdata: any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
   let bidN = 0, bidS = 0, contract
   let by = 0, P = 0, X = 0, XX = 0, turn = 0
@@ -213,7 +218,7 @@ function updateBid(tdata: any) {
   return tdata
 }
 
-function bidSuit(b: any) {
+function bidSuit (b: any) {
   let s = b.substring(1).trim()
   switch (s) {
     case '♣':
@@ -229,8 +234,7 @@ function bidSuit(b: any) {
   }
 }
 
-function onPlay(context: any) {
-  let tdata = context.data
+function onPlay (tdata: any) {
   let n = tdata.plays.data.length
   if (n < 1) return tdata
 
@@ -251,17 +255,13 @@ function onPlay(context: any) {
     case 0:
     case 2:
     case 3:
-      // console.log(last.card.suit, lead.card.suit)
       if (last.card.suit === lead.card.suit) {
         let v0 = lead.card.value // % 13
         let v1 = last.card.value // % 13
-        // if (!v0) v0 = 13
-        // if (!v1) v1 = 13
         if (v1 > v0) {
           lead = last
           winner = last.sId
         }
-        // console.log(v0, v1, winner)
       } else if (trump.endsWith(last.card.suit)) {
         winner = last.sId
       }
@@ -290,15 +290,19 @@ function onPlay(context: any) {
   if (tricks[0] + tricks[1] === 13) {
     tdata.state = -1
     tdata.turn = 0
-    tdata = onScore(context.app, tdata)
+    const result = {
+      vul: tdata.board.vulN,
+      contract: tdata.bids.info,
+      tricks: tdata.plays.tricks
+    }
+    tdata.result = onScore(result)
   }
   return tdata
 }
 
-function onClaim(context: any) {
-  let tdata = context.data
+function onClaim (tdata: any) {
   let claim = tdata.claim
-  let d = (claim.by - 1) % 2
+  let d = (claim.declarer - 1) % 2
   let o = (d + 1) % 2
 
   let tricks = claim.tricks // .slice(0)
@@ -307,7 +311,7 @@ function onClaim(context: any) {
       // claim.tricks[o] = 13 - claim.tricks[d]
       break
     case 'Claim Just Make':
-      tricks[d] = 6 + parseInt(claim.contract)
+      tricks[d] = 6 + claim.contract.bidN
       break
     case 'Claim All':
       tricks[d] = 13 - tricks[o]
@@ -319,37 +323,34 @@ function onClaim(context: any) {
   // tdata.claim.tricks = tricks
   tdata.state = -1
   tdata.turn = 0
-  tdata.claim = onScore(context, claim)
+  const result = {
+    vul: claim.vul,
+    contract: claim.contract,
+    tricks: claim.tricks
+  }
+  tdata.result = onScore(result)
 
   return tdata
 }
 
-function onScore(context:any, claim: any) {
-  console.log('score', claim)
-  const contractN = 6 + parseInt(claim.info.contract)
+function onScore (sdata: any) {
+  // const contractN = 6 + info.contract.bidN
   let result = 0
   let scores = [0, 0]
-  if (claim.info.by > 0) { //passed
-    const by0 = (claim.info.by - 1) % 2
+  if (sdata.contract.by > 0) { //passed
+    const by0 = (sdata.contract.by - 1) % 2
     const by1 = (by0 + 1) % 2
-    result = claim.tricks[by0] - contractN
-    let score = getScore(claim.info, result)
+    result = sdata.tricks[by0] - 6 - sdata.contract.bidN
+    let score = getScore(sdata, result)
     scores[by0] = score
     scores[by1] = -score
   }
 
-  claim.result = result
-  claim.scores = scores
-
   const rdata = {
-    bId: claim.bId,
     result,
     scores
   }
-
-  context.app.service('results').create(rdata)
-  console.log('score', rdata)
-  return claim
+  return rdata
 }
 
 export {

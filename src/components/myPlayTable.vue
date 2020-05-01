@@ -25,7 +25,7 @@
           <div class='col-3 self-start'>
             <div
               class='row justify-end'
-              v-if='myState === 2'
+              v-if='myState === 2 || myState === -1'
             >
               <myBidBox
                 :myPlayer='myPlayer'

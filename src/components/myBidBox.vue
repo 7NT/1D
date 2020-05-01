@@ -1,31 +1,44 @@
 <template>
-  <div :class='`bidbox ${myVul}`'>
-    <q-table
-      dense
-      bordered
-      square
-      hide-bottom
-      separator="cell"
-      :data="bData"
-      :columns="columns"
-      row-key="row"
-    >
-      <q-tr slot="header" slot-scope="props" :props="props">
-        <q-th :class="vul_bgcolor(col.seat)" v-for="col in props.cols" :key="col.seat">
-          {{ props.cols[col.seat - 1].label }}
-          <q-tooltip>{{ playerName(col.seat) }}</q-tooltip>
-        </q-th>
-      </q-tr>
-      <template v-slot:body-cell="props">
-        <q-td :props="props" :class="turn_bgcolor(props)">{{props.value}}</q-td>
-      </template>
-    </q-table>
+  <div>
+    <!--:class='`bidbox ${myVul}`'>-->
+    <div class='q-ma-sm'>
+      <q-table
+        dense
+        square
+        hide-bottom
+        separator="cell"
+        :data="bData"
+        :columns="columns"
+        row-key="row"
+      >
+        <q-tr
+          slot="header"
+          slot-scope="props"
+          :props="props"
+        >
+          <q-th
+            :class="vul_bgcolor(col.seat)"
+            v-for="col in props.cols"
+            :key="col.seat"
+          >
+            {{ props.cols[col.seat - 1].label }}
+            <q-tooltip>{{ playerName(col.seat) }}</q-tooltip>
+          </q-th>
+        </q-tr>
+        <template v-slot:body-cell="props">
+          <q-td
+            :props="props"
+            :class="turn_bgcolor(props)"
+          >{{props.value}}</q-td>
+        </template>
+      </q-table>
+    </div>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-// import jb from 'src/jb'
+import jb from 'src/jb'
 
 export default {
   name: 'myBidBox',
@@ -55,16 +68,16 @@ export default {
       return cols
     },
     myVul () {
-      const s0 = (this.mySeatX - 1) % 2
+      const s1 = this.mySeatX % 2
       switch (this.myTable.board.vulN) {
         case 0:
           return 'vul0'
         case 3:
           return 'vul3'
         case 1:
-          return s0 === 0 ? 'vul1' : 'vul2'
+          return s1 === 1 ? 'vul1' : 'vul2'
         case 2:
-          return s0 === 0 ? 'vul2' : 'vul1'
+          return s1 === 0 ? 'vul2' : 'vul1'
         default:
           return ''
       }
@@ -82,17 +95,18 @@ export default {
     },
     vul_bgcolor (s) {
       if (this.myBids) {
+        const x = jb.seatX(s, this.mySeatX) % 2
         switch (this.myTable.board.vulN) {
           case 0:
             return 'bg-info'
           case 3:
             return 'bg-negative'
           case 1: {
-            if (s % 2 === 1) return 'bg-negative'
+            if (x === 0) return 'bg-negative'
             else return 'bg-info'
           }
           case 2: {
-            if (s % 2 === 1) return 'bg-info'
+            if (x === 0) return 'bg-info'
             else return 'bg-negative'
           }
           default:

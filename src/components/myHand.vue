@@ -2,7 +2,11 @@
   <div class="row items-end">
     <div class="column">
       <div class="row self-end no-wrap">
-        <q-card flat v-if="isVisible" class="transparent">
+        <q-card
+          flat
+          v-if="isVisible"
+          class="transparent"
+        >
           <div class="hand hhand-compact active-hand full-width">
             <img
               v-for="(c, i) of myCards"
@@ -15,9 +19,19 @@
         </q-card>
       </div>
       <div class="pbar">
-        <q-btn-group flat dense spread>
-          <q-icon :name="seatIcon" class="seat" />
-          <q-icon :name="flag" class="flag" />
+        <q-btn-group
+          flat
+          dense
+          spread
+        >
+          <q-icon
+            :name="seatIcon"
+            class="seat"
+          />
+          <q-icon
+            :name="flag"
+            class="flag"
+          />
           <q-btn
             flat
             outline
@@ -54,9 +68,17 @@
             :disable="showDeclarer"
           >
             <q-list dense>
-              <q-item clickable v-close-popup>
+              <q-item
+                clickable
+                v-close-popup
+              >
                 <q-item-section>
-                  <q-item-label label v-for="c in claims" :key="c" @click="onClaim(c)">{{c}}</q-item-label>
+                  <q-item-label
+                    label
+                    v-for="c in claims"
+                    :key="c"
+                    @click="onClaim(c)"
+                  >{{c}}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -246,14 +268,13 @@ export default {
       this.$emit('onTable', {
         action: 'claim',
         claim: {
-          bId: this.myTable.board._id,
-          info: this.myTable.bids.info,
-          contract: this.contract,
+          vul: this.myTable.board.vulN,
+          contract: this.myTable.bids.info,
+          tricks: this.myTable.plays.info.tricks,
           claim: c,
-          by: this.mySeat.sId,
-          r1: -jb.seat1234(this.mySeat.sId - 1),
-          r2: -jb.seat1234(this.mySeat.sId + 1),
-          tricks: this.myTable.plays.info.tricks
+          declarer: this.mySeat.sId,
+          o1: -jb.seat1234(this.mySeat.sId - 1),
+          o2: -jb.seat1234(this.mySeat.sId + 1)
         }
       })
     },
@@ -261,10 +282,10 @@ export default {
       let claim
       claim = Object.assign({}, claim, this.myClaim)
       if (r) {
-        if (this.myClaim.r1 === -this.mySeat.sId) {
-          claim.r1 = -claim.r1
+        if (this.myClaim.o1 === -this.mySeat.sId) {
+          claim.o1 = -claim.o1
         } else {
-          claim.r2 = -claim.r2
+          claim.o2 = -claim.o2
         }
       } else {
         claim = null
@@ -327,7 +348,7 @@ export default {
         icon: 'live_help'
       }
       if (jb.isPlayer(this.mySeat.sId)) {
-        if (this.mySeat.sId === -claim.r1 || this.mySeat.sId === -claim.r2) {
+        if (this.mySeat.sId === -claim.o1 || this.mySeat.sId === -claim.o2) {
           notification.timeout = 5000
           notification.actions = [
             { label: 'Accept', color: 'yellow', handler: () => { this.onClaimR(true) } },
@@ -359,7 +380,7 @@ export default {
 <style scoped>
 .pbar {
   min-width: 275px;
-  height: 32px;
+  /*height: 32px;*/
   margin-bottom: 0px;
   align-items: flex-start;
   text-overflow: ellipsis;

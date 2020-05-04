@@ -13,6 +13,7 @@
         />
 
         <q-toolbar-title>
+          <q-icon name='img:statics/jbicon/seats/seat0.svg' />
           1D App
         </q-toolbar-title>
 
@@ -33,7 +34,7 @@
         <q-btn
           flat
           round
-          @click="goTo('home')"
+          @click="goTo('lobby')"
           v-if='authenticated'
         >
           <q-icon name='home' />
@@ -41,14 +42,14 @@
             anchor='bottom middle'
             self='top middle'
             :offset='[0, 20]'
-          >Home</q-tooltip>
+          >Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
           round
           dense
           icon='menu_book'
-          @click='playerList = !playerList'
+          @click='scoreBook = !scoreBook'
           aria-label='ScoreBook'
           v-show='authenticated'
         />
@@ -222,12 +223,16 @@
       overlay
       bordered
       elevated
-      v-model='playerList'
+      v-model='scoreBook'
       v-show='authenticated'
       :content-class="$q.theme === 'mat' ? 'bg-grey-3' : null"
       :content-style="{ fontSize: '16px' }"
     >
-      <q-list>
+      <q-list
+        separator
+        bordered
+        dense
+      >
         <q-item-label
           header
           class='text-grey-8'
@@ -238,7 +243,28 @@
         <q-item
           v-for='r in results'
           :key='r._id'
-        />
+        >
+          <q-item-section>
+            <q-item-label overline>
+              {{r.board.bt}}#{{r.board.bn}}: by {{getPName(r)}}
+            </q-item-label>
+            <q-item-label>
+              {{getContract(r)}}{{getResult(r)}}:
+              <q-badge
+                outline
+                :color="getScore(r) >= 0 ? 'secondary' : 'warning'"
+                :label='getScore(r)'
+              />
+            </q-item-label>
+          </q-item-section>
+
+          <q-item-section
+            side
+            top
+          >
+            <q-item-label caption>{{playedDate(r.playedAt)}}</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
     <q-page-container>
@@ -249,6 +275,7 @@
 
 <script>
 // import EssentialLink from 'components/EssentialLink'
+import moment from 'moment'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { users$, players$, tables$, chats$, results$ } from 'src/api'
 import auth from 'src/auth'
@@ -268,50 +295,12 @@ export default {
   data () {
     return {
       playerDrawer: false,
-      essentialLinks: [],
-      /*
-        {
-          title: 'Docs',
-          caption: 'quasar.dev',
-          icon: 'school',
-          link: 'https://quasar.dev'
-        },
-        {
-          title: 'Github',
-          caption: 'github.com/quasarframework',
-          icon: 'code',
-          link: 'https://github.com/quasarframework'
-        },
-        {
-          title: 'Discord Chat Channel',
-          caption: 'chat.quasar.dev',
-          icon: 'chat',
-          link: 'https://chat.quasar.dev'
-        },
-        {
-          title: 'Forum',
-          caption: 'forum.quasar.dev',
-          icon: 'record_voice_over',
-          link: 'https://forum.quasar.dev'
-        },
-        {
-          title: 'Twitter',
-          caption: '@quasarframework',
-          icon: 'rss_feed',
-          link: 'https://twitter.quasar.dev'
-        },
-        {
-          title: 'Facebook',
-          caption: '@QuasarFramework',
-          icon: 'public',
-          link: 'https://facebook.quasar.dev'
-        }
-      ],
-      */
-      playerList: this.$q.platform.is.desktop,
+      // essentialLinks: [],
+      scoreBook: this.$q.platform.is.desktop,
       page: '',
       user: null,
       room: '#Lobby',
+      seatName: ['North', 'East', 'South', 'West'],
       player_search: null
     }
   },
@@ -343,9 +332,7 @@ export default {
     signin (user) {
       console.log('signin', user)
       this.updateUser(user)
-      this.onServices()
-      this.playerDrawer = true
-      // this.goTo('lobby')
+      this.goTo('home')
     },
     signout () {
       auth
@@ -368,6 +355,36 @@ export default {
       const t = this.getTableById(p.seat.tId)
       if (t) return t.name
       else return '#Lobby'
+    },
+    getPName (r) {
+      const pId = r.players[r.bids.info.by - 1]
+      if (pId) {
+        const p = this.getPlayerById(pId)
+        if (p) return p.nick
+      }
+      return this.seatName[r.bids.info.by - 1]
+    },
+    getContract (r) {
+      if (r.bids.info.by === 0) return 'Passed hand'
+      else {
+        let c = r.bids.info.contract
+        if (r.bids.info.XX) c += 'XX'
+        else if (r.bids.info.X) c += 'X'
+        // c += ' by ' + this.getPName(r)
+        return c
+      }
+    },
+    getResult (r) {
+      if (r.result.result === 0) return '='
+      else if (r.result.result > 0) return `+${r.result.result}`
+      else return `-${r.result.result}`
+    },
+    getScore (r) {
+      const by = (r.bids.info.by - 1) % 2
+      return r.result.scores[by]
+    },
+    playedDate (playedAt) {
+      return moment(playedAt).startOf('hour').fromNow()
     },
     updateUser (u) {
       this.user = u
@@ -402,7 +419,7 @@ export default {
         this.setPlayers(response.data)
       })
       players$.on('created', p => {
-        console.log('create player', p, this.user)
+        // console.log('create player', p, this.user)
         if (p.id === this.user._id) {
           if (this.user.seat.tId) { // rejoin
             const t = this.getTableById(this.user.seat.tId) // if table still exists
@@ -416,7 +433,7 @@ export default {
               players$.patch(p.id, { seat })
             }
           }
-          this.myPlayer = p
+          this.$data.myPlayer = p
         }
         this.addPlayer(p)
         this.$q.notify({
@@ -442,11 +459,15 @@ export default {
         this.updateChat(chat)
       })
       results$.find({
+        /*
         query: {
           players: { $in: this.user._id }
         }
+        */
       }).then(response => {
+        console.log(response)
         this.setResults(response.data)
+        console.log(this.results)
       })
       results$.on('created', r => {
         console.log('create result', r)
@@ -490,8 +511,10 @@ export default {
   },
   watch: {
     user (u, o) {
-      console.log(u, o)
-      if (!u) this.goTo('home')
+      if (u) {
+        this.onServices()
+        this.playerDrawer = true
+      } else this.goTo('home')
     },
     myPlayer (p) {
       if (p) this.goTo('lobby')

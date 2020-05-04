@@ -10,27 +10,86 @@
         </q-card-section>
 
         <q-card-section>
-          <q-input
-            v-model='email'
-            filled
-            type='email'
-            label='Email'
-          />
-
-          <q-input
-            v-model='password'
-            filled
-            :type="isPwd ? 'password' : 'text'"
-            label='Password'
+          <q-list
+            bordered
+            padding
           >
-            <template v-slot:append>
-              <q-icon
-                :name="isPwd ? 'visibility_off' : 'visibility'"
-                class='cursor-pointer'
-                @click='isPwd = !isPwd'
-              />
-            </template>
-          </q-input>
+            <q-item v-if='isRegistration()'>
+              <q-item-section
+                top
+                avatar
+              >
+                <q-icon name='face' />
+              </q-item-section>
+              <q-item-section>
+                <q-input
+                  v-model='nick'
+                  filled
+                  type='text'
+                  label='Nick Name'
+                />
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section
+                top
+                avatar
+              >
+                <q-icon name='email' />
+              </q-item-section>
+              <q-item-section>
+                <q-input
+                  v-model='email'
+                  filled
+                  type='email'
+                  label='Email'
+                />
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section
+                top
+                avatar
+              >
+                <q-icon name='fingerprint' />
+              </q-item-section>
+              <q-item-section>
+                <q-input
+                  v-model='password'
+                  filled
+                  :type="isPwd ? 'password' : 'text'"
+                  label='Password'
+                >
+                  <template v-slot:append>
+                    <q-icon
+                      :name="isPwd ? 'visibility_off' : 'visibility'"
+                      class='cursor-pointer'
+                      @click='isPwd = !isPwd'
+                    />
+                  </template>
+                </q-input>
+              </q-item-section>
+            </q-item>
+            <q-item v-if='isRegistration()'>
+              <q-item-section
+                top
+                avatar
+              >
+                <q-icon :name='`img:statics/flags/4x3/${flag}.svg`' />
+              </q-item-section>
+              <q-item-section>
+                <q-input
+                  v-model='flag'
+                  square
+                  filled
+                  label="Country:"
+                  mask="AA"
+                  type='text'
+                >
+                </q-input>
+              </q-item-section>
+            </q-item>
+          </q-list>
         </q-card-section>
 
         <q-card-actions
@@ -43,6 +102,15 @@
             v-close-popup
             @click="onOk()"
           />
+          <!--
+          <q-btn
+            flat
+            label="Cancel"
+            color="primary"
+            v-close-popup
+            @click="show=false"
+          />
+          -->
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -57,9 +125,11 @@ export default {
     return {
       show: true,
       title: null,
+      nick: null,
       email: null,
       password: '',
-      isPwd: true
+      isPwd: true,
+      flag: 'US'
     }
   },
   computed: {},

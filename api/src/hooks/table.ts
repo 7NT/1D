@@ -22,7 +22,7 @@ const onTable = (): Hook => {
   }
 }
 
-async function onReady(context: any) {
+async function onReady (context: any) {
   const { state, ready } = context.data
   switch (state) {
     case -1:
@@ -38,7 +38,7 @@ async function onReady(context: any) {
   }
 }
 
-async function getBoard(context: any) {
+async function getBoard (context: any) {
   const tables$ = context.app.service('tables')
   const boards$ = context.app.service('boards')
   const played$ = context.app.service('played')
@@ -47,7 +47,7 @@ async function getBoard(context: any) {
   let uIds = table.seats.filter((x: any) => x != null)
   let played = await played$.find({
     query: {
-      $select: ['uId'],
+      $select: ['boardId'],
       bt: table.bt,
       uId: { $in: uIds }
     }
@@ -55,7 +55,7 @@ async function getBoard(context: any) {
 
   let board: { _id: any; bn: number; bt: any; vulN: any; players: any }
   try {
-    const boardIds = played.data.map((x: { uId: any }) => x.uId)
+    const boardIds = played.data.map((x: { boardId: any }) => x.boardId)
     let notplayed = await played$.find({
       query: {
         $limit: 1,
@@ -65,6 +65,8 @@ async function getBoard(context: any) {
       }
     })
     const boardId = notplayed.data.map((x: { boardId: any }) => x.boardId)
+    // console.log(uIds, played, boardIds, notplayed, boardId)
+
     board = await boards$.get(boardId[0])
   } catch (err) {
     let bnx: any = await boards$.find({
@@ -151,7 +153,7 @@ const shuffle = function () {
   return card4
 }
 
-function onBid(tdata: any) {
+function onBid (tdata: any) {
   tdata = updateBid(tdata)
   let info = tdata.bids.info
   if (info.P > 3 || (info.P > 2 && info.by > 0)) {
@@ -168,6 +170,7 @@ function onBid(tdata: any) {
     }
     if (info.P > 3) {
       tdata.state = -1
+      tdata.ready = [0, 0, 0, 0]
       tdata.turn = 0
       const result = {
         vul: tdata.board.vulN,
@@ -184,7 +187,7 @@ function onBid(tdata: any) {
   return tdata
 }
 
-function updateBid(tdata: any) {
+function updateBid (tdata: any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
   let bidN = 0, bidS = 0, contract
   let by = 0, P = 0, X = 0, XX = 0, turn = 0
@@ -195,8 +198,8 @@ function updateBid(tdata: any) {
       case '?':
         turn = b.sId
         break
-      case 'P':
-      case 'Pass':
+      case 'p':
+      case 'pass':
         P++
         break
       case 'X':
@@ -243,7 +246,7 @@ function updateBid(tdata: any) {
   return tdata
 }
 
-function bidSuit(b: any) {
+function bidSuit (b: any) {
   let s = b.substring(1).trim()
   switch (s) {
     case '♣':
@@ -259,7 +262,7 @@ function bidSuit(b: any) {
   }
 }
 
-function onPlay(tdata: any) {
+function onPlay (tdata: any) {
   let n = tdata.plays.data.length
   if (n < 1) return tdata
 
@@ -314,6 +317,7 @@ function onPlay(tdata: any) {
   tdata.claim = null
   if (tricks[0] + tricks[1] === 13) {
     tdata.state = -1
+    tdata.ready = [0, 0, 0, 0]
     tdata.turn = 0
     const result = {
       vul: tdata.board.vulN,
@@ -325,7 +329,7 @@ function onPlay(tdata: any) {
   return tdata
 }
 
-function onClaim(tdata: any) {
+function onClaim (tdata: any) {
   let claim = tdata.claim
   let d = (claim.declarer - 1) % 2
   let o = (d + 1) % 2
@@ -347,6 +351,7 @@ function onClaim(tdata: any) {
   tricks[o] = 13 - tricks[d]
   // tdata.claim.tricks = tricks
   tdata.state = -1
+  tdata.ready = [0, 0, 0, 0]
   tdata.turn = 0
   const result = {
     vul: claim.vul,
@@ -358,7 +363,7 @@ function onClaim(tdata: any) {
   return tdata
 }
 
-function onScore(sdata: any) {
+function onScore (sdata: any) {
   // const contractN = 6 + info.contract.bidN
   let result = 0
   let scores = [0, 0]

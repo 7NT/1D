@@ -47,13 +47,14 @@ export const setResults = (state, payload) => {
 }
 
 export const addResult = (state, payload) => {
-  //state.results.push(payload)
+  // state.results.push(payload)
   const i = state.results.findIndex(r => r._id === payload._id)
   if (i >= 0) {
     state.results.splice(i, 1, payload)
   } else {
     state.results.splice(1, 0, payload)
   }
+  console.log(state.results)
 }
 
 export const setChat = (state, payload) => {

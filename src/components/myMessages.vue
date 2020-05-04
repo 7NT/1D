@@ -1,7 +1,9 @@
 <template>
-  <div v-if='to'>
+  <div
+    class="q-ma-md fit"
+    v-if='to'
+  >
     <q-card
-      class='chats'
       flat
       bordered
     >
@@ -10,7 +12,7 @@
         color="orange"
         inset
       />
-      <div class='fit messages'>
+      <div class='messages'>
         <q-chat-message
           v-for="chat in myChats"
           :key='chat._id'
@@ -51,3 +53,12 @@ export default {
   }
 }
 </script>
+<style scoped>
+.messages {
+  min-width: auto;
+  min-height: auto;
+  align-items: stretch;
+  flex: 1 1 auto;
+  overflow-y: hidden;
+}
+</style>

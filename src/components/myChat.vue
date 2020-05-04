@@ -11,8 +11,10 @@
     <div class='full-width'>
       <q-input
         dark
+        outlined
         autofocus
-        standout
+        color="silver"
+        label="Chat"
         v-model='chat'
         @keypress='onChat'
       >

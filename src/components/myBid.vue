@@ -1,5 +1,8 @@
 <template>
-  <div class="bidbox" v-if='isMyTurn() === 1'>
+  <div
+    class="bidbox"
+    v-if='isMyTurn() === 1'
+  >
     <div class="row">
       <q-btn-group push>
         <q-fab
@@ -31,7 +34,10 @@
         </q-fab>
       </q-btn-group>
     </div>
-    <div class="row items-center" style="height:40px">
+    <div
+      class="row items-center"
+      style="height:40px"
+    >
       <!--
                 <q-input
                   dense
@@ -50,8 +56,14 @@
       -->
       <q-space></q-space>
     </div>
-    <div class="row" style="height:30px">
-      <q-btn-group dense class="full-width">
+    <div
+      class="row"
+      style="height:30px"
+    >
+      <q-btn-group
+        dense
+        class="full-width"
+      >
         <q-btn
           glossy
           label="X"
@@ -68,7 +80,13 @@
           @click="onBid('XX')"
           style="width:25%"
         />
-        <q-btn glaosy label="Pass" color="primary" @click="onBid('Pass')" style="width:45%" />
+        <q-btn
+          glaosy
+          label="Pass"
+          color="primary"
+          @click="onBid('pass')"
+          style="width:45%"
+        />
       </q-btn-group>
     </div>
   </div>

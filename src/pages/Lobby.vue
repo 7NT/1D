@@ -49,7 +49,10 @@
               </div>
             </q-tab-panel>
 
-            <q-tab-panel :name='1' class='panel'>
+            <q-tab-panel
+              :name='1'
+              class='panel'
+            >
               <div class='fit'>
                 <myPlayTable
                   :myPlayer='myPlayer'
@@ -147,7 +150,9 @@ export default {
   },
   watch: {
     myPlayer (p) {
-      if (!p) this.goTo('home')
+      if (!p) {
+        this.$router.push({ name: 'home' }).catch(e => { })
+      }
     },
     mySeat (n, o) {
       this.rooms[1].open = !!n.tId
@@ -156,7 +161,6 @@ export default {
       // this.$parent.player_filter = this.rId
     },
     rId (r) {
-      console.log('r', r)
       this.setRoomId(r ? this.mySeat.tId : null)
     }
   },
@@ -167,11 +171,7 @@ export default {
 </script>
 
 <style scoped>
-.panel {
+messages {
   overflow-x: hidden;
-}
-.messages {
-  min-height: 200px;
-  max-height: 400px;
 }
 </style>

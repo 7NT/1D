@@ -15,7 +15,7 @@ interface UserData {
   nick: string,
   email: string;
   password: string;
-  profile: { avatar?: string, flag?: string };
+  profile?: any;
   createdAt: number;
 }
 
@@ -26,23 +26,22 @@ export class Users extends Service<UserData> {
 
   create (data: UserData, params?: Params) {
     // This is the information we want from the user signup data
-    const { email, password, id } = data;
-    const nick = email.split('@')[0];
+    const { nick, email, password, profile, id } = data;
     // Gravatar uses MD5 hashes from an email address (all lowercase) to get the image
     const hash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex');
     // The full avatar URL
     const avatar = `${gravatarUrl}/${hash}?${query}`;
     // The complete user
-    const flag = 'us'
     const userData = {
       id,
       nick,
       email,
       password,
-      profile: { avatar, flag },
+      profile,
       createdAt: new Date().getTime()
     };
 
+    userData.profile.avatar = avatar
     // Call the original `create` method with existing `params` and new data
     return super.create(userData, params);
   }

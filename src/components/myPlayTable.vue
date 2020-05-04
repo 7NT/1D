@@ -259,6 +259,7 @@ export default {
   watch: {
     myPlayer (n, o) {
       console.log('p', n, o)
+      // if (!n) this.goTo('home')
     },
     myTable (t1, t0) {
       console.log('t', t1, t0)

@@ -116,6 +116,7 @@ export default {
   left: 0px;
 }
 img.card {
-  max-height: 76px;
+  max-height: 80px;
+  /*max-width: 76px;*/
 }
 </style>

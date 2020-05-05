@@ -159,7 +159,7 @@ export default {
         this.$router.push({ name: 'home' }).catch(e => { })
       }
     },
-    mySeat (n, o) {
+    mySeat (n) {
       this.rooms[1].open = !!n.tId
       this.rooms[1].id = n.tId
       this.rId = n.tId ? 1 : 0

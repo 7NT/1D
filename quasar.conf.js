@@ -57,7 +57,13 @@ module.exports = function (ctx) {
         'Notify',
         'Dialog',
         'AppFullscreen'
-      ]
+      ],
+
+      config: {
+        screen: {
+          bodyClasses: true // <<< add this
+        }
+      }
     },
 
     // https://quasar.dev/quasar-cli/cli-documentation/supporting-ie

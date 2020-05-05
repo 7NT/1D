@@ -1,125 +1,108 @@
 <template padding>
-  <div v-if='myTable'>
-    <div class='column jbtable'>
-      <div class='col'>
-        <div class='row no-wrap'>
-          <div class='col-4 items-start'>
-            <myBoard
-              :myTable='myTable'
-              :mySeat='mySeat'
-              v-on:onTable='onTable'
-            ></myBoard>
+  <div v-if="myTable">
+    <div class="column jbtable">
+      <div class="col">
+        <div class="row no-wrap">
+          <div class="col-4 items-start">
+            <myBoard :myTable="myTable" :mySeat="mySeat" v-on:onTable="onTable"></myBoard>
           </div>
-          <div class='col-5'>
-            <div class='column'>
+          <div class="col-5">
+            <div class="column">
               <myHand
-                :handId='1'
-                :myPlayer='myPlayer'
-                :myTable='myTable'
-                v-on:onTable='onTable'
-                class='myHand justify-start'
-                offset='[10, 10]'
+                :handId="1"
+                :myPlayer="myPlayer"
+                :myTable="myTable"
+                v-on:onTable="onTable"
+                class="myHand justify-start"
+                offset="[10, 10]"
               />
             </div>
           </div>
-          <div class='col-3 self-start'>
-            <div
-              class='row justify-end'
-              v-if='myState === 2 || myState === -1'
-            >
-              <myBidBox
-                :myPlayer='myPlayer'
-                :myTable='myTable'
-                class='fit bbox'
-              />
-            </div>
+          <div class="col-3 items-end column">
+            <q-list bordered>
+              <q-item-label overline class="bg-primary text-white shadow-2">
+                <div class="full-width">
+                  <div class="row statusbar">
+                    <q-space />
+                    {{myStatus}}
+                    <q-space />
+                    <q-btn-group push>
+                      <q-btn class="gt-xs" size="12px" flat dense round icon="live_help" @click="onCommand" />
+                      <q-btn class="gt-xs" size="12px" flat dense round icon="close" @click="onCommand" />
+                      <q-btn size="12px" flat dense round icon="more_vert" />
+                    </q-btn-group>
+                  </div>
+                </div>
+              </q-item-label>
+              <q-item-section v-if="myState === 2 || myState === -1">
+                <myBidBox :myPlayer="myPlayer" :myTable="myTable" class="fit bbox" />
+              </q-item-section>
+            </q-list>
           </div>
         </div>
       </div>
-      <div class='col'>
-        <div class='row no-wrap'>
-          <div class='col-4'>
-            <div class='column'>
+      <div class="col">
+        <div class="row no-wrap">
+          <div class="col-4">
+            <div class="column">
               <myHand
-                :handId='4'
-                :myPlayer='myPlayer'
-                :myTable='myTable'
-                v-on:onTable='onTable'
-                class='myHand justify-center'
+                :handId="4"
+                :myPlayer="myPlayer"
+                :myTable="myTable"
+                v-on:onTable="onTable"
+                class="myHand justify-center"
               />
             </div>
           </div>
-          <div class='col-4'>
-            <div class='column'>
+          <div class="col-4">
+            <div class="column">
               <div>
-                <q-card
-                  class='bbox pbox'
-                  v-if='myState === 1'
-                >
+                <q-card class="bbox pbox" v-if="myState === 1">
                   <q-card>
-                    <myBidBox
-                      :myPlayer='myPlayer'
-                      :myTable='myTable'
-                    />
+                    <myBidBox :myPlayer="myPlayer" :myTable="myTable" />
                   </q-card>
                 </q-card>
-                <q-card
-                  class='pbox transparent'
-                  v-if='myState === 2'
-                >
-                  <myPlayBox
-                    :myPlayer='myPlayer'
-                    :myTable='myTable'
-                    :review='false'
-                  />
+                <q-card flat class="pbox transparent" v-if="myState === 2">
+                  <myPlayBox :myPlayer="myPlayer" :myTable="myTable" :review="false" />
                 </q-card>
                 <q-space />
               </div>
             </div>
           </div>
-          <div class='col-4'>
-            <div class='column'>
+          <div class="col-4">
+            <div class="column">
               <myHand
-                :handId='2'
-                :myPlayer='myPlayer'
-                :myTable='myTable'
-                v-on:onTable='onTable'
-                class='myHand justify-start'
+                :handId="2"
+                :myPlayer="myPlayer"
+                :myTable="myTable"
+                v-on:onTable="onTable"
+                class="myHand justify-start"
               />
             </div>
           </div>
         </div>
       </div>
-      <div class='col'>
-        <div class='row no-wrap'>
-          <div class='col-3'>
-            <div class='column'>
-              <myTricks
-                :myPlayer='myPlayer'
-                :myTable='myTable'
-                class='myHand justify-start'
-              />
+      <div class="col">
+        <div class="row no-wrap">
+          <div class="col-3">
+            <div class="column">
+              <myTricks :myPlayer="myPlayer" :myTable="myTable" class="myHand justify-start" />
             </div>
           </div>
-          <div class='col-6'>
-            <div class='column'>
+          <div class="col-6">
+            <div class="column">
               <myHand
-                :handId='3'
-                :myPlayer='myPlayer'
-                :myTable='myTable'
-                v-on:onTable='onTable'
-                class='myHand justify-center'
+                :handId="3"
+                :myPlayer="myPlayer"
+                :myTable="myTable"
+                v-on:onTable="onTable"
+                class="myHand justify-center"
               />
             </div>
           </div>
-          <div class='col-3'>
-            <div class='fit'>
-              <myBid
-                :myPlayer='myPlayer'
-                :myTable='myTable'
-                v-on:onTable='onTable'
-                class='justify-center'
-              />
+          <div class="col-3 column">
+            <div class="justify-start">
+              <myBid :myPlayer="myPlayer" :myTable="myTable" v-on:onTable="onTable" />
             </div>
           </div>
         </div>
@@ -178,6 +161,17 @@ export default {
         this.$data.state = s
       }
     },
+    myStatus: {
+      get: function () {
+        switch (this.myState) {
+          case -1: return 'Reviewing...'
+          case 0: return 'Ready...'
+          case 1: return 'Bidding...'
+          case 2: return 'Playing...'
+          default: return null
+        }
+      }
+    },
     myAlert: {
       get: function (n) {
         try {
@@ -224,7 +218,10 @@ export default {
           break
         }
         case 'ready': {
-          tables$.patch(this.myTable.id, { state: action.state, ready: action.ready })
+          tables$.patch(this.myTable.id, {
+            state: action.state,
+            ready: action.ready
+          })
           break
         }
         case 'bt': {
@@ -255,15 +252,25 @@ export default {
           tables$.patch(this.myTable.id, { claim: action.claim })
           break
         }
-        default: { }
+        default: {
+        }
+      }
+    },
+    onCommand (action) {
+      const cmd = action.target.innerText
+      switch (cmd) {
+        case 'close': {
+          this.onTable({ action: 'sit', seat: { tId: '#Lobby', sId: 0 } })
+          break
+        }
+        case 'live_help': {
+          break
+        }
+        default:
       }
     }
   },
   watch: {
-    myPlayer (n, o) {
-      console.log('p', n, o)
-      // if (!n) this.goTo('home')
-    },
     myTable (t) {
       if (t) this.myState = t.state
     },
@@ -281,7 +288,7 @@ export default {
         })
       }
     },
-    myTurn (t1, t0) { }
+    myTurn (t1, t0) {}
   },
   mounted () {
     if (!this.myTable) {
@@ -289,20 +296,12 @@ export default {
       this.onTable({ action: 'sit', seat })
     }
   },
-  beforeDestroy () { }
+  beforeDestroy () {}
 }
 </script>
 <!-- Notice lang='scss' -->
 <style scoped>
 .jbtable {
-  /*
-  min-width: 694px;
-  min-height: 393px;
-  max-height: 480px;
-  border: 1px solid red;
-  width: 100%;
-  height: 100%;
-  */
   margin: 2px;
   background-image: url("/statics/imgs/jbbg.jpeg");
   background-position: center; /* Center the image */
@@ -310,7 +309,7 @@ export default {
   background-size: cover; /* Resize the background image to cover the entire container */
 }
 .bbox {
-  margin: 4px;
+  margin: auto;
   z-index: 100;
 }
 .pbox {
@@ -319,10 +318,13 @@ export default {
   margin: auto;
   overflow-y: auto;
 }
+.statusbar {
+  min-width: 200px;
+}
 .myHand {
   min-height: 100px;
   max-height: 130px;
   min-width: 175px;
-  margin-right: 16px;
+  margin-right: 10px;
 }
 </style>

@@ -29,24 +29,62 @@ const onFind = (): Hook => {
   }
 }
 
-/*
 const onResult = (): Hook => {
   return async (context: HookContext) => {
-    const { tId, result } = context.data
+    const { result } = context.data
     if (result) {
-      const tables$ = context.app.service('tables')
-      const table = await tables$.get(tId)
-      context.data.boardId = table.board._id
-      context.data.players = table.seats
-      context.data.board = table.board
-      context.data.bids = table.bids
-      context.data.plays = table.plays
-      context.data.playedAt = new Date().getTime()
+      const results$ = context.app.service('results')
+      const results = await results$.find({
+        query: {
+          $select: ['_id', 'scores'],
+          boardId: result.boardId
+        }
+      })
+      const bt = result.board.bt
+      switch (bt) {
+        case 'MP': {
+          scoreMP(results)
+          break;
+        }
+        case 'IMP': {
+          scoreIMP(results)
+          break;
+        }
+        case 'XIMP': {
+          scoreXIMP(results)
+          break;
+        }
+        default: return
+      }
+      context.data.updatedAt = new Date().getTime()
     }
     return Promise.resolve(context)
   }
 }
-*/
+
+function scoreMP(scores: number[]) {
+  // Create a temporary array to keep metadata regarding each entry of the original array
+  const tmpArr = scores.map((v: number) => ({
+    value: v,
+    rank: 1,
+  }));
+
+  // Get rid of douplicate values
+  const unique = new Set(scores);
+
+  // Loops through the set
+  for (let a of unique) {
+    for (let b of tmpArr) {
+      // increment the order of an element if a larger element is pressent
+      if (b.value < a) {
+        b.rank += 1;
+      }
+    }
+  }
+
+  // Strip out the unnecessary metadata
+  return tmpArr.map((v: { rank: any }) => v.rank);
+}
 
 export {
   onFind

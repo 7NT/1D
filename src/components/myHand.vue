@@ -390,8 +390,15 @@ export default {
   opacity: 1;
   z-index: 100;
 }
+/*
+body.screen--xs {
+  .myCard {
+    max-width: 70px;
+  }
+}
+*/
 img.card {
-  max-width: 70px;
+  max-width: 75px;
   margin: 0;
   padding: 0;
   border: 0;
@@ -416,12 +423,11 @@ img.card {
 .ready {
   height: 24px;
   width: 50px;
-  margin-top: 2px;
-  margin-right: 5px;
+  margin-top: auto;
 }
-.player .declarer {
+.declarer {
   height: 24px;
-  margin-top: 1px;
+  margin: auto;
 }
 
 /*

@@ -27,9 +27,14 @@ async function beforeSit(context: any) {
       }
     }
 
-    let t1 = await getTable(tables$, user, seat)
-    context.data.seat.tId = t1.id
-    context.app.channel(`#${t1.id}`).join(connection);
+    if (seat.tId === '#Lobby') {  //go to lobby
+      context.data.seat.tId = null
+      context.data.seat.sId = 0
+    } else {
+      let t1 = await getTable(tables$, user, seat)
+      context.data.seat.tId = t1.id
+      context.app.channel(`#${t1.id}`).join(connection);
+    }
   }
   return context.data
 }

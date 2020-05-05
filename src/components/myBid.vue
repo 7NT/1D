@@ -1,5 +1,5 @@
 <template>
-  <div class="bidbox column" v-if="isMyTurn() === 1">
+  <div class="bbox column" v-if="isMyTurn() === 1">
     <div class="col row">
       <q-btn-group push>
         <q-fab
@@ -17,7 +17,7 @@
           type="button"
           direction="up"
           class="bg-teal"
-          style="width:30px"
+          style="width:28px"
         >
           <q-fab-action
             v-for="s in suits"
@@ -177,25 +177,12 @@ export default {
   float: left;
   align-self: flex-start;
 }
-.bidfab {
-  width: 28px;
-  height: 28px;
-  padding: 0px;
-  margin: 0px;
-}
-.bidbox {
+.bbox {
   height: 120px;
-  width: 220px;
-  margin: 5px;
+  width: 210px;
+  margin: auto;
   border: 1px solid tomato;
   align-self: flex-start;
   z-index: 200;
-}
-.bbox {
-  min-height: 100px;
-  min-width: 120px;
-}
-.bidrow {
-  flex-wrap: no-wrap;
 }
 </style>

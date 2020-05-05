@@ -252,7 +252,7 @@
               {{getContract(r)}}{{getResult(r)}}
               <q-badge
                 outline
-                :color="getScore(r) >= 0 ? 'secondary' : 'warning'"
+                :color="getScore(r) >= 0 ? 'positive' : 'negative'"
                 :label='getScore(r)'
               />
             </q-item-label>
@@ -306,7 +306,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['players', 'tables', 'results', 'roomId']),
-    ...mapGetters('jstore', ['myPlayer', 'getTableById']),
+    ...mapGetters('jstore', ['myPlayer', 'getPlayerById', 'getTableById']),
     authenticated () {
       return this.user != null
     },

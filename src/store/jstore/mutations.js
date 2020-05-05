@@ -54,7 +54,7 @@ export const addResult = (state, payload) => {
   } else {
     state.results.splice(1, 0, payload)
   }
-  console.log(state.results)
+  // console.log(state.results)
 }
 
 export const setChat = (state, payload) => {

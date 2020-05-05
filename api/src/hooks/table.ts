@@ -373,12 +373,12 @@ const onResult = (): Hook => {
       let t: any
       if (context.id) {
         t = context.service.store[context.id]
-        console.log('t1', t)
+        // console.log('t1', t)
       }
       if (!t) {
         const tables$ = context.app.service('tables')
         t = await tables$.get(context.id)
-        console.log('t2', t)
+        // console.log('t2', t)
       }
       // if (context.id) console.log('t', context.service.store[context.id], t)
 
@@ -419,7 +419,8 @@ function onScore (rdata: any) {
   }
 
   rdata.result = result
-  rdata.scores = scores
+  // rdata.scores = scores
+  rdata.score = scores[0]   //NS score
 
   return rdata
 }

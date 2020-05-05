@@ -11,7 +11,7 @@
     <div class='full-width'>
       <q-input
         dark
-        outlined
+        standout
         autofocus
         color="silver"
         label="Chat"

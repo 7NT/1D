@@ -1,6 +1,5 @@
 <template>
-  <div
-    class="q-ma-md fit"
+  <div class='fit'
     v-if='to'
   >
     <q-card
@@ -40,7 +39,7 @@ export default {
   computed: {
     ...mapState('jstore', ['user', 'chats']),
     myChats () {
-      return this.chats.filter(m => m.to === (this.to.name || this.to.nick)).reverse()
+      return this.chats.filter(m => m.to === (this.to.name || this.to.nick)).slice(-10).reverse()
     }
   },
   methods: {
@@ -54,11 +53,12 @@ export default {
 }
 </script>
 <style scoped>
+.box {
+  max-height: 50vh;
+}
 .messages {
-  min-width: auto;
-  min-height: auto;
-  align-items: stretch;
-  flex: 1 1 auto;
+  width: 100%;
+  height: auto;
   overflow-y: hidden;
 }
 </style>

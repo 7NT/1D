@@ -54,7 +54,7 @@ export default {
   computed: {
     // ...mapGetters('jstore', ['myPlayer', 'myTable']),
     isVisible () {
-      return this.myTable.state > 1
+      return this.myTable.state > 1 || this.myTable.state < 0
     },
     playedCards () {
       return this.myTable.plays.data

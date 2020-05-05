@@ -29,6 +29,7 @@ const onFind = (): Hook => {
   }
 }
 
+/*
 const onResult = (): Hook => {
   return async (context: HookContext) => {
     const { tId, result } = context.data
@@ -45,8 +46,9 @@ const onResult = (): Hook => {
     return Promise.resolve(context)
   }
 }
+*/
 
 export {
-  onFind,
-  onResult
+  onFind
+  // onResult
 }

@@ -268,7 +268,7 @@ export default {
       this.$emit('onTable', {
         action: 'claim',
         claim: {
-          vul: this.myTable.board.vulN,
+          // vul: this.myTable.board.vulN,
           contract: this.myTable.bids.info,
           tricks: this.myTable.plays.info.tricks,
           claim: c,
@@ -278,10 +278,10 @@ export default {
         }
       })
     },
-    onClaimR (r) {
+    onClaimR (accept) {
       let claim
       claim = Object.assign({}, claim, this.myClaim)
-      if (r) {
+      if (accept) {
         if (this.myClaim.o1 === -this.mySeat.sId) {
           claim.o1 = -claim.o1
         } else {

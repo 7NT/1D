@@ -1,107 +1,63 @@
 <template>
-  <q-page class='flex flex-center'>
-    <q-dialog
-      v-model='show'
-      persistent
-    >
-      <q-card style='min-width: 400px'>
+  <q-page class="flex flex-center">
+    <q-dialog v-model="show" persistent>
+      <q-card style="min-width: 400px">
         <q-card-section>
-          <div class='text-h6'>{{ title }}:</div>
+          <div class="text-h6">{{ title }}:</div>
         </q-card-section>
 
         <q-card-section>
-          <q-list
-            bordered
-            padding
-          >
-            <q-item v-if='isRegistration()'>
-              <q-item-section
-                top
-                avatar
-              >
-                <q-icon name='face' />
+          <q-list bordered padding>
+            <q-item v-if="isRegistration()">
+              <q-item-section top avatar>
+                <q-icon name="face" />
               </q-item-section>
               <q-item-section>
-                <q-input
-                  v-model='nick'
-                  filled
-                  type='text'
-                  label='Nick Name'
-                />
+                <q-input v-model="nick" filled type="text" label="Nick Name" />
               </q-item-section>
             </q-item>
             <q-item>
-              <q-item-section
-                top
-                avatar
-              >
-                <q-icon name='email' />
+              <q-item-section top avatar>
+                <q-icon name="email" />
               </q-item-section>
               <q-item-section>
-                <q-input
-                  v-model='email'
-                  filled
-                  type='email'
-                  label='Email'
-                />
+                <q-input v-model="email" filled type="email" label="Email" />
               </q-item-section>
             </q-item>
             <q-item>
-              <q-item-section
-                top
-                avatar
-              >
-                <q-icon name='fingerprint' />
+              <q-item-section top avatar>
+                <q-icon name="fingerprint" />
               </q-item-section>
               <q-item-section>
                 <q-input
-                  v-model='password'
+                  v-model="password"
                   filled
                   :type="isPwd ? 'password' : 'text'"
-                  label='Password'
+                  label="Password"
                 >
                   <template v-slot:append>
                     <q-icon
                       :name="isPwd ? 'visibility_off' : 'visibility'"
-                      class='cursor-pointer'
-                      @click='isPwd = !isPwd'
+                      class="cursor-pointer"
+                      @click="isPwd = !isPwd"
                     />
                   </template>
                 </q-input>
               </q-item-section>
             </q-item>
-            <q-item v-if='isRegistration()'>
-              <q-item-section
-                top
-                avatar
-              >
-                <q-icon :name='`img:statics/flags/4x3/${flag}.svg`' />
+            <q-item v-if="isRegistration()">
+              <q-item-section top avatar>
+                <q-icon :name="`img:statics/flags/4x3/${flag}.svg`" />
               </q-item-section>
               <q-item-section>
-                <q-input
-                  v-model='flag'
-                  square
-                  filled
-                  label="Country:"
-                  mask="AA"
-                  type='text'
-                >
-                </q-input>
+                <q-input v-model="flag" square filled label="Country:" mask="AA" type="text"></q-input>
               </q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
 
-        <q-card-actions
-          align='right'
-          class='text-primary'
-        >
-          <q-btn
-            push
-            :label=title
-            v-close-popup
-            @click="onOk()"
-          />
+        <q-card-actions align="right" class="text-primary">
+          <q-btn push :label="title" v-close-popup @click="onOk()" />
           <!--
           <q-btn
             flat
@@ -150,18 +106,22 @@ export default {
     onOk () {
       const credential = this.getCredentials()
       if (this.isRegistration()) {
-        auth.register(credential)
-          .then((user) => {
+        credential.nick = this.$data.nick
+        credential.profile = { flag: this.$data.flag, avatar: null }
+
+        auth
+          .register(credential)
+          .then(user => {
             return this.login(credential)
           })
-          .then((user) => {
+          .then(user => {
             this.$q.notify({
               color: 'positive',
               message: 'You are now logged in'
             })
             this.goTo('lobby')
           })
-          .catch((err) => {
+          .catch(err => {
             console.error(err)
             this.$q.notify({
               color: 'positive',
@@ -177,7 +137,7 @@ export default {
               message: 'You are now logged in'
             })
           })
-          .catch((err) => {
+          .catch(err => {
             console.error(err)
             this.$q.notify({
               color: 'positive',
@@ -197,7 +157,7 @@ export default {
   mounted () {
     this.title = this.isRegistration() ? 'Register' : 'Sign In'
   },
-  beforeDestroy () { }
+  beforeDestroy () {}
 }
 </script>
 

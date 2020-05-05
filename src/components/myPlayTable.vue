@@ -1,5 +1,5 @@
 <template padding>
-  <div>
+  <div v-if='myTable'>
     <div class='column jbtable'>
       <div class='col'>
         <div class='row no-wrap'>
@@ -179,8 +179,11 @@ export default {
       }
     },
     myAlert: {
-      get: function () {
-        return this.myTable ? this.myTable.alert : null
+      get: function (n) {
+        try {
+          return this.myTable.alert
+        } catch (err) {}
+        return null
       }
     },
     myBids: {
@@ -261,9 +264,8 @@ export default {
       console.log('p', n, o)
       // if (!n) this.goTo('home')
     },
-    myTable (t1, t0) {
-      console.log('t', t1, t0)
-      this.myState = t1.state
+    myTable (t) {
+      if (t) this.myState = t.state
     },
     myState (s1, s0) {
       // s0++
@@ -282,7 +284,10 @@ export default {
     myTurn (t1, t0) { }
   },
   mounted () {
-    console.log('t', this.myTable)
+    if (!this.myTable) {
+      const seat = { sId: 0 }
+      this.onTable({ action: 'sit', seat })
+    }
   },
   beforeDestroy () { }
 }

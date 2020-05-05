@@ -423,7 +423,6 @@ export default {
         if (p.id === this.user._id) {
           if (this.user.seat.tId) { // rejoin
             const t = this.getTableById(this.user.seat.tId) // if table still exists
-            console.log('rejoin player', p, t)
             if (t) {
               const seat = {
                 tId: this.user.seat.tId,
@@ -436,10 +435,12 @@ export default {
           this.$data.myPlayer = p
         }
         this.addPlayer(p)
-        this.$q.notify({
-          color: 'into',
-          message: `[JOIN]: ${p.nick}`
-        })
+        if (!this.myPlayer.tId) {
+          this.$q.notify({
+            color: 'into',
+            message: `[JOIN]: ${p.nick}`
+          })
+        }
       })
       players$.on('patched', p => {
         console.log('player patched', p)
@@ -449,10 +450,12 @@ export default {
         console.log('player removed', p)
         p.state = -1
         this.addPlayer(p)
-        this.$q.notify({
-          color: 'into',
-          message: `[EXIT]: ${p.nick}`
-        })
+        if (!this.myPlayer.tId) {
+          this.$q.notify({
+            color: 'into',
+            message: `[EXIT]: ${p.nick}`
+          })
+        }
       })
       chats$.on('created', chat => {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
@@ -465,9 +468,7 @@ export default {
         }
         */
       }).then(response => {
-        console.log(response)
-        this.setResults(response.data)
-        console.log(this.results)
+        if (response.data.length > 0) this.setResults(response.data)
       })
       results$.on('created', r => {
         console.log('create result', r)
@@ -528,6 +529,9 @@ export default {
 }
 </script>
 <style scoped>
+.container {
+  height: 100vh;
+}
 .seat {
   width: 24px;
   height: 30px;

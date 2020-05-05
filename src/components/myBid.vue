@@ -1,9 +1,6 @@
 <template>
-  <div
-    class="bidbox"
-    v-if='isMyTurn() === 1'
-  >
-    <div class="row">
+  <div class="bidbox column" v-if="isMyTurn() === 1">
+    <div class="col row">
       <q-btn-group push>
         <q-fab
           square
@@ -34,36 +31,9 @@
         </q-fab>
       </q-btn-group>
     </div>
-    <div
-      class="row items-center"
-      style="height:40px"
-    >
-      <!--
-                <q-input
-                  dense
-                  standout='bg-primary text-negative'
-                  autofocus
-                  clearable
-                  color='warning'
-                  v-model='alert'
-                  label='Alert'
-                  class='full-width'
-                >
-                  <template v-slot:prepend>
-                    <q-icon name='add_alert' />
-                  </template>
-                </q-input>
-      -->
-      <q-space></q-space>
-    </div>
-    <div
-      class="row"
-      style="height:30px"
-    >
-      <q-btn-group
-        dense
-        class="full-width"
-      >
+    <q-separator />
+    <div class="col row" style="height:30px">
+      <q-btn-group dense class="full-width">
         <q-btn
           glossy
           label="X"
@@ -80,14 +50,25 @@
           @click="onBid('XX')"
           style="width:25%"
         />
-        <q-btn
-          glaosy
-          label="Pass"
-          color="primary"
-          @click="onBid('pass')"
-          style="width:45%"
-        />
+        <q-btn glaosy label="Pass" color="primary" @click="onBid('pass')" style="width:45%" />
       </q-btn-group>
+    </div>
+    <q-separator />
+    <div class="col row items-center" style="height:40px">
+      <q-input
+        dense
+        standout="bg-primary text-negative"
+        autofocus
+        clearable
+        color="warning"
+        v-model="alert"
+        label="Alert"
+        class="full-width"
+      >
+        <template v-slot:prepend>
+          <q-icon name="add_alert" />
+        </template>
+      </q-input>
     </div>
   </div>
 </template>
@@ -106,7 +87,8 @@ export default {
         { id: 3, suit: '♥', color: 'red' },
         { id: 4, suit: '♠', color: 'black' },
         { id: 5, suit: 'NT', color: 'purple' }
-      ]
+      ],
+      alert: null
     }
   },
   computed: {
@@ -170,15 +152,16 @@ export default {
       const info = this.myBids.info
       const data = this.myBids.data.slice(0)
       let sId = this.myTurn
+      const alert = this.alert
       data.pop()
-      data.push({ sId, bid })
+      data.push({ sId, bid, alert })
       sId = (sId % 4) + 1
       data.push({ sId, bid: '?' })
-      // this.onTable({ action: 'bid', bid: { bids: { info, data } } })
       this.$emit('onTable', {
         action: 'bid',
         bid: { bids: { info, data } }
       })
+      this.alert = null
       // const tts = jb.jbVoiceName(bid)
       // say.speak(tts)
     }

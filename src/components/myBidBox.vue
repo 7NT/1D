@@ -28,8 +28,11 @@
         <template v-slot:body-cell="props">
           <q-td
             :props="props"
-            :class="turn_bgcolor(props)"
-          >{{props.value}}</q-td>
+            :class="bid_class(props.value)"
+          >
+            {{ getBid(props.value) }}
+            <q-tooltip>{{ getAlert(props.value) }}</q-tooltip>
+          </q-td>
         </template>
       </q-table>
     </div>
@@ -55,6 +58,7 @@ export default {
       return x
     },
     myBids () {
+      // console.log(this.myTable)
       return this.myTable.bids
     },
     columns () {
@@ -93,6 +97,18 @@ export default {
       if (p) return p.nick
       else return this.seats[s - 1]
     },
+    getBid (b) {
+      try {
+        return b.bid
+      } catch (err) {}
+      return b
+    },
+    getAlert (a) {
+      try {
+        if (a.alert) return a.alert
+      } catch (err) {}
+      return this.getBid(a)
+    },
     vul_bgcolor (s) {
       if (this.myBids) {
         const x = jb.seatX(s, this.mySeatX) % 2
@@ -114,13 +130,15 @@ export default {
         }
       }
     },
-    turn_bgcolor (props) {
-      if (!props.value) return 'bg-grey'
-      else if (props.value === '?') return 'bg-warning'
-      else return 'col-3'
+    bid_class (bdata) {
+      if (!bdata) return 'bg-grey'
+      else if (bdata.bid === '?') return 'bg-warning'
+      else {
+        if (bdata.alert) return 'col-3 vul3'
+        else return 'col-3'
+      }
     },
     loadBids () {
-      // console.log('loadbids', this.myVul)
       if (!this.myBids) return
       // let turn = 0
       const data = []
@@ -129,21 +147,22 @@ export default {
         let row = 1
         let rBid = { N: null, E: null, S: null, W: null }
         _bid.data.forEach(bid => {
+          const bdata = { bid: bid.bid, alert: bid.alert || null }
           switch (bid.sId) {
             case 1: {
-              rBid.N = bid.bid
+              rBid.N = bdata
               break
             }
             case 2: {
-              rBid.E = bid.bid
+              rBid.E = bdata
               break
             }
             case 3: {
-              rBid.S = bid.bid
+              rBid.S = bdata
               break
             }
             case 4: {
-              rBid.W = bid.bid
+              rBid.W = bdata
               break
             }
             default:
@@ -162,8 +181,9 @@ export default {
         }
         this.$data.bData = data
       } catch (err) {
-        console.log(err)
+        // console.log(err)
       }
+      // console.log('loadbids', this.$data.bData)
       // if (turn) this.$emit('onAction', { action: 'bid', turn, bid: _bid })
     }
   },

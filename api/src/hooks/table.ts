@@ -1,7 +1,7 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
-import { vulN, N52Suit, N52Rank } from '../jb'
+import { vulN, N52Suit, N52Rank, N4Suit } from '../jb'
 import { getScore } from '../jbScore'
 
 const onTable = (): Hook => {
@@ -10,7 +10,9 @@ const onTable = (): Hook => {
     if (ready) {
       context.data = await onReady(context)
     } else if (claim) {
-      if (claim.o1 > 0 && claim.o2 > 0) {
+      if (!claim ) {
+        context.data.alert = 'Claim is declined'
+      } else if ((claim.o1 > 0 && claim.o2 > 0) || claim.claim === 'Concede All') {
         context.data = onClaim(context.data)
       }
     } else if (plays) {
@@ -161,9 +163,9 @@ function onBid (tdata: any) {
 
     tdata.plays = {
       info: {
-        trump: info.contract,
+        trump: N4Suit(info.bidS),
         lead: null,
-        winner: 0,
+        winner: null,
         tricks: [0, 0],
       },
       data: []
@@ -173,11 +175,9 @@ function onBid (tdata: any) {
       tdata.ready = [0, 0, 0, 0]
       tdata.turn = 0
       const result = {
-        vul: tdata.board.vulN,
-        contract: tdata.bids.info,
         tricks: [0, 0]
       }
-      tdata.result = onScore(result)
+      tdata.result = result // onScore(result)
     } else {
       tdata.state = 2
       tdata.turn = (info.by % 4) + 1
@@ -278,32 +278,27 @@ function onPlay (tdata: any) {
   switch (n4) {
     case 1:
       lead = last
-      winner = last.sId
+      winner = last
       break
     case 0:
     case 2:
     case 3:
-      if (last.card.suit === lead.card.suit) {
-        let v0 = lead.card.value // % 13
-        let v1 = last.card.value // % 13
-        if (v1 > v0) {
-          lead = last
-          winner = last.sId
-        }
-      } else if (trump.endsWith(last.card.suit)) {
-        winner = last.sId
+      if (last.card.suit === winner.card.suit) {
+        if (last.card.value > winner.card.value) winner = last
+      } else if (last.card.suit === trump) {
+        winner = last
       }
       break
     default:
   }
   if (n4 === 0) {
     lead = null
-    if (winner > 0) {
-      last.winner = winner
-      if ((winner % 2) === 1) tricks[0]++
+    if (winner.sId > 0) {
+      last.winner = winner.sId
+      if ((winner.sId % 2) === 1) tricks[0]++
       else tricks[1]++
     }
-    turn = winner - 1
+    turn = winner.sId - 1
   }
 
   tdata.plays.info = {
@@ -320,11 +315,9 @@ function onPlay (tdata: any) {
     tdata.ready = [0, 0, 0, 0]
     tdata.turn = 0
     const result = {
-      vul: tdata.board.vulN,
-      contract: tdata.bids.info,
       tricks: tdata.plays.tricks
     }
-    tdata.result = onScore(result)
+    tdata.result = result //onScore(result)
   }
   return tdata
 }
@@ -353,45 +346,64 @@ function onClaim (tdata: any) {
   tdata.state = -1
   tdata.ready = [0, 0, 0, 0]
   tdata.turn = 0
-  const result = {
-    vul: claim.vul,
-    contract: claim.contract,
-    tricks: claim.tricks
-  }
-  tdata.result = onScore(result)
+  const result = { tricks: claim.tricks }
+  tdata.result = result // onScore(result)
 
   return tdata
 }
 
-function onScore (sdata: any) {
+const onResult = (): Hook => {
+  return async (context: HookContext) => {
+    let { result } = context.data
+    if (result) {
+      const results$ = context.app.service('results')
+
+      let t: any
+      if (context.id) t = context.service.store[context.id]
+      if (!t) {
+        console.log('t', t, context.service.store)
+        const tables$ = context.app.service('tables')
+        t = await tables$.get(context.id)
+      }
+
+      const rdata = {
+        vul: t.board.vulN,
+        contract: t.bids.info.contract,
+        tricks: result.tricks,
+      }
+      const score = onScore(rdata)
+      result.boardId = t.board._id
+      result.players = t.seats
+      result.board = t.board
+      result.bids  = t.bids
+      result.plays = t.plays
+      result.result = score.result
+      result.scores = score.scores
+      result.playedAt = new Date().getTime()
+
+      results$.create(result)
+    }
+    return Promise.resolve(context)
+  }
+}
+
+function onScore (rdata: any) {
   // const contractN = 6 + info.contract.bidN
   let result = 0
   let scores = [0, 0]
-  if (sdata.contract.by > 0) { //passed
-    const by0 = (sdata.contract.by - 1) % 2
+  if (rdata.contract.by > 0) { //passed
+    const by0 = (rdata.contract.by - 1) % 2
     const by1 = (by0 + 1) % 2
-    result = sdata.tricks[by0] - 6 - sdata.contract.bidN
-    let score = getScore(sdata, result)
+    result = rdata.tricks[by0] - 6 - rdata.contract.bidN
+    let score = getScore(rdata, result)
     scores[by0] = score
     scores[by1] = -score
   }
 
-  const rdata = {
-    result,
-    scores
-  }
-  return rdata
-}
+  rdata.result = result
+  rdata.scores = scores
 
-const onResult = (): Hook => {
-  return async (context: HookContext) => {
-    const { result } = context.data
-    if (result) {
-      const results$ = context.app.service('results')
-      results$.create({ tId: context.id, result })
-    }
-    return Promise.resolve(context)
-  }
+  return rdata
 }
 
 export {

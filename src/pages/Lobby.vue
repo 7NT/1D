@@ -63,7 +63,8 @@
           </q-tab-panels>
         </q-card>
       </div>
-      <div class='col-4'>
+      <q-space />
+      <div class='col-3 messages'>
         <myMessages :to='rooms[rId]' />
       </div>
     </div>
@@ -106,7 +107,7 @@ export default {
           name: 'My Table',
           value: 1,
           icon: 'portrait',
-          open: false,
+          open: true,
           id: '#Lobby'
         },
         {
@@ -138,9 +139,13 @@ export default {
   },
   methods: {
     ...mapActions('jstore', ['setRoomId']),
+    onRoom (value) {
+      console.log('r', value)
+    },
     onPlayer (seat) {
       seat.tId0 = this.mySeat.tId
       seat.sId0 = this.mySeat.sId
+      console.log(seat)
       players$.patch(this.myPlayer.id, { seat })
     }
   },

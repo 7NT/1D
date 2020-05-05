@@ -24,7 +24,7 @@
             no-wrap
             @click='sit(n)'
             :label='pNick(n)'
-            icon='event_seat'
+            :icon='`img:statics/jbicon/seats/seat${n}.svg`'
             :color='scolor(n)'
             style='width:100px'
           />

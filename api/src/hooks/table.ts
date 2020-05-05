@@ -10,7 +10,7 @@ const onTable = (): Hook => {
     if (ready) {
       context.data = await onReady(context)
     } else if (claim) {
-      if (!claim ) {
+      if (!claim) {
         context.data.alert = 'Claim is declined'
       } else if ((claim.o1 > 0 && claim.o2 > 0) || claim.claim === 'Concede All') {
         context.data = onClaim(context.data)
@@ -163,7 +163,7 @@ function onBid (tdata: any) {
 
     tdata.plays = {
       info: {
-        trump: N4Suit(info.bidS),
+        trump: CDHSNT12345(info.bidS),
         lead: null,
         winner: null,
         tricks: [0, 0],
@@ -262,6 +262,20 @@ function bidSuit (b: any) {
   }
 }
 
+function CDHSNT12345 (n: number) {
+  const suits = ['C', 'D', 'H', 'S', 'NT']
+  switch (n) {
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+      return suits[n - 1]
+    default:
+      return ''
+  }
+}
+
 function onPlay (tdata: any) {
   let n = tdata.plays.data.length
   if (n < 1) return tdata
@@ -314,9 +328,7 @@ function onPlay (tdata: any) {
     tdata.state = -1
     tdata.ready = [0, 0, 0, 0]
     tdata.turn = 0
-    const result = {
-      tricks: tdata.plays.tricks
-    }
+    const result = { tricks }
     tdata.result = result //onScore(result)
   }
   return tdata
@@ -359,36 +371,42 @@ const onResult = (): Hook => {
       const results$ = context.app.service('results')
 
       let t: any
-      if (context.id) t = context.service.store[context.id]
+      if (context.id) {
+        t = context.service.store[context.id]
+        console.log('t1', t)
+      }
       if (!t) {
-        console.log('t', t, context.service.store)
         const tables$ = context.app.service('tables')
         t = await tables$.get(context.id)
+        console.log('t2', t)
       }
+      // if (context.id) console.log('t', context.service.store[context.id], t)
 
       const rdata = {
         vul: t.board.vulN,
-        contract: t.bids.info.contract,
+        contract: t.bids.info,
         tricks: result.tricks,
       }
       const score = onScore(rdata)
-      result.boardId = t.board._id
-      result.players = t.seats
-      result.board = t.board
-      result.bids  = t.bids
-      result.plays = t.plays
-      result.result = score.result
-      result.scores = score.scores
-      result.playedAt = new Date().getTime()
+      const sdata = {
+        boardId: t.board._id,
+        players: t.seats,
+        board: t.board,
+        bids: t.bids,
+        plays: t.plays,
+        result: score.result,
+        scores: score.scores,
+        playedAt: new Date().getTime()
+      }
 
-      results$.create(result)
+      results$.create(sdata)
+      context.data = { result: score }
     }
     return Promise.resolve(context)
   }
 }
 
 function onScore (rdata: any) {
-  // const contractN = 6 + info.contract.bidN
   let result = 0
   let scores = [0, 0]
   if (rdata.contract.by > 0) { //passed

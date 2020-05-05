@@ -246,10 +246,10 @@
         >
           <q-item-section>
             <q-item-label overline>
-              {{r.board.bt}}#{{r.board.bn}}: by {{getPName(r)}}
+              {{r.board.bt}}#{{r.board.bn}}: {{getPName(r)}}
             </q-item-label>
             <q-item-label>
-              {{getContract(r)}}{{getResult(r)}}:
+              {{getContract(r)}}{{getResult(r)}}
               <q-badge
                 outline
                 :color="getScore(r) >= 0 ? 'secondary' : 'warning'"
@@ -357,12 +357,14 @@ export default {
       else return '#Lobby'
     },
     getPName (r) {
+      if (r.bids.info.by < 1) return ''
       const pId = r.players[r.bids.info.by - 1]
+      let pname = this.seatName[r.bids.info.by - 1]
       if (pId) {
         const p = this.getPlayerById(pId)
-        if (p) return p.nick
+        if (p) pname = p.nick
       }
-      return this.seatName[r.bids.info.by - 1]
+      return `by ${pname}`
     },
     getContract (r) {
       if (r.bids.info.by === 0) return 'Passed hand'
@@ -375,13 +377,16 @@ export default {
       }
     },
     getResult (r) {
-      if (r.result.result === 0) return '='
-      else if (r.result.result > 0) return `+${r.result.result}`
-      else return `-${r.result.result}`
+      if (r.result === 0) return '='
+      else if (r.result > 0) return `+${r.result}`
+      else return `${r.result}`
     },
     getScore (r) {
-      const by = (r.bids.info.by - 1) % 2
-      return r.result.scores[by]
+      if (r.bids.info.by < 1) return 0
+      else {
+        const by = (r.bids.info.by - 1) % 2
+        return r.scores[by]
+      }
     },
     playedDate (playedAt) {
       return moment(playedAt).startOf('hour').fromNow()

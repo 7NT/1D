@@ -19,38 +19,36 @@ for (let b = 0; b < bid.length; b++) {
 }
 */
 
-const scores: number[] = [5, 7, 2, 9, 4, 3, 2]
-const mp: number[] = scoreMP(scores)
-const max = Math.max(...mp)
-const min = Math.min(...mp)
-console.log(scores, mp, Math.max(...mp), Math.min(...mp))
-const mprank = mp.map(s => {
-  console.log(s, max, min, (s - min) / (max - min))
-  //(s-min)/(max-min)
-})
-console.log(mprank)
-function scoreMP(scores: number[]) {
+const scores: number[] = [5, 7, 2, 9, 4, 3, 2, 9]
+const max = Math.max(...scores)
+const min = Math.min(...scores)
+console.log(min, max, scores)
+
+scoreMP2(scores)
+
+function scoreMP (scores: number[]) {
   const max = Math.max(...scores)
   const min = Math.min(...scores)
   // Create a temporary array to keep metadata regarding each entry of the original array
-  const tmpArr = scores.map((v: number) => ({
+  const rank = scores.map((v: number) => ({
     value: v,
     rank: (v - min) / (max - min),
   }));
+  console.log(min, max, rank)
+  return rank
+}
 
-  // Get rid of douplicate values
-  const unique = new Set(scores);
+function scoreMP2 (scores: number[]) {
+  const n = scores.length
+  const sorted = scores.sort()
+  console.log(n, sorted)
 
-  // Loops through the set
-  for (let a of unique) {
-    for (let b of tmpArr) {
-      // increment the order of an element if a larger element is pressent
-      if (b.value < a) {
-        b.rank += 1;
-      }
-    }
+  for (let i = 0; i < n; i++) {
+    const v = sorted[i]
+    const j1 = sorted.indexOf(v)
+    const j2 = sorted.lastIndexOf(v)
+    const r = j2 / (n - 1)
+    console.log(i, v, j1, j2, r)
   }
-
-  // Strip out the unnecessary metadata
-  return tmpArr.map((v: { rank: any }) => v.rank);
+  return sorted
 }

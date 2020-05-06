@@ -62,7 +62,7 @@
             split
             auto-close
             v-if="isDeclarer"
-            :label="contract"
+            :label="myContract"
             color="info"
             class="declarer"
             :disable="showDeclarer"
@@ -192,8 +192,11 @@ export default {
       }
       return false
     },
-    contract () {
-      return this.myTable.bids ? this.myTable.bids.info.contract : null
+    myContract () {
+      let c = this.myTable.bids ? this.myTable.bids.info.contract : null
+      if (this.myTable.bids.info.XX) c += 'XX'
+      else if (this.myTable.bids.info.X) c += 'X'
+      return c
     },
     playerBtn () {
       if (!this.player) return 'Ready...'
@@ -268,7 +271,7 @@ export default {
       this.$emit('onTable', {
         action: 'claim',
         claim: {
-          // vul: this.myTable.board.vulN,
+          // vul: this.myTable.board.vul,
           contract: this.myTable.bids.info,
           tricks: this.myTable.plays.info.tricks,
           claim: c,
@@ -343,7 +346,7 @@ export default {
     isMyClaim (claim) {
       const notification = {
         message: 'Declarer is claiming:',
-        caption: `Contract ${claim.contract}: ${claim.claim}`,
+        caption: `Contract ${this.myContract}: ${claim.claim}`,
         color: 'primary',
         icon: 'live_help'
       }

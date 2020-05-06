@@ -251,7 +251,6 @@ export default {
     }
   },
   mounted () {
-    // console.log(this.myTable)
     this.mix = this.myTable.bt
   }
 }

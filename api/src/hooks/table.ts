@@ -24,7 +24,7 @@ const onTable = (): Hook => {
   }
 }
 
-async function onReady (context: any) {
+async function onReady(context: any) {
   const { state, ready } = context.data
   switch (state) {
     case -1:
@@ -40,7 +40,7 @@ async function onReady (context: any) {
   }
 }
 
-async function getBoard (context: any) {
+async function getBoard(context: any) {
   const tables$ = context.app.service('tables')
   const boards$ = context.app.service('boards')
   const played$ = context.app.service('played')
@@ -55,7 +55,7 @@ async function getBoard (context: any) {
     }
   })
 
-  let board: { _id: any; bn: number; bt: any; vulN: any; players: any }
+  let board: any
   try {
     const boardIds = played.data.map((x: { boardId: any }) => x.boardId)
     let notplayed = await played$.find({
@@ -67,11 +67,9 @@ async function getBoard (context: any) {
       }
     })
     const boardId = notplayed.data.map((x: { boardId: any }) => x.boardId)
-    // console.log(uIds, played, boardIds, notplayed, boardId)
-
     board = await boards$.get(boardId[0])
   } catch (err) {
-    let bnx: any = await boards$.find({
+    let bns: any = await boards$.find({
       query: {
         $limit: 1,
         $select: ['bn'],
@@ -81,12 +79,20 @@ async function getBoard (context: any) {
         }
       }
     })
-    let bn: number = bnx.data.map((x: { bn: any }) => x.bn)[0]
+    let bn: number = bns.data.map((x: { bn: any }) => x.bn)[0]
     if (typeof bn === 'undefined') bn = 1
     else bn++
-    const time = new Date().getTime();
+    const createdAt = new Date().getTime();
     const cards = shuffle()
-    board = await boards$.create({ bn, bt: table.bt, played: 0, cards, time })
+    const bdata = {
+      bn,
+      bt: table.bt,
+      vul: vulN(bn),
+      played: 0,
+      cards,
+      createdAt
+    }
+    board = await boards$.create(bdata)
   }
 
   table.seats.forEach((u: any, index: number) => {
@@ -96,28 +102,24 @@ async function getBoard (context: any) {
         bt: table.bt,
         uId: u,
         sId: index + 1,
-        date: new Date().getTime()
+        playedAt: new Date().getTime()
       })
   })
 
+  board.players = table.seats //download uIds
   let dealer = (board.bn - 1) % 4
   dealer++
-
-  board.bt = table.bt
-  board.vulN = vulN(board.bn)
-  board.players = table.seats //uIds
-
   let bids = {
     info: { bidN: 0, bidS: 0, by: 0, P: 0, X: 0, XX: 0 },
     data: [{ sId: dealer, bid: '?' }]
   }
-  // let _bids = await bids$.create(_bid)
+
   table.state = 1
   table.board = board
   table.bids = bids
   table.turn = dealer
   table.ready = [1, 2, 3, 4]
-  // return await tables$.patch(context.id, table)
+
   return table
 }
 
@@ -155,7 +157,7 @@ const shuffle = function () {
   return card4
 }
 
-function onBid (tdata: any) {
+function onBid(tdata: any) {
   tdata = updateBid(tdata)
   let info = tdata.bids.info
   if (info.P > 3 || (info.P > 2 && info.by > 0)) {
@@ -187,7 +189,7 @@ function onBid (tdata: any) {
   return tdata
 }
 
-function updateBid (tdata: any) {
+function updateBid(tdata: any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
   let bidN = 0, bidS = 0, contract
   let by = 0, P = 0, X = 0, XX = 0, turn = 0
@@ -246,7 +248,7 @@ function updateBid (tdata: any) {
   return tdata
 }
 
-function bidSuit (b: any) {
+function bidSuit(b: any) {
   let s = b.substring(1).trim()
   switch (s) {
     case '♣':
@@ -262,7 +264,7 @@ function bidSuit (b: any) {
   }
 }
 
-function CDHSNT12345 (n: number) {
+function CDHSNT12345(n: number) {
   const suits = ['C', 'D', 'H', 'S', 'NT']
   switch (n) {
     case 1:
@@ -276,7 +278,7 @@ function CDHSNT12345 (n: number) {
   }
 }
 
-function onPlay (tdata: any) {
+function onPlay(tdata: any) {
   let n = tdata.plays.data.length
   if (n < 1) return tdata
 
@@ -334,7 +336,7 @@ function onPlay (tdata: any) {
   return tdata
 }
 
-function onClaim (tdata: any) {
+function onClaim(tdata: any) {
   let claim = tdata.claim
   let d = (claim.declarer - 1) % 2
   let o = (d + 1) % 2
@@ -369,7 +371,6 @@ const onResult = (): Hook => {
     let { result } = context.data
     if (result) {
       const results$ = context.app.service('results')
-
       let t: any
       if (context.id) {
         t = context.service.store[context.id]
@@ -383,30 +384,30 @@ const onResult = (): Hook => {
       // if (context.id) console.log('t', context.service.store[context.id], t)
 
       const rdata = {
-        vul: t.board.vulN,
+        vul: t.board.vul,
         contract: t.bids.info,
         tricks: result.tricks,
       }
       const score = onScore(rdata)
       const sdata = {
         boardId: t.board._id,
+        board: { bn: t.board.bn, bt: t.board.bt, vul: t.board.vul },
         players: t.seats,
-        board: t.board,
         bids: t.bids,
         plays: t.plays,
         result: score.result,
-        scores: score.scores,
+        score: score.score,
         playedAt: new Date().getTime()
       }
 
       results$.create(sdata)
-      context.data = { result: score }
+      // context.data.result = score
     }
     return Promise.resolve(context)
   }
 }
 
-function onScore (rdata: any) {
+function onScore(rdata: any) {
   let result = 0
   let scores = [0, 0]
   if (rdata.contract.by > 0) { //passed

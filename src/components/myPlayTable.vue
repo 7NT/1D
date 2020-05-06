@@ -192,24 +192,7 @@ export default {
     }
   },
   methods: {
-    onState (s) {
-      // console.log('t', s, this.myTable)
-      /*
-      switch (s) {
-        case 0:
-          this.$data.boardInfo.bt = this.myTable.bt
-          break
-        case 1:
-          this.$data.boardInfo.bn = this.myTable.board.bn
-          break
-        case 2:
-          this.$data.boardInfo.play = this.myTable.play.info
-          break
-        default:
-        // return
-      }
-      */
-    },
+    onState (s) {},
     onTable (action) {
       console.log('onTable', action)
       switch (action.action) {

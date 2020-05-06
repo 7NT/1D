@@ -1,113 +1,69 @@
 <template>
-  <q-layout view='lHh Lpr lFf'>
+  <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
         <q-btn
           flat
           dense
           round
-          icon='menu'
-          aria-label='Menu'
-          v-if='authenticated'
-          @click='playerDrawer = !playerDrawer'
+          icon="menu"
+          aria-label="Menu"
+          v-if="authenticated"
+          @click="playerDrawer = !playerDrawer"
         />
 
         <q-toolbar-title>
-          <q-icon name='img:statics/jbicon/seats/seat0.svg' />
-          1D App
+          <q-icon name="img:statics/jbicon/seats/seat0.svg" />1D App
         </q-toolbar-title>
 
         <div>1D v{{ $q.version }}</div>
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
         -->
-        <q-btn
-          flat
-          @click="goTo('signin')"
-          v-show='!authenticated'
-        >Sign In</q-btn>
-        <q-btn
-          flat
-          @click="goTo('register')"
-          v-show='!authenticated'
-        >Register</q-btn>
-        <q-btn
-          flat
-          round
-          @click="goTo('lobby')"
-          v-if='authenticated'
-        >
-          <q-icon name='home' />
-          <q-tooltip
-            anchor='bottom middle'
-            self='top middle'
-            :offset='[0, 20]'
-          >Lobby</q-tooltip>
+        <q-btn flat @click="goTo('signin')" v-show="!authenticated">Sign In</q-btn>
+        <q-btn flat @click="goTo('register')" v-show="!authenticated">Register</q-btn>
+        <q-btn flat round @click="goTo('lobby')" v-if="authenticated">
+          <q-icon name="home" />
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
           round
           dense
-          icon='menu_book'
-          @click='scoreBook = !scoreBook'
-          aria-label='ScoreBook'
-          v-show='authenticated'
+          icon="menu_book"
+          @click="scoreBook = !scoreBook"
+          aria-label="ScoreBook"
+          v-show="authenticated"
         />
-        <q-btn
-          flat
-          round
-          @click="goTo('profile')"
-          v-if='authenticated'
-        >
-          <q-avatar class='gt-xs'>
-            <img :src='user.profile.avatar' />
+        <q-btn flat round @click="goTo('profile')" v-if="authenticated">
+          <q-avatar class="gt-xs">
+            <img :src="user.profile.avatar" />
           </q-avatar>
-          <q-tooltip
-            anchor='bottom middle'
-            self='top middle'
-            :offset='[0, 20]'
-          >Profile</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Profile</q-tooltip>
         </q-btn>
-        <q-btn
-          flat
-          round
-          @click='signout'
-          v-show='authenticated'
-        >
-          <q-icon name='exit_to_app' />
-          <q-tooltip
-            anchor='bottom middle'
-            self='top middle'
-            :offset='[0, 20]'
-          >Signout</q-tooltip>
+        <q-btn flat round @click="signout" v-show="authenticated">
+          <q-icon name="exit_to_app" />
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Signout</q-tooltip>
         </q-btn>
         <q-btn
           color="secondary"
           @click="$q.fullscreen.toggle()"
           :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
         >
-          <q-tooltip>
-            Full Screen
-          </q-tooltip>
+          <q-tooltip>Full Screen</q-tooltip>
         </q-btn>
       </q-toolbar>
     </q-header>
 
     <q-drawer
-      v-model='playerDrawer'
-      v-if='authenticated'
+      v-model="playerDrawer"
+      v-if="authenticated"
       bordered
       elevated
-      content-class='bg-grey-1'
+      content-class="bg-grey-1"
     >
       <q-toolbar class="bg-primary text-white rounded-borders">
-        <q-btn
-          round
-          dense
-          flat
-          icon="group"
-          class="q-mr-xs"
-        />
+        <q-btn round dense flat icon="group" class="q-mr-xs" />
 
         <q-space />
 
@@ -120,16 +76,8 @@
           class="q-ml-md"
         >
           <template v-slot:append>
-            <q-icon
-              v-if="!player_search"
-              name="search"
-            />
-            <q-icon
-              v-else
-              name="clear"
-              class="cursor-pointer"
-              @click="player_search = null"
-            />
+            <q-icon v-if="!player_search" name="search" />
+            <q-icon v-else name="clear" class="cursor-pointer" @click="player_search = null" />
           </template>
         </q-input>
       </q-toolbar>
@@ -137,40 +85,21 @@
       <q-list bordered>
         <q-item-label header>{{room}} Players:</q-item-label>
         <q-separator />
-        <q-expansion-item
-          dense
-          dense-toggle
-          expand-separator
-          v-for='p in myPlayers'
-          :key='p.id'
-        >
+        <q-expansion-item dense dense-toggle expand-separator v-for="p in myPlayers" :key="p.id">
           <template v-slot:header>
             <q-item-section side>
               <div class="row items-center">
-                <q-icon
-                  :name='`img:statics/jbicon/seats/seat${p.seat.sId}.svg`'
-                  size="24px"
-                />
+                <q-icon :name="`img:statics/jbicon/seats/seat${p.seat.sId}.svg`" size="24px" />
                 <q-avatar size="24px">
-                  <img :src='p.profile.avatar' />
+                  <img :src="p.profile.avatar" />
                 </q-avatar>
               </div>
             </q-item-section>
 
-            <q-item-section>
-              {{p.nick}}
-            </q-item-section>
+            <q-item-section>{{p.nick}}</q-item-section>
 
-            <q-item-section
-              avatar
-              side
-            >
-              <q-icon
-                dense
-                :name='flag(p)'
-                class="q-ml-md"
-                size='sm'
-              />
+            <q-item-section avatar side>
+              <q-icon dense :name="flag(p)" class="q-ml-md" size="sm" />
               <!--
                 <q-badge
                   color="red"
@@ -183,35 +112,17 @@
           </template>
           <q-card>
             <q-card-actions>
-              <q-btn
-                dense
-                flat
-                disable
-                size='sm'
-              >Watch</q-btn>
-              <q-btn
-                dense
-                flat
-                disable
-                size='sm'
-              >Partner?</q-btn>
-              <q-btn
-                dense
-                flat
-                disable
-                size='sm'
-              >Join</q-btn>
+              <q-btn dense flat disable size="sm">Watch</q-btn>
+              <q-btn dense flat disable size="sm">Partner?</q-btn>
+              <q-btn dense flat disable size="sm">Join</q-btn>
             </q-card-actions>
             <q-separator dark />
             <q-card-section>
-              <myMessages :to='p' />
+              <myMessages :to="p" />
             </q-card-section>
             <q-card-section>
-              <div
-                class='full-width'
-                style='height:24px'
-              >
-                <myChat :to='p' />
+              <div class="full-width" style="height:24px">
+                <myChat :to="p" />
               </div>
             </q-card-section>
           </q-card>
@@ -219,56 +130,39 @@
       </q-list>
     </q-drawer>
     <q-drawer
-      side='right'
+      side="right"
       overlay
       bordered
       elevated
-      v-model='scoreBook'
-      v-show='authenticated'
+      v-model="scoreBook"
+      v-show="authenticated"
       :content-class="$q.theme === 'mat' ? 'bg-grey-3' : null"
       :content-style="{ fontSize: '16px' }"
     >
-      <q-list
-        separator
-        bordered
-        dense
-      >
-        <q-item-label
-          header
-          class='text-grey-8'
-        >
-          My ScoreBook:
-        </q-item-label>
+      <q-list separator bordered dense>
+        <q-item-label header class="text-grey-8">My ScoreBook:</q-item-label>
         <q-separator />
-        <q-item
-          v-for='r in results'
-          :key='r._id'
-        >
+        <q-item v-for="r in results" :key="r._id">
           <q-item-section>
-            <q-item-label overline>
-              {{r.board.bt}}#{{r.board.bn}}: {{getPName(r)}}
-            </q-item-label>
+            <q-item-label overline>{{r.board.bt}}#{{r.board.bn}}: {{getPName(r)}}</q-item-label>
             <q-item-label>
               {{getContract(r)}}{{getResult(r)}}
               <q-badge
                 outline
                 :color="getScore(r) >= 0 ? 'positive' : 'negative'"
-                :label='getScore(r)'
+                :label="getScore(r)"
               />
             </q-item-label>
           </q-item-section>
 
-          <q-item-section
-            side
-            top
-          >
+          <q-item-section side top>
             <q-item-label caption>{{playedDate(r.playedAt)}}</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
     </q-drawer>
     <q-page-container>
-      <router-view :user='user'></router-view>
+      <router-view :user="user"></router-view>
     </q-page-container>
   </q-layout>
 </template>
@@ -311,8 +205,9 @@ export default {
       return this.user != null
     },
     myPlayers () {
-      if (this.roomId) return this.players.filter(p => p.seat.tId === this.roomId)
-      else return this.players
+      if (this.roomId) {
+        return this.players.filter(p => p.seat.tId === this.roomId)
+      } else return this.players
     }
   },
   methods: {
@@ -327,7 +222,9 @@ export default {
       'addResult'
     ]),
     goTo (route) {
-      if (this.$route.name !== route) this.$router.push({ name: route }).catch(e => { })
+      if (this.$route.name !== route) {
+        this.$router.push({ name: route }).catch(e => {})
+      }
     },
     signin (user) {
       console.log('signin', user)
@@ -343,7 +240,7 @@ export default {
             message: 'You are now logged out, sign in again to continue to play'
           })
         })
-        .catch((err) => {
+        .catch(err => {
           console.log(err)
           this.$q.notify({
             type: 'positive',
@@ -384,12 +281,20 @@ export default {
     getScore (r) {
       if (r.bids.info.by < 1) return 0
       else {
-        const by = (r.bids.info.by - 1) % 2
-        return r.scores[by]
+        const by = (r.bids.info.by - 1) % 2 === 0
+        const bt = r.board.bt
+        switch (bt) {
+          case 'MP':
+            return by ? `${r.score}%` : `${100 - r.score}%`
+          default:
+            return by ? r.score : -r.score
+        }
       }
     },
     playedDate (playedAt) {
-      return moment(playedAt).startOf('hour').fromNow()
+      return moment(playedAt)
+        .startOf('hour')
+        .fromNow()
     },
     updateUser (u) {
       this.user = u
@@ -426,7 +331,8 @@ export default {
       players$.on('created', p => {
         // console.log('create player', p, this.user)
         if (p.id === this.user._id) {
-          if (this.user.seat.tId) { // rejoin
+          if (this.user.seat.tId) {
+            // rejoin
             const t = this.getTableById(this.user.seat.tId) // if table still exists
             if (t) {
               const seat = {
@@ -466,17 +372,23 @@ export default {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
         this.updateChat(chat)
       })
-      results$.find({
-        /*
+      results$
+        .find({
+          /*
         query: {
           players: { $in: this.user._id }
         }
         */
-      }).then(response => {
-        if (response.data.length > 0) this.setResults(response.data)
-      })
+        })
+        .then(response => {
+          if (response.data.length > 0) this.setResults(response.data)
+        })
       results$.on('created', r => {
         console.log('create result', r)
+        if (r.players.includes(this.user._id)) this.addResult(r)
+      })
+      results$.on('patched', r => {
+        console.log('patched result', r)
         if (r.players.includes(this.user._id)) this.addResult(r)
       })
     },
@@ -530,7 +442,7 @@ export default {
       this.room = n ? 'My Table' : '#Lobby'
     }
   },
-  beforeDestroy () { }
+  beforeDestroy () {}
 }
 </script>
 <style scoped>

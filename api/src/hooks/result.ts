@@ -62,23 +62,23 @@ const onResult = (): Hook => {
   }
 }
 
-function scoreMP(scores: number[]) {
-  // Create a temporary array to keep metadata regarding each entry of the original array
-  const tmpArr = scores.map((v: number) => ({
-    value: v,
-    rank: 1,
-  }));
+function scoreM(scores: number[]) {
+  const n = scores.length
+  const sorted = scores.sort((a, b) => a - b)
+  const mp: number[] = []
 
   // Get rid of douplicate values
   const unique = new Set(scores);
 
-  // Loops through the set
-  for (let a of unique) {
-    for (let b of tmpArr) {
-      // increment the order of an element if a larger element is pressent
-      if (b.value < a) {
-        b.rank += 1;
-      }
+function scoreI(scores: number[]) {
+  const n = scores.length
+  const sum: any = scores.reduce((a, b) => a + b, 0)
+  let avg = sum / n
+  if (n > 2) {
+    const max = Math.max(...scores)
+    const min = Math.min(...scores)
+    avg = (sum - max - min) / (n - 2)
+  }
     }
   }
 

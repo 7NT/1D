@@ -5,5 +5,12 @@ import { Application } from '../../declarations';
 export class Results extends Service {
   constructor(options: Partial<MongoDBServiceOptions>, app: Application) {
     super(options);
+
+    const client: Promise<Db> = app.get('mongoClient');
+
+    client.then(db => {
+      this.Model = db.collection('results');
+    });
+
   }
 };

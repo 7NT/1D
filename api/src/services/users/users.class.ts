@@ -23,6 +23,13 @@ interface UserData {
 export class Users extends Service<UserData> {
   constructor(options: Partial<MongoDBServiceOptions>, app: Application) {
     super(options);
+
+    const client: Promise<Db> = app.get('mongoClient');
+
+    client.then(db => {
+      this.Model = db.collection('users');
+    });
+
   }
 
   create (data: UserData, params?: Params) {

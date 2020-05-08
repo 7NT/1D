@@ -4,8 +4,6 @@ import chats from './chats/chats.service';
 import players from './players/players.service';
 import tables from './tables/tables.service';
 import boards from './boards/boards.service';
-import bids from './bids/bids.service';
-import plays from './plays/plays.service';
 import results from './results/results.service';
 import played from './played/played.service';
 // Don't remove this comment. It's needed to format import lines nicely.
@@ -16,8 +14,6 @@ export default function (app: Application) {
   app.configure(players);
   app.configure(tables);
   app.configure(boards);
-  app.configure(bids);
-  app.configure(plays);
   app.configure(results);
   app.configure(played);
 }

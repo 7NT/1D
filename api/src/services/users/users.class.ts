@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { Params } from '@feathersjs/feathers';
-import { Service, NedbServiceOptions } from 'feathers-nedb';
+import { Db } from 'mongodb';
+import { Service, MongoDBServiceOptions } from 'feathers-mongodb';
 import { Application } from '../../declarations';
 
 // The Gravatar image service
@@ -20,7 +21,7 @@ interface UserData {
 }
 
 export class Users extends Service<UserData> {
-  constructor(options: Partial<NedbServiceOptions>, app: Application) {
+  constructor(options: Partial<MongoDBServiceOptions>, app: Application) {
     super(options);
   }
 

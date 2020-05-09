@@ -92,7 +92,7 @@
 <script>
 import { mapGetters } from 'vuex'
 // import myCards from 'src/components/myCards';
-import jb from 'src/jb'
+import { jbIsPlayer, jbSeatX, jbSeat1234 } from 'src/jb'
 
 export default {
   name: 'myHand',
@@ -123,7 +123,7 @@ export default {
     },
     seatX: {
       get: function () {
-        return jb.seatX(this.handId, this.mySeat.sId)
+        return jbSeatX(this.handId, this.mySeat.sId)
       }
     },
     player: {
@@ -276,8 +276,8 @@ export default {
           tricks: this.myTable.plays.info.tricks,
           claim: c,
           declarer: this.mySeat.sId,
-          o1: -jb.seat1234(this.mySeat.sId - 1),
-          o2: -jb.seat1234(this.mySeat.sId + 1)
+          o1: -jbSeat1234(this.mySeat.sId - 1),
+          o2: -jbSeat1234(this.mySeat.sId + 1)
         }
       })
     },
@@ -350,7 +350,7 @@ export default {
         color: 'primary',
         icon: 'live_help'
       }
-      if (jb.isPlayer(this.mySeat.sId)) {
+      if (jbIsPlayer(this.mySeat.sId)) {
         if (this.mySeat.sId === -claim.o1 || this.mySeat.sId === -claim.o2) {
           notification.timeout = 5000
           notification.actions = [

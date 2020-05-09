@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import jb from 'src/jb'
+import { jbBidX } from 'src/jb'
 
 export default {
   name: 'myBid',
@@ -103,10 +103,10 @@ export default {
       }
     },
     X: function () {
-      return jb.bidX(this.myBids.info.by, this.myTurn)
+      return jbBidX(this.myBids.info.by, this.myTurn)
     },
     XX: function () {
-      return jb.bidX(this.myBids.info.X, this.myTurn)
+      return jbBidX(this.myBids.info.X, this.myTurn)
     }
   },
   methods: {

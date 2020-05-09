@@ -1,75 +1,63 @@
 <template>
-  <q-page
-    class="no-padding no-margin"
-    v-if='myPlayer'
-  >
+  <q-page class="no-padding no-margin" v-if="myPlayer">
     <!-- content -->
-    <div class='column'>
-      <div class='col-8'>
+    <div class="column">
+      <div class="col-8">
         <q-card>
           <q-tabs
-            v-model='rId'
-            align='left'
+            v-model="rId"
+            align="left"
             dense
             shrink
             no-caps
             inline-label
-            indicator-color='yellow'
-            class='bg-secondary text-white shadow-2'
+            indicator-color="yellow"
+            class="bg-secondary text-white shadow-2"
           >
             <q-tab
-              v-for='r in rooms'
-              :key='r.value'
-              :name='r.value'
-              :icon='r.icon'
-              :label='r.name'
-              :disable='!r.open'
+              v-for="r in rooms"
+              :key="r.value"
+              :name="r.value"
+              :icon="r.icon"
+              :label="r.name"
+              :disable="!r.open"
             />
           </q-tabs>
-          <q-tab-panels
-            keep-alive
-            v-model='rId'
-            animated
-            class="bg-teal"
-          >
-            <q-tab-panel :name='0'>
-              <div class='fit'>
-                <q-list
-                  dense
-                  bordered
-                  separator
-                >
+          <q-tab-panels keep-alive v-model="rId" animated class="bg-teal">
+            <q-tab-panel :name="0">
+              <div class="fit">
+                <q-list dense bordered separator>
                   <myTableList
-                    v-for='t in tables'
-                    :key='t.id'
-                    :myTable='t'
-                    v-on:onPlayer='onPlayer'
+                    v-for="t in myTables"
+                    :key="t.id"
+                    :myTable="t"
+                    v-on:onPlayer="onPlayer"
                   />
                 </q-list>
               </div>
             </q-tab-panel>
 
-            <q-tab-panel
-              :name='1'
-              class='panel'
-            >
-              <div class='fit'>
-                <myPlayTable
-                  :myPlayer='myPlayer'
-                  v-on:onPlayer='onPlayer'
-                />
+            <q-tab-panel :name="1">
+              <div class="fit">
+                <myPlayTable :myPlayer="myPlayer" v-on:onPlayer="onPlayer" />
+              </div>
+            </q-tab-panel>
+
+            <q-tab-panel :name="2">
+              <div class="fit">
+                <myTourney :myPlayer="myPlayer" v-on:onTourney="onTourney" />
               </div>
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
       </div>
       <q-space />
-      <div class='col-3 messages'>
-        <myMessages :to='rooms[rId]' />
+      <div class="col-3 messages">
+        <myMessages :to="rooms[rId]" />
       </div>
     </div>
     <q-footer elevated>
-      <myChat :to='rooms[rId]' />
+      <myChat :to="rooms[rId]" />
     </q-footer>
   </q-page>
 </template>
@@ -81,6 +69,7 @@ import myTableList from 'src/components/myTableList'
 import myPlayTable from 'src/components/myPlayTable'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
+import myTourney from 'src/components/myTourney'
 
 export default {
   name: 'Lobby',
@@ -88,7 +77,8 @@ export default {
     myTableList,
     myPlayTable,
     myMessages,
-    myChat
+    myChat,
+    myTourney
   },
   data () {
     return {
@@ -114,7 +104,7 @@ export default {
           name: 'Tourney',
           value: 2,
           icon: 'person_add',
-          open: false,
+          open: open,
           id: '#Lobby'
         },
         {
@@ -135,6 +125,9 @@ export default {
 
     mySeat () {
       return this.myPlayer.seat
+    },
+    myTables () {
+      return this.tables
     }
   },
   methods: {
@@ -147,7 +140,8 @@ export default {
       seat.sId0 = this.mySeat.sId
       console.log(seat)
       players$.patch(this.myPlayer.id, { seat })
-    }
+    },
+    onTourney (tourney) {}
   },
   mounted () {
     this.$parent.page = 'Lobby'
@@ -156,14 +150,13 @@ export default {
   watch: {
     myPlayer (p) {
       if (!p) {
-        this.$router.push({ name: 'home' }).catch(e => { })
+        this.$router.push({ name: 'home' }).catch(e => {})
       }
     },
     mySeat (n) {
       this.rooms[1].open = !!n.tId
       this.rooms[1].id = n.tId
       this.rId = n.tId ? 1 : 0
-      // this.$parent.player_filter = this.rId
     },
     rId (r) {
       this.setRoomId(r ? this.mySeat.tId : null)

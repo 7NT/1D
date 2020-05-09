@@ -28,8 +28,7 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
-import jb from 'src/jb'
+import { jbSeatX } from 'src/jb'
 
 export default {
   name: 'myPlayBox',
@@ -40,7 +39,6 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters('jstore', ['myPlayer', 'myTable']),
     mySeat () {
       return this.myPlayer.seat
     },
@@ -63,13 +61,13 @@ export default {
       }
     },
     cardImg (n) {
-      const x = jb.seatX(n, this.mySeat.sId)
+      const x = jbSeatX(n, this.mySeat.sId)
       const c = this.card4.filter(c => c.sId === x)[0] || null
       if (c) return `statics/cards/${c.card.rank + c.card.suit}.svg`
       else return null
     },
     zIndex (n) {
-      const x = jb.seatX(n, this.mySeat.sId)
+      const x = jbSeatX(n, this.mySeat.sId)
       const c = this.card4.filter(c => c.sId === x)[0] || null
       if (c) return `z-index:${c.z}`
       else return -1

@@ -36,8 +36,7 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
-import jb from 'src/jb'
+import { jbIsPlayer } from 'src/jb'
 
 import myPlayBox from 'src/components/myPlayBox'
 
@@ -78,7 +77,7 @@ export default {
       // const w = c.winner
       const sId = Math.abs(this.myPlayer.seat.sId)
 
-      if (jb.isPlayer(sId)) {
+      if (jbIsPlayer(sId)) {
         return w % 2 === sId % 2
       } else {
         return w % 2

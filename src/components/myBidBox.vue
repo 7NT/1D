@@ -41,7 +41,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import jb from 'src/jb'
+import { jbSeatX } from 'src/jb'
 
 export default {
   name: 'myBidBox',
@@ -111,7 +111,7 @@ export default {
     },
     vul_bgcolor (s) {
       if (this.myBids) {
-        const x = jb.seatX(s, this.mySeatX) % 2
+        const x = jbSeatX(s, this.mySeatX) % 2
         switch (this.myTable.board.vul) {
           case 0:
             return 'bg-info'

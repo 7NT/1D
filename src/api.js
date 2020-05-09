@@ -17,6 +17,8 @@ const chats$ = api.service('/chats')
 const players$ = api.service('/players')
 const tables$ = api.service('/tables')
 const results$ = api.service('/results')
+const tourneys$ = api.service('/tourneys')
+const teams$ = api.service('/teams')
 
 // export default api
 export {
@@ -25,5 +27,7 @@ export {
   chats$,
   players$,
   tables$,
-  results$
+  results$,
+  tourneys$,
+  teams$
 }

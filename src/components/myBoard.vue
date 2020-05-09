@@ -160,10 +160,8 @@
 </template>
 
 <script>
-// import { mapGetters } from 'vuex'
-
 import { openURL } from 'quasar'
-import jb from 'src/jb'
+import { jbIsPlayer } from 'src/jb'
 
 export default {
   name: 'myBoard',
@@ -201,7 +199,7 @@ export default {
       return this.myTable.cc || ['SAYC', 'SAYC']
     },
     isMyCC: function () {
-      if (jb.isPlayer(this.mySeat.sId)) {
+      if (jbIsPlayer(this.mySeat.sId)) {
         return (this.mySeat.sId - 1) % 2
       }
       return null
@@ -211,7 +209,7 @@ export default {
     onBT (bt) {
       let message
       console.log('bt', this.mySeat)
-      if (jb.isPlayer(this.mySeat.sId)) {
+      if (jbIsPlayer(this.mySeat.sId)) {
         this.$emit('onTable', { action: 'bt', bt })
         message = `Board will switch to ${bt} next`
         // say.speak(message)

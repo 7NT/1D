@@ -56,7 +56,7 @@
     </q-header>
 
     <q-drawer
-      v-model="playerDrawer"
+      v-model="playerList"
       v-if="authenticated"
       bordered
       elevated
@@ -99,7 +99,7 @@
             <q-item-section>{{p.nick}}</q-item-section>
 
             <q-item-section avatar side>
-              <q-icon dense :name="flag(p)" class="q-ml-md" size="sm" />
+              <q-icon dense :name="getFlag(p)" class="q-ml-md" size="sm" />
               <!--
                 <q-badge
                   color="red"
@@ -129,6 +129,7 @@
         </q-expansion-item>
       </q-list>
     </q-drawer>
+
     <q-drawer
       side="right"
       overlay
@@ -171,7 +172,7 @@
 // import EssentialLink from 'components/EssentialLink'
 import moment from 'moment'
 import { mapState, mapGetters, mapActions } from 'vuex'
-import { users$, players$, tables$, chats$, results$ } from 'src/api'
+import { users$, players$, tables$, chats$, results$, tourneys$, teams$ } from 'src/api'
 import auth from 'src/auth'
 
 import myMessages from 'src/components/myMessages'
@@ -188,9 +189,9 @@ export default {
 
   data () {
     return {
-      playerDrawer: false,
       // essentialLinks: [],
-      scoreBook: this.$q.platform.is.desktop,
+      playerList: true,
+      scoreBook: false,
       page: '',
       user: null,
       room: '#Lobby',
@@ -200,14 +201,14 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['players', 'tables', 'results', 'roomId']),
-    ...mapGetters('jstore', ['myPlayer', 'getPlayerById', 'getTableById']),
+    ...mapGetters('jstore', ['getPlayerById', 'getTableById']),
     authenticated () {
       return this.user != null
     },
     myPlayers () {
-      if (this.roomId) {
-        return this.players.filter(p => p.seat.tId === this.roomId)
-      } else return this.players
+      let players = this.players
+      if (this.roomId) players = players.filter(p => p.seat.tId === this.roomId)
+      return players
     }
   },
   methods: {
@@ -219,7 +220,9 @@ export default {
       'setPlayers',
       'setTables',
       'setResults',
-      'addResult'
+      'addResult',
+      'setTourneys',
+      'setTeams'
     ]),
     goTo (route) {
       if (this.$route.name !== route) {
@@ -229,7 +232,6 @@ export default {
     signin (user) {
       console.log('signin', user)
       this.updateUser(user)
-      this.goTo('home')
     },
     signout () {
       auth
@@ -262,6 +264,13 @@ export default {
         if (p) pname = p.nick
       }
       return `by ${pname}`
+    },
+    getFlag (p) {
+      if (p) {
+        const f = p.profile.flag.toLowerCase()
+        return `img:statics/flags/4x3/${f}.svg`
+      }
+      return null
     },
     getContract (r) {
       if (r.bids.info.by === 0) return 'Passed hand'
@@ -321,6 +330,7 @@ export default {
         this.addTable(t)
       })
       users$.on('patched', user => {
+        console.log('user patched', user)
         if (user._id === this.user._id) {
           this.updateUser(user)
         }
@@ -329,7 +339,8 @@ export default {
         this.setPlayers(response.data)
       })
       players$.on('created', p => {
-        // console.log('create player', p, this.user)
+        console.log('create player', p, this.user)
+        this.addPlayer(p)
         if (p.id === this.user._id) {
           if (this.user.seat.tId) {
             // rejoin
@@ -343,10 +354,7 @@ export default {
               players$.patch(p.id, { seat })
             }
           }
-          this.$data.myPlayer = p
-        }
-        this.addPlayer(p)
-        if (!this.myPlayer.tId) {
+        } else {
           this.$q.notify({
             color: 'into',
             message: `[JOIN]: ${p.nick}`
@@ -361,12 +369,10 @@ export default {
         console.log('player removed', p)
         p.state = -1
         this.addPlayer(p)
-        if (!this.myPlayer.tId) {
-          this.$q.notify({
-            color: 'into',
-            message: `[EXIT]: ${p.nick}`
-          })
-        }
+        this.$q.notify({
+          color: 'into',
+          message: `[EXIT]: ${p.nick}`
+        })
       })
       chats$.on('created', chat => {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
@@ -391,13 +397,12 @@ export default {
         console.log('patched result', r)
         if (r.players.includes(this.user._id)) this.addResult(r)
       })
-    },
-    flag (p) {
-      if (p) {
-        const f = p.profile.flag.toLowerCase()
-        return `img:statics/flags/4x3/${f}.svg`
-      }
-      return null
+      tourneys$.find().then(response => {
+        this.setTourneys(response.data)
+      })
+      teams$.find().then(response => {
+        this.setTourneys(response.data)
+      })
     }
   },
   mounted () {
@@ -424,22 +429,17 @@ export default {
     auth.onLogout(() => {
       this.goTo('home')
       this.user = null
-      this.myPlayer = null
     })
   },
   watch: {
-    user (u, o) {
-      if (u) {
+    user (user) {
+      if (user) {
         this.onServices()
-        this.playerDrawer = true
+        this.goTo('lobby')
       } else this.goTo('home')
     },
-    myPlayer (p) {
-      if (p) this.goTo('lobby')
-      else this.goTo('home')
-    },
     roomId (n, o) {
-      this.room = n ? 'My Table' : '#Lobby'
+      this.room = n ? '#Table' : '#Lobby'
     }
   },
   beforeDestroy () {}

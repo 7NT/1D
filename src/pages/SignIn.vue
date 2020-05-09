@@ -8,15 +8,16 @@
 
         <q-card-section>
           <q-list bordered padding>
-            <q-item v-if="isRegistration()">
+            <q-item>
               <q-item-section top avatar>
                 <q-icon name="face" />
               </q-item-section>
               <q-item-section>
-                <q-input v-model="nick" filled type="text" label="Nick Name" />
+                <q-input v-model="nick" filled type="text" label="Nickname" :rules="[ n => n.length > 1 || 'Nickname is required']"
+                />
               </q-item-section>
             </q-item>
-            <q-item>
+            <q-item v-if="isRegistration()">
               <q-item-section top avatar>
                 <q-icon name="email" />
               </q-item-section>
@@ -58,15 +59,6 @@
 
         <q-card-actions align="right" class="text-primary">
           <q-btn push :label="title" v-close-popup @click="onOk()" />
-          <!--
-          <q-btn
-            flat
-            label="Cancel"
-            color="primary"
-            v-close-popup
-            @click="show=false"
-          />
-          -->
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -95,7 +87,8 @@ export default {
     },
     getCredentials () {
       const user = {
-        email: this.$data.email,
+        // email: this.$data.email,
+        nick: this.$data.nick,
         password: this.$data.password
       }
       return user
@@ -125,7 +118,7 @@ export default {
             console.error(err)
             this.$q.notify({
               color: 'positive',
-              message: 'Cannot register, please check your e-mail or password'
+              message: 'Cannot register, please check your nickname or password'
             })
             this.goTo('home')
           })
@@ -141,7 +134,7 @@ export default {
             console.error(err)
             this.$q.notify({
               color: 'positive',
-              message: 'Cannot sign in, please check your e-mail or password'
+              message: 'Cannot sign in, please check your nickname or password'
             })
             this.goTo('home')
           })

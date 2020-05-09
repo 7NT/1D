@@ -39,6 +39,7 @@
                   markers
                   snap
                   label
+                label-always
                   :label-value='`boards/round: ${t2.bn}`'
                   color="blue"
                   class='col-5'

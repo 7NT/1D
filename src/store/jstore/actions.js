@@ -27,7 +27,7 @@ export const setTourneys = (context, payload) => {
 }
 
 export const setTeams = (context, payload) => {
-  context.commit('setTeamss', payload)
+  context.commit('setTeams', payload)
 }
 
 export const addPlayer = (context, payload) => {

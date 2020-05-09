@@ -2,51 +2,69 @@
   <div class="q-pa-md">
     <q-toolbar class="bg-primary text-white shadow-2">
       <q-toolbar-title>Tourney List:</q-toolbar-title>
-      <q-btn icon="add" @click="newTx=!newTx" />
+      <q-btn
+        icon="add"
+        @click="newTx=!newTx"
+      />
     </q-toolbar>
-    <q-list bordered separator>
-      <q-expansion-item
-        group="tourney"
-        icon="event"
-        header-class="bg-teal text-white"
-        expand-icon-class="text-white"
-        v-show="newTx"
-        :label="`Tourney Director: @${t2.TD}`"
-        default-opened
-      >
-        <q-separator />
-        <q-item>
-          <q-item-label overline>
-            <div class="q-ma-md row">
-              <q-badge color="secondary">Start in: {{ t2.time }} minutes</q-badge>
-              <q-slider v-model="t2.time" color="red" :min="10" :max="30" :step="10" />
+    <q-expansion-item
+      group="tourney"
+      icon="event"
+      header-class="bg-teal text-white"
+      expand-icon-class="text-white"
+      v-show="newTx"
+      :label="`Tourney Director: @${t2.td}`"
+      default-opened
+    >
+      <q-card>
+        <q-card-section>
+          <q-item-label header>
+            <div class='q-ma-md row'>
+              <q-input
+                standout="bg-teal text-white"
+                v-model="t2.name"
+                label="Tourney Name"
+                class='col-8'
+              />
+              <q-space />
+              <div class='col'>
+                <q-badge color="secondary">Start in: {{ t2.time }} minutes</q-badge>
+                <q-slider
+                  dense
+                  v-model="t2.time"
+                  color="red"
+                  :min="10"
+                  :max="30"
+                  :step="10"
+                />
+              </div>
             </div>
           </q-item-label>
           <q-separator />
-          <q-item-section>
-            <div class="column">
-              <q-input standout="bg-teal text-white" v-model="t2.Name" label="Tourney Name" />
-              <q-space>
-                <q-separator />
-              </q-space>
-              <div class="row">
+          <q-item>
+            <q-item-section side>
+              <q-icon name='settings' />
+            </q-item-section>
+            <q-separator />
+            <q-item-section>
+              <div class="q-ma-md row">
                 <q-slider
                   dense
                   v-model="t2.bn"
                   :min="1"
-                  :max="4"
+                  :max="5"
                   :step="1"
                   markers
                   snap
                   label
-                label-always
+                  label-always
                   :label-value='`boards/round: ${t2.bn}`'
                   color="blue"
                   class='col-5'
                 />
-                <q-space class='col-2'>
-                  <q-separator vertical />
-                </q-space>
+                <q-separator vertical>
+                  <q-space />
+                </q-separator>
                 <q-slider
                   dense
                   v-model="t2.br"
@@ -56,29 +74,86 @@
                   markers
                   snap
                   label
+                  label-always
                   :label-value='`rounds: ${t2.br}`'
                   color="green"
                   class='col-5'
                 />
               </div>
-            </div>
-          </q-item-section>
-          <q-item-section side top>
-            <div class="q-pa-md bg-info">
-              <q-option-group dense :options="bt" label="Board" type="radio" v-model="t2.mix" />
-            </div>
-          </q-item-section>
-        </q-item>
-      </q-expansion-item>
+            </q-item-section>
+            <q-item-section
+              side
+              top
+            >
+              <div class="q-pa-md bg-info">
+                <q-option-group
+                  dense
+                  :options="bt"
+                  label="Board"
+                  type="radio"
+                  v-model="t2.mix"
+                />
+              </div>
+            </q-item-section>
+          </q-item>
+        </q-card-section>
+        <q-separator dark />
+        <q-card-actions align="right">
+          <q-btn
+            push
+            @click='onSubmit()'
+          >Submit</q-btn>
+        </q-card-actions>
+      </q-card>
+    </q-expansion-item>
+    <q-list
+      bordered
+      separator
+    >
       <q-expansion-item
         group="tourney"
-        icon="event"
         header-class="bg-teal text-white"
         expand-icon-class="text-white"
         v-for="t in myTourneys"
         :key="t.id"
-        :label="t.name"
+        :caption="`start in: ${t.time} minutes`"
       >
+        <template v-slot:header>
+          <q-item-section avatar>
+            <q-avatar
+              icon="event"
+              color="primary"
+              text-color="white"
+            />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label overline>
+              @{{t.td}}: {{t.name}}
+            </q-item-label>
+            <q-item-label caption>
+              <q-badge color="blue">
+                {{t.mix}}
+              </q-badge>
+              <q-badge
+                transparent
+                align="middle"
+                color="orange"
+              >
+                {{t.bn}} x {{t.br}}
+              </q-badge>
+            </q-item-label>
+          </q-item-section>
+
+          <q-item-section
+            side
+            top
+          >
+            <q-badge color="info">
+              start in: {{startAt(t.startAt)}}
+            </q-badge>
+          </q-item-section>
+        </template>
         <q-card>
           <q-card-section></q-card-section>
         </q-card>
@@ -89,6 +164,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { mapState } from 'vuex'
 import { jbBoardMix } from '../jb'
 
@@ -98,10 +174,10 @@ export default {
 
   data () {
     return {
-      newTx: null,
+      newTx: false,
       t2: {
-        Name: 'Welcome to my Tourney...',
-        TD: this.myPlayer.nick,
+        name: 'Welcome to my Tourney...',
+        td: this.myPlayer.nick,
         time: 30,
         mix: jbBoardMix(),
         bn: 2,
@@ -117,13 +193,26 @@ export default {
   computed: {
     ...mapState('jstore', ['tourneys']),
     myTourneys () {
+      console.log('t2', this.tourneys)
       return this.tourneys
     }
   },
-  watch: {
-    newTx (t) {
-      console.log(t)
+  methods: {
+    onSubmit () {
+      this.$emit('onTourney', this.t2)
+      this.newTx = false
+    },
+    getTourney (t) {
+      let tinfo = `${t.td}: ${t.Name}`
+      tinfo += `: ${t.bn} x ${t.br}`
+      return tinfo
+    },
+    startAt (startAt) {
+      return moment(startAt).format('MMM Do, hh:mm:ss')
     }
+  },
+  watch: {
+    newTx (t) { }
   }
 }
 </script>

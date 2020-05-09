@@ -20,11 +20,28 @@
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
         -->
-        <q-btn flat @click="goTo('signin')" v-show="!authenticated">Sign In</q-btn>
-        <q-btn flat @click="goTo('register')" v-show="!authenticated">Register</q-btn>
-        <q-btn flat round @click="goTo('lobby')" v-if="authenticated">
+        <q-btn
+          flat
+          @click="goTo('signin')"
+          v-show="!authenticated"
+        >Sign In</q-btn>
+        <q-btn
+          flat
+          @click="goTo('register')"
+          v-show="!authenticated"
+        >Register</q-btn>
+        <q-btn
+          flat
+          round
+          @click="goTo('lobby')"
+          v-if="authenticated"
+        >
           <q-icon name="home" />
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Lobby</q-tooltip>
+          <q-tooltip
+            anchor="bottom middle"
+            self="top middle"
+            :offset="[0, 20]"
+          >Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
@@ -35,15 +52,33 @@
           aria-label="ScoreBook"
           v-show="authenticated"
         />
-        <q-btn flat round @click="goTo('profile')" v-if="authenticated">
+        <q-btn
+          flat
+          round
+          @click="goTo('profile')"
+          v-if="authenticated"
+        >
           <q-avatar class="gt-xs">
             <img :src="user.profile.avatar" />
           </q-avatar>
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Profile</q-tooltip>
+          <q-tooltip
+            anchor="bottom middle"
+            self="top middle"
+            :offset="[0, 20]"
+          >Profile</q-tooltip>
         </q-btn>
-        <q-btn flat round @click="signout" v-show="authenticated">
+        <q-btn
+          flat
+          round
+          @click="signout"
+          v-show="authenticated"
+        >
           <q-icon name="exit_to_app" />
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Signout</q-tooltip>
+          <q-tooltip
+            anchor="bottom middle"
+            self="top middle"
+            :offset="[0, 20]"
+          >Signout</q-tooltip>
         </q-btn>
         <q-btn
           color="secondary"
@@ -63,7 +98,13 @@
       content-class="bg-grey-1"
     >
       <q-toolbar class="bg-primary text-white rounded-borders">
-        <q-btn round dense flat icon="group" class="q-mr-xs" />
+        <q-btn
+          round
+          dense
+          flat
+          icon="group"
+          class="q-mr-xs"
+        />
 
         <q-space />
 
@@ -76,8 +117,16 @@
           class="q-ml-md"
         >
           <template v-slot:append>
-            <q-icon v-if="!player_search" name="search" />
-            <q-icon v-else name="clear" class="cursor-pointer" @click="player_search = null" />
+            <q-icon
+              v-if="!player_search"
+              name="search"
+            />
+            <q-icon
+              v-else
+              name="clear"
+              class="cursor-pointer"
+              @click="player_search = null"
+            />
           </template>
         </q-input>
       </q-toolbar>
@@ -85,11 +134,20 @@
       <q-list bordered>
         <q-item-label header>{{room}} Players:</q-item-label>
         <q-separator />
-        <q-expansion-item dense dense-toggle expand-separator v-for="p in myPlayers" :key="p.id">
+        <q-expansion-item
+          dense
+          dense-toggle
+          expand-separator
+          v-for="p in myPlayers"
+          :key="p.id"
+        >
           <template v-slot:header>
             <q-item-section side>
               <div class="row items-center">
-                <q-icon :name="`img:statics/jbicon/seats/seat${p.seat.sId}.svg`" size="24px" />
+                <q-icon
+                  :name="`img:statics/jbicon/seats/seat${p.seat.sId}.svg`"
+                  size="24px"
+                />
                 <q-avatar size="24px">
                   <img :src="p.profile.avatar" />
                 </q-avatar>
@@ -98,8 +156,16 @@
 
             <q-item-section>{{p.nick}}</q-item-section>
 
-            <q-item-section avatar side>
-              <q-icon dense :name="getFlag(p)" class="q-ml-md" size="sm" />
+            <q-item-section
+              avatar
+              side
+            >
+              <q-icon
+                dense
+                :name="getFlag(p)"
+                class="q-ml-md"
+                size="sm"
+              />
               <!--
                 <q-badge
                   color="red"
@@ -112,16 +178,34 @@
           </template>
           <q-card>
             <q-card-actions>
-              <q-btn dense flat disable size="sm">Watch</q-btn>
-              <q-btn dense flat disable size="sm">Partner?</q-btn>
-              <q-btn dense flat disable size="sm">Join</q-btn>
+              <q-btn
+                dense
+                flat
+                disable
+                size="sm"
+              >Watch</q-btn>
+              <q-btn
+                dense
+                flat
+                disable
+                size="sm"
+              >Partner?</q-btn>
+              <q-btn
+                dense
+                flat
+                disable
+                size="sm"
+              >Join</q-btn>
             </q-card-actions>
             <q-separator dark />
             <q-card-section>
               <myMessages :to="p" />
             </q-card-section>
             <q-card-section>
-              <div class="full-width" style="height:24px">
+              <div
+                class="full-width"
+                style="height:24px"
+              >
                 <myChat :to="p" />
               </div>
             </q-card-section>
@@ -140,10 +224,20 @@
       :content-class="$q.theme === 'mat' ? 'bg-grey-3' : null"
       :content-style="{ fontSize: '16px' }"
     >
-      <q-list separator bordered dense>
-        <q-item-label header class="text-grey-8">My ScoreBook:</q-item-label>
+      <q-list
+        separator
+        bordered
+        dense
+      >
+        <q-item-label
+          header
+          class="text-grey-8"
+        >My ScoreBook:</q-item-label>
         <q-separator />
-        <q-item v-for="r in results" :key="r._id">
+        <q-item
+          v-for="r in results"
+          :key="r._id"
+        >
           <q-item-section>
             <q-item-label overline>{{r.board.bt}}#{{r.board.bn}}: {{getPName(r)}}</q-item-label>
             <q-item-label>
@@ -156,7 +250,10 @@
             </q-item-label>
           </q-item-section>
 
-          <q-item-section side top>
+          <q-item-section
+            side
+            top
+          >
             <q-item-label caption>{{playedDate(r.playedAt)}}</q-item-label>
           </q-item-section>
         </q-item>
@@ -215,18 +312,19 @@ export default {
     ...mapActions('jstore', [
       'setUser',
       'setChat',
-      'addPlayer',
-      'addTable',
       'setPlayers',
       'setTables',
       'setResults',
-      'addResult',
       'setTourneys',
-      'setTeams'
+      'setTeams',
+      'addPlayer',
+      'addTable',
+      'addResult',
+      'addTourney'
     ]),
     goTo (route) {
       if (this.$route.name !== route) {
-        this.$router.push({ name: route }).catch(e => {})
+        this.$router.push({ name: route }).catch(e => { })
       }
     },
     signin (user) {
@@ -313,33 +411,34 @@ export default {
       this.setChat(c)
     },
     async onServices () {
+      // find
       await tables$.find().then(response => {
         this.setTables(response.data)
-      })
-      tables$.on('created', t => {
-        console.log('table created', t)
-        this.addTable(t)
-      })
-      tables$.on('patched', t => {
-        console.log('table patched', t)
-        this.addTable(t)
-      })
-      tables$.on('removed', t => {
-        console.log('table removed', t)
-        t.state = -2
-        this.addTable(t)
-      })
-      users$.on('patched', user => {
-        console.log('user patched', user)
-        if (user._id === this.user._id) {
-          this.updateUser(user)
-        }
       })
       await players$.find().then(response => {
         this.setPlayers(response.data)
       })
+      results$
+        .find({
+          // query: { players: { $in: this.user._id }}
+        })
+        .then(response => {
+          if (response.data.length > 0) this.setResults(response.data)
+        })
+      tourneys$.find().then(response => {
+        this.setTourneys(response.data)
+      })
+      teams$.find().then(response => {
+        this.setTeams(response.data)
+      })
+
+      // creation
+      tables$.on('created', t => {
+        console.log('table created', t)
+        this.addTable(t)
+      })
       players$.on('created', p => {
-        console.log('create player', p, this.user)
+        // console.log('create player', p, this.user)
         this.addPlayer(p)
         if (p.id === this.user._id) {
           if (this.user.seat.tId) {
@@ -361,9 +460,48 @@ export default {
           })
         }
       })
+      chats$.on('created', chat => {
+        // if (chat.to === '#Lobby') this.myChats.unshift(chat)
+        this.updateChat(chat)
+      })
+      results$.on('created', r => {
+        console.log('create result', r)
+        if (r.players.includes(this.user._id)) this.addResult(r)
+      })
+      tourneys$.on('created', t2 => {
+        console.log('tourney created', t2)
+        this.addTourney(t2)
+      })
+
+      // update
+      users$.on('patched', user => {
+        console.log('user patched', user)
+        if (user._id === this.user._id) {
+          this.updateUser(user)
+        }
+      })
+      tables$.on('patched', t => {
+        console.log('table patched', t)
+        this.addTable(t)
+      })
       players$.on('patched', p => {
         console.log('player patched', p)
         this.addPlayer(p)
+      })
+      results$.on('patched', r => {
+        console.log('patched result', r)
+        if (r.players.includes(this.user._id)) this.addResult(r)
+      })
+      tourneys$.on('patched', t2 => {
+        console.log('tourney patched', t2)
+        this.addTourney(t2)
+      })
+
+      // removed
+      tables$.on('removed', t => {
+        console.log('table removed', t)
+        t.state = -2
+        this.addTable(t)
       })
       players$.on('removed', p => {
         console.log('player removed', p)
@@ -373,35 +511,6 @@ export default {
           color: 'into',
           message: `[EXIT]: ${p.nick}`
         })
-      })
-      chats$.on('created', chat => {
-        // if (chat.to === '#Lobby') this.myChats.unshift(chat)
-        this.updateChat(chat)
-      })
-      results$
-        .find({
-          /*
-        query: {
-          players: { $in: this.user._id }
-        }
-        */
-        })
-        .then(response => {
-          if (response.data.length > 0) this.setResults(response.data)
-        })
-      results$.on('created', r => {
-        console.log('create result', r)
-        if (r.players.includes(this.user._id)) this.addResult(r)
-      })
-      results$.on('patched', r => {
-        console.log('patched result', r)
-        if (r.players.includes(this.user._id)) this.addResult(r)
-      })
-      tourneys$.find().then(response => {
-        this.setTourneys(response.data)
-      })
-      teams$.find().then(response => {
-        this.setTourneys(response.data)
       })
     }
   },
@@ -442,7 +551,7 @@ export default {
       this.room = n ? '#Table' : '#Lobby'
     }
   },
-  beforeDestroy () {}
+  beforeDestroy () { }
 }
 </script>
 <style scoped>

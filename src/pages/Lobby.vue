@@ -1,5 +1,8 @@
 <template>
-  <q-page class="no-padding no-margin" v-if="myPlayer">
+  <q-page
+    class="no-padding no-margin"
+    v-if="myPlayer"
+  >
     <!-- content -->
     <div class="column">
       <div class="col-8">
@@ -23,10 +26,19 @@
               :disable="!r.open"
             />
           </q-tabs>
-          <q-tab-panels keep-alive v-model="rId" animated class="bg-teal">
+          <q-tab-panels
+            keep-alive
+            v-model="rId"
+            animated
+            class="bg-teal"
+          >
             <q-tab-panel :name="0">
               <div class="fit">
-                <q-list dense bordered separator>
+                <q-list
+                  dense
+                  bordered
+                  separator
+                >
                   <myTableList
                     v-for="t in myTables"
                     :key="t.id"
@@ -39,13 +51,19 @@
 
             <q-tab-panel :name="1">
               <div class="fit">
-                <myPlayTable :myPlayer="myPlayer" v-on:onPlayer="onPlayer" />
+                <myPlayTable
+                  :myPlayer="myPlayer"
+                  v-on:onPlayer="onPlayer"
+                />
               </div>
             </q-tab-panel>
 
             <q-tab-panel :name="2">
               <div class="fit">
-                <myTourney :myPlayer="myPlayer" v-on:onTourney="onTourney" />
+                <myTourney
+                  :myPlayer="myPlayer"
+                  v-on:onTourney="onTourney"
+                />
               </div>
             </q-tab-panel>
           </q-tab-panels>
@@ -64,7 +82,7 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
-import { players$ } from 'src/api'
+import { players$, tourneys$ } from 'src/api'
 import myTableList from 'src/components/myTableList'
 import myPlayTable from 'src/components/myPlayTable'
 import myMessages from 'src/components/myMessages'
@@ -141,7 +159,10 @@ export default {
       console.log(seat)
       players$.patch(this.myPlayer.id, { seat })
     },
-    onTourney (tourney) {}
+    onTourney (t2) {
+      console.log('t', t2)
+      tourneys$.create(t2)
+    }
   },
   mounted () {
     this.$parent.page = 'Lobby'
@@ -150,7 +171,7 @@ export default {
   watch: {
     myPlayer (p) {
       if (!p) {
-        this.$router.push({ name: 'home' }).catch(e => {})
+        this.$router.push({ name: 'home' }).catch(e => { })
       }
     },
     mySeat (n) {

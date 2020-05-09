@@ -12,4 +12,4 @@ export class Tourneys extends Service {
       this.Model = db.collection('tourneys');
     });
   }
-};
+}

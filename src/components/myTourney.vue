@@ -125,6 +125,21 @@
               color="primary"
               text-color="white"
             />
+              <q-fab-action
+                label-position="right"
+                color="secondary"
+                @click="onJoin"
+                icon="hourglass_full"
+                label="Start"
+              />
+              <q-fab-action
+                label-position="right"
+                color="secondary"
+                @click="onJoin"
+                icon="hourglass_empty"
+                label="Close"
+              />
+            </q-fab>
           </q-item-section>
 
           <q-item-section>

@@ -60,10 +60,7 @@
 
             <q-tab-panel :name="2">
               <div class="fit">
-                <myTourney
-                  :myPlayer="myPlayer"
-                  v-on:onTourney="onTourney"
-                />
+                <myTourney :myPlayer="myPlayer" />
               </div>
             </q-tab-panel>
           </q-tab-panels>
@@ -82,7 +79,7 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
-import { players$, tourneys$ } from 'src/api'
+import { players$ } from 'src/api'
 import myTableList from 'src/components/myTableList'
 import myPlayTable from 'src/components/myPlayTable'
 import myMessages from 'src/components/myMessages'
@@ -158,10 +155,6 @@ export default {
       seat.sId0 = this.mySeat.sId
       console.log(seat)
       players$.patch(this.myPlayer.id, { seat })
-    },
-    onTourney (t2) {
-      console.log('t', t2)
-      tourneys$.create(t2)
     }
   },
   mounted () {

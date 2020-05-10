@@ -101,7 +101,7 @@
         <q-card-actions align="right">
           <q-btn
             push
-            @click='onSubmit()'
+            @click='onT2Submit(t2, 0)'
           >Submit</q-btn>
         </q-card-actions>
       </q-card>
@@ -111,6 +111,9 @@
       separator
     >
       <q-expansion-item
+        dense-toggle
+        switch-toggle-side
+        expand-separator
         group="tourney"
         header-class="bg-teal text-white"
         expand-icon-class="text-white"
@@ -119,29 +122,6 @@
         :caption="`start in: ${t.time} minutes`"
       >
         <template v-slot:header>
-          <q-item-section avatar>
-            <q-avatar
-              icon="event"
-              color="primary"
-              text-color="white"
-            />
-              <q-fab-action
-                label-position="right"
-                color="secondary"
-                @click="onJoin"
-                icon="hourglass_full"
-                label="Start"
-              />
-              <q-fab-action
-                label-position="right"
-                color="secondary"
-                @click="onJoin"
-                icon="hourglass_empty"
-                label="Close"
-              />
-            </q-fab>
-          </q-item-section>
-
           <q-item-section>
             <q-item-label overline>
               @{{t.td}}: {{t.name}}
@@ -168,9 +148,117 @@
               start in: {{startAt(t.startAt)}}
             </q-badge>
           </q-item-section>
+          <q-item-section side>
+            <q-item-section avatar>
+              <q-fab
+                color="primary"
+                square
+                icon="keyboard_arrow_down"
+                label="Status"
+                vertical-actions-align="left"
+                direction="left"
+                style='height:30px'
+              >
+                <q-fab-action
+                  square
+                  label-position="right"
+                  color="negative"
+                  @click="onJoin"
+                  icon="hourglass_empty"
+                  label="Close"
+                />
+                <q-fab-action
+                  square
+                  label-position="right"
+                  color="positive"
+                  @click="onJoin"
+                  icon="hourglass_full"
+                  label="Start"
+                />
+                <q-fab-action
+                  square
+                  label-position="right"
+                  color="warning"
+                  @click="onJoin"
+                  icon="alarm_on"
+                  label="Ready..."
+                />
+              </q-fab>
+            </q-item-section>
+          </q-item-section>
         </template>
         <q-card>
-          <q-card-section></q-card-section>
+          <q-card-section>
+            <q-time
+              v-for="p in t.pairs"
+              :key="p.id"
+            >
+              <q-item-section
+                avatar
+                top
+              >
+                <q-badge
+                  color="orange"
+                  text-color="black"
+                  label="t.id"
+                />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{p.player}}</q-item-label>
+                <q-item-label>{{p.partner}}</q-item-label>
+              </q-item-section>
+              <q-item-section
+                side
+                top
+              >
+                <q-item-label caption>p.cc</q-item-label>
+              </q-item-section>
+            </q-time>
+          </q-card-section>
+          <q-card-section class="justify-start">
+          </q-card-section>
+          <q-separator
+            color="orange"
+            inset
+          />
+          <q-card-actions align="right">
+            <q-btn-toggle
+              v-model="myCC"
+              push
+              glossy
+              toggle-color="primary"
+              :options="[
+                {label: 'SAYC', value: 'SAYC'},
+                {label: '2/1', value: '2/1'},
+                {label: 'Precision', value: 'Precision'},
+                {label: 'My CC...', value: 'My CC'}
+              ]"
+            />
+            <q-separator
+              vertical
+              inset
+            />
+            <q-input
+              filled
+              dense
+              v-model="myCC"
+              label="My CC..."
+            />
+            <q-space />
+            <q-input
+              filled
+              dense
+              v-model="myPd"
+              label="My Partner"
+            />
+            <q-space>
+              <q-separator />
+            </q-space>
+            <q-btn
+              push
+              @click='onT2Submit(t,-1)'
+            >Join</q-btn>
+          </q-card-actions>
         </q-card>
       </q-expansion-item>
       <q-separator />
@@ -182,6 +270,7 @@
 import moment from 'moment'
 import { mapState } from 'vuex'
 import { jbBoardMix } from '../jb'
+import { tourneys$ } from 'src/api'
 
 export default {
   name: 'myTourney',
@@ -196,26 +285,41 @@ export default {
         time: 30,
         mix: jbBoardMix(),
         bn: 2,
-        br: 6
+        br: 6,
+        state: 0,
+        pairs: []
       },
       bt: [
         { label: 'MP', value: 'MP', color: 'blue' },
         { label: 'IMP', value: 'IMP', color: 'green' },
         { label: 'XIMP', value: 'XIMP', color: 'red' }
-      ]
+      ],
+      myCC: 'SAYC',
+      myPd: null
     }
   },
   computed: {
     ...mapState('jstore', ['tourneys']),
     myTourneys () {
-      console.log('t2', this.tourneys)
       return this.tourneys
     }
   },
   methods: {
-    onSubmit () {
-      this.$emit('onTourney', this.t2)
+    onT2Submit (t, state) {
+      console.log('t', t)
+      switch (state) {
+        case -1:
+          tourneys$.remove(t._id)
+          break
+        case 0:
+          tourneys$.create(t)
+          break
+        default:
+      }
       this.newTx = false
+    },
+    onJoin (ev) {
+      console.log('onJoin', ev)
     },
     getTourney (t) {
       let tinfo = `${t.td}: ${t.Name}`

@@ -56,7 +56,7 @@ export const addTable = (state, table) => {
   // if (table.state < 0) state.tables.delete(table.id) else state.tables.set(table.id, table)
   const i = state.tables.findIndex(t => t.id === table.id)
   if (i >= 0) {
-    if (table.state < -1) state.tables.splice(i, 1)
+    if (table.state < 0) state.tables.splice(i, 1)
     else state.tables.splice(i, 1, table)
   } else if (table.state >= 0) {
     state.tables.splice(1, 0, table)
@@ -70,6 +70,17 @@ export const addResult = (state, result) => {
     state.results.splice(i, 1, result)
   } else {
     state.results.splice(1, 0, result)
+  }
+}
+
+export const addTourney = (state, tourney) => {
+  // if (table.state < 0) state.tables.delete(table.id) else state.tables.set(table.id, table)
+  const i = state.tourneys.findIndex(t => t.id === tourney._id)
+  if (i >= 0) {
+    if (tourney.state < 0) state.tourneys.splice(i, 1)
+    else state.tourneys.splice(i, 1, tourney)
+  } else if (tourney.state >= 0) {
+    state.tourneys.splice(1, 0, tourney)
   }
 }
 

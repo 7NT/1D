@@ -500,7 +500,7 @@ export default {
       // removed
       tables$.on('removed', t => {
         console.log('table removed', t)
-        t.state = -2
+        t.state = -1
         this.addTable(t)
       })
       players$.on('removed', p => {
@@ -511,6 +511,11 @@ export default {
           color: 'into',
           message: `[EXIT]: ${p.nick}`
         })
+      })
+      tourneys$.on('removed', t => {
+        console.log('tourney removed', t)
+        t.state = -1
+        this.addTourney(t)
       })
     }
   },

@@ -1,6 +1,5 @@
 <template>
   <div>
-    <!--:class='`bidbox ${myVul}`'>-->
     <div class='q-ma-sm'>
       <q-table
         dense
@@ -100,13 +99,13 @@ export default {
     getBid (b) {
       try {
         return b.bid
-      } catch (err) {}
+      } catch (err) { }
       return b
     },
     getAlert (a) {
       try {
         if (a.alert) return a.alert
-      } catch (err) {}
+      } catch (err) { }
       return this.getBid(a)
     },
     vul_bgcolor (s) {

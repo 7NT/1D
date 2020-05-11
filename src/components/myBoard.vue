@@ -130,7 +130,7 @@
             top
             class="col-2 gt-sm"
           >
-            <q-item-label class="q-mt-sm">Score:</q-item-label>
+            <q-item-label class="q-mt-sm">{{mix}}:</q-item-label>
           </q-item-section>
           <q-item-section
             side

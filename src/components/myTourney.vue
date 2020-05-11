@@ -3,18 +3,19 @@
     <q-toolbar class="bg-primary text-white shadow-2">
       <q-toolbar-title>Tourney List:</q-toolbar-title>
       <q-btn
-        icon="add"
-        @click="newTx=!newTx"
+        :icon="newT2 ? 'close' : 'add'"
+        @click="newT2=!newT2"
       />
     </q-toolbar>
     <q-expansion-item
-      group="tourney"
+      default-opened
+      expand-separator
       icon="event"
       header-class="bg-teal text-white"
       expand-icon-class="text-white"
-      v-show="newTx"
+      v-if="newT2"
       :label="`Tourney Director: @${t2.td}`"
-      default-opened
+      :key="componentKey"
     >
       <q-card>
         <q-card-section>
@@ -101,7 +102,7 @@
         <q-card-actions align="right">
           <q-btn
             push
-            @click='onT2Submit(t2, 0)'
+            @click='onState(t2, 0)'
           >Submit</q-btn>
         </q-card-actions>
       </q-card>
@@ -114,7 +115,6 @@
         dense-toggle
         switch-toggle-side
         expand-separator
-        group="tourney"
         header-class="bg-teal text-white"
         expand-icon-class="text-white"
         v-for="t in myTourneys"
@@ -124,7 +124,14 @@
         <template v-slot:header>
           <q-item-section>
             <q-item-label overline>
-              @{{t.td}}: {{t.name}}
+              <q-chip
+                class="glossy"
+                color="teal"
+                text-color="white"
+                icon="emoji_events"
+              >
+                @{{t.td}}: {{t.name}}
+              </q-chip>
             </q-item-label>
             <q-item-label caption>
               <q-badge color="blue">
@@ -139,7 +146,6 @@
               </q-badge>
             </q-item-label>
           </q-item-section>
-
           <q-item-section
             side
             top
@@ -163,7 +169,7 @@
                   square
                   label-position="right"
                   color="negative"
-                  @click="onJoin"
+                  @click="onState(t, -1)"
                   icon="hourglass_empty"
                   label="Close"
                 />
@@ -171,7 +177,7 @@
                   square
                   label-position="right"
                   color="positive"
-                  @click="onJoin"
+                  @click="onState(t, 1)"
                   icon="hourglass_full"
                   label="Start"
                 />
@@ -179,7 +185,7 @@
                   square
                   label-position="right"
                   color="warning"
-                  @click="onJoin"
+                  @click="onState(t,  0)"
                   icon="alarm_on"
                   label="Ready..."
                 />
@@ -189,31 +195,68 @@
         </template>
         <q-card>
           <q-card-section>
-            <q-time
+            <q-item
               v-for="p in t.pairs"
               :key="p.id"
+              class='pair'
             >
               <q-item-section
                 avatar
                 top
               >
-                <q-badge
-                  color="orange"
-                  text-color="black"
-                  label="t.id"
-                />
+                <q-chip>
+                  <q-avatar
+                    color="info"
+                    text-color="white"
+                  >{{p.pairN}}</q-avatar>
+                  {{p.cc}}
+                </q-chip>
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{p.player}}</q-item-label>
-                <q-item-label>{{p.partner}}</q-item-label>
+                <div class="text-grey-8 q-gutter-xs">
+                  <q-btn
+                    dense
+                    :icon-right="getPFlag(p.player)"
+                  >
+                    <q-avatar
+                      square
+                      size="24px"
+                      color="orange"
+                    >
+                      <img :src='getPAvatar(p.player)'>
+                    </q-avatar>
+                    {{getPNick(p.player)}}
+                  </q-btn>
+                  <template v-if="getPlayer(p.partner)">
+                    <q-btn
+                      dense
+                      :icon-right="getPFlag(p.partner)"
+                    >
+                      <q-avatar
+                        square
+                        size="24px"
+                        color="green"
+                      >
+                        <img :src='getPAvatar(p.partner)'>
+                      </q-avatar>
+                      {{getPNick(p.partner)}}
+                    </q-btn>
+                  </template>
+                  <template v-else>
+                    <q-btn>
+                      <q-icon
+                        square
+                        left
+                        size="24px"
+                        color="orange"
+                        name='person_add'
+                      />
+                      Join...
+                    </q-btn>
+                  </template>
+                </div>
               </q-item-section>
-              <q-item-section
-                side
-                top
-              >
-                <q-item-label caption>p.cc</q-item-label>
-              </q-item-section>
-            </q-time>
+            </q-item>
           </q-card-section>
           <q-card-section class="justify-start">
           </q-card-section>
@@ -221,7 +264,10 @@
             color="orange"
             inset
           />
-          <q-card-actions align="right">
+          <q-card-actions
+            align="right"
+            v-if='t.state===0'
+          >
             <q-btn-toggle
               v-model="myCC"
               push
@@ -231,7 +277,6 @@
                 {label: 'SAYC', value: 'SAYC'},
                 {label: '2/1', value: '2/1'},
                 {label: 'Precision', value: 'Precision'},
-                {label: 'My CC...', value: 'My CC'}
               ]"
             />
             <q-separator
@@ -256,7 +301,7 @@
             </q-space>
             <q-btn
               push
-              @click='onT2Submit(t,-1)'
+              @click='onJoin(t)'
             >Join</q-btn>
           </q-card-actions>
         </q-card>
@@ -268,7 +313,7 @@
 
 <script>
 import moment from 'moment'
-import { mapState } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import { jbBoardMix } from '../jb'
 import { tourneys$ } from 'src/api'
 
@@ -278,7 +323,8 @@ export default {
 
   data () {
     return {
-      newTx: false,
+      componentKey: 0,
+      newT2: false,
       t2: {
         name: 'Welcome to my Tourney...',
         td: this.myPlayer.nick,
@@ -300,26 +346,59 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['tourneys']),
+    ...mapGetters('jstore', ['getPlayerById']),
     myTourneys () {
+      console.log(this.tourneys)
       return this.tourneys
     }
   },
   methods: {
-    onT2Submit (t, state) {
-      console.log('t', t)
-      switch (state) {
+    getPlayer: function (pId) {
+      return this.getPlayerById(pId)
+    },
+    getPNick (p) {
+      const player = this.getPlayer(p)
+      if (player) return player.nick
+      else return '[JOIN]'
+    },
+    getPAvatar (p) {
+      const player = this.getPlayer(p)
+      if (player) return player.profile.avatar
+      else return null
+    },
+    getPFlag (p) {
+      const player = this.getPlayer(p)
+      if (player) {
+        const flag = player.profile.flag.toLowerCase()
+        return `img:statics/flags/4x3/${flag}.svg`
+      } else return null
+    },
+    onJoin (t) {
+      const pairs = t.pairs.slice(0)
+      const myPair = {
+        player: this.myPlayer.id,
+        partner: this.myPd,
+        cc: this.myCC
+      }
+      pairs.push(myPair)
+      tourneys$.patch(t._id, { pairs })
+      this.$forceUpdate()
+    },
+    onState (t, s) {
+      switch (s) {
         case -1:
           tourneys$.remove(t._id)
           break
         case 0:
           tourneys$.create(t)
           break
+        case 1:
+          tourneys$.patch(t._id, { state: s })
+          break
         default:
       }
-      this.newTx = false
-    },
-    onJoin (ev) {
-      console.log('onJoin', ev)
+      this.newT2 = false
+      this.$forceUpdate()
     },
     getTourney (t) {
       let tinfo = `${t.td}: ${t.Name}`
@@ -328,10 +407,28 @@ export default {
     },
     startAt (startAt) {
       return moment(startAt).format('MMM Do, hh:mm:ss')
+      // return moment(startAt).toNow()
+    },
+    forceRerender () {
+      this.componentKey += 1
     }
   },
   watch: {
-    newTx (t) { }
+    newT2 (t2) {
+      console.log(t2)
+    }
   }
 }
 </script>
+
+<style scoped>
+.q-btn {
+  /*max-width: 125px;*/
+  /* height: 32px; */
+  text-overflow: ellipsis;
+  text-transform: none;
+}
+.pair {
+  border: 1px solid yellowgreen;
+}
+</style>

@@ -1,5 +1,6 @@
 <template>
-  <div class='fit'
+  <div
+    class='fit'
     v-if='to'
   >
     <q-card
@@ -27,7 +28,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import * as moment from 'moment'
 import { mapState } from 'vuex'
 
 export default {
@@ -48,6 +49,7 @@ export default {
     },
     chatDate (createdAt) {
       return moment(createdAt).format('MMM Do, hh:mm:ss')
+      // return moments(createdAt).formNow()
     }
   }
 }

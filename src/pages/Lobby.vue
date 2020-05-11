@@ -111,14 +111,14 @@ export default {
         {
           name: 'My Table',
           value: 1,
-          icon: 'portrait',
+          icon: 'local_play',
           open: true,
           id: '#Lobby'
         },
         {
           name: 'Tourney',
           value: 2,
-          icon: 'person_add',
+          icon: 'emoji_events',
           open: open,
           id: '#Lobby'
         },

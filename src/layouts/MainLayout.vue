@@ -513,9 +513,9 @@ export default {
         })
       })
       tourneys$.on('removed', t => {
-        console.log('tourney removed', t)
         t.state = -1
         this.addTourney(t)
+        console.log('t2 removed', t)
       })
     }
   },

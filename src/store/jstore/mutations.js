@@ -75,7 +75,7 @@ export const addResult = (state, result) => {
 
 export const addTourney = (state, tourney) => {
   // if (table.state < 0) state.tables.delete(table.id) else state.tables.set(table.id, table)
-  const i = state.tourneys.findIndex(t => t.id === tourney._id)
+  const i = state.tourneys.findIndex(t => t._id === tourney._id)
   if (i >= 0) {
     if (tourney.state < 0) state.tourneys.splice(i, 1)
     else state.tourneys.splice(i, 1, tourney)

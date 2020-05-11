@@ -1,8 +1,5 @@
 <template>
-  <q-page
-    class="no-padding no-margin"
-    v-if="myPlayer"
-  >
+  <q-page class="no-padding no-margin" v-if="myPlayer">
     <!-- content -->
     <div class="column">
       <div class="col-8">
@@ -26,20 +23,11 @@
               :disable="!r.open"
             />
           </q-tabs>
-          <q-tab-panels
-            keep-alive
-            v-model="rId"
-            animated
-            class="bg-teal"
-          >
+          <q-tab-panels keep-alive v-model="rId" animated class="bg-teal">
             <q-tab-panel :name="0">
               <div class="fit">
-                <q-list
-                  dense
-                  bordered
-                  separator
-                >
-                  <myTableList
+                <q-list dense bordered separator>
+                  <myT1List
                     v-for="t in myTables"
                     :key="t.id"
                     :myTable="t"
@@ -51,10 +39,7 @@
 
             <q-tab-panel :name="1">
               <div class="fit">
-                <myPlayTable
-                  :myPlayer="myPlayer"
-                  v-on:onPlayer="onPlayer"
-                />
+                <myPlayTable :myPlayer="myPlayer" v-on:onPlayer="onPlayer" />
               </div>
             </q-tab-panel>
 
@@ -80,7 +65,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { players$ } from 'src/api'
-import myTableList from 'src/components/myTableList'
+import myT1List from 'src/components/myT1List'
 import myPlayTable from 'src/components/myPlayTable'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
@@ -89,7 +74,7 @@ import myTourney from 'src/components/myTourney'
 export default {
   name: 'Lobby',
   components: {
-    myTableList,
+    myT1List,
     myPlayTable,
     myMessages,
     myChat,
@@ -164,7 +149,7 @@ export default {
   watch: {
     myPlayer (p) {
       if (!p) {
-        this.$router.push({ name: 'home' }).catch(e => { })
+        this.$router.push({ name: 'home' }).catch(e => {})
       }
     },
     mySeat (n) {
@@ -183,7 +168,11 @@ export default {
 </script>
 
 <style scoped>
-messages {
+.q-panel {
+  max-height: 400px;
+  overflow-y: auto;
+}
+.messages {
   overflow-x: hidden;
 }
 </style>

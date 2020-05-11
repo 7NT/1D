@@ -7,6 +7,7 @@ interface PlayerData {
   id: string;
   nick?: string;
   profile?: { avatar?: string; flag?: string };
+  status?: number;
   state: number,
   seat: { tId?: string; sId?: number }
 }
@@ -18,12 +19,13 @@ export class Players extends Service {
 
   create (data: PlayerData, params?: Params) {
     // This is the information we want from the player enter lobby
-    const { id, nick, profile, state, seat } = data;
+    const { id, nick, profile, status, state, seat } = data;
     // The complete player
     const playerData = {
       id,
       nick,
       profile,
+      status,
       state,
       seat
     };

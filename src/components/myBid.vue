@@ -17,7 +17,7 @@
           type="button"
           direction="up"
           class="bg-teal"
-          style="width:28px"
+          style='width:28px'
         >
           <q-fab-action
             v-for="s in suits"

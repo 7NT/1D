@@ -4,6 +4,7 @@
       <q-toolbar-title>Tourney List:</q-toolbar-title>
       <q-btn
         :icon="newT2 ? 'close' : 'add'"
+        :disable='!isTD'
         @click="newT2=!newT2"
       />
     </q-toolbar>
@@ -15,7 +16,6 @@
       expand-icon-class="text-white"
       v-if="newT2"
       :label="`Tourney Director: @${t2.td}`"
-      :key="componentKey"
     >
       <q-card>
         <q-card-section>
@@ -125,8 +125,9 @@
           <q-item-section>
             <q-item-label overline>
               <q-chip
+                square
                 class="glossy"
-                color="teal"
+                color="green"
                 text-color="white"
                 icon="emoji_events"
               >
@@ -163,10 +164,12 @@
                 label="Status"
                 vertical-actions-align="left"
                 direction="left"
-                style='height:30px'
+                padding="none sm"
+                :disable="!isTD"
               >
                 <q-fab-action
                   square
+                  padding="5px"
                   label-position="right"
                   color="negative"
                   @click="onState(t, -1)"
@@ -175,6 +178,7 @@
                 />
                 <q-fab-action
                   square
+                  padding="5px"
                   label-position="right"
                   color="positive"
                   @click="onState(t, 1)"
@@ -183,6 +187,7 @@
                 />
                 <q-fab-action
                   square
+                  padding="5px"
                   label-position="right"
                   color="warning"
                   @click="onState(t,  0)"
@@ -195,68 +200,15 @@
         </template>
         <q-card>
           <q-card-section>
-            <q-item
+            <myT2List
               v-for="p in t.pairs"
-              :key="p.id"
+              :key="p.pairN"
+              :t2='t'
+              :myPlayer='myPlayer'
+              :myPair='p'
+              v-on:onPair="onPair"
               class='pair'
-            >
-              <q-item-section
-                avatar
-                top
-              >
-                <q-chip>
-                  <q-avatar
-                    color="info"
-                    text-color="white"
-                  >{{p.pairN}}</q-avatar>
-                  {{p.cc}}
-                </q-chip>
-              </q-item-section>
-              <q-item-section>
-                <div class="text-grey-8 q-gutter-xs">
-                  <q-btn
-                    dense
-                    :icon-right="getPFlag(p.player)"
-                  >
-                    <q-avatar
-                      square
-                      size="24px"
-                      color="orange"
-                    >
-                      <img :src='getPAvatar(p.player)'>
-                    </q-avatar>
-                    {{getPNick(p.player)}}
-                  </q-btn>
-                  <template v-if="getPlayer(p.partner)">
-                    <q-btn
-                      dense
-                      :icon-right="getPFlag(p.partner)"
-                    >
-                      <q-avatar
-                        square
-                        size="24px"
-                        color="green"
-                      >
-                        <img :src='getPAvatar(p.partner)'>
-                      </q-avatar>
-                      {{getPNick(p.partner)}}
-                    </q-btn>
-                  </template>
-                  <template v-else>
-                    <q-btn>
-                      <q-icon
-                        square
-                        left
-                        size="24px"
-                        color="orange"
-                        name='person_add'
-                      />
-                      Join...
-                    </q-btn>
-                  </template>
-                </div>
-              </q-item-section>
-            </q-item>
+            />
           </q-card-section>
           <q-card-section class="justify-start">
           </q-card-section>
@@ -316,6 +268,7 @@ import moment from 'moment'
 import { mapState, mapGetters } from 'vuex'
 import { jbBoardMix } from '../jb'
 import { tourneys$ } from 'src/api'
+import myT2List from 'src/components/myT2List'
 
 export default {
   name: 'myTourney',
@@ -323,7 +276,6 @@ export default {
 
   data () {
     return {
-      componentKey: 0,
       newT2: false,
       t2: {
         name: 'Welcome to my Tourney...',
@@ -344,12 +296,17 @@ export default {
       myPd: null
     }
   },
+  components: {
+    myT2List
+  },
   computed: {
     ...mapState('jstore', ['tourneys']),
     ...mapGetters('jstore', ['getPlayerById']),
     myTourneys () {
-      console.log(this.tourneys)
       return this.tourneys
+    },
+    isTD () {
+      return this.myPlayer.status > 1
     }
   },
   methods: {
@@ -378,11 +335,24 @@ export default {
       const myPair = {
         player: this.myPlayer.id,
         partner: this.myPd,
-        cc: this.myCC
+        cc: this.myCC,
+        boards: 0,
+        score: null
       }
       pairs.push(myPair)
       tourneys$.patch(t._id, { pairs })
       this.$forceUpdate()
+    },
+    onPair (p) {
+      const pair
+      Object.assign({}, pair, this.myPair)
+      if (!p) {
+        if (!pair.partner) pair.partner = this.myPlayer.id
+        else if (!pair.player) pair.player = this.myPlayer.id
+      } else if (p === this.myPlayer.id) {
+
+      }
+      else this.$q.notify({ type: 'info', message: 'You can not join this pair.' })
     },
     onState (t, s) {
       switch (s) {
@@ -398,7 +368,6 @@ export default {
         default:
       }
       this.newT2 = false
-      this.$forceUpdate()
     },
     getTourney (t) {
       let tinfo = `${t.td}: ${t.Name}`
@@ -408,14 +377,11 @@ export default {
     startAt (startAt) {
       return moment(startAt).format('MMM Do, hh:mm:ss')
       // return moment(startAt).toNow()
-    },
-    forceRerender () {
-      this.componentKey += 1
     }
   },
   watch: {
     newT2 (t2) {
-      console.log(t2)
+      console.log(t2, this.isTD)
     }
   }
 }
@@ -429,6 +395,7 @@ export default {
   text-transform: none;
 }
 .pair {
+  height: 30px;
   border: 1px solid yellowgreen;
 }
 </style>

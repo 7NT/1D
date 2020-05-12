@@ -220,7 +220,7 @@ export default {
     },
     onCC (n, c) {
       if (this.isMyCC === n) {
-        const _cc = this.cc.slice(0)
+        const _cc = [...this.cc] // .slice(0)
         _cc.splice(n, 1, c)
         this.$emit('onTable', { action: 'cc', cc: _cc })
         return

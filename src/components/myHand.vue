@@ -229,7 +229,7 @@ export default {
         }
         this.$emit('onTable', seat)
       } else if (this.player.id === this.myPlayer.id) {
-        const _ready = this.myTable.ready.slice(0) || [null, null, null, null]
+        const _ready = [...this.myTable.ready] || [null, null, null, null]
         _ready[this.seatX - 1] = this.seatX
         const ready = {
           action: 'ready',

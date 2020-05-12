@@ -1,5 +1,8 @@
 <template>
-  <div class="bbox column" v-if="isMyTurn() === 1">
+  <div
+    class="bbox column"
+    v-if="isMyTurn() === 1"
+  >
     <div class="col row">
       <q-btn-group push>
         <q-fab
@@ -32,8 +35,14 @@
       </q-btn-group>
     </div>
     <q-separator />
-    <div class="col row" style="height:30px">
-      <q-btn-group dense class="full-width">
+    <div
+      class="col row"
+      style="height:30px"
+    >
+      <q-btn-group
+        dense
+        class="full-width"
+      >
         <q-btn
           glossy
           label="X"
@@ -50,11 +59,20 @@
           @click="onBid('XX')"
           style="width:25%"
         />
-        <q-btn glaosy label="Pass" color="primary" @click="onBid('pass')" style="width:45%" />
+        <q-btn
+          glaosy
+          label="Pass"
+          color="primary"
+          @click="onBid('pass')"
+          style="width:45%"
+        />
       </q-btn-group>
     </div>
     <q-separator />
-    <div class="col row items-center" style="height:40px">
+    <div
+      class="col row items-center"
+      style="height:40px"
+    >
       <q-input
         dense
         standout="bg-primary text-negative"
@@ -150,7 +168,7 @@ export default {
     },
     onBid (bid) {
       const info = this.myBids.info
-      const data = this.myBids.data.slice(0)
+      const data = [...this.myBids.data] // this.myBids.data.slice(0)
       let sId = this.myTurn
       const alert = this.alert
       data.pop()

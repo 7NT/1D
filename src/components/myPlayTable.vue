@@ -283,7 +283,7 @@ export default {
         }
         case 'play': {
           const _info = this.myPlays.info
-          const _data = this.myPlays.data.slice(0)
+          const _data = [...this.myPlays.data] // .slice(0)
           const _played = _data.map(x => x.card) || []
           if (!_played.includes(action.play.card)) {
             _data.push(action.play)

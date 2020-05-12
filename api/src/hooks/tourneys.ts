@@ -3,7 +3,7 @@ import { Hook, HookContext } from '@feathersjs/feathers'
 
 const createdAt = (): Hook => {
   return async (context: HookContext) => {
-    const { time, pairs } = context.data
+    const { time } = context.data
 
     if (time) {
       const dt = new Date()
@@ -16,7 +16,7 @@ const createdAt = (): Hook => {
 
 const pairUp = (): Hook => {
   return async (context: HookContext) => {
-    const { pairs } = context.data
+    const { pairs, pair } = context.data
 
     if (pairs) {
       context.data.pairs = pairNo(pairs)
@@ -27,11 +27,15 @@ const pairUp = (): Hook => {
 
 function pairNo (pairs: any[]) {
   let n: number = 1
+  let pairs2: any[] = []
   pairs.forEach(p => {
-    p.pairN = n
-    n++
+    if (p.player || p.partner) {
+      p.pairN = n
+      n++
+      pairs2.push(p)
+    }
   })
-  return pairs
+  return pairs2
 }
 
 export {

@@ -1,8 +1,14 @@
 <template>
   <q-item class="row">
-    <q-item-section avatar class="col-2">
+    <q-item-section
+      avatar
+      class="col-2"
+    >
       <q-chip>
-        <q-avatar color="info" text-color="white">{{myPair.pairN}}</q-avatar>
+        <q-avatar
+          color="info"
+          text-color="white"
+        >{{myPair.pairN}}</q-avatar>
         {{myPair.cc}}
       </q-chip>
     </q-item-section>
@@ -16,7 +22,7 @@
             :icon-right="myFlag(myPair.player)"
             class="player bg-secondary"
             align="around"
-            @click='onPair(myPair.player)'
+            @click='onPair(myPair,1)'
           />
         </div>
         <div class="col-6">
@@ -27,11 +33,26 @@
               :icon-right="myFlag(myPair.partner)"
               class="player bg-secondary"
               align="around"
-              @click='onPair(myPair.partner)'
+              @click='onPair(myPair.partner, 2)'
+            />
+          </template>
+          <template v-else-if="myPair.partner">
+            <q-btn
+              :label="myPair.partner"
+              icon="person"
+              class="player bg-info"
+              align="around"
+              @click='onPair(myPair, 0)'
             />
           </template>
           <template v-else>
-            <q-btn label="Join..." icon="person_add" class="player bg-info" align="around" @click='onPair(null)' />
+            <q-btn
+              label="Join..."
+              icon="person_add"
+              class="player bg-info"
+              align="around"
+              @click='onPair(myPair, -1)'
+            />
           </template>
         </div>
       </div>
@@ -39,11 +60,18 @@
 
     <q-item-section class="col-2">
       <q-chip square>
-        <q-avatar color="green" text-color="white">{{myPair.score}}</q-avatar>
+        <q-avatar
+          color="green"
+          text-color="white"
+        >{{myPair.score}}</q-avatar>
         {{myPair.boards}}
       </q-chip>
     </q-item-section>
-    <q-item-section side top class="col-2">
+    <q-item-section
+      side
+      top
+      class="col-2"
+    >
       <div class="col-2 q-mt-md">
         <q-fab
           square
@@ -125,20 +153,34 @@ export default {
     onPState (p2) {
       console.log(p2, this.myPair)
     },
-    onPair (p) {
-      const pairs = this.t2.pairs.slice(0)
-      const myPair = {
-        player: this.myPlayer.id,
-        partner: this.myPd,
-        cc: this.myCC,
-        boards: 0,
-        score: null
+    onPair (pair, n) {
+      let bCancel = false
+      const pair2 = JSON.parse(JSON.stringify(pair))
+      console.log(n, pair, pair2)
+      switch (n) {
+        case -1:
+          pair2.partner = this.myPlayer.id
+          break
+        case 0:
+          if (pair2.player === this.myPlayer.id) pair2.partner = null
+          else bCancel = true
+          break
+        case 1:
+          if (pair2.player === this.myPlayer.id) pair2.player = null
+          else bCancel = true
+          break
+        case 2:
+          if (pair2.partner === this.myPlayer.id) pair2.partner = null
+          else bCancel = true
+          break
+        default:
       }
-
-      if (!p) tourneys$.patch(p.t2Id, { pair: p.pair })
-      else if (p === this.myPlayer.id) tourneys$.patch(p.t2Id, { pair: p.pair })
-      else this.$q.notify({ type: 'info', message: 'You can not join this pair.' })
-      this.$emit('onPair', { t2Id: this.t2Id, pair: p })
+      if (bCancel) this.$q.notify({ type: 'info', message: 'You can not join this pair.' })
+      else {
+        const pairs2 = [...this.t2.pairs] // this.t2.pairs.slice(0)
+        pairs2[pair.pairN - 1] = pair2
+        this.$emit('onPair', { t2Id: this.t2._id, pairs: pairs2 })
+      }
     }
   }
 }

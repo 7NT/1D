@@ -331,7 +331,7 @@ export default {
       } else return null
     },
     onJoin (t) {
-      const pairs = t.pairs.slice(0)
+      const pairs = [...t.pairs] // .slice(0)
       const myPair = {
         player: this.myPlayer.id,
         partner: this.myPd,
@@ -341,18 +341,10 @@ export default {
       }
       pairs.push(myPair)
       tourneys$.patch(t._id, { pairs })
-      this.$forceUpdate()
     },
     onPair (p) {
-      const pair
-      Object.assign({}, pair, this.myPair)
-      if (!p) {
-        if (!pair.partner) pair.partner = this.myPlayer.id
-        else if (!pair.player) pair.player = this.myPlayer.id
-      } else if (p === this.myPlayer.id) {
-
-      }
-      else this.$q.notify({ type: 'info', message: 'You can not join this pair.' })
+      console.log(p)
+      tourneys$.patch(p.t2Id, { pairs: p.pairs })
     },
     onState (t, s) {
       switch (s) {

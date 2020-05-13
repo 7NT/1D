@@ -2,11 +2,7 @@
   <div class="q-pa-md">
     <q-toolbar class="bg-primary text-white shadow-2">
       <q-toolbar-title>Tourney List:</q-toolbar-title>
-      <q-btn
-        :icon="newT2 ? 'close' : 'add'"
-        :disable='!isTD'
-        @click="newT2=!newT2"
-      />
+      <q-btn :icon="newT2 ? 'close' : 'add'" :disable="!isTD" @click="newT2=!newT2" />
     </q-toolbar>
     <q-expansion-item
       default-opened
@@ -20,31 +16,24 @@
       <q-card>
         <q-card-section>
           <q-item-label header>
-            <div class='q-ma-md row'>
+            <div class="q-ma-md row">
               <q-input
                 standout="bg-teal text-white"
                 v-model="t2.name"
                 label="Tourney Name"
-                class='col-8'
+                class="col-8"
               />
               <q-space />
-              <div class='col'>
+              <div class="col">
                 <q-badge color="secondary">Start in: {{ t2.time }} minutes</q-badge>
-                <q-slider
-                  dense
-                  v-model="t2.time"
-                  color="red"
-                  :min="10"
-                  :max="30"
-                  :step="10"
-                />
+                <q-slider dense v-model="t2.time" color="red" :min="10" :max="30" :step="10" />
               </div>
             </div>
           </q-item-label>
           <q-separator />
           <q-item>
             <q-item-section side>
-              <q-icon name='settings' />
+              <q-icon name="settings" />
             </q-item-section>
             <q-separator />
             <q-item-section>
@@ -59,9 +48,9 @@
                   snap
                   label
                   label-always
-                  :label-value='`boards/round: ${t2.bn}`'
+                  :label-value="`boards/round: ${t2.bn}`"
                   color="blue"
-                  class='col-5'
+                  class="col-5"
                 />
                 <q-separator vertical>
                   <q-space />
@@ -76,41 +65,26 @@
                   snap
                   label
                   label-always
-                  :label-value='`rounds: ${t2.br}`'
+                  :label-value="`rounds: ${t2.br}`"
                   color="green"
-                  class='col-5'
+                  class="col-5"
                 />
               </div>
             </q-item-section>
-            <q-item-section
-              side
-              top
-            >
+            <q-item-section side top>
               <div class="q-pa-md bg-info">
-                <q-option-group
-                  dense
-                  :options="bt"
-                  label="Board"
-                  type="radio"
-                  v-model="t2.mix"
-                />
+                <q-option-group dense :options="bt" label="Board" type="radio" v-model="t2.mix" />
               </div>
             </q-item-section>
           </q-item>
         </q-card-section>
         <q-separator dark />
         <q-card-actions align="right">
-          <q-btn
-            push
-            @click='onState(t2, 0)'
-          >Submit</q-btn>
+          <q-btn push @click="onState(t2, 0)">Submit</q-btn>
         </q-card-actions>
       </q-card>
     </q-expansion-item>
-    <q-list
-      bordered
-      separator
-    >
+    <q-list bordered separator>
       <q-expansion-item
         dense-toggle
         switch-toggle-side
@@ -130,30 +104,15 @@
                 color="green"
                 text-color="white"
                 icon="emoji_events"
-              >
-                @{{t.td}}: {{t.name}}
-              </q-chip>
+              >@{{t.td}}: {{t.name}}</q-chip>
             </q-item-label>
             <q-item-label caption>
-              <q-badge color="blue">
-                {{t.mix}}
-              </q-badge>
-              <q-badge
-                transparent
-                align="middle"
-                color="orange"
-              >
-                {{t.bn}} x {{t.br}}
-              </q-badge>
+              <q-badge color="blue">{{t.mix}}</q-badge>
+              <q-badge transparent align="middle" color="orange">{{t.bn}} x {{t.br}}</q-badge>
             </q-item-label>
           </q-item-section>
-          <q-item-section
-            side
-            top
-          >
-            <q-badge color="info">
-              start in: {{startAt(t.startAt)}}
-            </q-badge>
+          <q-item-section side top>
+            <q-badge color="info">start in: {{startAt(t.startAt)}}</q-badge>
           </q-item-section>
           <q-item-section side>
             <q-item-section avatar>
@@ -203,23 +162,17 @@
             <myT2List
               v-for="p in t.pairs"
               :key="p.pairN"
-              :t2='t'
-              :myPlayer='myPlayer'
-              :myPair='p'
+              :t2="t"
+              :myPlayer="myPlayer"
+              :myPair="p"
+              v-on:onRoomId="onRoomId"
               v-on:onPair="onPair"
-              class='pair'
+              class="pair"
             />
           </q-card-section>
-          <q-card-section class="justify-start">
-          </q-card-section>
-          <q-separator
-            color="orange"
-            inset
-          />
-          <q-card-actions
-            align="right"
-            v-if='t.state===0'
-          >
+          <q-card-section class="justify-start"></q-card-section>
+          <q-separator color="orange" inset />
+          <q-card-actions align="right" v-if="t.state===0">
             <q-btn-toggle
               v-model="myCC"
               push
@@ -231,30 +184,14 @@
                 {label: 'Precision', value: 'Precision'},
               ]"
             />
-            <q-separator
-              vertical
-              inset
-            />
-            <q-input
-              filled
-              dense
-              v-model="myCC"
-              label="My CC..."
-            />
+            <q-separator vertical inset />
+            <q-input filled dense v-model="myCC" label="My CC..." />
             <q-space />
-            <q-input
-              filled
-              dense
-              v-model="myPd"
-              label="My Partner"
-            />
+            <q-input filled dense v-model="myPd" label="My Partner" />
             <q-space>
               <q-separator />
             </q-space>
-            <q-btn
-              push
-              @click='onJoin(t)'
-            >Join</q-btn>
+            <q-btn push @click="onJoin(t)">{{register(t)}}</q-btn>
           </q-card-actions>
         </q-card>
       </q-expansion-item>
@@ -265,7 +202,7 @@
 
 <script>
 import moment from 'moment'
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { jbBoardMix } from '../jb'
 import { tourneys$ } from 'src/api'
 import myT2List from 'src/components/myT2List'
@@ -300,8 +237,8 @@ export default {
     myT2List
   },
   computed: {
-    ...mapState('jstore', ['tourneys']),
-    ...mapGetters('jstore', ['getPlayerById']),
+    ...mapState('jstore', ['tourneys', 't2Id']),
+    ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick']),
     myTourneys () {
       return this.tourneys
     },
@@ -310,41 +247,35 @@ export default {
     }
   },
   methods: {
-    getPlayer: function (pId) {
-      return this.getPlayerById(pId)
-    },
-    getPNick (p) {
-      const player = this.getPlayer(p)
-      if (player) return player.nick
-      else return '[JOIN]'
-    },
-    getPAvatar (p) {
-      const player = this.getPlayer(p)
-      if (player) return player.profile.avatar
-      else return null
-    },
-    getPFlag (p) {
-      const player = this.getPlayer(p)
-      if (player) {
-        const flag = player.profile.flag.toLowerCase()
-        return `img:statics/flags/4x3/${flag}.svg`
-      } else return null
+    ...mapActions('jstore', ['setRoomId']),
+    register (t) {
+      try {
+        if (this.t2Id._id === t._id) return 'Update'
+      } catch (err) {}
+      return 'Join'
     },
     onJoin (t) {
       const pairs = [...t.pairs] // .slice(0)
+      let pd = this.getPlayerByNick(this.myPd)
+      if (!pd) pd = { nick: this.myPd }
       const myPair = {
-        player: this.myPlayer.id,
-        partner: this.myPd,
+        player: this.myPlayer,
+        partner: pd,
         cc: this.myCC,
         boards: 0,
         score: null
       }
       pairs.push(myPair)
+      this.onRoomId({ id: 2, t2Id: { _id: t._id, myPair } })
       tourneys$.patch(t._id, { pairs })
     },
-    onPair (p) {
-      console.log(p)
-      tourneys$.patch(p.t2Id, { pairs: p.pairs })
+    onRoomId (t2Id) {
+      console.log(this.t2Id, t2Id)
+      if (t2Id !== this.t2Id) this.setRoomId(t2Id)
+    },
+    onPair (pair) {
+      // console.log(pair)
+      tourneys$.patch(pair.t2._id, { pairs: pair.pairs })
     },
     onState (t, s) {
       switch (s) {
@@ -388,6 +319,5 @@ export default {
 }
 .pair {
   height: 30px;
-  border: 1px solid yellowgreen;
 }
 </style>

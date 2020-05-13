@@ -2,12 +2,8 @@
 export function someAction (context) {
 }
 */
-export const setUser = (context, payload) => {
-  context.commit('setUser', payload)
-}
-
-export const addUser = (context, payload) => {
-  context.commit('addUser', payload)
+export const setMyUser = (context, payload) => {
+  context.commit('setMyUser', payload)
 }
 
 export const setPlayers = (context, payload) => {

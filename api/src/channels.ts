@@ -17,7 +17,7 @@ export default function (app: Application) {
     // on an array of the user
     /*
     user.rooms.forEach((room:any) =>
-      app.channel(`rooms/${(roomId:any)}`).join(connection)
+      app.channel(`rooms/${(t1Id:any)}`).join(connection)
     )
     */
     // Easily organize users by email and userid for things like messaging

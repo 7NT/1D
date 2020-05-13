@@ -2,17 +2,20 @@
 export function someGetter (state) {}
 */
 export const myPlayer = state => {
-  // if (state.user) return state.players.get(state.user._id) else return null
-  return state.players.find(p => p.id === state.user._id)
+  const p = state.players.find(p => p.id === state.myUser._id)
+  if (p) return p
+  else return state.myUser
 }
 
 export const getPlayerById = state => id => {
-  // return state.players.get(id)
   return state.players.find(p => p.id === id)
 }
 
+export const getPlayerByNick = state => nick => {
+  return state.players.find(p => p.nick === nick)
+}
+
 export const getTableById = state => id => {
-  // return state.tables.get(id)
   return state.tables.find(t => t.id === id)
 }
 

@@ -132,13 +132,12 @@ export default {
   },
   methods: {
     ...mapActions('jstore', ['setRoomId']),
-    onRoom (value) {
-      console.log('r', value)
+    onUser (user) {
+      this.updateuser(user)
     },
     onPlayer (seat) {
       seat.tId0 = this.mySeat.tId
       seat.sId0 = this.mySeat.sId
-      console.log(seat)
       players$.patch(this.myPlayer.id, { seat })
     }
   },
@@ -148,9 +147,7 @@ export default {
   },
   watch: {
     myPlayer (p) {
-      if (!p) {
-        this.$router.push({ name: 'home' }).catch(e => {})
-      }
+      if (!p) this.$router.push({ name: 'home' }).catch(e => {})
     },
     mySeat (n) {
       this.rooms[1].open = !!n.tId
@@ -158,7 +155,7 @@ export default {
       this.rId = n.tId ? 1 : 0
     },
     rId (r) {
-      this.setRoomId(r ? this.mySeat.tId : null)
+      this.setRoomId({ id: 1, t1Id: r ? this.mySeat.tId : null })
     }
   },
   created () {

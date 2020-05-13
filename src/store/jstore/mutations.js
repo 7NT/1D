@@ -1,8 +1,9 @@
 /*
 export function someMutation (state) {}
 */
-export const setUser = (state, user) => {
-  state.user = user
+export const setMyUser = (state, user) => {
+  if (user && !user.id) user.id = user._id
+  state.myUser = user
 }
 
 export const setPlayers = (state, players) => {
@@ -88,6 +89,17 @@ export const setChat = (state, chat) => {
   state.chats.push(chat)
 }
 
-export const setRoomId = (state, roomId) => {
-  state.roomId = roomId
+export const setRoomId = (state, room) => {
+  switch (room.id) {
+    case 1:
+      state.t1Id = room.t1Id
+      break
+    case 2:
+      state.t2Id = room.t2Id
+      break
+    case 4:
+      state.t4Id = room.t4Id
+      break
+    default:
+  }
 }

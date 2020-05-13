@@ -208,7 +208,7 @@ export default {
   methods: {
     onBT (bt) {
       let message
-      console.log('bt', this.mySeat)
+      // console.log('bt', this.mySeat)
       if (jbIsPlayer(this.mySeat.sId)) {
         this.$emit('onTable', { action: 'bt', bt })
         message = `Board will switch to ${bt} next`

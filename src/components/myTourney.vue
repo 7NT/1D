@@ -2,7 +2,11 @@
   <div class="q-pa-md">
     <q-toolbar class="bg-primary text-white shadow-2">
       <q-toolbar-title>Tourney List:</q-toolbar-title>
-      <q-btn :icon="newT2 ? 'close' : 'add'" :disable="!isTD" @click="newT2=!newT2" />
+      <q-btn
+        :icon="newT2 ? 'close' : 'add'"
+        :disable="!isTD"
+        @click="newT2=!newT2"
+      />
     </q-toolbar>
     <q-expansion-item
       default-opened
@@ -26,7 +30,14 @@
               <q-space />
               <div class="col">
                 <q-badge color="secondary">Start in: {{ t2.time }} minutes</q-badge>
-                <q-slider dense v-model="t2.time" color="red" :min="10" :max="30" :step="10" />
+                <q-slider
+                  dense
+                  v-model="t2.time"
+                  color="red"
+                  :min="10"
+                  :max="30"
+                  :step="10"
+                />
               </div>
             </div>
           </q-item-label>
@@ -71,20 +82,35 @@
                 />
               </div>
             </q-item-section>
-            <q-item-section side top>
+            <q-item-section
+              side
+              top
+            >
               <div class="q-pa-md bg-info">
-                <q-option-group dense :options="bt" label="Board" type="radio" v-model="t2.mix" />
+                <q-option-group
+                  dense
+                  :options="bt"
+                  label="Board"
+                  type="radio"
+                  v-model="t2.mix"
+                />
               </div>
             </q-item-section>
           </q-item>
         </q-card-section>
         <q-separator dark />
         <q-card-actions align="right">
-          <q-btn push @click="onState(t2, 0)">Submit</q-btn>
+          <q-btn
+            push
+            @click="onState(t2, 0)"
+          >Submit</q-btn>
         </q-card-actions>
       </q-card>
     </q-expansion-item>
-    <q-list bordered separator>
+    <q-list
+      bordered
+      separator
+    >
       <q-expansion-item
         dense-toggle
         switch-toggle-side
@@ -108,10 +134,17 @@
             </q-item-label>
             <q-item-label caption>
               <q-badge color="blue">{{t.mix}}</q-badge>
-              <q-badge transparent align="middle" color="orange">{{t.bn}} x {{t.br}}</q-badge>
+              <q-badge
+                transparent
+                align="middle"
+                color="orange"
+              >{{t.bn}} x {{t.br}}</q-badge>
             </q-item-label>
           </q-item-section>
-          <q-item-section side top>
+          <q-item-section
+            side
+            top
+          >
             <q-badge color="info">start in: {{startAt(t.startAt)}}</q-badge>
           </q-item-section>
           <q-item-section side>
@@ -171,8 +204,14 @@
             />
           </q-card-section>
           <q-card-section class="justify-start"></q-card-section>
-          <q-separator color="orange" inset />
-          <q-card-actions align="right" v-if="t.state===0">
+          <q-separator
+            color="orange"
+            inset
+          />
+          <q-card-actions
+            align="right"
+            v-if="t.state===0"
+          >
             <q-btn-toggle
               v-model="myCC"
               push
@@ -184,14 +223,31 @@
                 {label: 'Precision', value: 'Precision'},
               ]"
             />
-            <q-separator vertical inset />
-            <q-input filled dense v-model="myCC" label="My CC..." />
+            <q-separator
+              vertical
+              inset
+            />
+            <q-input
+              filled
+              dense
+              v-model="myCC"
+              label="My CC..."
+            />
             <q-space />
-            <q-input filled dense v-model="myPd" label="My Partner" />
+            <q-input
+              filled
+              dense
+              v-model="myPd"
+              :value="myPd.nick || null"
+              label="My Partner"
+            />
             <q-space>
               <q-separator />
             </q-space>
-            <q-btn push @click="onJoin(t)">{{register(t)}}</q-btn>
+            <q-btn
+              push
+              @click="onRegister(t)"
+            >{{register(t)}}</q-btn>
           </q-card-actions>
         </q-card>
       </q-expansion-item>
@@ -229,8 +285,8 @@ export default {
         { label: 'IMP', value: 'IMP', color: 'green' },
         { label: 'XIMP', value: 'XIMP', color: 'red' }
       ],
-      myCC: 'SAYC',
-      myPd: null
+      myPd: null,
+      myCC: 'SAYC'
     }
   },
   components: {
@@ -251,30 +307,39 @@ export default {
     register (t) {
       try {
         if (this.t2Id._id === t._id) return 'Update'
-      } catch (err) {}
+      } catch (err) { }
       return 'Join'
     },
-    onJoin (t) {
+    onRegister (t) {
       const pairs = [...t.pairs] // .slice(0)
-      let pd = this.getPlayerByNick(this.myPd)
-      if (!pd) pd = { nick: this.myPd }
-      const myPair = {
-        player: this.myPlayer,
-        partner: pd,
-        cc: this.myCC,
-        boards: 0,
-        score: null
+      let pd = this.myPd
+      if (pd && !pd.id) {
+        pd = this.getPlayerByNick(pd)
+        if (!pd) pd = { nick: this.myPd }
       }
-      pairs.push(myPair)
+      let myPair = this.t2Id.myPair
+      console.log(myPair)
+      if (myPair && myPair.pairN > 0 && myPair.pairN < pairs.length) {
+        pairs[myPair.pairN - 1].partner = pd
+        pairs[myPair.pairN - 1].cc = this.myCC
+      } else {
+        myPair = {
+          player: this.myPlayer,
+          partner: pd,
+          cc: this.myCC,
+          boards: 0,
+          score: null
+        }
+        pairs.push(myPair)
+      }
       this.onRoomId({ id: 2, t2Id: { _id: t._id, myPair } })
       tourneys$.patch(t._id, { pairs })
     },
     onRoomId (t2Id) {
       console.log(this.t2Id, t2Id)
-      if (t2Id !== this.t2Id) this.setRoomId(t2Id)
+      this.setRoomId(t2Id)
     },
     onPair (pair) {
-      // console.log(pair)
       tourneys$.patch(pair.t2._id, { pairs: pair.pairs })
     },
     onState (t, s) {
@@ -302,6 +367,12 @@ export default {
       // return moment(startAt).toNow()
     }
   },
+  mounted () {
+    if (this.t2Id.myPair) {
+      this.myPd = this.t2Id.myPair.partner || null
+      this.myCC = this.t2Id.myPair.cc || 'SAYC'
+    }
+  },
   watch: {
     newT2 (t2) {
       console.log(t2, this.isTD)
@@ -311,7 +382,7 @@ export default {
 </script>
 
 <style scoped>
-.q-btn {
+.q-btn .q-btn-toggle {
   /*max-width: 125px;*/
   /* height: 32px; */
   text-overflow: ellipsis;

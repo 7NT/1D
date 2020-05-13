@@ -38,14 +38,14 @@ export default {
     return {}
   },
   computed: {
-    ...mapState('jstore', ['user', 'chats']),
+    ...mapState('jstore', ['myUser', 'chats']),
     myChats () {
       return this.chats.filter(m => m.to === (this.to.name || this.to.nick)).slice(-10).reverse()
     }
   },
   methods: {
     isSent (from) {
-      return from._id === this.user._id
+      return from._id === this.myUser._id
     },
     chatDate (createdAt) {
       return moment(createdAt).format('MMM Do, hh:mm:ss')

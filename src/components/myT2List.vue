@@ -1,8 +1,14 @@
 <template>
   <q-item :class="getBorder(myPair)">
-    <q-item-section avatar class="col-2">
+    <q-item-section
+      avatar
+      class="col-2"
+    >
       <q-chip>
-        <q-avatar color="info" text-color="white">{{myPair.pairN}}</q-avatar>
+        <q-avatar
+          color="info"
+          text-color="white"
+        >{{myPair.pairN}}</q-avatar>
         {{myPair.cc}}
       </q-chip>
     </q-item-section>
@@ -54,11 +60,18 @@
 
     <q-item-section class="col-2">
       <q-chip square>
-        <q-avatar color="green" text-color="white">{{myPair.score}}</q-avatar>
+        <q-avatar
+          color="green"
+          text-color="white"
+        >{{myPair.score}}</q-avatar>
         {{myPair.boards || 0}} / {{ getBoards ()}}
       </q-chip>
     </q-item-section>
-    <q-item-section side top class="col-2">
+    <q-item-section
+      side
+      top
+      class="col-2"
+    >
       <div class="col-2 q-mt-md">
         <q-fab
           square
@@ -88,7 +101,7 @@
           <q-fab-action
             square
             padding="3px"
-            color="warning"
+            color="negative"
             @click="onPState(-2)"
             icon="close"
             label="Remove"
@@ -135,13 +148,13 @@ export default {
     myFlag (player) {
       try {
         return `img:statics/flags/4x3/${player.profile.flag}.svg`
-      } catch (err) {}
+      } catch (err) { }
       return null
     },
     myAvatar (player) {
       try {
         return `img:${player.profile.avatar}`
-      } catch (err) {}
+      } catch (err) { }
       return null
     },
     myT2State (s2) {
@@ -161,22 +174,27 @@ export default {
       return this.t2.bn * this.t2.br
     },
     onPState (p2) {
-      console.log(p2, this.myPair)
+      const pair2 = JSON.parse(JSON.stringify(this.myPair))
+      switch (p2) {
+        case 0:
+        case 1:
+        case -2:
+          pair2.state = p2
+          break
+        default:
+      }
+      this.updatePairs(pair2)
     },
     onPair (pair, n) {
       let bCancel = false
       const pair2 = JSON.parse(JSON.stringify(pair))
       switch (n) {
-        case -1: // pd offline
-          // pair2.partner = this.myPlayer
-          bCancel = true
-          break
         case 0: // no pd
           pair2.partner = this.myPlayer
           break
         case 1: // signout
           if (pair2.player.id === this.myPlayer.id) {
-            if (pair2.partner.id) {
+            if (this.isOnline(pair2.partner)) {
               pair2.player = pair2.partner
               pair2.partner = null
             } else {
@@ -185,6 +203,7 @@ export default {
             }
           } else bCancel = true
           break
+        case -1: // pd offline
         case 2: // join as pd
           if (this.isMyPair) pair2.partner = null
           else bCancel = true
@@ -201,16 +220,21 @@ export default {
           message
         })
       } else {
-        const pairs2 = []
-        this.t2.pairs.forEach(p => {
+        this.updatePairs(pair2)
+      }
+    },
+    updatePairs (pair2) {
+      const pairs2 = []
+      this.t2.pairs.forEach(p => {
+        if (p.state >= -1) {
           if (p.pairN === pair2.pairN) {
             pairs2.push(pair2)
           } else if (p.player.id || p.partner.id) {
             pairs2.push(this.scanPair(p))
           }
-        })
-        this.$emit('onPair', { t2: this.t2, pairs: pairs2 })
-      }
+        }
+      })
+      this.$emit('onPair', { t2: this.t2, pairs: pairs2 })
     },
     scanPair (p) {
       const pair3 = JSON.parse(JSON.stringify(p))
@@ -219,7 +243,7 @@ export default {
           if (pair3.player.id === this.myPlayer.id) pair3.player = null
           else if (pair3.partner.id === this.myPlayer.id) pair3.partner = null
         }
-      } catch (err) {}
+      } catch (err) { }
       return pair3
     }
   },

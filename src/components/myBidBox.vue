@@ -72,7 +72,7 @@ export default {
     },
     myVul () {
       const s1 = this.mySeatX % 2
-      switch (this.myTable.board.vul) {
+      switch (this.myTable.board.bV) {
         case 0:
           return 'vul0'
         case 3:
@@ -111,7 +111,7 @@ export default {
     vul_bgcolor (s) {
       if (this.myBids) {
         const x = jbSeatX(s, this.mySeatX) % 2
-        switch (this.myTable.board.vul) {
+        switch (this.myTable.board.bV) {
           case 0:
             return 'bg-info'
           case 3:

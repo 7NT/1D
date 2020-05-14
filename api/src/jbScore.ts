@@ -1,6 +1,6 @@
 export const jbGetScore = function (sdata: any, result: number) {
   const contract = sdata.contract
-  const v = V12(sdata.vul, contract.declarer)
+  const v = V12(sdata.bV, contract.declarer)
   const xx = contract.XX > 0
   const x = !xx && contract.X > 0
 

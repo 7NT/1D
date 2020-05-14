@@ -87,7 +87,7 @@ async function getBoard(context: any) {
     const bdata = {
       bN,
       bT: table.bT,
-      vul: jbGetVulN(bN),
+      bV: jbGetVulN(bN),
       played: 0,
       cards,
       createdAt
@@ -384,14 +384,14 @@ const onResult = (): Hook => {
       // if (context.id) console.log('t', context.service.store[context.id], t)
 
       const rdata = {
-        vul: t.board.vul,
+        bV: t.board.bV,
         contract: t.bids.info,
         tricks: result.tricks,
       }
       const score = onScore(rdata)
       const sdata = {
         boardId: t.board._id,
-        board: { bN: t.board.bN, bT: t.board.bT, vul: t.board.vul },
+        board: { bN: t.board.bN, bT: t.board.bT, bV: t.board.bV },
         players: t.seats,
         bids: t.bids,
         plays: t.plays,

@@ -271,7 +271,7 @@ export default {
       this.$emit('onTable', {
         action: 'claim',
         claim: {
-          // vul: this.myTable.board.vul,
+          // bV: this.myTable.board.bV,
           contract: this.myTable.bids.info,
           tricks: this.myTable.plays.info.tricks,
           claim: c,

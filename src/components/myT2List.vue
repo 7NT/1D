@@ -10,20 +10,20 @@
     <q-item-section class="col-6">
       <div class="row">
         <div class="col-6">
+          <q-icon :name="myFlag(myPair.player)" size='sm' />
           <q-btn
             :icon="myAvatar(myPair.player)"
             :label="myNick(myPair.player)"
-            :icon-right="myFlag(myPair.player)"
             class="player bg-secondary"
             align="around"
           />
         </div>
         <div class="col-6">
           <template v-if="isOnline(myPair.partner)">
+            <q-icon :name="myFlag(myPair.partner)" size='sm' />
             <q-btn
               :icon="myAvatar(myPair.partner)"
               :label="myNick(myPair.partner)"
-              :icon-right="myFlag(myPair.partner)"
               class="player bg-secondary"
               align="around"
             />
@@ -99,6 +99,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { getT2State } from 'src/jbState'
+import { jbIsAdmin, jbIsMyPlayer } from 'src/jbPlayer'
 
 export default {
   name: 'myT2List',
@@ -112,19 +113,19 @@ export default {
     ...mapState('jstore', ['t2Id']),
     ...mapGetters('jstore', ['getPlayerById']),
     isTD () {
-      return this.myPlayer.status > 1
+      return jbIsAdmin(this.myPlayer)
     }
   },
   methods: {
+    isOnline (nick) {
+      try {
+        return this.getPlayerByNick(nick).state >= 0
+      } catch (err) {}
+      return false
+    },
     getBorder (pair) {
       if (this.isMyPair) return 'row rborder'
       else return 'row gborder'
-    },
-    isMyPlayer (p) {
-      return p ? p.id === this.myPlayer.id : null
-    },
-    isOnline (player) {
-      return player ? !!player.id : false
     },
     myNick (player) {
       return player ? player.nick : 'JOIN...'
@@ -170,8 +171,9 @@ export default {
       this.updatePairs(pair2, 0)
     },
     onPair (pair) {
-      pair.partner = this.myPlayer
-      this.updatePairs(pair, this.t2Id.myPair.pN)
+      const pair0 = JSON.parse(JSON.stringify(pair))
+      pair0.partner = this.myPlayer
+      this.updatePairs(pair0, this.t2Id.myPair.pN)
     },
     updatePairs (pair, myPN) {
       const pairs = []
@@ -180,19 +182,26 @@ export default {
           pairs.push(pair)
         } else {
           if (p.pN === myPN) { // remove
-            if (this.isMyPlayer(p.player)) p.player = null
-            else if (this.isMyPlayer(p.partner)) p.partner = null
-          }
-          pairs.push(p)
+            const p0 = JSON.parse(JSON.stringify(p))
+            if (this.isMyPlayer(p.player)) {
+              p0.player = null
+              if (!this.isOnline(p.partner)) p0.partner = null
+            } else if (jbIsMyPlayer(p.partner)) {
+              p0.partner = null
+              if (!this.isOnline(p.player)) p0.player = null
+            }
+            pairs.push(p0)
+          } else pairs.push(p)
         }
       })
       this.$emit('onPair', { t2: this.t2, pairs })
     }
   },
   mounted () {
+    console.log(this.myPair, this.myPlayer)
     if (
-      this.isMyPlayer(this.myPair.player) ||
-      this.isMyPlayer(this.myPair.partner)
+      jbIsMyPlayer(this.myPair.player, this.myPlayer) ||
+      jbIsMyPlayer(this.myPair.partner, this.myPlayer)
     ) {
       this.$emit('onRoomId', {
         id: 2,

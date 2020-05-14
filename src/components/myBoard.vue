@@ -161,7 +161,7 @@
 
 <script>
 import { openURL } from 'quasar'
-import { jbIsPlayer } from 'src/jb'
+import { jbIsPlayer } from 'src/jbPlayer'
 
 export default {
   name: 'myBoard',
@@ -190,7 +190,7 @@ export default {
     bdata: function () {
       try {
         if (this.myTable.board) {
-          return this.myTable.board.bt + ': ' + this.myTable.board.bN
+          return this.myTable.board.bT + ': ' + this.myTable.board.bN
         }
       } catch (err) { }
       return 'Board'
@@ -206,12 +206,12 @@ export default {
     }
   },
   methods: {
-    onBT (bt) {
+    onBT (bT) {
       let message
-      // console.log('bt', this.mySeat)
+      // console.log('bT', this.mySeat)
       if (jbIsPlayer(this.mySeat.sId)) {
-        this.$emit('onTable', { action: 'bt', bt })
-        message = `Board will switch to ${bt} next`
+        this.$emit('onTable', { action: 'bT', bT })
+        message = `Board will switch to ${bT} next`
         // say.speak(message)
       } else {
         message = 'You do not have permission to switch board'
@@ -244,12 +244,12 @@ export default {
     }
   },
   watch: {
-    mix (bt) {
-      this.onBT(bt)
+    mix (bT) {
+      this.onBT(bT)
     }
   },
   mounted () {
-    this.mix = this.myTable.bt
+    this.mix = this.myTable.bT
   }
 }
 </script>

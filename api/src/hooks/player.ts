@@ -1,7 +1,7 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
-import { isPlayer, getMIX } from '../jb'
+import { jbIsPlayer, jbGetMIX } from '../jb'
 
 const onPlayer = (): Hook => {
   return async (context: HookContext) => {
@@ -42,7 +42,7 @@ async function beforeSit(context: any) {
 async function getTable(tables$: any, user: any, seat: any) {
   let table: { seats: any[]; ready: any[]; state: number; id: any }
   if (!seat.tId) {  //new table
-    table = await newTable(tables$, user, getMIX(), seat)
+    table = await newTable(tables$, user, jbGetMIX(), seat)
   } else {
     table = await tables$.get(seat.tId)
     let seats = table.seats
@@ -70,7 +70,7 @@ async function newTable(tables$: any, user: any, mix: any, seat: any) {
     name: '#' + user.nick,
     state: 0,
     turn: 0,
-    bt: mix,
+    bT: mix,
     players: 1,
     seats: [null, null, null, null],
     ready: [0, 0, 0, 0]
@@ -90,7 +90,7 @@ async function leaveTable(tables$: any, pId: any, seat: any) {
       seats: table.seats,
       ready: table.ready
     }
-    if (isPlayer(seat.sId0)) {
+    if (jbIsPlayer(seat.sId0)) {
       let p = tdata.seats[seat.sId0 - 1]
       if (p) {
         if (p === pId) {

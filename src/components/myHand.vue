@@ -92,7 +92,7 @@
 <script>
 import { mapGetters } from 'vuex'
 // import myCards from 'src/components/myCards';
-import { jbIsPlayer, jbSeatX, jbSeat1234 } from 'src/jb'
+import { jbIsPlayer, jbSeatX, jbSeat1234 } from 'src/jbPlayer'
 
 export default {
   name: 'myHand',
@@ -143,7 +143,7 @@ export default {
       }
     },
     isVisible () {
-      if (this.myTable.state < 1) return true
+      if (this.myTable.state > 2) return true
       else if (this.myTable.state === 0) return false
       else if (this.isDummy) return true
       else return this.seatX === this.mySeat.sId

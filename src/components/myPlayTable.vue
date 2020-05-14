@@ -268,8 +268,8 @@ export default {
           })
           break
         }
-        case 'bt': {
-          tables$.patch(this.myTable.id, { bt: action.bt })
+        case 'bT': {
+          tables$.patch(this.myTable.id, { bT: action.bT })
           break
         }
         case 'cc': {

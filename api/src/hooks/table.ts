@@ -1,8 +1,8 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
-import { vulN, N52Suit, N52Rank, N4Suit } from '../jb'
-import { getScore } from '../jbScore'
+import { jbGetVulN, jbGetSuitN52, jbGetRankN52, jbGetSuitN4 } from '../jb'
+import { jbGetScore } from '../jbScore'
 
 const onTable = (): Hook => {
   return async (context: HookContext) => {
@@ -50,7 +50,7 @@ async function getBoard(context: any) {
   let played = await played$.find({
     query: {
       $select: ['boardId'],
-      bt: table.bt,
+      bT: table.bT,
       uId: { $in: uIds }
     }
   })
@@ -62,7 +62,7 @@ async function getBoard(context: any) {
       query: {
         $limit: 1,
         $select: ['boardId'],
-        bt: table.bt,
+        bT: table.bT,
         boardId: { $nin: boardIds }
       }
     })
@@ -72,22 +72,22 @@ async function getBoard(context: any) {
     let bns: any = await boards$.find({
       query: {
         $limit: 1,
-        $select: ['bn'],
-        bt: table.bt,
+        $select: ['bN'],
+        bT: table.bT,
         $sort: {
-          bn: -1
+          bN: -1
         }
       }
     })
-    let bn: number = bns.data.map((x: { bn: any }) => x.bN)[0]
-    if (typeof bn === 'undefined') bn = 1
-    else bn++
+    let bN: number = bns.data.map((x: { bN: any }) => x.bN)[0]
+    if (typeof bN === 'undefined') bN = 1
+    else bN++
     const createdAt = new Date().getTime();
     const cards = shuffle()
     const bdata = {
-      bn,
-      bt: table.bt,
-      vul: vulN(bn),
+      bN,
+      bT: table.bT,
+      vul: jbGetVulN(bN),
       played: 0,
       cards,
       createdAt
@@ -99,7 +99,7 @@ async function getBoard(context: any) {
     if (u)
       played$.create({
         boardId: board._id,
-        bt: table.bt,
+        bT: table.bT,
         uId: u,
         sId: index + 1,
         playedAt: new Date().getTime()
@@ -147,8 +147,8 @@ const shuffle = function () {
       let c = sort4[h][i] + 1
       let card = {
         value: c,
-        suit: N52Suit(c),
-        rank: N52Rank(c)
+        suit: jbGetSuitN52(c),
+        rank: jbGetRankN52(c)
       }
       card4[h].push(card)
     }
@@ -173,7 +173,7 @@ function onBid(tdata: any) {
       data: []
     }
     if (info.P > 3) {
-      tdata.state = -1
+      tdata.state = 3 //review
       tdata.ready = [0, 0, 0, 0]
       tdata.turn = 0
       const result = {
@@ -327,7 +327,7 @@ function onPlay(tdata: any) {
   tdata.turn = (turn % 4) + 1
   tdata.claim = null
   if (tricks[0] + tricks[1] === 13) {
-    tdata.state = -1
+    tdata.state = 3
     tdata.ready = [0, 0, 0, 0]
     tdata.turn = 0
     const result = { tricks }
@@ -357,7 +357,7 @@ function onClaim(tdata: any) {
   }
   tricks[o] = 13 - tricks[d]
   // tdata.claim.tricks = tricks
-  tdata.state = -1
+  tdata.state = 3
   tdata.ready = [0, 0, 0, 0]
   tdata.turn = 0
   const result = { tricks: claim.tricks }
@@ -391,7 +391,7 @@ const onResult = (): Hook => {
       const score = onScore(rdata)
       const sdata = {
         boardId: t.board._id,
-        board: { bn: t.board.bN, bt: t.board.bt, vul: t.board.vul },
+        board: { bN: t.board.bN, bT: t.board.bT, vul: t.board.vul },
         players: t.seats,
         bids: t.bids,
         plays: t.plays,
@@ -414,7 +414,7 @@ function onScore(rdata: any) {
     const by0 = (rdata.contract.by - 1) % 2
     const by1 = (by0 + 1) % 2
     result = rdata.tricks[by0] - 6 - rdata.contract.bidN
-    let score = getScore(rdata, result)
+    let score = jbGetScore(rdata, result)
     scores[by0] = score
     scores[by1] = -score
   }

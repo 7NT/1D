@@ -40,13 +40,13 @@ const onResult = (): Hook => {
           boardId: result.boardId
         }
       })
-      const bt = result.board.bt
+      const bT = result.board.bT
       if (results.data.length > 0) {
         const boardIds = results.data.map((s: { _id: any }) => s._id)
         const rawscores = results.data.map((s: { score: number }) => s.score)
 
         let scoreMap: any
-        switch (bt) {
+        switch (bT) {
           case 'MP': {
             scoreMap = scoreM(rawscores)
             break;
@@ -76,7 +76,7 @@ const onResult = (): Hook => {
         }
         context.data.updatedAt = new Date().getTime()
       } else {
-        switch (bt) {
+        switch (bT) {
           case 'MP': {
             context.data.mix = 50
             break;

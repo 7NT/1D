@@ -1,39 +1,3 @@
-export const jbSeatX = (s, v) => {
-  // if (v < 1) v = 3
-  const v0 = Math.abs(v)
-  switch (v0) {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      v = v0 - 3
-      break
-    default:
-      v = 0
-  }
-  let x = (s + v) % 4
-  if (x <= 0) x += 4
-  return x
-}
-
-export const jbSeat1234 = (s) => {
-  let s1234 = s % 4
-  if (s1234 < 1) s1234 += 4
-  return s1234
-}
-
-export const jbIsPlayer = (seat) => {
-  switch (seat) {
-    case 1:
-    case 2:
-    case 3:
-    case 4:
-      return true
-    default:
-      return false
-  }
-}
-
 export const jbBoardMix = () => {
   const t = new Date().getTime()
   switch (t % 3) {
@@ -46,8 +10,8 @@ export const jbBoardMix = () => {
   }
 }
 
-export const jbBoardVulN = (bn) => {
-  switch (bn % 16) {
+export const jbBoardVulN = (bN) => {
+  switch (bN % 16) {
     case 1:
     case 8:
     case 11:
@@ -73,8 +37,8 @@ export const jbBoardVulN = (bn) => {
   }
 }
 
-export const jbDealer = (bn) => {
-  return ((bn - 1) % 4) + 1
+export const jbDealer = (bN) => {
+  return ((bN - 1) % 4) + 1
 }
 
 export const jbBidNS = (n, s) => {

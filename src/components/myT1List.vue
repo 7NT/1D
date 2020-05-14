@@ -46,7 +46,7 @@ export default {
       else return getT2State(this.myTable.state)
     },
     myT1Info () {
-      return `${this.myTable.name}: ${this.myTable.info} || ${this.state} }`
+      return `${this.myTable.name}: ${this.state}`
     }
   },
   methods: {

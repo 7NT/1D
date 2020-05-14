@@ -40,7 +40,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { jbSeatX } from 'src/jb'
+import { jbSeatX } from 'src/jbPlayer'
 
 export default {
   name: 'myBidBox',

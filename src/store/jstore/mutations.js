@@ -105,4 +105,5 @@ export const setRoomId = (state, room) => {
       break
     default:
   }
+  // console.log(room, state.t2Id)
 }

@@ -9,7 +9,7 @@
           icon="menu"
           aria-label="Menu"
           v-if="authenticated"
-          @click="playerDrawer = !playerDrawer"
+          @click="playerList = !playerList"
         />
 
         <q-toolbar-title>
@@ -239,7 +239,7 @@
           :key="r._id"
         >
           <q-item-section>
-            <q-item-label overline>{{r.board.bt}}#{{r.board.bN}}: {{getPName(r)}}</q-item-label>
+            <q-item-label overline>{{r.board.bT}}#{{r.board.bN}}: {{getPName(r)}}</q-item-label>
             <q-item-label>
               {{getContract(r)}}{{getResult(r)}}
               <q-badge
@@ -403,8 +403,8 @@ export default {
       if (r.bids.info.by < 1) return 0
       else {
         const by = (r.bids.info.by - 1) % 2 === 0
-        const bt = r.board.bt
-        switch (bt) {
+        const bT = r.board.bT
+        switch (bT) {
           case 'MP':
             return by ? `${r.score}%` : `${100 - r.score}%`
           default:

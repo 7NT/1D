@@ -1,4 +1,4 @@
-export const getMIX = () => {
+export const jbGetMIX = () => {
   let t = new Date().getTime();
   switch (t % 3) {
     case 1:
@@ -10,7 +10,7 @@ export const getMIX = () => {
   }
 }
 
-export const isPlayer = (seat: number) => {
+export const jbIsPlayer = (seat: number) => {
   switch (seat) {
     case 1:
     case 2:
@@ -22,8 +22,8 @@ export const isPlayer = (seat: number) => {
   }
 }
 
-export const vulN = (bn: number) => {
-  switch (bn % 16) {
+export const jbGetVulN = (bN: number) => {
+  switch (bN % 16) {
     case 1:
     case 8:
     case 11:
@@ -48,13 +48,13 @@ export const vulN = (bn: number) => {
   }
 }
 
-export const N52Suit = (n52: number) => {
+export const jbGetSuitN52 = (n52: number) => {
   n52--;
   let n13 = Math.floor(n52 / 13);
-  return N4Suit(n13);
+  return jbGetSuitN4(n13);
 }
 
-export const N52Rank = (n52: number) => {
+export const jbGetRankN52 = (n52: number) => {
   let n13 = n52 % 13;
   switch (n13) {
     case 0:
@@ -70,7 +70,7 @@ export const N52Rank = (n52: number) => {
   }
 }
 
-export const N4Suit = (n4: number) => {
+export const jbGetSuitN4 = (n4: number) => {
   switch (n4) {
     case 4:
       return 'NT';
@@ -86,5 +86,3 @@ export const N4Suit = (n4: number) => {
       return '';
   }
 }
-
-// module.exports = { getMIX, isPlayer, vulN, N4Suit, N52Suit, N52Rank };

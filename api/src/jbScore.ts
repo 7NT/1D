@@ -1,4 +1,4 @@
-const getScore = function (sdata: any, result: number) {
+export const jbGetScore = function (sdata: any, result: number) {
   const contract = sdata.contract
   const v = V12(sdata.vul, contract.declarer)
   const xx = contract.XX > 0
@@ -98,8 +98,3 @@ function downScoreX (n: number, v: boolean, x: boolean, xx: boolean) {
   }
 }
 
-export {
-  getScore,
-  getScoreDown,
-  getScorePlus
-}

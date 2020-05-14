@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { jbIsPlayer } from 'src/jb'
+import { jbIsPlayer } from 'src/jbPlayer'
 
 import myPlayBox from 'src/components/myPlayBox'
 

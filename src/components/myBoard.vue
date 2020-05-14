@@ -190,7 +190,7 @@ export default {
     bdata: function () {
       try {
         if (this.myTable.board) {
-          return this.myTable.board.bt + ': ' + this.myTable.board.bn
+          return this.myTable.board.bt + ': ' + this.myTable.board.bN
         }
       } catch (err) { }
       return 'Board'

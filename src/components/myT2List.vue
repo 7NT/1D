@@ -1,14 +1,8 @@
 <template>
   <q-item :class="getBorder(myPair)">
-    <q-item-section
-      avatar
-      class="col-2"
-    >
+    <q-item-section avatar class="col-2">
       <q-chip>
-        <q-avatar
-          color="info"
-          text-color="white"
-        >{{myPair.pairN}}</q-avatar>
+        <q-avatar color="info" text-color="white">{{myPair.pN}}</q-avatar>
         {{myPair.cc}}
       </q-chip>
     </q-item-section>
@@ -22,7 +16,6 @@
             :icon-right="myFlag(myPair.player)"
             class="player bg-secondary"
             align="around"
-            @click="onPair(myPair, 1)"
           />
         </div>
         <div class="col-6">
@@ -33,7 +26,6 @@
               :icon-right="myFlag(myPair.partner)"
               class="player bg-secondary"
               align="around"
-              @click="onPair(myPair, 2)"
             />
           </template>
           <template v-else-if="myPair.partner">
@@ -42,7 +34,6 @@
               icon="person"
               class="player bg-info"
               align="around"
-              @click="onPair(myPair, -1)"
             />
           </template>
           <template v-else>
@@ -51,7 +42,7 @@
               icon="person_add"
               class="player bg-info"
               align="around"
-              @click="onPair(myPair, 0)"
+              @click="onPair(myPair)"
             />
           </template>
         </div>
@@ -60,18 +51,11 @@
 
     <q-item-section class="col-2">
       <q-chip square>
-        <q-avatar
-          color="green"
-          text-color="white"
-        >{{myPair.score}}</q-avatar>
+        <q-avatar color="green" text-color="white">{{myPair.score}}</q-avatar>
         {{myPair.boards || 0}} / {{ getBoards ()}}
       </q-chip>
     </q-item-section>
-    <q-item-section
-      side
-      top
-      class="col-2"
-    >
+    <q-item-section side top class="col-2">
       <div class="col-2 q-mt-md">
         <q-fab
           square
@@ -148,13 +132,13 @@ export default {
     myFlag (player) {
       try {
         return `img:statics/flags/4x3/${player.profile.flag}.svg`
-      } catch (err) { }
+      } catch (err) {}
       return null
     },
     myAvatar (player) {
       try {
         return `img:${player.profile.avatar}`
-      } catch (err) { }
+      } catch (err) {}
       return null
     },
     myT2State (s2) {
@@ -171,7 +155,7 @@ export default {
       }
     },
     getBoards () {
-      return this.t2.bn * this.t2.br
+      return this.t2.bN * this.t2.bR
     },
     onPState (p2) {
       const pair2 = JSON.parse(JSON.stringify(this.myPair))
@@ -183,74 +167,37 @@ export default {
           break
         default:
       }
-      this.updatePairs(pair2)
+      this.updatePairs(pair2, 0)
     },
-    onPair (pair, n) {
-      let bCancel = false
-      const pair2 = JSON.parse(JSON.stringify(pair))
-      switch (n) {
-        case 0: // no pd
-          pair2.partner = this.myPlayer
-          break
-        case 1: // signout
-          if (pair2.player.id === this.myPlayer.id) {
-            if (this.isOnline(pair2.partner)) {
-              pair2.player = pair2.partner
-              pair2.partner = null
-            } else {
-              pair2.player = null
-              pair2.partner = null
-            }
-          } else bCancel = true
-          break
-        case -1: // pd offline
-        case 2: // join as pd
-          if (this.isMyPair) pair2.partner = null
-          else bCancel = true
-          break
-        default:
-      }
-      if (bCancel) {
-        let message
-        if (this.isMyPair) message = 'You do not have permission to change this pair.'
-        else message = 'You can not join this pair.'
-
-        this.$q.notify({
-          type: 'info',
-          message
-        })
-      } else {
-        this.updatePairs(pair2)
-      }
+    onPair (pair) {
+      pair.partner = this.myPlayer
+      this.updatePairs(pair, this.t2Id.myPair.pN)
     },
-    updatePairs (pair2) {
-      const pairs2 = []
+    updatePairs (pair, myPN) {
+      const pairs = []
       this.t2.pairs.forEach(p => {
-        if (p.state >= -1) {
-          if (p.pairN === pair2.pairN) {
-            pairs2.push(pair2)
-          } else if (p.player.id || p.partner.id) {
-            pairs2.push(this.scanPair(p))
+        if (p.pN === pair.pN) {
+          pairs.push(pair)
+        } else {
+          if (p.pN === myPN) { // remove
+            if (this.isMyPlayer(p.player)) p.player = null
+            else if (this.isMyPlayer(p.partner)) p.partner = null
           }
+          pairs.push(p)
         }
       })
-      this.$emit('onPair', { t2: this.t2, pairs: pairs2 })
-    },
-    scanPair (p) {
-      const pair3 = JSON.parse(JSON.stringify(p))
-      try {
-        if (this.t2Id && p.pairN === this.t2Id.myPair.pairN) {
-          if (pair3.player.id === this.myPlayer.id) pair3.player = null
-          else if (pair3.partner.id === this.myPlayer.id) pair3.partner = null
-        }
-      } catch (err) { }
-      return pair3
+      this.$emit('onPair', { t2: this.t2, pairs })
     }
   },
   mounted () {
-    if (this.isMyPlayer(this.myPair.player) || this.isMyPlayer(this.myPair.partner)) {
-      console.log(this.t2, this.myPair)
-      this.$emit('onRoomId', { id: 2, t2Id: { _id: this.t2._id, myPair: this.myPair } })
+    if (
+      this.isMyPlayer(this.myPair.player) ||
+      this.isMyPlayer(this.myPair.partner)
+    ) {
+      this.$emit('onRoomId', {
+        id: 2,
+        t2Id: { _id: this.t2._id, myPair: this.myPair }
+      })
       this.isMyPair = true
     }
   }

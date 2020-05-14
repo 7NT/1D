@@ -79,7 +79,7 @@ async function getBoard(context: any) {
         }
       }
     })
-    let bn: number = bns.data.map((x: { bn: any }) => x.bn)[0]
+    let bn: number = bns.data.map((x: { bn: any }) => x.bN)[0]
     if (typeof bn === 'undefined') bn = 1
     else bn++
     const createdAt = new Date().getTime();
@@ -107,7 +107,7 @@ async function getBoard(context: any) {
   })
 
   board.players = table.seats //download uIds
-  let dealer = (board.bn - 1) % 4
+  let dealer = (board.bN - 1) % 4
   dealer++
   let bids = {
     info: { bidN: 0, bidS: 0, by: 0, P: 0, X: 0, XX: 0 },
@@ -391,7 +391,7 @@ const onResult = (): Hook => {
       const score = onScore(rdata)
       const sdata = {
         boardId: t.board._id,
-        board: { bn: t.board.bn, bt: t.board.bt, vul: t.board.vul },
+        board: { bn: t.board.bN, bt: t.board.bt, vul: t.board.vul },
         players: t.seats,
         bids: t.bids,
         plays: t.plays,

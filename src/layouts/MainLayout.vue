@@ -239,7 +239,7 @@
           :key="r._id"
         >
           <q-item-section>
-            <q-item-label overline>{{r.board.bt}}#{{r.board.bn}}: {{getPName(r)}}</q-item-label>
+            <q-item-label overline>{{r.board.bt}}#{{r.board.bN}}: {{getPName(r)}}</q-item-label>
             <q-item-label>
               {{getContract(r)}}{{getResult(r)}}
               <q-badge

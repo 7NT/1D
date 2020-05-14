@@ -11,8 +11,8 @@ const auth = {
     return this.user != null
   },
 
-  async register (credential) {
-    await api.authentication.removeAccessToken()
+  register (credential) {
+    // await api.authentication.removeAccessToken()
     return api.service('users').create(credential)
   },
 

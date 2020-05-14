@@ -29,8 +29,8 @@ function pairNo (pairs: any[]) {
   let n: number = 1
   let pairs2: any[] = []
   pairs.forEach(p => {
-    if (p.player || p.partner) {
-      p.pairN = n
+    if (p.state > -2 && (p.player || p.partner)) {
+      p.pN = n
       n++
       pairs2.push(p)
     }

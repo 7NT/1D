@@ -16,6 +16,8 @@ interface UserData {
   nick: string,
   email: string;
   password: string;
+  status: number;
+  state: number;
   profile?: any;
   createdAt: number;
 }
@@ -45,6 +47,8 @@ export class Users extends Service<UserData> {
       nick,
       email,
       password,
+      status: 0,
+      state: 0,
       profile,
       createdAt: new Date().getTime()
     };

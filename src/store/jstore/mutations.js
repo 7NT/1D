@@ -95,8 +95,11 @@ export const setRoomId = (state, room) => {
       state.t1Id = room.t1Id
       break
     case 2:
+    {
       state.t2Id = room.t2Id
+      console.log(room)
       break
+    }
     case 4:
       state.t4Id = room.t4Id
       break

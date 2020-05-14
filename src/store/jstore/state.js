@@ -9,6 +9,6 @@ export default {
   teams: [],
   chats: [],
   t1Id: null,
-  t2Id: null,
-  t4Id: null
+  t2Id: {},
+  t4Id: {}
 }

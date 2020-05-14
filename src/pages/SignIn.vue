@@ -99,12 +99,14 @@ export default {
     onOk () {
       const credential = this.getCredentials()
       if (this.isRegistration()) {
-        credential.nick = this.$data.nick
+        credential.email = this.$data.email
         credential.profile = { flag: this.$data.flag, avatar: null }
 
         auth
           .register(credential)
           .then(user => {
+            delete credential.email
+            delete credential.profile
             return this.login(credential)
           })
           .then(user => {
@@ -140,11 +142,9 @@ export default {
           })
       }
     },
-    register (credential) {
-      return auth.register(credential)
-    },
-    login (credentials) {
-      return auth.login(credentials)
+    login (credential) {
+      console.log(credential)
+      return auth.login(credential)
     }
   },
   mounted () {

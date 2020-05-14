@@ -51,7 +51,7 @@
               <div class="q-ma-md row">
                 <q-slider
                   dense
-                  v-model="t2.bn"
+                  v-model="t2.bN"
                   :min="1"
                   :max="5"
                   :step="1"
@@ -59,7 +59,7 @@
                   snap
                   label
                   label-always
-                  :label-value="`boards/round: ${t2.bn}`"
+                  :label-value="`boards/round: ${t2.bN}`"
                   color="blue"
                   class="col-5"
                 />
@@ -68,7 +68,7 @@
                 </q-separator>
                 <q-slider
                   dense
-                  v-model="t2.br"
+                  v-model="t2.bR"
                   :min="4"
                   :max="10"
                   :step="1"
@@ -76,7 +76,7 @@
                   snap
                   label
                   label-always
-                  :label-value="`rounds: ${t2.br}`"
+                  :label-value="`rounds: ${t2.bR}`"
                   color="green"
                   class="col-5"
                 />
@@ -138,7 +138,7 @@
                 transparent
                 align="middle"
                 color="orange"
-              >{{t.bn}} x {{t.br}}</q-badge>
+              >{{t.bN}} x {{t.bR}}</q-badge>
             </q-item-label>
           </q-item-section>
           <q-item-section
@@ -194,7 +194,7 @@
           <q-card-section>
             <myT2List
               v-for="p in t.pairs"
-              :key="p.pairN"
+              :key="p.pN"
               :t2="t"
               :myPlayer="myPlayer"
               :myPair="p"
@@ -238,7 +238,6 @@
               filled
               dense
               v-model="myPd"
-              :value="myPd.nick || null"
               label="My Partner"
             />
             <q-space>
@@ -275,8 +274,8 @@ export default {
         td: this.myPlayer.nick,
         time: 30,
         mix: jbBoardMix(),
-        bn: 2,
-        br: 6,
+        bN: 2,
+        bR: 6,
         state: 0,
         pairs: []
       },
@@ -311,33 +310,42 @@ export default {
       return 'Join'
     },
     onRegister (t) {
-      const pairs = [...t.pairs] // .slice(0)
+      // const pairs = [...t.pairs] // .slice(0)
+      const pairs = JSON.parse(JSON.stringify(t.pairs))
       let pd = this.myPd
       if (pd && !pd.id) {
         pd = this.getPlayerByNick(pd)
         if (!pd) pd = { nick: this.myPd }
       }
-      let myPair = this.t2Id.myPair
-      console.log(myPair)
-      if (myPair && myPair.pairN > 0 && myPair.pairN < pairs.length) {
-        pairs[myPair.pairN - 1].partner = pd
-        pairs[myPair.pairN - 1].cc = this.myCC
+      let pair
+      let pN = 0
+      try {
+        if (this.t2Id._id === t._id) pN = this.t2Id.myPair.pN
+      } catch (err) {}
+
+      if (pN > 0 && pN <= pairs.length) {
+        pair = pairs[pN - 1]
+        pair.partner = pd
+        pair.cc = this.myCC
       } else {
-        myPair = {
+        pair = {
           player: this.myPlayer,
           partner: pd,
           cc: this.myCC,
           boards: 0,
-          score: null
+          score: null,
+          state: 0
         }
-        pairs.push(myPair)
+        pairs.push(pair)
       }
-      this.onRoomId({ id: 2, t2Id: { _id: t._id, myPair } })
+
+      this.onRoomId({ id: 2, t2Id: { _id: t._id, myPair: pair } })
+      console.log(pairs)
       tourneys$.patch(t._id, { pairs })
     },
     onRoomId (t2Id) {
-      console.log(this.t2Id, t2Id)
-      this.setRoomId(t2Id)
+      console.log(t2Id)
+      if (this.t2Id !== t2Id) this.setRoomId(t2Id)
     },
     onPair (pair) {
       tourneys$.patch(pair.t2._id, { pairs: pair.pairs })
@@ -359,7 +367,7 @@ export default {
     },
     getTourney (t) {
       let tinfo = `${t.td}: ${t.Name}`
-      tinfo += `: ${t.bn} x ${t.br}`
+      tinfo += `: ${t.bN} x ${t.bR}`
       return tinfo
     },
     startAt (startAt) {
@@ -368,14 +376,14 @@ export default {
     }
   },
   mounted () {
-    if (this.t2Id.myPair) {
-      this.myPd = this.t2Id.myPair.partner || null
+    if (this.t2Id._id) {
+      this.myPd = this.t2Id.myPair.partner.nick || null
       this.myCC = this.t2Id.myPair.cc || 'SAYC'
     }
   },
   watch: {
     newT2 (t2) {
-      console.log(t2, this.isTD)
+      // console.log(t2, this.isTD)
     }
   }
 }

@@ -24,7 +24,7 @@ const onTable = (): Hook => {
   }
 }
 
-async function onReady(context: any) {
+async function onReady (context: any) {
   const { state, ready } = context.data
   switch (state) {
     case -1:
@@ -40,7 +40,7 @@ async function onReady(context: any) {
   }
 }
 
-async function getBoard(context: any) {
+async function getBoard (context: any) {
   const tables$ = context.app.service('tables')
   const boards$ = context.app.service('boards')
   const played$ = context.app.service('played')
@@ -122,7 +122,16 @@ async function getBoard(context: any) {
 
   return table
 }
-
+/*
+function getNextBN (bT: string) {
+  var sequenceDocument = db.counters.findAndModify({
+    query: { _id: bT },
+    update: { $inc: { sequence_value: 1 } },
+    new: true
+  });
+  return sequenceDocument.sequence_value;
+}
+*/
 const shuffle = function () {
   /**
    * Shuffles array in place. ES6 version
@@ -157,7 +166,7 @@ const shuffle = function () {
   return card4
 }
 
-function onBid(tdata: any) {
+function onBid (tdata: any) {
   tdata = updateBid(tdata)
   let info = tdata.bids.info
   if (info.P > 3 || (info.P > 2 && info.by > 0)) {
@@ -189,7 +198,7 @@ function onBid(tdata: any) {
   return tdata
 }
 
-function updateBid(tdata: any) {
+function updateBid (tdata: any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
   let bidN = 0, bidS = 0, contract
   let by = 0, P = 0, X = 0, XX = 0, turn = 0
@@ -248,7 +257,7 @@ function updateBid(tdata: any) {
   return tdata
 }
 
-function bidSuit(b: any) {
+function bidSuit (b: any) {
   let s = b.substring(1).trim()
   switch (s) {
     case '♣':
@@ -264,7 +273,7 @@ function bidSuit(b: any) {
   }
 }
 
-function CDHSNT12345(n: number) {
+function CDHSNT12345 (n: number) {
   const suits = ['C', 'D', 'H', 'S', 'NT']
   switch (n) {
     case 1:
@@ -278,7 +287,7 @@ function CDHSNT12345(n: number) {
   }
 }
 
-function onPlay(tdata: any) {
+function onPlay (tdata: any) {
   let n = tdata.plays.data.length
   if (n < 1) return tdata
 
@@ -336,7 +345,7 @@ function onPlay(tdata: any) {
   return tdata
 }
 
-function onClaim(tdata: any) {
+function onClaim (tdata: any) {
   let claim = tdata.claim
   let d = (claim.declarer - 1) % 2
   let o = (d + 1) % 2
@@ -407,7 +416,7 @@ const onResult = (): Hook => {
   }
 }
 
-function onScore(rdata: any) {
+function onScore (rdata: any) {
   let result = 0
   let scores = [0, 0]
   if (rdata.contract.by > 0) { //passed

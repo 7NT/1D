@@ -56,17 +56,20 @@ async function getBoard (context: any) {
   })
   let board: any
   try {
-    const boardIds = played.data.map((x: { boardId: any }) => x.boardId)
+    const playedIds = played.data.map((x: { boardId: any }) => x.boardId)
     let notplayed = await boards$.find({
       query: {
-        $limit: 1,
+        // $limit: 1,
         $select: ['_id'],
-        bT: table.bT,
-        boardId: { $nin: boardIds }
+        // bT: table.bT,
+        boardId: {
+          $nin: playedIds
+        }
       }
     })
-    const boardId = notplayed.data.map((x: { _id: any }) => x._id)
-    board = await boards$.get(boardId[0])
+    const notPlayedId = notplayed.data.map((x: { _id: any }) => x._id)
+    console.log(playedIds, notPlayedId)
+    board = await boards$.get(notPlayedId[0])
   } catch (err) {
     let bns: any = await boards$.find({
       query: {

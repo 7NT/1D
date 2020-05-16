@@ -33,18 +33,23 @@ const onResult = (): Hook => {
   return async (context: HookContext) => {
     const result = context.data
     if (result) {
+      const bT = result.board.bT
       const results$ = context.app.service('results')
       const results = await results$.find({
         query: {
           $select: ['_id', 'score'],
-          boardId: result.boardId
+          // boardId: result.boardId
+          board: {
+            bT,
+            bN: result.board.bN
+          }
         }
       })
-      const bT = result.board.bT
+      console.log(results)
       if (results.data.length > 0) {
         const boardIds = results.data.map((s: { _id: any }) => s._id)
         const rawscores = results.data.map((s: { score: number }) => s.score)
-
+        console.log(boardIds, rawscores)
         let scoreMap: any
         switch (bT) {
           case 'MP': {

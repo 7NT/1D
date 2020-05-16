@@ -54,19 +54,18 @@ async function getBoard (context: any) {
       uId: { $in: uIds }
     }
   })
-
   let board: any
   try {
     const boardIds = played.data.map((x: { boardId: any }) => x.boardId)
-    let notplayed = await played$.find({
+    let notplayed = await boards$.find({
       query: {
         $limit: 1,
-        $select: ['boardId'],
+        $select: ['_id'],
         bT: table.bT,
         boardId: { $nin: boardIds }
       }
     })
-    const boardId = notplayed.data.map((x: { boardId: any }) => x.boardId)
+    const boardId = notplayed.data.map((x: { _id: any }) => x._id)
     board = await boards$.get(boardId[0])
   } catch (err) {
     let bns: any = await boards$.find({
@@ -122,16 +121,7 @@ async function getBoard (context: any) {
 
   return table
 }
-/*
-function getNextBN (bT: string) {
-  var sequenceDocument = db.counters.findAndModify({
-    query: { _id: bT },
-    update: { $inc: { sequence_value: 1 } },
-    new: true
-  });
-  return sequenceDocument.sequence_value;
-}
-*/
+
 const shuffle = function () {
   /**
    * Shuffles array in place. ES6 version
@@ -383,14 +373,11 @@ const onResult = (): Hook => {
       let t: any
       if (context.id) {
         t = context.service.store[context.id]
-        // console.log('t1', t)
       }
       if (!t) {
         const tables$ = context.app.service('tables')
         t = await tables$.get(context.id)
-        // console.log('t2', t)
       }
-      // if (context.id) console.log('t', context.service.store[context.id], t)
 
       const rdata = {
         bV: t.board.bV,

@@ -1,7 +1,8 @@
-// Initializes the `tourneys` service on path `/tourneys`
+// Initializes the `Tourneys` service on path `/tourneys`
 import { ServiceAddons } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import { Tourneys } from './tourneys.class';
+import createModel from '../../models/tourneys.model';
 import hooks from './tourneys.hooks';
 
 // Add this service to the service type index
@@ -13,6 +14,7 @@ declare module '../../declarations' {
 
 export default function (app: Application) {
   const options = {
+    Model: createModel(app),
     paginate: app.get('paginate')
   };
 

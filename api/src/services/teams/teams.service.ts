@@ -1,7 +1,8 @@
-// Initializes the `teams` service on path `/teams`
+// Initializes the `Teams` service on path `/teams`
 import { ServiceAddons } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import { Teams } from './teams.class';
+import createModel from '../../models/teams.model';
 import hooks from './teams.hooks';
 
 // Add this service to the service type index
@@ -13,6 +14,7 @@ declare module '../../declarations' {
 
 export default function (app: Application) {
   const options = {
+    Model: createModel(app),
     paginate: app.get('paginate')
   };
 

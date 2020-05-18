@@ -1,7 +1,6 @@
 import crypto from 'crypto';
 import { Params } from '@feathersjs/feathers';
-import { Db } from 'mongodb';
-import { Service, MongoDBServiceOptions } from 'feathers-mongodb';
+import { Service, MongooseServiceOptions } from 'feathers-mongoose';
 import { Application } from '../../declarations';
 
 // The Gravatar image service
@@ -22,16 +21,9 @@ interface UserData {
   createdAt: number;
 }
 
-export class Users extends Service<UserData> {
-  constructor(options: Partial<MongoDBServiceOptions>, app: Application) {
+export class Users extends Service {
+  constructor(options: Partial<MongooseServiceOptions>, app: Application) {
     super(options);
-
-    const client: Promise<Db> = app.get('mongoClient');
-
-    client.then(db => {
-      this.Model = db.collection('users');
-    });
-
   }
 
   create (data: UserData, params?: Params) {

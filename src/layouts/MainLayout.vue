@@ -239,9 +239,9 @@
           :key="r._id"
         >
           <q-item-section>
-            <q-item-label overline>{{r.board.bT}}#{{r.board.bN}}: {{getPName(r)}}</q-item-label>
+            <q-item-label overline>{{r.info.bT}}#{{r.info.bN}}: {{getPName(r)}}</q-item-label>
             <q-item-label>
-              {{getContract(r)}}{{getResult(r)}}
+              {{r.info.contract}}{{getResult(r)}}
               <q-badge
                 outline
                 :color="getScore(r) >= 0 ? 'positive' : 'negative'"
@@ -368,9 +368,9 @@ export default {
       else return '#Lobby'
     },
     getPName (r) {
-      if (r.bids.info.by < 1) return ''
-      const pId = r.players[r.bids.info.by - 1]
-      let pname = this.seatName[r.bids.info.by - 1]
+      if (r.info.by < 1) return ''
+      const pId = r.players[r.info.by - 1]
+      let pname = this.seatName[r.info.by - 1]
       if (pId) {
         const p = this.getPlayerById(pId)
         if (p) pname = p.nick
@@ -384,26 +384,16 @@ export default {
       }
       return null
     },
-    getContract (r) {
-      if (r.bids.info.by === 0) return 'Passed hand'
-      else {
-        let c = r.bids.info.contract
-        if (r.bids.info.XX) c += 'XX'
-        else if (r.bids.info.X) c += 'X'
-        // c += ' by ' + this.getPName(r)
-        return c
-      }
-    },
     getResult (r) {
       if (r.result === 0) return '='
       else if (r.result > 0) return `+${r.result}`
       else return `${r.result}`
     },
     getScore (r) {
-      if (r.bids.info.by < 1) return 0
+      if (r.info.by < 1) return 0
       else {
-        const by = (r.bids.info.by - 1) % 2 === 0
-        const bT = r.board.bT
+        const by = (r.info.by - 1) % 2 === 0
+        const bT = r.info.bT
         switch (bT) {
           case 'MP':
             return by ? `${r.score}%` : `${100 - r.score}%`

@@ -13,13 +13,15 @@ const onPlayer = (): Hook => {
   }
 }
 
-async function beforeSit(context: any) {
+async function beforeSit (context: any) {
   const { connection } = context.params
   if (connection) {
     const tables$ = context.app.service('tables')
     const { user } = connection
     const { seat } = context.data
 
+    // if (typeof (seat.tId) == "undefined") seat.tId = null
+    // if (typeof (seat.tId0) == "undefined") seat.tId0 = null
     if (seat.tId0 !== seat.tId) {  //leave table
       if (seat.tId0) {
         leaveTable(tables$, user._id, seat)
@@ -39,7 +41,7 @@ async function beforeSit(context: any) {
   return context.data
 }
 
-async function getTable(tables$: any, user: any, seat: any) {
+async function getTable (tables$: any, user: any, seat: any) {
   let table: { seats: any[]; ready: any[]; state: number; id: any }
   if (!seat.tId) {  //new table
     table = await newTable(tables$, user, jbGetMIX(), seat)
@@ -64,7 +66,7 @@ async function getTable(tables$: any, user: any, seat: any) {
   return table
 }
 
-async function newTable(tables$: any, user: any, mix: any, seat: any) {
+async function newTable (tables$: any, user: any, mix: any, seat: any) {
   const tdata = {
     id: user._id,
     name: '#' + user.nick,
@@ -76,10 +78,12 @@ async function newTable(tables$: any, user: any, mix: any, seat: any) {
     ready: [0, 0, 0, 0]
   }
   tdata.seats[seat.sId - 1] = user._id
+  // console.log('newt', tdata)
+
   return await tables$.create(tdata)
 }
 
-async function leaveTable(tables$: any, pId: any, seat: any) {
+async function leaveTable (tables$: any, pId: any, seat: any) {
   let table = await tables$.get(seat.tId0)
   // free seat
   if (table.players < 2) {
@@ -104,6 +108,7 @@ async function leaveTable(tables$: any, pId: any, seat: any) {
         }
       }
     }
+    //console.log('closet', tdata)
     tables$.patch(table.id, tdata)
   }
 }

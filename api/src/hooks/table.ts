@@ -4,6 +4,8 @@ import { Hook, HookContext } from '@feathersjs/feathers'
 import { jbGetVulN, jbGetSuitN52, jbGetRankN52, jbGetSuitN4 } from '../jb'
 import { jbGetScore } from '../jbScore'
 
+import mongoose from 'mongoose';
+
 const onTable = (): Hook => {
   return async (context: HookContext) => {
     const { ready, bids, plays, claim } = context.data
@@ -46,7 +48,7 @@ async function getBoard (context: any) {
   const played$ = context.app.service('played')
 
   let table = await tables$.get(context.id)
-  let uIds = table.seats.filter((x: any) => x != null)
+  let uIds = table.seats.filter((u: string) => u != null)
   let played = await played$.find({
     query: {
       $select: ['boardId'],
@@ -56,22 +58,20 @@ async function getBoard (context: any) {
   })
   let board: any
   try {
-    const playedIds = played.data.map((x: { boardId: any }) => x.boardId)
-    let notplayed = await boards$.find({
+    const played_bIds = played.data.map((x: { boardId: any }) => mongoose.Types.ObjectId(x.boardId)) //new mongoose.Types.ObjectId(
+    let notPlayed = await boards$.find({
       query: {
-        // $limit: 1,
+        $limit: 1,
         $select: ['_id'],
-        // bT: table.bT,
-        boardId: {
-          $nin: playedIds
-        }
+        _id: { $in: played_bIds }
       }
     })
-    const notPlayedId = notplayed.data.map((x: { _id: any }) => x._id)
-    console.log(playedIds, notPlayedId)
-    board = await boards$.get(notPlayedId[0])
+
+    const notPlayed_bIds = notPlayed.data.map((x: { boardId: any }) => x.boardId)
+    console.log(uIds, played_bIds, notPlayed_bIds)
+    board = await boards$.get(notPlayed_bIds[0])
   } catch (err) {
-    let bns: any = await boards$.find({
+    let bNs: any = await boards$.find({
       query: {
         $limit: 1,
         $select: ['bN'],
@@ -81,31 +81,32 @@ async function getBoard (context: any) {
         }
       }
     })
-    let bN: number = bns.data.map((x: { bN: any }) => x.bN)[0]
+    let bN: number = bNs.data.map((x: { bN: number }) => x.bN)[0]
     if (typeof bN === 'undefined') bN = 1
     else bN++
-    const createdAt = new Date().getTime();
+
     const cards = shuffle()
     const bdata = {
       bN,
       bT: table.bT,
-      bV: jbGetVulN(bN),
       played: 0,
-      cards,
-      createdAt
+      cards
     }
     board = await boards$.create(bdata)
   }
 
   table.seats.forEach((u: any, index: number) => {
-    if (u)
-      played$.create({
+    if (u) {
+      const playedb = {
         boardId: board._id,
-        bT: table.bT,
-        uId: u,
-        sId: index + 1,
-        playedAt: new Date().getTime()
+        bT: board.bT,
+        uId: u + '',
+        sId: index + 1
+      }
+      played$.create(playedb).then((p: any) => {
+        // console.log('played', p)
       })
+    }
   })
 
   board.players = table.seats //download uIds
@@ -383,20 +384,20 @@ const onResult = (): Hook => {
       }
 
       const rdata = {
-        bV: t.board.bV,
+        bV: jbGetVulN(t.board.bN),
         contract: t.bids.info,
         tricks: result.tricks,
       }
       const score = onScore(rdata)
       const sdata = {
         boardId: t.board._id,
-        board: { bN: t.board.bN, bT: t.board.bT, bV: t.board.bV },
-        players: t.seats,
-        bids: t.bids,
-        plays: t.plays,
+        info: { bN: t.board.bN, bT: t.board.bT, contract: getContract(t.bids.info), by: t.bids.info.by },
+        players: JSON.stringify(t.seats),
+        bids: JSON.stringify(t.bids),
+        plays: JSON.stringify(t.plays),
         result: score.result,
-        score: score.score,
-        playedAt: new Date().getTime()
+        score: score.score
+        // playedAt: new Date().getTime()
       }
 
       results$.create(sdata)
@@ -406,6 +407,15 @@ const onResult = (): Hook => {
   }
 }
 
+function getContract (info: any) {
+  if (info.by === 0) return 'Passed hand'
+  else {
+    let c = info.contract
+    if (info.XX) c += 'XX'
+    else if (info.X) c += 'X'
+    return c
+  }
+}
 function onScore (rdata: any) {
   let result = 0
   let scores = [0, 0]

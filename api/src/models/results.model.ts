@@ -1,5 +1,5 @@
 // results-model.js - A mongoose model
-// 
+//
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 import { Application } from '../declarations';
@@ -12,17 +12,21 @@ export default function (app: Application) {
   const schema = new Schema({
     boardId: { type: Schema.Types.ObjectId, ref: "boards", required: true },
     info: {
+      YYWW: { type: String },
       bN: { type: Number },
       bT: { type: String },
+      bV: { type: Number },
       contract: { type: String },
-      by: { type: Number }
+      by: { type: Number },
+      cc: { type: Array }
     },
-    players: { type: String },
+    players: { type: String },  //JSON string
     bids: { type: String },
     plays: { type: String },
     result: { type: Number },
     score: { type: Number },
-    mix: { type: Number }
+    mix: { type: Number },
+    played: { type: Date, default: Date.now }
   });
 
   // This is necessary to avoid model compilation errors in watch mode

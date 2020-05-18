@@ -396,9 +396,9 @@ export default {
         const bT = r.info.bT
         switch (bT) {
           case 'MP':
-            return by ? `${r.score}%` : `${100 - r.score}%`
+            return by ? `${r.mix}%` : `${100 - r.mix}%`
           default:
-            return by ? r.score : -r.score
+            return by ? r.mix : -r.mix
         }
       }
     },

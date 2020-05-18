@@ -1,4 +1,9 @@
-import { getScore, getScoreDown, getScorePlus } from './jbScore'
+import moment from 'moment'
+
+const dt = new Date()
+console.log(dt)
+console.log(moment(dt).format('YY-ww'))
+// import { getScore, getScoreDown, getScorePlus } from './jbScore'
 //ts-node jbTest
 /*
 const bid = []
@@ -18,7 +23,7 @@ for (let b = 0; b < bid.length; b++) {
   }
 }
 */
-
+/*
 const scores: number[] = [
   420,
   400,
@@ -36,7 +41,7 @@ console.log(scoreMap)
 for (let [key, value] of scoreMap) {
   console.log(key + ' = ' + value)
 }
-
+*/
 function scoreM(scores: number[]) {
   const n = scores.length
   const sorted = scores.sort((a, b) => a - b)

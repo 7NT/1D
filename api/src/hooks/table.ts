@@ -1,6 +1,7 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
+import moment from 'moment'
 import { jbGetVulN, jbGetSuitN52, jbGetRankN52, jbGetSuitN4 } from '../jb'
 import { jbGetScore } from '../jbScore'
 
@@ -26,7 +27,7 @@ const onTable = (): Hook => {
   }
 }
 
-async function onReady (context: any) {
+async function onReady(context: any) {
   const { state, ready } = context.data
   switch (state) {
     case -1:
@@ -42,7 +43,7 @@ async function onReady (context: any) {
   }
 }
 
-async function getBoard (context: any) {
+async function getBoard(context: any) {
   const tables$ = context.app.service('tables')
   const boards$ = context.app.service('boards')
   const played$ = context.app.service('played')
@@ -58,17 +59,17 @@ async function getBoard (context: any) {
   })
   let board: any
   try {
-    const played_bIds = played.data.map((x: { boardId: any }) => mongoose.Types.ObjectId(x.boardId)) //new mongoose.Types.ObjectId(
+    const played_bIds = played.data.map((x: { boardId: any }) => mongoose.Types.ObjectId(x.boardId))
     let notPlayed = await boards$.find({
       query: {
         $limit: 1,
         $select: ['_id'],
-        _id: { $in: played_bIds }
+        bT: table.bT,
+        _id: { $nin: played_bIds }
       }
     })
 
-    const notPlayed_bIds = notPlayed.data.map((x: { boardId: any }) => x.boardId)
-    console.log(uIds, played_bIds, notPlayed_bIds)
+    const notPlayed_bIds = notPlayed.data.map((x: { _id: any }) => x._id)
     board = await boards$.get(notPlayed_bIds[0])
   } catch (err) {
     let bNs: any = await boards$.find({
@@ -85,12 +86,14 @@ async function getBoard (context: any) {
     if (typeof bN === 'undefined') bN = 1
     else bN++
 
-    const cards = shuffle()
+    const dt = new Date()
+    const YYWW = moment(dt).format('YY-ww')
     const bdata = {
+      YYWW,
       bN,
       bT: table.bT,
       played: 0,
-      cards
+      cards: shuffle()
     }
     board = await boards$.create(bdata)
   }
@@ -103,9 +106,7 @@ async function getBoard (context: any) {
         uId: u + '',
         sId: index + 1
       }
-      played$.create(playedb).then((p: any) => {
-        // console.log('played', p)
-      })
+      played$.create(playedb)
     }
   })
 
@@ -160,7 +161,7 @@ const shuffle = function () {
   return card4
 }
 
-function onBid (tdata: any) {
+function onBid(tdata: any) {
   tdata = updateBid(tdata)
   let info = tdata.bids.info
   if (info.P > 3 || (info.P > 2 && info.by > 0)) {
@@ -192,7 +193,7 @@ function onBid (tdata: any) {
   return tdata
 }
 
-function updateBid (tdata: any) {
+function updateBid(tdata: any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
   let bidN = 0, bidS = 0, contract
   let by = 0, P = 0, X = 0, XX = 0, turn = 0
@@ -251,7 +252,7 @@ function updateBid (tdata: any) {
   return tdata
 }
 
-function bidSuit (b: any) {
+function bidSuit(b: any) {
   let s = b.substring(1).trim()
   switch (s) {
     case '♣':
@@ -267,7 +268,7 @@ function bidSuit (b: any) {
   }
 }
 
-function CDHSNT12345 (n: number) {
+function CDHSNT12345(n: number) {
   const suits = ['C', 'D', 'H', 'S', 'NT']
   switch (n) {
     case 1:
@@ -281,7 +282,7 @@ function CDHSNT12345 (n: number) {
   }
 }
 
-function onPlay (tdata: any) {
+function onPlay(tdata: any) {
   let n = tdata.plays.data.length
   if (n < 1) return tdata
 
@@ -339,7 +340,7 @@ function onPlay (tdata: any) {
   return tdata
 }
 
-function onClaim (tdata: any) {
+function onClaim(tdata: any) {
   let claim = tdata.claim
   let d = (claim.declarer - 1) % 2
   let o = (d + 1) % 2
@@ -391,23 +392,30 @@ const onResult = (): Hook => {
       const score = onScore(rdata)
       const sdata = {
         boardId: t.board._id,
-        info: { bN: t.board.bN, bT: t.board.bT, contract: getContract(t.bids.info), by: t.bids.info.by },
+        info: {
+          YYWW: t.board.YYWW,
+          bN: t.board.bN,
+          bT: t.board.bT,
+          bV: t.board.bV,
+          contract: getContract(t.bids.info),
+          by: t.bids.info.by,
+          cc: t.cc
+        },
         players: JSON.stringify(t.seats),
         bids: JSON.stringify(t.bids),
         plays: JSON.stringify(t.plays),
         result: score.result,
-        score: score.score
-        // playedAt: new Date().getTime()
+        score: score.score,
+        mix: t.board.bT === 'MP' ? 50 : 0,
+        played: new Date()
       }
-
       results$.create(sdata)
-      // context.data.result = score
     }
     return Promise.resolve(context)
   }
 }
 
-function getContract (info: any) {
+function getContract(info: any) {
   if (info.by === 0) return 'Passed hand'
   else {
     let c = info.contract
@@ -416,7 +424,7 @@ function getContract (info: any) {
     return c
   }
 }
-function onScore (rdata: any) {
+function onScore(rdata: any) {
   let result = 0
   let scores = [0, 0]
   if (rdata.contract.by > 0) { //passed

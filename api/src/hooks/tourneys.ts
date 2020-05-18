@@ -3,11 +3,11 @@ import { Hook, HookContext } from '@feathersjs/feathers'
 
 const createdAt = (): Hook => {
   return async (context: HookContext) => {
-    const { time } = context.data
+    const { minutes2 } = context.data
 
-    if (time) {
+    if (minutes2) {
       const dt = new Date()
-      dt.setMinutes(dt.getMinutes() + time);
+      dt.setMinutes(dt.getMinutes() + minutes2);
       context.data.startAt = dt
     }
     return Promise.resolve(context)

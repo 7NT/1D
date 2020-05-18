@@ -33,19 +33,16 @@ const onResult = (): Hook => {
   return async (context: HookContext) => {
     const result = context.data
     if (result) {
-      const bT = result.board.bT
+      const bT = result.info.bT
       const results$ = context.app.service('results')
-      const results = await results$.find({
+
+      let results = await results$.find({
         query: {
-          $select: ['_id', 'score'],
-          // boardId: result.boardId
-          board: {
-            bT,
-            bN: result.board.bN
-          }
+          $limit: 10,
+          $select: ['result', 'score'],
         }
       })
-      console.log(results)
+      console.log(result, results)
       if (results.data.length > 0) {
         const boardIds = results.data.map((s: { _id: any }) => s._id)
         const rawscores = results.data.map((s: { score: number }) => s.score)
@@ -79,15 +76,7 @@ const onResult = (): Hook => {
           })
           console.log('r', r)
         }
-        context.data.updatedAt = new Date().getTime()
-      } else {
-        switch (bT) {
-          case 'MP': {
-            context.data.mix = 50
-            break;
-          }
-          default: context.data.mix = 0
-        }
+        context.data.updated = new Date().getTime()
       }
     }
     return Promise.resolve(context)

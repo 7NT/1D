@@ -25,8 +25,8 @@
               />
               <q-space />
               <div class="col">
-                <q-badge color="secondary">Start in: {{ t2.time }} minutes</q-badge>
-                <q-slider dense v-model="t2.time" color="red" :min="10" :max="30" :step="10" />
+                <q-badge color="secondary">Start in: {{ t2.minutes2 }} minutes</q-badge>
+                <q-slider dense v-model="t2.minutes2" color="red" :min="10" :max="30" :step="10" />
               </div>
             </div>
           </q-item-label>
@@ -73,7 +73,7 @@
             </q-item-section>
             <q-item-section side top>
               <div class="q-pa-md bg-info">
-                <q-option-group dense :options="bT" label="Board" type="radio" v-model="t2.mix" />
+                <q-option-group dense :options="bT" label="Board" type="radio" v-model="t2.bT" />
               </div>
             </q-item-section>
           </q-item>
@@ -93,7 +93,6 @@
         expand-icon-class="text-white"
         v-for="t in myTourneys"
         :key="t.id"
-        :caption="`start in: ${t.time} minutes`"
       >
         <template v-slot:header>
           <q-item-section>
@@ -107,7 +106,7 @@
               >@{{t.td}}: {{t.name}}</q-chip>
             </q-item-label>
             <q-item-label caption>
-              <q-badge color="blue">{{t.mix}}</q-badge>
+              <q-badge color="blue">{{t.bT}}</q-badge>
               <q-badge transparent align="middle" color="orange">{{t.bN}} x {{t.bR}}</q-badge>
             </q-item-label>
           </q-item-section>
@@ -218,8 +217,8 @@ export default {
       t2: {
         name: 'Welcome to my Tourney...',
         td: this.myPlayer.nick,
-        time: 30,
-        mix: jbBoardMix(),
+        minutes2: 30,
+        bT: jbBoardMix(),
         bN: 2,
         bR: 6,
         state: 0,
@@ -270,9 +269,10 @@ export default {
       let message = null
 
       if (this.myPd && this.t2Id._id === t._id) {
-        const players = t.pairs.map(p => (p.player || p.partner)).map(p1 => p1.nick)
+        const players = t.pairs.map(p => (p.player || p.partner)).map(n => n.nick)
+        console.log(players, this.t2Id.myPair)
         if (this.t2Id.myPair) {
-          if (jbIsMyPlayer(this.t2Id.myPair.player) || jbIsMyPlayer(this.t2Id.myPair.partner)) pN = this.t2Id.myPair.pN
+          if (jbIsMyPlayer(this.t2Id.myPair.player, this.myPlayer) || jbIsMyPlayer(this.t2Id.myPair.partner, this.myPlayer)) pN = this.t2Id.myPair.pN
         }
         if (players.includes(this.myPd)) {
           message = `${this.Pd} has already JOINED this tourney`
@@ -304,6 +304,7 @@ export default {
         }
 
         this.onRoomId({ id: 2, t2Id: { _id: t._id, myPair: pair } })
+        console.log(pairs)
         tourneys$.patch(t._id, { pairs })
       }
     },
@@ -314,6 +315,7 @@ export default {
       tourneys$.patch(pair.t2._id, { pairs: pair.pairs })
     },
     onState (t, s) {
+      console.log(t, s)
       switch (s) {
         case -1:
           tourneys$.remove(t._id)
@@ -334,8 +336,8 @@ export default {
       return tinfo
     },
     startAt (startAt) {
-      return moment(startAt).format('MMM Do, hh:mm:ss')
-      // return moment(startAt).toNow()
+      // return moment(startAt).format('MMM Do, hh:mm:ss')
+      return moment(startAt).toNow()
     }
   },
   mounted () {

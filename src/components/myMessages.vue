@@ -48,8 +48,8 @@ export default {
       return from._id === this.myUser._id
     },
     chatDate (createdAt) {
-      return moment(createdAt).format('MMM Do, hh:mm:ss')
-      // return moments(createdAt).formNow()
+      // return moment(createdAt).format('MMM Do, hh:mm:ss')
+      return moment(createdAt).fromNow()
     }
   }
 }

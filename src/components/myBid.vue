@@ -71,25 +71,6 @@
         />
       </q-btn-group>
     </div>
-    <!--
-    <q-separator />
-    <div class="col row items-center" style="height:40px">
-      <q-input
-        dense
-        standout="bg-primary text-negative"
-        autofocus
-        clearable
-        color="warning"
-        v-model="alert"
-        label="Alert"
-        class="full-width"
-      >
-        <template v-slot:prepend>
-          <q-icon name="add_alert" />
-        </template>
-      </q-input>
-    </div>
-    -->
     <q-separator
       spaced
       inset
@@ -112,7 +93,7 @@
           label="Bid+Alert"
           :disable="!bidding"
           color="negative"
-          @click="onBid2()"
+          @click="onAlert2()"
         />
       </q-btn-group>
     </div>
@@ -219,7 +200,7 @@ export default {
         // say.speak(tts)
       }
     },
-    onAlert () {
+    onAlert2 () {
       this.$q.dialog({
         title: `Alert ${this.bidding}:`,
         message: 'Alert message?',

@@ -13,7 +13,7 @@ const onPlayer = (): Hook => {
   }
 }
 
-async function beforeSit (context: any) {
+async function beforeSit(context: any) {
   const { connection } = context.params
   if (connection) {
     const tables$ = context.app.service('tables')
@@ -41,7 +41,7 @@ async function beforeSit (context: any) {
   return context.data
 }
 
-async function getTable (tables$: any, user: any, seat: any) {
+async function getTable(tables$: any, user: any, seat: any) {
   let table: { seats: any[]; ready: any[]; state: number; id: any }
   if (!seat.tId) {  //new table
     table = await newTable(tables$, user, jbGetMIX(), seat)
@@ -66,7 +66,7 @@ async function getTable (tables$: any, user: any, seat: any) {
   return table
 }
 
-async function newTable (tables$: any, user: any, mix: any, seat: any) {
+async function newTable(tables$: any, user: any, mix: any, seat: any) {
   const tdata = {
     id: user._id,
     name: '#' + user.nick,
@@ -74,6 +74,7 @@ async function newTable (tables$: any, user: any, mix: any, seat: any) {
     turn: 0,
     bT: mix,
     players: 1,
+    cc: ['SAYC', 'SAYC'],
     seats: [null, null, null, null],
     ready: [0, 0, 0, 0]
   }
@@ -83,7 +84,7 @@ async function newTable (tables$: any, user: any, mix: any, seat: any) {
   return await tables$.create(tdata)
 }
 
-async function leaveTable (tables$: any, pId: any, seat: any) {
+async function leaveTable(tables$: any, pId: any, seat: any) {
   let table = await tables$.get(seat.tId0)
   // free seat
   if (table.players < 2) {

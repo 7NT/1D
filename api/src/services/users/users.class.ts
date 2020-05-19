@@ -42,7 +42,7 @@ export class Users extends Service {
       status: 0,
       state: 0,
       profile,
-      createdAt: new Date().getTime()
+      created: new Date()
     };
 
     userData.profile.avatar = avatar

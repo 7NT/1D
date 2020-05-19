@@ -23,4 +23,12 @@ export default function (app: Application) {
   const service = app.service('tables');
 
   service.hooks(hooks);
+
+  service.publish((data, context) => {
+    let c = '#Lobby'
+    const { id, action } = data
+    if (id && action ==='play') c=`#${id}`
+    // console.log(context.id, data, c)
+    return app.channel(c)
+  })
 }

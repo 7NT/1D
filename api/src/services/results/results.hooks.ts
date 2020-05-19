@@ -5,9 +5,9 @@ export default {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [onResult()],
     update: [],
-    patch: [onResult()],
+    patch: [],
     remove: []
   },
 

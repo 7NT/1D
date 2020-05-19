@@ -391,6 +391,7 @@ const onResult = (): Hook => {
       }
       const score = onScore(rdata)
       const sdata = {
+        tId: t.id ,
         boardId: t.board._id + '',
         info: {
           YYWW: t.board.YYWW,

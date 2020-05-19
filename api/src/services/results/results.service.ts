@@ -25,4 +25,10 @@ export default function (app: Application) {
   const service = app.service('results');
 
   service.hooks(hooks);
+
+  service.publish((data, context) => {
+    const { tId } = data
+    if (tId) return app.channel(`#${tId}`)
+    else return []
+  })
 }

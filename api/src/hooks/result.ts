@@ -38,15 +38,19 @@ const onResult = (): Hook => {
 
       let results = await results$.find({
         query: {
-          $select: ['score'],
-          bT: bT
-        }
+          $select: ['_id', 'score'],
+          // $sort: { score: -1 },
+          'info.bT': bT,
+          'info.bN': result.info.bN,
+          'info.YYWW': result.info.YYWW
+        },
+        paginate: false
       })
-      console.log(result, results)
-      if (results.data.length > 0) {
-        const boardIds = results.data.map((s: { _id: any }) => s._id)
-        const rawscores = results.data.map((s: { score: number }) => s.score)
-        console.log(boardIds, rawscores)
+      if (results.length > 0) {
+        results.push({ _id: null, score: result.score })
+        results.sort((a: { score: number }, b: { score: number }) => (a.score > b.score) ? 1 : -1)
+        const boardIds = results.map((s: { _id: any }) => s._id)
+        const rawscores = results.map((s: { score: number }) => s.score)
         let scoreMap: any
         switch (bT) {
           case 'MP': {
@@ -64,18 +68,16 @@ const onResult = (): Hook => {
           default: return
         }
 
-        console.log('s', scoreMap)
-        for (let [score, mix] of scoreMap) {
-          const r = await results$.patch(null, {
-            mix
-          }, {
-            query: {
-              boardId: { $in: boardIds },
-              score: score
-            }
-          })
-          console.log('r', r)
-        }
+        results.forEach((r: any) => {
+          const mix = scoreMap.get(r.score)
+          if (!r._id) {
+            console.log('+', r, mix)
+            context.data.mix = mix
+          }else {
+            console.log(r._id, mix)
+            results$.patch(r._id, { mix })
+          }
+        })
         context.data.updated = new Date().getTime()
       }
     }
@@ -83,7 +85,7 @@ const onResult = (): Hook => {
   }
 }
 
-function scoreM (scores: number[]) {
+function scoreM(scores: number[]) {
   const n = scores.length
   const sorted = scores.sort((a, b) => a - b)
   const scoreMap = new Map()
@@ -102,7 +104,7 @@ function scoreM (scores: number[]) {
   return scoreMap
 }
 
-function scoreI (scores: number[]) {
+function scoreI(scores: number[]) {
   const n = scores.length
   const sum: any = scores.reduce((a, b) => a + b, 0)
   let avg = sum / n
@@ -125,7 +127,7 @@ function scoreI (scores: number[]) {
   return scoreMap
 }
 
-function scoreX (scores: number[]) {
+function scoreX(scores: number[]) {
   const scoreMap = new Map()
 
   scores.forEach(s => {
@@ -139,7 +141,7 @@ function scoreX (scores: number[]) {
   return scoreMap
 }
 
-function IMP_table (s: number) {
+function IMP_table(s: number) {
   if (s < 20) return 0
   else if (s < 50) return 1
   else if (s < 90) return 2

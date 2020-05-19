@@ -4,11 +4,7 @@
       <div class="col">
         <div class="row no-wrap">
           <div class="col-4 items-start">
-            <myBoard
-              :myTable="myTable"
-              :mySeat="mySeat"
-              v-on:onTable="onTable"
-            ></myBoard>
+            <myBoard :myTable="myTable" :mySeat="mySeat" v-on:onTable="onTable"></myBoard>
           </div>
           <div class="col-5">
             <div class="column">
@@ -24,20 +20,11 @@
           </div>
           <div class="col-3 items-end column">
             <q-list bordered>
-              <q-item-label
-                overline
-                class="bg-primary text-white shadow-2"
-              >
+              <q-item-label overline class="bg-primary text-white shadow-2">
                 <div class="full-width">
                   <div class="row statusbar">
                     <q-space />
-                    <q-chip
-                      square
-                      color="green"
-                      text-color="white"
-                      icon="alarm"
-                      :label="myStatus"
-                    />
+                    <q-chip square color="green" text-color="white" icon="alarm" :label="myStatus" />
                     <q-space />
                     <q-btn-group push>
                       <q-btn
@@ -58,23 +45,13 @@
                         icon="close"
                         @click="onCommand"
                       />
-                      <q-btn
-                        size="12px"
-                        flat
-                        dense
-                        round
-                        icon="more_vert"
-                      />
+                      <q-btn size="12px" flat dense round icon="more_vert" />
                     </q-btn-group>
                   </div>
                 </div>
               </q-item-label>
               <q-item-section v-if="myState >1">
-                <myBidBox
-                  :myPlayer="myPlayer"
-                  :myTable="myTable"
-                  class="fit bbox"
-                />
+                <myBidBox :myPlayer="myPlayer" :myTable="myTable" class="fit bbox" />
               </q-item-section>
             </q-list>
           </div>
@@ -96,27 +73,13 @@
           <div class="col-4">
             <div class="column">
               <div>
-                <q-card
-                  class="bbox pbox"
-                  v-if="myState === 1"
-                >
+                <q-card class="bbox pbox" v-if="myState === 1">
                   <q-card>
-                    <myBidBox
-                      :myPlayer="myPlayer"
-                      :myTable="myTable"
-                    />
+                    <myBidBox :myPlayer="myPlayer" :myTable="myTable" />
                   </q-card>
                 </q-card>
-                <q-card
-                  flat
-                  class="pbox transparent"
-                  v-if="myState === 2"
-                >
-                  <myPlayBox
-                    :myPlayer="myPlayer"
-                    :myTable="myTable"
-                    :review="false"
-                  />
+                <q-card flat class="pbox transparent" v-if="myState === 2">
+                  <myPlayBox :myPlayer="myPlayer" :myTable="myTable" :review="false" />
                 </q-card>
                 <q-space />
               </div>
@@ -139,11 +102,7 @@
         <div class="row no-wrap">
           <div class="col-3">
             <div class="column">
-              <myTricks
-                :myPlayer="myPlayer"
-                :myTable="myTable"
-                class="myHand justify-start"
-              />
+              <myTricks :myPlayer="myPlayer" :myTable="myTable" class="myHand justify-start" />
             </div>
           </div>
           <div class="col-6">
@@ -159,11 +118,7 @@
           </div>
           <div class="col-3 column">
             <div class="justify-start">
-              <myBid
-                :myPlayer="myPlayer"
-                :myTable="myTable"
-                v-on:onTable="onTable"
-              />
+              <myBid :myPlayer="myPlayer" :myTable="myTable" v-on:onTable="onTable" />
             </div>
           </div>
         </div>
@@ -225,11 +180,16 @@ export default {
     myStatus: {
       get: function () {
         switch (this.myState) {
-          case -1: return 'Reviewing...'
-          case 0: return 'Ready...'
-          case 1: return 'Bidding...'
-          case 2: return 'Playing...'
-          default: return null
+          case -1:
+            return 'Reviewing...'
+          case 0:
+            return 'Ready...'
+          case 1:
+            return 'Bidding...'
+          case 2:
+            return 'Playing...'
+          default:
+            return null
         }
       }
     },
@@ -237,7 +197,7 @@ export default {
       get: function (n) {
         try {
           return this.myTable.alert
-        } catch (err) { }
+        } catch (err) {}
         return null
       }
     },
@@ -253,9 +213,9 @@ export default {
     }
   },
   methods: {
-    onState (s) { },
+    onState (s) {},
     onTable (action) {
-      console.log('onTable', action)
+      // console.log('onTable', action)
       switch (action.action) {
         case 'sit': {
           this.$emit('onPlayer', action.seat)
@@ -263,21 +223,31 @@ export default {
         }
         case 'ready': {
           tables$.patch(this.myTable.id, {
+            action: 'play',
             state: action.state,
             ready: action.ready
           })
           break
         }
         case 'bT': {
-          tables$.patch(this.myTable.id, { bT: action.bT })
+          tables$.patch(this.myTable.id, {
+            action: 'play',
+            bT: action.bT
+          })
           break
         }
         case 'cc': {
-          tables$.patch(this.myTable.id, { cc: action.cc })
+          tables$.patch(this.myTable.id, {
+            action: 'play',
+            cc: action.cc
+          })
           break
         }
         case 'bid': {
-          const bids = { bids: action.bid.bids }
+          const bids = {
+            action: 'play',
+            bids: action.bid.bids
+          }
           tables$.patch(this.myTable.id, bids)
           break
         }
@@ -287,13 +257,19 @@ export default {
           const _played = _data.map(x => x.card) || []
           if (!_played.includes(action.play.card)) {
             _data.push(action.play)
-            const plays = { plays: { info: _info, data: _data } }
+            const plays = {
+              action: 'play',
+              plays: { info: _info, data: _data }
+            }
             tables$.patch(this.myTable.id, plays)
           }
           break
         }
         case 'claim': {
-          tables$.patch(this.myTable.id, { claim: action.claim })
+          tables$.patch(this.myTable.id, {
+            action: 'play',
+            claim: action.claim
+          })
           break
         }
         default: {
@@ -332,7 +308,7 @@ export default {
         })
       }
     },
-    myTurn (t1, t0) { }
+    myTurn (t1, t0) {}
   },
   mounted () {
     if (!this.myTable) {
@@ -340,7 +316,7 @@ export default {
       this.onTable({ action: 'sit', seat })
     }
   },
-  beforeDestroy () { }
+  beforeDestroy () {}
 }
 </script>
 <!-- Notice lang='scss' -->

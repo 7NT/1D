@@ -20,8 +20,6 @@ async function beforeSit(context: any) {
     const { user } = connection
     const { seat } = context.data
 
-    // if (typeof (seat.tId) == "undefined") seat.tId = null
-    // if (typeof (seat.tId0) == "undefined") seat.tId0 = null
     if (seat.tId0 !== seat.tId) {  //leave table
       if (seat.tId0) {
         leaveTable(tables$, user._id, seat)
@@ -47,6 +45,7 @@ async function getTable(tables$: any, user: any, seat: any) {
     table = await newTable(tables$, user, jbGetMIX(), seat)
   } else {
     table = await tables$.get(seat.tId)
+    let action = 'sit'
     let seats = table.seats
     let ready = table.ready
     let players = 0
@@ -60,7 +59,7 @@ async function getTable(tables$: any, user: any, seat: any) {
       }
       if (seats[i] != null) players++
     })
-    const tdata = { players, seats, ready }
+    const tdata = { action, players, seats, ready }
     tables$.patch(table.id, tdata)
   }
   return table
@@ -70,6 +69,7 @@ async function newTable(tables$: any, user: any, mix: any, seat: any) {
   const tdata = {
     id: user._id,
     name: '#' + user.nick,
+    action: 'open',
     state: 0,
     turn: 0,
     bT: mix,
@@ -79,7 +79,6 @@ async function newTable(tables$: any, user: any, mix: any, seat: any) {
     ready: [0, 0, 0, 0]
   }
   tdata.seats[seat.sId - 1] = user._id
-  // console.log('newt', tdata)
 
   return await tables$.create(tdata)
 }
@@ -91,6 +90,7 @@ async function leaveTable(tables$: any, pId: any, seat: any) {
     tables$.remove(table.id)
   } else {
     let tdata = {
+      action: 'sit',
       players: table.players - 1,
       seats: table.seats,
       ready: table.ready
@@ -109,7 +109,6 @@ async function leaveTable(tables$: any, pId: any, seat: any) {
         }
       }
     }
-    //console.log('closet', tdata)
     tables$.patch(table.id, tdata)
   }
 }
@@ -122,13 +121,11 @@ const onLogout = (): Hook => {
       const tables$ = context.app.service('tables')
 
       let player = await players$.get(pId)
-      // console.log('logout', context.id, player)
       if (player) {
         const { seat } = player
 
         if (seat.tId) {
           let t = await tables$.get(seat.tId)
-          // console.log('logout', t)
           if (t.players < 2) {
             tables$.remove(t.id)
           } else {

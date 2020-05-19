@@ -71,10 +71,8 @@ const onResult = (): Hook => {
         results.forEach((r: any) => {
           const mix = scoreMap.get(r.score)
           if (!r._id) {
-            console.log('+', r, mix)
             context.data.mix = mix
           }else {
-            console.log(r._id, mix)
             results$.patch(r._id, { mix })
           }
         })

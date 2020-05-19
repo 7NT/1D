@@ -73,7 +73,7 @@ export default {
     return {
       show: true,
       title: null,
-      nick: null,
+      nick: '',
       email: null,
       password: '',
       isPwd: true,
@@ -143,7 +143,6 @@ export default {
       }
     },
     login (credential) {
-      console.log(credential)
       return auth.login(credential)
     }
   },

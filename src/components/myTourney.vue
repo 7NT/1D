@@ -270,7 +270,7 @@ export default {
 
       if (this.myPd && this.t2Id._id === t._id) {
         const players = t.pairs.map(p => (p.player || p.partner)).map(n => n.nick)
-        console.log(players, this.t2Id.myPair)
+        // console.log(players, this.t2Id.myPair)
         if (this.t2Id.myPair) {
           if (jbIsMyPlayer(this.t2Id.myPair.player, this.myPlayer) || jbIsMyPlayer(this.t2Id.myPair.partner, this.myPlayer)) pN = this.t2Id.myPair.pN
         }
@@ -304,7 +304,7 @@ export default {
         }
 
         this.onRoomId({ id: 2, t2Id: { _id: t._id, myPair: pair } })
-        console.log(pairs)
+        // console.log(pairs)
         tourneys$.patch(t._id, { pairs })
       }
     },
@@ -315,7 +315,7 @@ export default {
       tourneys$.patch(pair.t2._id, { pairs: pair.pairs })
     },
     onState (t, s) {
-      console.log(t, s)
+      // console.log(t, s)
       switch (s) {
         case -1:
           tourneys$.remove(t._id)
@@ -341,7 +341,7 @@ export default {
     }
   },
   mounted () {
-    console.log(this.t2Id)
+    // console.log(this.t2Id)
     if (this.t2Id._id) {
       this.myCC = this.t2Id.myPair.cc || 'SAYC'
       this.myPd = this.t2Id.myPair.partner ? this.t2Id.myPair.partner.nick : null

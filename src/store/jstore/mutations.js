@@ -97,7 +97,6 @@ export const setRoomId = (state, room) => {
     case 2:
     {
       state.t2Id = room.t2Id
-      console.log(room)
       break
     }
     case 4:

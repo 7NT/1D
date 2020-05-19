@@ -2,11 +2,7 @@
   <div class="row items-end">
     <div class="column">
       <div class="row self-end no-wrap">
-        <q-card
-          flat
-          v-if="isVisible"
-          class="transparent"
-        >
+        <q-card flat v-if="isVisible" class="transparent">
           <div class="hand hhand-compact active-hand full-width">
             <img
               v-for="(c, i) of myCards"
@@ -19,19 +15,9 @@
         </q-card>
       </div>
       <div class="pbar">
-        <q-btn-group
-          flat
-          dense
-          spread
-        >
-          <q-icon
-            :name="seatIcon"
-            class="seat"
-          />
-          <q-icon
-            :name="flag"
-            class="flag"
-          />
+        <q-btn-group flat dense spread>
+          <q-icon :name="seatIcon" class="seat" />
+          <q-icon :name="flag" class="flag" />
           <q-btn
             flat
             outline
@@ -68,17 +54,9 @@
             :disable="showDeclarer"
           >
             <q-list dense>
-              <q-item
-                clickable
-                v-close-popup
-              >
+              <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label
-                    label
-                    v-for="c in claims"
-                    :key="c"
-                    @click="onClaim(c)"
-                  >{{c}}</q-item-label>
+                  <q-item-label label v-for="c in claims" :key="c" @click="onClaim(c)">{{c}}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -157,7 +135,7 @@ export default {
         try {
           const flag2 = this.player.profile.flag.toLowerCase()
           return `img:statics/flags/4x3/${flag2}.svg`
-        } catch (_) { }
+        } catch (_) {}
       }
       return null
     },
@@ -208,7 +186,7 @@ export default {
         if (this.myTable.state > 1) {
           return this.myTable.plays.data.map(x => x.card)
         }
-      } catch (_) { }
+      } catch (_) {}
       return []
     },
     myClaim () {
@@ -263,11 +241,14 @@ export default {
           })
         }
       } else {
-        console.log('play', 'not your turn')
+        this.$q.notify({
+          type: 'positive',
+          message: 'not your turn'
+        })
       }
     },
     onClaim (c) {
-      console.log(this.myTable)
+      // console.log(this.myTable)
       this.$emit('onTable', {
         action: 'claim',
         claim: {
@@ -299,7 +280,7 @@ export default {
       })
     },
     cardImg (n52) {
-      if (!n52.suit) console.log('error', n52)
+      // if (!n52.suit) console.log('error', n52)
       return `statics/cards/${n52.rank + n52.suit}.svg`
     },
     updateTable () {
@@ -329,14 +310,16 @@ export default {
           const _suit = this.$data.myCards.filter(
             c => c.suit === lead.card.suit
           )
-          console.log(lead.card.suit, _suit)
+          // console.log(lead.card.suit, _suit)
           return _suit.length === 0
         }
       }
     },
     isMyPlay () {
       if (this.myTable.state === 2) {
-        return this.isDummy ? this.myPlayer.seat.sId === this.myTable.bids.info.by : this.isMyTurn()
+        return this.isDummy
+          ? this.myPlayer.seat.sId === this.myTable.bids.info.by
+          : this.isMyTurn()
       } else return false
     },
     isMyTurn () {
@@ -354,8 +337,20 @@ export default {
         if (this.mySeat.sId === -claim.o1 || this.mySeat.sId === -claim.o2) {
           notification.timeout = 5000
           notification.actions = [
-            { label: 'Accept', color: 'yellow', handler: () => { this.onClaimR(true) } },
-            { label: 'Decline', color: 'white', handler: () => { this.onClaimR(true) } }
+            {
+              label: 'Accept',
+              color: 'yellow',
+              handler: () => {
+                this.onClaimR(true)
+              }
+            },
+            {
+              label: 'Decline',
+              color: 'white',
+              handler: () => {
+                this.onClaimR(true)
+              }
+            }
           ]
         }
       }
@@ -376,7 +371,7 @@ export default {
   mounted () {
     this.updateTable()
   },
-  created () { }
+  created () {}
 }
 </script>
 

@@ -12,17 +12,18 @@ declare module './declarations' {
   }
 }
 
+/*
 class JbLocalStrategy extends LocalStrategy {
   async getEntityQuery(query: Query, params: Params) {
     // Query for use but only include `active` users
     return {
       ...query,
-      state: { $gt: -2 },
+      status: { $gt: -2 },
       $limit: 1
     }
   }
 }
-
+*/
 class GoogleStrategy extends OAuthStrategy {
   async getEntityData(profile: OAuthProfile, existing: any, params: Params) {
     // this will set 'googleId'
@@ -71,8 +72,8 @@ export default function (app: Application) {
   const authentication = new AuthenticationService(app);
 
   authentication.register('jwt', new JWTStrategy());
-  // authentication.register('local', new LocalStrategy());
-  authentication.register('local', new JbLocalStrategy());
+  authentication.register('local', new LocalStrategy());
+  // authentication.register('local', new JbLocalStrategy());
   authentication.register('google', new GoogleStrategy());
   authentication.register('facebook', new FacebookStrategy());
 

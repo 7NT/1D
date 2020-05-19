@@ -24,7 +24,7 @@ export default function (app: Application) {
 
   service.hooks(hooks);
 
-  service.publish((data, context) => {
+  service.publish('patched', (data, context) => {
     let c = '#Lobby'
     const { id, action } = data
     if (id && action ==='play') c=`#${id}`

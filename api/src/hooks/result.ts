@@ -38,8 +38,8 @@ const onResult = (): Hook => {
 
       let results = await results$.find({
         query: {
-          $limit: 10,
-          $select: ['result', 'score'],
+          $select: ['score'],
+          bT: bT
         }
       })
       console.log(result, results)
@@ -83,7 +83,7 @@ const onResult = (): Hook => {
   }
 }
 
-function scoreM(scores: number[]) {
+function scoreM (scores: number[]) {
   const n = scores.length
   const sorted = scores.sort((a, b) => a - b)
   const scoreMap = new Map()
@@ -102,7 +102,7 @@ function scoreM(scores: number[]) {
   return scoreMap
 }
 
-function scoreI(scores: number[]) {
+function scoreI (scores: number[]) {
   const n = scores.length
   const sum: any = scores.reduce((a, b) => a + b, 0)
   let avg = sum / n
@@ -125,7 +125,7 @@ function scoreI(scores: number[]) {
   return scoreMap
 }
 
-function scoreX(scores: number[]) {
+function scoreX (scores: number[]) {
   const scoreMap = new Map()
 
   scores.forEach(s => {
@@ -139,7 +139,7 @@ function scoreX(scores: number[]) {
   return scoreMap
 }
 
-function IMP_table(s: number) {
+function IMP_table (s: number) {
   if (s < 20) return 0
   else if (s < 50) return 1
   else if (s < 90) return 2

@@ -77,7 +77,6 @@ export default {
   props: ['handId', 'myPlayer', 'myTable'],
   data () {
     return {
-      seatId: 0,
       NESW: ['North', 'East', 'South', 'West'],
       myCards: [],
       claims: ['Concede All', 'Claim Just Make', 'Claim All'],
@@ -183,8 +182,9 @@ export default {
     },
     playedCards () {
       try {
-        if (this.myTable.state > 1) {
-          return this.myTable.plays.data.map(x => x.card)
+        if (this.myTable.state === 2) {
+          const _played = this.myTable.plays.data.map(x => x.card)
+          return _played
         }
       } catch (_) {}
       return []
@@ -291,7 +291,9 @@ export default {
         let playCards = this.myTable.board.cards[this.seatX - 1]
         const _played = this.playedCards.map(x => x.value)
         if (_played.length) {
+          // console.log(this.handId, playCards)
           playCards = playCards.filter(c => !_played.includes(c.value))
+          // console.log(_played, playCards)
         }
 
         this.$data.myCards = playCards

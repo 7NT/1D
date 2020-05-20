@@ -1,14 +1,10 @@
 <template>
-  <div
-    class="bbox column"
-    v-if="isMyTurn() === 1"
-  >
+  <div class="bbox column" v-if="isMyTurn() === 1">
     <div class="col row">
       <q-btn-group push>
         <q-fab
           square
           glossy
-          persistent
           unelevated
           v-for="n of 7"
           :key="n"
@@ -34,18 +30,9 @@
         </q-fab>
       </q-btn-group>
     </div>
-    <q-separator
-      spaced
-      inset
-    />
-    <div
-      class="col row"
-      style="height:30px"
-    >
-      <q-btn-group
-        dense
-        class="full-width"
-      >
+    <q-separator spaced inset />
+    <div class="col row" style="height:30px">
+      <q-btn-group dense class="full-width">
         <q-btn
           glossy
           label="X"
@@ -62,25 +49,12 @@
           @click="onBid('XX')"
           style="width:25%"
         />
-        <q-btn
-          glaosy
-          label="Pass"
-          color="primary"
-          @click="onBid('pass')"
-          style="width:45%"
-        />
+        <q-btn glaosy label="Pass" color="primary" @click="onBid('pass')" style="width:45%" />
       </q-btn-group>
     </div>
-    <q-separator
-      spaced
-      inset
-    />
+    <q-separator spaced inset />
     <div class="col row items-center">
-      <q-btn-group
-        dense
-        class="full-width"
-        style="height:30px"
-      >
+      <q-btn-group dense class="full-width" style="height:30px">
         <q-btn
           glossy
           :label="`Bid: ${bidding}`"
@@ -88,13 +62,7 @@
           color="positive"
           @click="onBid2()"
         />
-        <q-btn
-          glossy
-          label="Bid+Alert"
-          :disable="!bidding"
-          color="negative"
-          @click="onAlert2()"
-        />
+        <q-btn glossy :label="`Alert: ${bidding}`" :disable="!bidding" color="negative" @click="onAlert2()" />
       </q-btn-group>
     </div>
   </div>
@@ -117,6 +85,7 @@ export default {
       ],
       bidding: '',
       alert: null
+      // showB: 0
     }
   },
   computed: {
@@ -138,6 +107,14 @@ export default {
     }
   },
   methods: {
+    /*
+    showN (n) {
+      this.showB = n
+    },
+    showM (n) {
+      return this.showB === n
+    },
+    */
     bidN (n) {
       try {
         if (n === this.myBids.info.bidN) return this.myBids.info.bidS < 5
@@ -201,27 +178,31 @@ export default {
       }
     },
     onAlert2 () {
-      this.$q.dialog({
-        title: `Alert ${this.bidding}:`,
-        message: 'Alert message?',
-        prompt: {
-          model: '',
-          type: 'text' // optional
-        },
-        cancel: true,
-        persistent: true
-      }).onOk(data => {
-        this.alert = data
-        this.onBid2()
-        // console.log('>>>> OK, received', data)
-      }).onCancel(() => {
-        this.alert = null
-        // console.log('>>>> Cancel')
-      }).onDismiss(() => {
-        this.alert = null
-        this.onBid2()
-        // console.log('I am triggered on both OK and Cancel')
-      })
+      this.$q
+        .dialog({
+          title: `Alert ${this.bidding}:`,
+          message: 'Alert message?',
+          prompt: {
+            model: '',
+            type: 'text' // optional
+          },
+          cancel: true,
+          persistent: true
+        })
+        .onOk(data => {
+          this.alert = data
+          this.onBid2()
+          // console.log('>>>> OK, received', data)
+        })
+        .onCancel(() => {
+          this.alert = null
+          // console.log('>>>> Cancel')
+        })
+        .onDismiss(() => {
+          this.alert = null
+          this.onBid2()
+          // console.log('I am triggered on both OK and Cancel')
+        })
     }
   }
 }

@@ -441,13 +441,14 @@ export default {
         console.log('create player', p, this.user)
         this.addPlayer(p)
         if (p.id === this.user._id) {
-          if (this.user.seat.tId) {
+          const { seat0 } = this.user
+          if (seat0 && seat0.tId) {
             // rejoin
-            const t = this.getTableById(this.user.seat.tId) // if table still exists
+            const t = this.getTableById(seat0.tId) // if table still exists
             if (t) {
               const seat = {
-                tId: this.user.seat.tId,
-                sId: this.user.seat.sId,
+                tId: seat0.tId,
+                sId: seat0.sId,
                 tId0: null
               }
               players$.patch(p.id, { seat })

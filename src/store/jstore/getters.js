@@ -19,6 +19,10 @@ export const getTableById = state => id => {
   return state.tables.find(t => t.id === id)
 }
 
+export const getResultById = state => tId => {
+  return state.results.find(t => t.tId === tId)
+}
+
 export const getTourneyById = state => id => {
   return state.tourneys.find(t => t.id === id)
 }

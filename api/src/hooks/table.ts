@@ -30,8 +30,8 @@ const onTable = (): Hook => {
 async function onReady (context: any) {
   const { state, ready } = context.data
   switch (state) {
-    case -1:
     case 0:
+    case 3:
       {
         let sum = ready.reduce((acc: number, val: number) => {
           return acc + val

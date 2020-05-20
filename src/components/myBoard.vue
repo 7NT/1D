@@ -160,6 +160,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { openURL } from 'quasar'
 import { jbIsPlayer } from 'src/jbPlayer'
 
@@ -186,7 +187,7 @@ export default {
     }
   },
   computed: {
-    // ...mapGetters('jstore', ['myPlayer']),
+    ...mapGetters('jstore', ['getResultById']),
     bdata: function () {
       try {
         if (this.myTable.board) {
@@ -203,6 +204,9 @@ export default {
         return (this.mySeat.sId - 1) % 2
       }
       return null
+    },
+    myResult: function () {
+      return this.getResultById(this.myTable.id)
     }
   },
   methods: {
@@ -234,8 +238,8 @@ export default {
     },
     score (n) {
       try {
-        if (this.myTable.result) {
-          return this.myTable.result.scores[n]
+        if (this.myResult) {
+          return this.myResult.mix[n]
         }
       } catch (err) {
         // console.log(err)

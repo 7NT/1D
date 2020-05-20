@@ -1,5 +1,5 @@
 // results-model.js - A mongoose model
-// 
+//
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 import { Application } from '../declarations';
@@ -9,6 +9,7 @@ export default function (app: Application) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
+    tId: { type: String },
     boardId: { type: String },
     info: {
       YYWW: { type: String },

@@ -13,7 +13,12 @@
                 <q-icon name="face" />
               </q-item-section>
               <q-item-section>
-                <q-input v-model="nick" filled type="text" label="Nickname" :rules="[ n => n.length > 1 || 'Nickname is required']"
+                <q-input
+                  v-model="nick"
+                  filled
+                  type="text"
+                  label="Nickname"
+                  :rules="[ n => n.length > 1 || 'Nickname is required']"
                 />
               </q-item-section>
             </q-item>
@@ -48,7 +53,7 @@
             </q-item>
             <q-item v-if="isRegistration()">
               <q-item-section top avatar>
-                <q-icon :name="`img:statics/flags/4x3/${flag}.svg`" />
+                <q-icon :name="`img:statics/flags/4x3/${flag.lowerCase()}.svg`" />
               </q-item-section>
               <q-item-section>
                 <q-input v-model="flag" square filled label="Country:" mask="AA" type="text"></q-input>

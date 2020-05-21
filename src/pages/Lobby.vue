@@ -53,11 +53,11 @@
       </div>
       <q-space />
       <div class="col-3 messages">
-        <myMessages :to="rooms[rId]" />
+        <myMessages :sendTo="rooms[rId].id" />
       </div>
     </div>
     <q-footer elevated>
-      <myChat :to="rooms[rId]" />
+      <myChat :sendTo="rooms[rId].id" />
     </q-footer>
   </q-page>
 </template>
@@ -98,13 +98,13 @@ export default {
           value: 1,
           icon: 'local_play',
           open: true,
-          id: '#Lobby'
+          id: 't1'
         },
         {
           name: 'Tourney',
           value: 2,
           icon: 'emoji_events',
-          open: open,
+          open: true,
           id: '#Lobby'
         },
         {
@@ -150,12 +150,11 @@ export default {
       if (!p) this.$router.push({ name: 'home' }).catch(e => {})
     },
     mySeat (n) {
-      this.rooms[1].open = !!n.tId
       this.rooms[1].id = n.tId
-      this.rId = n.tId ? 1 : 0
+      this.rId = n.tId === '#Lobby' ? 0 : 1
     },
     rId (r) {
-      this.setRoomId({ id: 1, t1Id: r ? this.mySeat.tId : null })
+      this.setRoomId({ id: 1, t1Id: this.rooms[r].id })
     }
   },
   created () {

@@ -4,13 +4,14 @@
       round
       dense
       flat
-      :icon='to.icon'
+      icon='chat'
       class='q-mr-xs'
     />
     <q-space />
     <div class='full-width'>
       <q-input
         dark
+        dense
         standout
         autofocus
         color="silver"
@@ -40,7 +41,7 @@ import { chats$ } from 'src/api'
 
 export default {
   name: 'myChat',
-  props: ['to'],
+  props: ['sendTo'],
   data () {
     return {
       chat: null
@@ -56,7 +57,7 @@ export default {
     send () {
       if (this.chat) {
         const chatData = {
-          to: this.to.name || this.to.nick,
+          to: this.sendTo,
           text: this.chat
         }
         chats$.create(chatData).then(() => {

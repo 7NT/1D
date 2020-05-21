@@ -25,10 +25,8 @@ export default function (app: Application) {
   service.hooks(hooks);
 
   service.publish('patched', (data, context) => {
-    let c = '#Lobby'
     const { id, action } = data
-    if (id && action ==='play') c=`#${id}`
-    // console.log(context.id, data, c)
-    return app.channel(c)
+    if (id && action ==='play') app.channel(id)
+    return app.channel('#Lobby')
   })
 }

@@ -23,4 +23,13 @@ export default function (app: Application) {
   const service = app.service('chats');
 
   service.hooks(hooks);
+
+  service.publish('created', data => {
+    if (data.to.startsWith('@')) {
+      return [
+             app.channel(data.to),
+             app.channel(`@${data.from._id}`)
+        ];
+    } else return app.channel(data.to)
+  });
 }

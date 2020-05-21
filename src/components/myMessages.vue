@@ -1,13 +1,10 @@
 <template>
-  <div
-    class='fit'
-    v-if='to'
-  >
+  <div class='fit' v-if='sendTo'>
     <q-card
       flat
       bordered
     >
-      <div class="text-overline text-orange-9">{{to.name || 'Private'}} Messages:</div>
+      <div class="text-overline text-orange-9">{{msgFrom}} Messages:</div>
       <q-separator
         color="orange"
         inset
@@ -33,14 +30,23 @@ import { mapState } from 'vuex'
 
 export default {
   name: 'myMessages',
-  props: ['to'],
+  props: ['sendTo'],
   data () {
     return {}
   },
   computed: {
     ...mapState('jstore', ['myUser', 'chats']),
     myChats () {
-      return this.chats.filter(m => m.to === (this.to.name || this.to.nick)).slice(-10).reverse()
+      if (this.sendTo.startsWith('@')) {
+        return this.chats.filter(m => {
+          return m.to === this.sendTo || m.userId === this.myUser._id
+        }).slice(-10).reverse()
+      } else return this.chats.filter(m => m.to === this.sendTo).slice(-10).reverse()
+    },
+    msgFrom () {
+      if (this.sendTo.startsWith('@')) return '@Private'
+      else if (this.sendTo === '#Lobby') return '#Lobby'
+      else return '#Table'
     }
   },
   methods: {

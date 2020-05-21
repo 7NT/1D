@@ -6,8 +6,8 @@
           flat
           dense
           round
-          icon="menu"
-          aria-label="Menu"
+          icon="group"
+          aria-label="Players"
           v-if="authenticated"
           @click="playerList = !playerList"
         />
@@ -20,28 +20,11 @@
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
         -->
-        <q-btn
-          flat
-          @click="goTo('signin')"
-          v-show="!authenticated"
-        >Sign In</q-btn>
-        <q-btn
-          flat
-          @click="goTo('register')"
-          v-show="!authenticated"
-        >Register</q-btn>
-        <q-btn
-          flat
-          round
-          @click="goTo('lobby')"
-          v-if="authenticated"
-        >
+        <q-btn flat @click="goTo('signin')" v-show="!authenticated">Sign In</q-btn>
+        <q-btn flat @click="goTo('register')" v-show="!authenticated">Register</q-btn>
+        <q-btn flat round @click="goTo('lobby')" v-if="authenticated">
           <q-icon name="home" />
-          <q-tooltip
-            anchor="bottom middle"
-            self="top middle"
-            :offset="[0, 20]"
-          >Lobby</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
@@ -52,33 +35,15 @@
           aria-label="ScoreBook"
           v-show="authenticated"
         />
-        <q-btn
-          flat
-          round
-          @click="goTo('profile')"
-          v-if="authenticated"
-        >
+        <q-btn flat round @click="goTo('profile')" v-if="authenticated">
           <q-avatar class="gt-xs">
             <img :src="user.profile.avatar" />
           </q-avatar>
-          <q-tooltip
-            anchor="bottom middle"
-            self="top middle"
-            :offset="[0, 20]"
-          >Profile</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Profile</q-tooltip>
         </q-btn>
-        <q-btn
-          flat
-          round
-          @click="signout"
-          v-show="authenticated"
-        >
+        <q-btn flat round @click="signout" v-show="authenticated">
           <q-icon name="exit_to_app" />
-          <q-tooltip
-            anchor="bottom middle"
-            self="top middle"
-            :offset="[0, 20]"
-          >Signout</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Signout</q-tooltip>
         </q-btn>
         <q-btn
           color="secondary"
@@ -90,128 +55,8 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="playerList"
-      v-if="authenticated"
-      bordered
-      elevated
-      content-class="bg-grey-1"
-    >
-      <q-toolbar class="bg-primary text-white rounded-borders">
-        <q-btn
-          round
-          dense
-          flat
-          icon="group"
-          class="q-mr-xs"
-        />
-
-        <q-space />
-
-        <q-input
-          dark
-          dense
-          standout
-          v-model="player_search"
-          input-class="text-right"
-          class="q-ml-md"
-        >
-          <template v-slot:append>
-            <q-icon
-              v-if="!player_search"
-              name="search"
-            />
-            <q-icon
-              v-else
-              name="clear"
-              class="cursor-pointer"
-              @click="player_search = null"
-            />
-          </template>
-        </q-input>
-      </q-toolbar>
-
-      <q-list bordered>
-        <q-item-label header>{{room}} Players:</q-item-label>
-        <q-separator />
-        <q-expansion-item
-          dense
-          dense-toggle
-          expand-separator
-          v-for="p in myPlayers"
-          :key="p.id"
-        >
-          <template v-slot:header>
-            <q-item-section side>
-              <div class="row items-center">
-                <q-icon
-                  :name="`img:statics/jbicon/seats/seat${p.seat.sId}.svg`"
-                  size="24px"
-                />
-                <q-avatar size="24px">
-                  <img :src="p.profile.avatar" />
-                </q-avatar>
-              </div>
-            </q-item-section>
-
-            <q-item-section>{{p.nick}}</q-item-section>
-
-            <q-item-section
-              avatar
-              side
-            >
-              <q-icon
-                dense
-                :name="getFlag(p)"
-                class="q-ml-md"
-                size="sm"
-              />
-              <!--
-                <q-badge
-                  color="red"
-                  floating
-                  transparent
-                >.</q-badge>
-              </q-btn>
-              -->
-            </q-item-section>
-          </template>
-          <q-card>
-            <q-card-actions>
-              <q-btn
-                dense
-                flat
-                disable
-                size="sm"
-              >Watch</q-btn>
-              <q-btn
-                dense
-                flat
-                disable
-                size="sm"
-              >Partner?</q-btn>
-              <q-btn
-                dense
-                flat
-                disable
-                size="sm"
-              >Join</q-btn>
-            </q-card-actions>
-            <q-separator dark />
-            <q-card-section>
-              <myMessages :to="p" />
-            </q-card-section>
-            <q-card-section>
-              <div
-                class="full-width"
-                style="height:24px"
-              >
-                <myChat :to="p" />
-              </div>
-            </q-card-section>
-          </q-card>
-        </q-expansion-item>
-      </q-list>
+    <q-drawer v-model="playerList" v-if="authenticated" bordered elevated content-class="bg-grey-1">
+      <myP1List :from='from' />
     </q-drawer>
 
     <q-drawer
@@ -224,40 +69,7 @@
       :content-class="$q.theme === 'mat' ? 'bg-grey-3' : null"
       :content-style="{ fontSize: '16px' }"
     >
-      <q-list
-        separator
-        bordered
-        dense
-      >
-        <q-item-label
-          header
-          class="text-grey-8"
-        >My ScoreBook:</q-item-label>
-        <q-separator />
-        <q-item
-          v-for="r in results"
-          :key="r._id"
-        >
-          <q-item-section>
-            <q-item-label overline>{{r.info.bT}}#{{r.info.bN}}: {{getPName(r)}}</q-item-label>
-            <q-item-label>
-              {{r.info.contract}}{{getResult(r)}}
-              <q-badge
-                outline
-                :color="getScore(r) >= 0 ? 'positive' : 'negative'"
-                :label="getScore(r)"
-              />
-            </q-item-label>
-          </q-item-section>
-
-          <q-item-section
-            side
-            top
-          >
-            <q-item-label caption>{{playedDate(r.playedAt)}}</q-item-label>
-          </q-item-section>
-        </q-item>
-      </q-list>
+      <myScoreBook />
     </q-drawer>
     <q-page-container>
       <router-view :user="user"></router-view>
@@ -267,8 +79,10 @@
 
 <script>
 // import EssentialLink from 'components/EssentialLink'
-import moment from 'moment'
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
+import myP1List from 'src/components/myP1List'
+import myScoreBook from 'src/components/myScoreBook'
+
 import {
   users$,
   players$,
@@ -280,16 +94,13 @@ import {
 } from 'src/api'
 import auth from 'src/auth'
 
-import myMessages from 'src/components/myMessages'
-import myChat from 'src/components/myChat'
-
 export default {
   name: 'MainLayout',
 
   components: {
     // EssentialLink,
-    myMessages,
-    myChat
+    myP1List,
+    myScoreBook
   },
 
   data () {
@@ -299,21 +110,12 @@ export default {
       scoreBook: false,
       page: '',
       user: null,
-      room: '#Lobby',
-      seatName: ['North', 'East', 'South', 'West'],
-      player_search: null
+      from: null
     }
   },
   computed: {
-    ...mapState('jstore', ['players', 'tables', 'results', 't1Id']),
-    ...mapGetters('jstore', ['getPlayerById', 'getTableById']),
     authenticated () {
       return this.user != null
-    },
-    myPlayers () {
-      let players = this.players
-      if (this.t1Id) players = players.filter(p => p.seat.tId === this.t1Id)
-      return players
     }
   },
   methods: {
@@ -333,7 +135,7 @@ export default {
     ]),
     goTo (route) {
       if (this.$route.name !== route) {
-        this.$router.push({ name: route }).catch(e => { })
+        this.$router.push({ name: route }).catch(e => {})
       }
     },
     signin (user) {
@@ -361,54 +163,6 @@ export default {
     setUser (u) {
       this.$data.user = u
       this.setMyUser(u)
-    },
-    getTName (p) {
-      const t = this.getTableById(p.seat.tId)
-      if (t) return t.name
-      else return '#Lobby'
-    },
-    getPName (r) {
-      if (r.info.by < 1) return ''
-      const pId = r.players[r.info.by - 1]
-      let pname = this.seatName[r.info.by - 1]
-      if (pId) {
-        const p = this.getPlayerById(pId)
-        if (p) pname = p.nick
-      }
-      return `by ${pname}`
-    },
-    getFlag (p) {
-      if (p) {
-        const f = p.profile.flag.toLowerCase()
-        return `img:statics/flags/4x3/${f}.svg`
-      }
-      return null
-    },
-    getResult (r) {
-      if (r.result === 0) return '='
-      else if (r.result > 0) return `+${r.result}`
-      else return `${r.result}`
-    },
-    getScore (r) {
-      if (r.info.by < 1) return 0
-      else {
-        const by = (r.info.by - 1) % 2 === 0
-        const bT = r.info.bT
-        switch (bT) {
-          case 'MP':
-            return by ? `${r.mix}%` : `${100 - r.mix}%`
-          default:
-            return by ? r.mix : -r.mix
-        }
-      }
-    },
-    playedDate (playedAt) {
-      return moment(playedAt)
-        .startOf('hour')
-        .fromNow()
-    },
-    updateChat (c) {
-      this.setChat(c)
     },
     async onServices () {
       // find
@@ -463,7 +217,11 @@ export default {
       })
       chats$.on('created', chat => {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
-        this.updateChat(chat)
+        if (chat.sendTo(`'@'${this.user._id}`)) {
+          this.from = chat.from.nick
+          this.$q.notify({ type: 'info', message: 'You received a message from: ' + chat.from.nick })
+        }
+        this.setChat(chat)
       })
       results$.on('created', r => {
         console.log('create result', r)
@@ -553,12 +311,9 @@ export default {
         this.onServices()
         this.goTo('lobby')
       } else this.goTo('home')
-    },
-    t1Id (n, o) {
-      this.room = n ? '#Table' : '#Lobby'
     }
   },
-  beforeDestroy () { }
+  beforeDestroy () {}
 }
 </script>
 <style scoped>

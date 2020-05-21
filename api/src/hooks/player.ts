@@ -28,12 +28,12 @@ async function beforeSit(context: any) {
     }
 
     if (seat.tId === '#Lobby') {  //go to lobby
-      context.data.seat.tId = null
+      context.data.seat.tId = '#Lobby'
       context.data.seat.sId = 0
     } else {
       let t1 = await getTable(tables$, user, seat)
       context.data.seat.tId = t1.id
-      context.app.channel(`#${t1.id}`).join(connection);
+      context.app.channel(t1.id).join(connection);
     }
   }
   return context.data
@@ -67,7 +67,7 @@ async function getTable(tables$: any, user: any, seat: any) {
 
 async function newTable(tables$: any, user: any, mix: any, seat: any) {
   const tdata = {
-    id: user._id,
+    id: '#' + user._id,
     name: '#' + user.nick,
     action: 'open',
     state: 0,
@@ -84,6 +84,8 @@ async function newTable(tables$: any, user: any, mix: any, seat: any) {
 }
 
 async function leaveTable(tables$: any, pId: any, seat: any) {
+  if (seat.tId0 === '#Lobby') return
+
   let table = await tables$.get(seat.tId0)
   // free seat
   if (table.players < 2) {
@@ -124,7 +126,7 @@ const onLogout = (): Hook => {
       if (player) {
         const { seat } = player
 
-        if (seat.tId) {
+        if (seat.tId !== '#Lobby') {
           let t = await tables$.get(seat.tId)
           if (t.players < 2) {
             tables$.remove(t.id)

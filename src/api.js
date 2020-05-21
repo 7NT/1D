@@ -11,7 +11,7 @@ const socket = io('http://localhost:3030')
 
 const api = feathers()
 
-api.configure(socketio(socket))
+// api.configure(socketio(socket))
 api.configure(socketio(socket, {
   timeout: 20000,
   pingInterval: 10000,
@@ -27,11 +27,27 @@ const results$ = api.service('/results')
 const tourneys$ = api.service('/tourneys')
 const teams$ = api.service('/teams')
 
-api.io.on('disconnect', (reason) => {
+api.on('connection', (reason) => {
+  // Show offline message
+  console.log('connection', reason)
+})
+
+api.on('disconnect', (reason) => {
   // Show offline message
   console.log('disconnect', reason)
 })
 
+api.on('reconnect_attempt', (reason) => {
+  console.log('reconnect', reason)
+})
+
+api.on('ping', (reason) => {
+  console.log('ping', reason)
+})
+
+api.on('pong', (reason) => {
+  console.log('pong', reason)
+})
 // export default api
 export {
   api,

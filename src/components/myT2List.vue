@@ -1,8 +1,14 @@
 <template>
   <q-item :class="getBorder(myPair)">
-    <q-item-section avatar class="col-2">
+    <q-item-section
+      avatar
+      class="col-2"
+    >
       <q-chip>
-        <q-avatar color="info" text-color="white">{{myPair.pN}}</q-avatar>
+        <q-avatar
+          color="info"
+          text-color="white"
+        >{{myPair.pN}}</q-avatar>
         {{myPair.cc}}
       </q-chip>
     </q-item-section>
@@ -10,7 +16,10 @@
     <q-item-section class="col-6">
       <div class="row">
         <div class="col-6">
-          <q-icon :name="myFlag(myPair.player)" size='sm' />
+          <q-icon
+            :name="myFlag(myPair.player)"
+            size='sm'
+          />
           <q-btn
             :icon="myAvatar(myPair.player)"
             :label="myNick(myPair.player)"
@@ -20,7 +29,10 @@
         </div>
         <div class="col-6">
           <template v-if="isOnline(myPair.partner)">
-            <q-icon :name="myFlag(myPair.partner)" size='sm' />
+            <q-icon
+              :name="myFlag(myPair.partner)"
+              size='sm'
+            />
             <q-btn
               :icon="myAvatar(myPair.partner)"
               :label="myNick(myPair.partner)"
@@ -51,11 +63,18 @@
 
     <q-item-section class="col-2">
       <q-chip square>
-        <q-avatar color="green" text-color="white">{{myPair.score}}</q-avatar>
+        <q-avatar
+          color="green"
+          text-color="white"
+        >{{myPair.score}}</q-avatar>
         {{myPair.boards || 0}} / {{ getBoards ()}}
       </q-chip>
     </q-item-section>
-    <q-item-section side top class="col-2">
+    <q-item-section
+      side
+      top
+      class="col-2"
+    >
       <div class="col-2 q-mt-md">
         <q-fab
           square
@@ -110,7 +129,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['t2Id']),
+    ...mapState('jstore', ['t2']),
     ...mapGetters('jstore', ['getPlayerById']),
     isTD () {
       return jbIsAdmin(this.myPlayer)
@@ -120,7 +139,7 @@ export default {
     isOnline (nick) {
       try {
         return this.getPlayerByNick(nick).state >= 0
-      } catch (err) {}
+      } catch (err) { }
       return false
     },
     getBorder (pair) {
@@ -133,13 +152,13 @@ export default {
     myFlag (player) {
       try {
         return `img:statics/flags/4x3/${player.profile.flag}.svg`
-      } catch (err) {}
+      } catch (err) { }
       return null
     },
     myAvatar (player) {
       try {
         return `img:${player.profile.avatar}`
-      } catch (err) {}
+      } catch (err) { }
       return null
     },
     myT2State (s2) {
@@ -173,7 +192,7 @@ export default {
     onPair (pair) {
       const pair0 = JSON.parse(JSON.stringify(pair))
       pair0.partner = this.myPlayer
-      this.updatePairs(pair0, this.t2Id.myPair.pN)
+      this.updatePairs(pair0, this.jbT2.myPair.pN)
     },
     updatePairs (pair, myPN) {
       const pairs = []
@@ -205,7 +224,7 @@ export default {
     ) {
       this.$emit('onRoomId', {
         id: 2,
-        t2Id: { _id: this.t2._id, myPair: this.myPair }
+        jbT2: { _id: this.t2._id, myPair: this.myPair }
       })
       this.isMyPair = true
     }

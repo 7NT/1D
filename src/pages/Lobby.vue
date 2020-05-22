@@ -1,5 +1,8 @@
 <template>
-  <q-page class="no-padding no-margin" v-if="myPlayer">
+  <q-page
+    class="no-padding no-margin"
+    v-if="myPlayer"
+  >
     <!-- content -->
     <div class="column">
       <div class="col-8">
@@ -23,10 +26,19 @@
               :disable="!r.open"
             />
           </q-tabs>
-          <q-tab-panels keep-alive v-model="rId" animated class="bg-teal">
+          <q-tab-panels
+            keep-alive
+            v-model="rId"
+            animated
+            class="bg-teal"
+          >
             <q-tab-panel :name="0">
               <div class="fit">
-                <q-list dense bordered separator>
+                <q-list
+                  dense
+                  bordered
+                  separator
+                >
                   <myT1List
                     v-for="t in myTables"
                     :key="t.id"
@@ -39,7 +51,10 @@
 
             <q-tab-panel :name="1">
               <div class="fit">
-                <myPlayTable :myPlayer="myPlayer" v-on:onPlayer="onPlayer" />
+                <myPlayTable
+                  :myPlayer="myPlayer"
+                  v-on:onPlayer="onPlayer"
+                />
               </div>
             </q-tab-panel>
 
@@ -131,7 +146,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('jstore', ['setRoomId']),
+    ...mapActions('jstore', ['setT04']),
     onUser (user) {
       this.updateuser(user)
     },
@@ -147,14 +162,14 @@ export default {
   },
   watch: {
     myPlayer (p) {
-      if (!p) this.$router.push({ name: 'home' }).catch(e => {})
+      if (!p) this.$router.push({ name: 'home' }).catch(e => { })
     },
     mySeat (n) {
       this.rooms[1].id = n.tId
       this.rId = n.tId === '#Lobby' ? 0 : 1
     },
     rId (r) {
-      this.setRoomId({ id: 1, t1Id: this.rooms[r].id })
+      this.setT04({ id: 1, t1: this.rooms[r].id })
     }
   },
   created () {

@@ -46,6 +46,6 @@ export const setChat = (context, payload) => {
   context.commit('setChat', payload)
 }
 
-export const setRoomId = (context, payload) => {
-  context.commit('setRoomId', payload)
+export const setT04 = (context, payload) => {
+  context.commit('setT04', payload)
 }

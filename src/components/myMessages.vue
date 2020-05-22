@@ -1,5 +1,5 @@
 <template>
-  <div class='fit' v-if='sendTo'>
+  <div class='fit'>
     <q-card
       flat
       bordered
@@ -39,7 +39,7 @@ export default {
     myChats () {
       if (this.sendTo.startsWith('@')) {
         return this.chats.filter(m => {
-          return m.to === this.sendTo || m.userId === this.myUser._id
+          return m.to === `@${this.myUser._id}` || m.userId === this.myUser._id
         }).slice(-10).reverse()
       } else return this.chats.filter(m => m.to === this.sendTo).slice(-10).reverse()
     },

@@ -13,16 +13,6 @@ export default function (app: Application) {
   // Join a channel given a user and connection
   const joinChannels = (user: any, connection: any) => {
     app.channel('#Lobby').join(connection)
-    // Assuming that the chat room/user assignment is stored
-    // on an array of the user
-    /*
-    user.rooms.forEach((room:any) =>
-      app.channel(`rooms/${(t1Id:any)}`).join(connection)
-    )
-    */
-    // Easily organize users by email and userid for things like messaging
-    // app.channel(`emails/${user.email}`).join(channel)
-    //app.channel(`userIds/${user._id}`).join(connection)
     app.channel(`@${user._id}`).join(connection)
   }
 
@@ -84,34 +74,6 @@ export default function (app: Application) {
         state: 0
       }
       players$.create(player)
-      /*
-      .then (p => {
-        console.log(p)
-      })
-      .then (player => {
-        if (user.tId) {
-          console.log('rejoin', user, connection)
-          players$.patch(user._id, { tId: user.tId, sId: user.sId}, connection)
-        }
-      })
-      */
-      // The connection is no longer anonymous, remove it
-      //app.channel('#anonymous').leave(connection)
-
-      // Add it to the authenticated user channel
-      //app.channel('authenticated').join(connection)
-
-      // Channels can be named anything and joined on any condition
-
-      // E.g. to send real-time events only to admins use
-      // if(user.isAdmin) { app.channel('admins').join(connection) }
-
-      // If the user has joined e.g. chat rooms
-      // if(Array.isArray(user.rooms)) user.rooms.forEach(room => app.channel(`rooms/${room.id}`).join(channel))
-
-      // Easily organize users by email and userid for things like messaging
-      // app.channel(`emails/${user.email}`).join(channel)
-      // app.channel(`userIds/$(user.id}`).join(channel)
     }
   })
 

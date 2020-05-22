@@ -1,26 +1,58 @@
 <template>
   <div>
     <q-toolbar class="bg-primary text-white rounded-borders">
-      <q-btn round dense flat icon="group" class="q-mr-xs" />
+      <q-btn
+        round
+        dense
+        flat
+        icon="group"
+        class="q-mr-xs"
+      />
 
       <q-space />
 
-      <q-input dark dense standout v-model="player" input-class="text-right" class="q-ml-md">
+      <q-input
+        dark
+        dense
+        standout
+        v-model="player"
+        input-class="text-right"
+        class="q-ml-md"
+      >
         <template v-slot:append>
-          <q-icon v-if="!player" name="search" />
-          <q-icon v-else name="clear" class="cursor-pointer" @click="player_search = null" />
+          <q-icon
+            v-if="!player"
+            name="search"
+          />
+          <q-icon
+            v-else
+            name="clear"
+            class="cursor-pointer"
+            @click="player_search = null"
+          />
         </template>
       </q-input>
     </q-toolbar>
 
     <q-list bordered>
-      <q-item-label header>{{room}} Players:</q-item-label>
+      <q-item-label header>{{jbT1}} Players:</q-item-label>
       <q-separator />
-      <q-expansion-item dense dense-toggle expand-separator v-for="p in myPlayers" :key="p.id" group='players' @input='read(p)'>
+      <q-expansion-item
+        dense
+        dense-toggle
+        expand-separator
+        v-for="p in myPlayers"
+        :key="p.id"
+        group='players'
+        @input='read(p)'
+      >
         <template v-slot:header>
           <q-item-section side>
             <div class="row items-center">
-              <q-icon :name="`img:statics/jbicon/seats/seat${p.seat.sId}.svg`" size="24px" />
+              <q-icon
+                :name="`img:statics/jbicon/seats/seat${p.seat.sId}.svg`"
+                size="24px"
+              />
               <q-avatar size="24px">
                 <img :src="p.profile.avatar" />
               </q-avatar>
@@ -30,28 +62,59 @@
           <q-item-section>
             <div>
               {{p.nick}}
-              <q-badge color="orange" align='top' transparent v-if='froms.has(p.nick)'>
+              <q-badge
+                color="orange"
+                align='top'
+                transparent
+                v-if='newMessage(p)'
+              >
                 ∞
               </q-badge>
             </div>
           </q-item-section>
 
-          <q-item-section avatar side>
-            <q-icon dense :name="getFlag(p)" class="q-ml-md" size="sm" />
+          <q-item-section
+            avatar
+            side
+          >
+            <q-icon
+              dense
+              :name="getFlag(p)"
+              class="q-ml-md"
+              size="sm"
+            />
           </q-item-section>
         </template>
         <q-card>
           <q-card-actions>
-            <q-btn dense flat disable size="sm">Watch</q-btn>
-            <q-btn dense flat disable size="sm">Partner?</q-btn>
-            <q-btn dense flat disable size="sm">Join</q-btn>
+            <q-btn
+              dense
+              flat
+              disable
+              size="sm"
+            >Watch</q-btn>
+            <q-btn
+              dense
+              flat
+              disable
+              size="sm"
+            >Partner?</q-btn>
+            <q-btn
+              dense
+              flat
+              disable
+              size="sm"
+            >Join</q-btn>
           </q-card-actions>
           <q-separator dark />
           <q-card-section>
             <myMessages :sendTo='`@${p.id}`' />
           </q-card-section>
           <q-card-section>
-            <div class="full-width" style="height:24px">
+            <div
+              class="full-width"
+              style="height:24px"
+            >
               <myChat :sendTo='`@${p.id}`' />
             </div>
           </q-card-section>
@@ -62,7 +125,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
 
@@ -74,24 +137,23 @@ export default {
     myMessages,
     myChat
   },
-  props: ['from'],
   data () {
     return {
       player: null,
-      froms: new Set(),
       room: '#Lobby'
     }
   },
   computed: {
-    ...mapState('jstore', ['players', 't1Id']),
+    ...mapState('jstore', ['players', 'jbT0', 'jbT1']),
     ...mapGetters('jstore', ['getPlayerById', 'getTableById']),
     myPlayers () {
       let players = this.players
-      if (this.t1Id && this.t1Id !== '#Lobby') players = players.filter(p => p.seat.tId === this.t1Id)
+      if (this.jbT1 && this.jbT1 !== '#Lobby') players = players.filter(p => p.seat.tId === this.jbT1)
       return players
     }
   },
   methods: {
+    ...mapActions('jstore', ['setT04']),
     getTName (p) {
       const t = this.getTableById(p.seat.tId)
       if (t) return t.name
@@ -114,16 +176,14 @@ export default {
       }
       return null
     },
-    read (p) {
-      this.froms.delete(p.nick)
-    }
-  },
-  watch: {
-    t1Id (n, o) {
-      this.room = n ? '#My Table' : '#Lobby'
+    newMessage (p) {
+      // if (this.jbT0.length > 0) {
+      const i = this.jbT0.findIndex(p0 => p0 === p.id)
+      return i >= 0
+      // } return false
     },
-    from (nick) {
-      if (nick) this.froms.add(nick)
+    read (p) {
+      this.setT04({ id: 0, t0: p.id })
     }
   }
 }

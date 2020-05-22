@@ -86,23 +86,32 @@ export const addTourney = (state, tourney) => {
 }
 
 export const setChat = (state, chat) => {
+  if (chat.to === `@${state.myUser._id}`) {
+    state.jbT0.push(chat.userId)
+    // console.log(state.jbT0)
+  }
   state.chats.push(chat)
 }
 
-export const setRoomId = (state, room) => {
-  switch (room.id) {
-    case 1:
-      state.t1Id = room.t1Id
-      break
-    case 2:
-    {
-      state.t2Id = room.t2Id
+export const setT04 = (state, t04) => {
+  switch (t04.id) {
+    case 0: { // remove
+      const i = state.jbT0.findIndex(p => p === t04.t0)
+      if (i >= 0) state.jbT0.splice(i, 1)
       break
     }
-    case 4:
-      state.t4Id = room.t4Id
+    case 1: {
+      state.jbT1 = t04.t1
       break
+    }
+    case 2: {
+      state.jbT2 = t04.t2
+      break
+    }
+    case 4: {
+      state.jbT4 = t04.t4
+      break
+    }
     default:
   }
-  // console.log(room, state.t2Id)
 }

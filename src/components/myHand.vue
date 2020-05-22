@@ -383,7 +383,10 @@ export default {
   height: 34px;
   margin-bottom: 0px;
   align-items: flex-start;
+  overflow: hidden;
+  white-space: nowrap;
   text-overflow: ellipsis;
+  text-transform: none;
   background-image: url("/statics/imgs/jbpbar.png");
   background-repeat: no-repeat;
   background-size: cover;

@@ -182,8 +182,8 @@ export default {
         { name: 'ns', label: '', field: 'ns' },
         { name: 'ew', label: '', field: 'ew' }
       ],
-      CCs: ['SAYC', '2over1', 'Prec', 'my CC...']
-      // cc: ['SAYC', 'SAYC']
+      CCs: ['SAYC', '2over1', 'Prec', 'my CC...'],
+      myResult: null
     }
   },
   computed: {
@@ -205,8 +205,8 @@ export default {
       }
       return null
     },
-    myResult: function () {
-      return this.getResultById(this.myTable.id)
+    state () {
+      return this.myTable.state
     }
   },
   methods: {
@@ -251,6 +251,14 @@ export default {
   watch: {
     mix (bT) {
       this.onBT(bT)
+    },
+    state (s) {
+      switch (s) {
+        case 3:
+          this.myResult = this.getResultById(this.myTable.id)
+          break
+        default:
+      }
     }
   },
   mounted () {

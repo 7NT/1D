@@ -197,7 +197,7 @@
               :t2="t"
               :myPlayer="myPlayer"
               :myPair="p"
-              v-on:onRoomId="onRoomId"
+              v-on:onT2="onT2"
               v-on:onPair="onPair"
               class="pair"
             />
@@ -302,7 +302,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('jstore', ['setRoomId']),
+    ...mapActions('jstore', ['setT04']),
     isOnline (nick) {
       try {
         return this.getPlayerByNick(nick).state >= 0
@@ -325,7 +325,7 @@ export default {
 
       if (this.myPd && this.jbT2._id === t._id) {
         const players = t.pairs.map(p => (p.player || p.partner)).map(n => n.nick)
-        // console.log(players, this.jbT2.myPair)
+        console.log(players, this.jbT2)
         if (this.jbT2.myPair) {
           if (jbIsMyPlayer(this.jbT2.myPair.player, this.myPlayer) || jbIsMyPlayer(this.jbT2.myPair.partner, this.myPlayer)) pN = this.jbT2.myPair.pN
         }
@@ -358,13 +358,12 @@ export default {
           pairs.push(pair)
         }
 
-        this.onRoomId({ id: 2, jbT2: { _id: t._id, myPair: pair } })
-        // console.log(pairs)
+        this.onT2({ id: 2, t2: { _id: t._id, myPair: pair } })
         tourneys$.patch(t._id, { pairs })
       }
     },
-    onRoomId (jbT2) {
-      if (this.jbT2 !== jbT2) this.setRoomId(jbT2)
+    onT2 (jbT2) {
+      if (this.jbT2 !== jbT2) this.setT04(jbT2)
     },
     onPair (pair) {
       tourneys$.patch(pair.t2._id, { pairs: pair.pairs })
@@ -392,7 +391,7 @@ export default {
     },
     startAt (startAt) {
       // return moment(startAt).format('MMM Do, hh:mm:ss')
-      return moment(startAt).toNow()
+      return moment(startAt).fromNow()
     }
   },
   mounted () {

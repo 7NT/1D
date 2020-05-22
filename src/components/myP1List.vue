@@ -61,6 +61,12 @@
 
           <q-item-section>
             <div>
+              <template v-if="p.status==2">
+                <span style="color:red;">@</span>
+              </template>
+              <template v-else-if="p.status==1">
+                <span style="color:purple;">♥</span>
+              </template>
               {{p.nick}}
               <q-badge
                 color="orange"
@@ -86,24 +92,31 @@
           </q-item-section>
         </template>
         <q-card>
-          <q-card-actions>
+          <q-card-actions v-if='p.id !== myUser._id'>
             <q-btn
               dense
               flat
-              disable
               size="sm"
+              icon='mdi-account-heart'
+              @click='setFriend(p)'
+            >Friend</q-btn>
+            <q-btn
+              dense
+              flat
+              size="sm"
+              icon='mdi-account-supervisor'
             >Watch</q-btn>
             <q-btn
               dense
               flat
-              disable
               size="sm"
+              icon='mdi-account-switch'
             >Partner?</q-btn>
             <q-btn
               dense
               flat
-              disable
               size="sm"
+              icon='mdi-account-multiple-plus'
             >Join</q-btn>
           </q-card-actions>
           <q-separator dark />
@@ -144,7 +157,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['players', 'jbT0', 'jbT1']),
+    ...mapState('jstore', ['myUser', 'players', 'jbT0', 'jbT1']),
     ...mapGetters('jstore', ['getPlayerById', 'getTableById']),
     myPlayers () {
       let players = this.players
@@ -176,11 +189,28 @@ export default {
       }
       return null
     },
+    getFriend (p) {
+      try {
+        const f = this.$q.localStorage.getItem(p)
+        return !!f
+      } catch (e) {
+        // data wasn't successfully saved due to
+        // a Web Storage API error
+      }
+      return false
+    },
+    setFriend (p) {
+      try {
+        const f = this.getFriend(p)
+        this.$q.localStorage.set(p.id, !f)
+      } catch (e) {
+        // data wasn't successfully saved due to
+        // a Web Storage API error
+      }
+    },
     newMessage (p) {
-      // if (this.jbT0.length > 0) {
       const i = this.jbT0.findIndex(p0 => p0 === p.id)
       return i >= 0
-      // } return false
     },
     read (p) {
       this.setT04({ id: 0, t0: p.id })

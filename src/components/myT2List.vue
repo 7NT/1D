@@ -129,7 +129,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['t2']),
+    ...mapState('jstore', ['jbT2']),
     ...mapGetters('jstore', ['getPlayerById']),
     isTD () {
       return jbIsAdmin(this.myPlayer)

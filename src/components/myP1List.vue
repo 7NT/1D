@@ -16,7 +16,7 @@
     <q-list bordered>
       <q-item-label header>{{room}} Players:</q-item-label>
       <q-separator />
-      <q-expansion-item dense dense-toggle expand-separator v-for="p in myPlayers" :key="p.id">
+      <q-expansion-item dense dense-toggle expand-separator v-for="p in myPlayers" :key="p.id" group='players' @input='read(p)'>
         <template v-slot:header>
           <q-item-section side>
             <div class="row items-center">
@@ -27,12 +27,17 @@
             </div>
           </q-item-section>
 
-          <q-item-section>{{p.nick}}</q-item-section>
+          <q-item-section>
+            <div>
+              {{p.nick}}
+              <q-badge color="orange" align='top' transparent v-if='froms.has(p.nick)'>
+                ∞
+              </q-badge>
+            </div>
+          </q-item-section>
 
           <q-item-section avatar side>
-            <q-icon dense :name="getFlag(p)" class="q-ml-md" size="sm">
-              <q-badge v-if='from === p.nick' color="red" floating transparent>.</q-badge>
-            </q-icon>
+            <q-icon dense :name="getFlag(p)" class="q-ml-md" size="sm" />
           </q-item-section>
         </template>
         <q-card>
@@ -73,6 +78,7 @@ export default {
   data () {
     return {
       player: null,
+      froms: new Set(),
       room: '#Lobby'
     }
   },
@@ -107,11 +113,17 @@ export default {
         return `img:statics/flags/4x3/${flag2}.svg`
       }
       return null
+    },
+    read (p) {
+      this.froms.delete(p.nick)
     }
   },
   watch: {
     t1Id (n, o) {
       this.room = n ? '#My Table' : '#Lobby'
+    },
+    from (nick) {
+      if (nick) this.froms.add(nick)
     }
   }
 }

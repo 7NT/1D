@@ -217,7 +217,7 @@ export default {
       })
       chats$.on('created', chat => {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
-        if (chat.sendTo(`'@'${this.user._id}`)) {
+        if (chat.to === `@${this.user._id}`) {
           this.from = chat.from.nick
           this.$q.notify({ type: 'info', message: 'You received a message from: ' + chat.from.nick })
         }

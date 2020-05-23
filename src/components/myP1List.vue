@@ -35,7 +35,7 @@
     </q-toolbar>
 
     <q-list bordered>
-      <q-item-label header>{{jbT1}} Players:</q-item-label>
+      <q-item-label header>{{jbT1.name}} Players:</q-item-label>
       <q-separator />
       <q-expansion-item
         dense
@@ -161,7 +161,7 @@ export default {
     ...mapGetters('jstore', ['getPlayerById', 'getTableById']),
     myPlayers () {
       let players = this.players
-      if (this.jbT1 && this.jbT1 !== '#Lobby') players = players.filter(p => p.seat.tId === this.jbT1)
+      if (this.jbT1.id !== '#Lobby') players = players.filter(p => p.seat.tId === this.jbT1.id)
       return players
     }
   },

@@ -223,7 +223,6 @@ export default {
           if (response.data.length > 0) this.setResults(response.data)
         })
       tourneys$.find().then(response => {
-        console.log('t2', response)
         this.setTourneys(response.data)
       })
       teams$.find().then(response => {

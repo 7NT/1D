@@ -9,7 +9,7 @@ export default {
   teams: [],
   chats: [],
   jbT0: [], // private players
-  jbT1: '#Lobby', // my pair tables
+  jbT1: { id: '#Lobby', name: '#Lobby' }, // my pair tables
   jbT2: {}, // tourney
   jbT4: {} // teams
 }

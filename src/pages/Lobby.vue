@@ -169,7 +169,7 @@ export default {
       this.rId = n.tId === '#Lobby' ? 0 : 1
     },
     rId (r) {
-      this.setT04({ id: 1, t1: this.rooms[r].id })
+      this.setT04({ id: 1, t1: { id: this.rooms[r].id, name: this.rooms[r].name } })
     }
   },
   created () {

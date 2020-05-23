@@ -259,7 +259,7 @@ import moment from 'moment'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { jbBoardMix } from '../jb'
 import { jbIsAdmin, jbIsMyPlayer, jbIsPlayer } from 'src/jbPlayer'
-import { tourneys$ } from 'src/api'
+import { tourneys$, chats$ } from 'src/api'
 import myT2List from 'src/components/myT2List'
 
 export default {
@@ -323,17 +323,25 @@ export default {
       let pN = 0
       let message = null
 
-      if (this.myPd && this.jbT2._id === t._id) {
+      if (this.myPd) {
         const players = t.pairs.map(p => (p.player || p.partner)).map(n => n.nick)
-        console.log(players, this.jbT2)
-        if (this.jbT2.myPair) {
+        if (this.jbT2._id === t._id) {
           if (jbIsMyPlayer(this.jbT2.myPair.player, this.myPlayer) || jbIsMyPlayer(this.jbT2.myPair.partner, this.myPlayer)) pN = this.jbT2.myPair.pN
         }
         if (players.includes(this.myPd)) {
           message = `${this.Pd} has already JOINED this tourney`
         } else if (this.isOnline(this.myPd)) {
           pd = this.getPlayerByNick(this.myPd)
-          if (jbIsPlayer(pd)) message = `${this.Pd} is playing`
+          if (jbIsPlayer(pd)) message = `${this.myPd} is playing`
+          else {
+            const chatData = {
+              to: `@${pd.id}`,
+              request: { t: 2, id: t._id, cc: this.myCC },
+              text: 'Join me in Tourney?'
+            }
+            chats$.create(chatData)
+            message = `sending tourney partner request to ${this.myPd}...`
+          }
         } else if (t.state > 0) {
           message = `${this.Pd} is not online`
         } else pd = { nick: this.myPd }

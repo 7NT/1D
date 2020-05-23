@@ -1,8 +1,14 @@
 <template>
   <q-item :class="getBorder(myPair)">
-    <q-item-section avatar class="col-2">
+    <q-item-section
+      avatar
+      class="col-2"
+    >
       <q-chip>
-        <q-avatar color="info" text-color="white">{{myPair.pN}}</q-avatar>
+        <q-avatar
+          color="info"
+          text-color="white"
+        >{{myPair.pN}}</q-avatar>
         {{myPair.cc}}
       </q-chip>
     </q-item-section>
@@ -10,7 +16,10 @@
     <q-item-section class="col-6">
       <div class="row">
         <div class="col-6">
-          <q-icon :name="myFlag(myPair.player)" size="sm" />
+          <q-icon
+            :name="myFlag(myPair.player)"
+            size="sm"
+          />
           <q-btn
             :icon="myAvatar(myPair.player)"
             :label="myNick(myPair.player)"
@@ -20,7 +29,10 @@
         </div>
         <div class="col-6">
           <template v-if="isOnline(myPair.partner)">
-            <q-icon :name="myFlag(myPair.partner)" size="sm" />
+            <q-icon
+              :name="myFlag(myPair.partner)"
+              size="sm"
+            />
             <q-btn
               :icon="myAvatar(myPair.partner)"
               :label="myNick(myPair.partner)"
@@ -51,11 +63,18 @@
 
     <q-item-section class="col-2">
       <q-chip square>
-        <q-avatar color="green" text-color="white">{{myPair.score}}</q-avatar>
+        <q-avatar
+          color="green"
+          text-color="white"
+        >{{myPair.score}}</q-avatar>
         {{myPair.boards || 0}} / {{ getBoards ()}}
       </q-chip>
     </q-item-section>
-    <q-item-section side top class="col-2">
+    <q-item-section
+      side
+      top
+      class="col-2"
+    >
       <div class="col-2 q-mt-md">
         <q-fab
           square
@@ -64,13 +83,13 @@
           icon="keyboard_arrow_left"
           direction="left"
           padding="none sm"
-          :disable="!isTD"
+          :disable="!(isMyPair || isTD)"
         >
           <q-fab-action
             square
             padding="3px"
             color="green"
-            @click="onPState(0)"
+            @click="onPairState(0)"
             icon="hourglass_full"
             label="Waiting"
           />
@@ -78,7 +97,7 @@
             square
             padding="3px"
             color="warning"
-            @click="onPState(-1)"
+            @click="onPairState(-1)"
             icon="hourglass_empty"
             label="Close"
           />
@@ -86,7 +105,7 @@
             square
             padding="3px"
             color="negative"
-            @click="onPState(-2)"
+            @click="onPairState(-2)"
             icon="close"
             label="Remove"
           />
@@ -111,16 +130,17 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['jbT2']),
-    ...mapGetters('jstore', ['getPlayerById']),
+    ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick']),
     isTD () {
       return jbIsAdmin(this.myPlayer)
     }
   },
   methods: {
-    isOnline (nick) {
+    isOnline (p) {
       try {
-        return this.getPlayerByNick(nick).state >= 0
-      } catch (err) {}
+        const player = this.getPlayerByNick(p.nick)
+        return player.state >= 0
+      } catch (err) { }
       return false
     },
     getBorder (pair) {
@@ -134,13 +154,13 @@ export default {
       try {
         const flag = player.profile.flag.toLowerCase()
         return `img:statics/flags/4x3/${flag}.svg`
-      } catch (err) {}
+      } catch (err) { }
       return null
     },
     myAvatar (player) {
       try {
         return `img:${player.profile.avatar}`
-      } catch (err) {}
+      } catch (err) { }
       return null
     },
     myT2State (s2) {
@@ -159,7 +179,7 @@ export default {
     getBoards () {
       return this.t2.bN * this.t2.bR
     },
-    onPState (p2) {
+    onPairState (p2) {
       const pair2 = JSON.parse(JSON.stringify(this.myPair))
       switch (p2) {
         case 0:
@@ -177,7 +197,6 @@ export default {
       this.updatePairs(pair0, this.jbT2.myPair.pN)
     },
     updatePairs (pair, myPN) {
-      console.log(pair, myPN)
       const pairs = []
       this.t2.pairs.forEach(p => {
         if (p.pN === pair.pN) {

@@ -120,7 +120,7 @@
 
 <script>
 // import EssentialLink from 'components/EssentialLink'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import myP1List from 'src/components/myP1List'
 import myScoreBook from 'src/components/myScoreBook'
 
@@ -155,6 +155,7 @@ export default {
     }
   },
   computed: {
+    ...mapGetters('jstore', ['getPlayerById', 'getTableById', 'getTourneyById']),
     authenticated () {
       return this.user != null
     }
@@ -172,7 +173,8 @@ export default {
       'addPlayer',
       'addTable',
       'addResult',
-      'addTourney'
+      'addTourney',
+      'setT04'
     ]),
     goTo (route) {
       if (this.$route.name !== route) {
@@ -221,6 +223,7 @@ export default {
           if (response.data.length > 0) this.setResults(response.data)
         })
       tourneys$.find().then(response => {
+        console.log('t2', response)
         this.setTourneys(response.data)
       })
       teams$.find().then(response => {
@@ -259,7 +262,33 @@ export default {
       chats$.on('created', chat => {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
         if (chat.to === `@${this.user._id}`) {
-          this.$q.notify({ type: 'info', message: 'You received a message from: ' + chat.from.nick })
+          if (chat.request) {
+            this.$q.notify({ type: 'info', message: 'You received a request from: ' + chat.from.nick })
+            const notification = {
+              message: `Tourney Request from: ${chat.from.nick}`,
+              caption: chat.text,
+              color: 'primary',
+              icon: 'live_help'
+            }
+            notification.timeout = 5000
+            notification.actions = [
+              {
+                label: 'Accept',
+                color: 'yellow',
+                handler: () => {
+                  this.onRequestR(chat)
+                }
+              },
+              {
+                label: 'Decline',
+                color: 'white',
+                handler: () => {
+                  this.onRequestR(null)
+                }
+              }
+            ]
+            this.$q.notify(notification)
+          } else this.$q.notify({ type: 'info', message: 'You received a message from: ' + chat.from.nick })
         }
         this.setChat(chat)
       })
@@ -316,6 +345,29 @@ export default {
         this.addTourney(t)
         console.log('t2 removed', t)
       })
+    },
+    onRequestR (chat) {
+      if (chat) {
+        const { request } = chat
+        if (request) {
+          const t2 = this.getTourneyById(request.id)
+          const pairs = JSON.parse(JSON.stringify(t2.pairs))
+          const player = this.getPlayerById(chat.from._id)
+          const partner = this.getPlayerById(chat.to.substring(1))
+          const pair = {
+            player,
+            partner,
+            cc: request.cc,
+            boards: 0,
+            score: null,
+            state: 0
+          }
+          pairs.push(pair)
+
+          this.setT04({ id: 2, t2: { _id: t2._id, myPair: pair } })
+          tourneys$.patch(t2._id, { pairs })
+        }
+      }
     }
   },
   mounted () {

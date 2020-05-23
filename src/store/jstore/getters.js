@@ -24,7 +24,7 @@ export const getResultById = state => tId => {
 }
 
 export const getTourneyById = state => id => {
-  return state.tourneys.find(t => t.id === id)
+  return state.tourneys.find(t => t._id === id)
 }
 
 export const getTeamById = state => id => {

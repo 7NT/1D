@@ -16,16 +16,27 @@
     <q-item-section class="col-6">
       <div class="row">
         <div class="col-6">
-          <q-icon
-            :name="myFlag(myPair.player)"
-            size="sm"
-          />
-          <q-btn
-            :icon="myAvatar(myPair.player)"
-            :label="myNick(myPair.player)"
-            class="player bg-secondary"
-            align="around"
-          />
+          <template v-if="isOnline(myPair.player)">
+            <q-icon
+              :name="myFlag(myPair.player)"
+              size="sm"
+            />
+            <q-btn
+              :icon="myAvatar(myPair.player)"
+              :label="myNick(myPair.player)"
+              class="player bg-secondary"
+              align="around"
+            />
+          </template>
+          <template v-else-if="myPair.player">
+            <q-btn
+              :label="myPair.partner.nick"
+              icon="person"
+              class="player bg-info"
+              align="around"
+            />
+            <q-tooltip>player is offline</q-tooltip>
+          </template>
         </div>
         <div class="col-6">
           <template v-if="isOnline(myPair.partner)">
@@ -47,6 +58,7 @@
               class="player bg-info"
               align="around"
             />
+            <q-tooltip>partner is offline</q-tooltip>
           </template>
           <template v-else>
             <q-btn

@@ -144,8 +144,9 @@ export default {
     isVisible () {
       if (this.myTable.state > 2) return true
       else if (this.myTable.state === 0) return false
+      else if (this.mySeat.sId === 9) return true
       else if (this.isDummy) return true
-      else return this.seatX === this.mySeat.sId
+      else return this.seatX === Math.abs(this.mySeat.sId)
     },
     pTurn () {
       if (this.isMyTurn()) return 'warning'
@@ -317,8 +318,8 @@ export default {
           playCards = playCards.filter(c => !_played.includes(c.value))
           // console.log(_played, playCards)
         }
-
         this.$data.myCards = playCards
+        // console.log(playCards)
       } catch (err) {
         // console.log(err)
         this.$data.myCards = []

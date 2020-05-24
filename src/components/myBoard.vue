@@ -238,7 +238,6 @@ export default {
     },
     score (n) {
       try {
-        console.log('r', this.myResult)
         if (this.myResult) {
           return this.myResult.mix[n]
         }

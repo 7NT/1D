@@ -46,7 +46,7 @@
                 side
                 top
               >
-                <q-badge :label='`Join: ${joinedDate(user.createdAt)}`' />
+                <q-badge :label='`Join: ${joinedDate(user.created)}`' />
               </q-item-section>
             </q-item>
             <q-item>
@@ -117,8 +117,8 @@ export default {
     gavatar () {
       openURL(gravatarUrl)
     },
-    joinedDate (createdAt) {
-      return moment(createdAt).format('MMMM Do YYYY')
+    joinedDate (created) {
+      return moment(created).format('MMMM Do YYYY')
     },
     onUpdate (update) {
       if (update) {

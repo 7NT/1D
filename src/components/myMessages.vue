@@ -16,7 +16,7 @@
           :name='chat.from.nick'
           :avatar='chat.from.profile.avatar'
           :text='[chat.text]'
-          :stamp='chatDate(chat.createdAt)'
+          :stamp='chatDate(chat.created)'
           :sent='isSent(chat.from) ? true : false'
         />
       </div>
@@ -53,9 +53,9 @@ export default {
     isSent (from) {
       return from._id === this.myUser._id
     },
-    chatDate (createdAt) {
-      // return moment(createdAt).format('MMM Do, hh:mm:ss')
-      return moment(createdAt).fromNow()
+    chatDate (created) {
+      // return moment(created).format('MMM Do, hh:mm:ss')
+      return moment(created).fromNow()
     }
   }
 }

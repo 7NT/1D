@@ -2,14 +2,14 @@ import * as authentication from '@feathersjs/authentication';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
-import { createdAt, pairUp } from '../../hooks/tourneys'
+import { created, pairUp } from '../../hooks/tourneys'
 
 export default {
   before: {
     all: [authenticate('jwt')],
     find: [],
     get: [],
-    create: [createdAt()],
+    create: [created()],
     update: [],
     patch: [pairUp()],
     remove: []

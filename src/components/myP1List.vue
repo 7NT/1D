@@ -67,6 +67,9 @@
               <template v-else-if="p.status==1">
                 <span style="color:purple;">♥</span>
               </template>
+              <template v-else-if="isFriend(p.nick)">
+                <q-icon name='mdi-account-heart' />
+              </template>
               {{p.nick}}
               <q-badge
                 color="orange"
@@ -98,7 +101,7 @@
               flat
               size="sm"
               icon='mdi-account-heart'
-              @click='setFriend(p)'
+              @click='setFriend(p.nick)'
             >Friend</q-btn>
             <q-btn
               dense
@@ -106,12 +109,6 @@
               size="sm"
               icon='mdi-account-supervisor'
             >Watch</q-btn>
-            <q-btn
-              dense
-              flat
-              size="sm"
-              icon='mdi-account-switch'
-            >Partner?</q-btn>
             <q-btn
               dense
               flat
@@ -138,6 +135,7 @@
 </template>
 
 <script>
+// import { LocalStorage } from 'quasar'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
@@ -153,6 +151,7 @@ export default {
   data () {
     return {
       player: null,
+      friends: [],
       room: '#Lobby'
     }
   },
@@ -189,23 +188,16 @@ export default {
       }
       return null
     },
-    getFriend (p) {
-      try {
-        const f = this.$q.localStorage.getItem(p)
-        return !!f
-      } catch (e) {
-        // data wasn't successfully saved due to
-        // a Web Storage API error
-      }
-      return false
+    isFriend (p) {
+      return this.friends.indexOf(p) >= 0
     },
     setFriend (p) {
-      try {
-        const f = this.getFriend(p)
-        this.$q.localStorage.set(p.id, !f)
-      } catch (e) {
-        // data wasn't successfully saved due to
-        // a Web Storage API error
+      if (this.isFriend(p)) {
+        this.friends = this.friends.filter(n => n !== p)
+        this.$q.notify(p + ' is removed from your friend list')
+      } else {
+        this.friends.push(p)
+        this.$q.notify(p + ' has been added into your friend list')
       }
     },
     newMessage (p) {
@@ -215,6 +207,16 @@ export default {
     read (p) {
       this.setT04({ id: 0, t0: p.id })
     }
+  },
+  created () {
+    try {
+      this.friends = this.$q.localStorage.getItem('friends') || []
+    } catch (err) {
+      this.friends = []
+    }
+  },
+  beforeDestroy () {
+    this.$q.localStorage.set('friends', this.friends)
   }
 }
 </script>

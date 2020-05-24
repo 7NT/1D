@@ -57,7 +57,8 @@ module.exports = function (ctx) {
         'Notify',
         'Dialog',
         'AppFullscreen',
-        'LocalStorage'
+        'LocalStorage',
+        'SessionStorage'
       ],
 
       config: {

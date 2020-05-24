@@ -1,7 +1,7 @@
 
 import { Hook, HookContext } from '@feathersjs/feathers'
 
-const createdAt = (): Hook => {
+const created = (): Hook => {
   return async (context: HookContext) => {
     const { minutes2 } = context.data
 
@@ -39,6 +39,6 @@ function pairNo (pairs: any[]) {
 }
 
 export {
-  createdAt,
+  created,
   pairUp
 }

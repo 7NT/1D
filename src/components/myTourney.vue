@@ -257,7 +257,7 @@
 <script>
 import moment from 'moment'
 import { mapState, mapGetters, mapActions } from 'vuex'
-import { jbBoardMix } from '../jb'
+import { jbMix } from 'src/jbBoard'
 import { jbIsAdmin, jbIsMyPlayer, jbIsPlayer } from 'src/jbPlayer'
 import { tourneys$, chats$ } from 'src/api'
 import myT2List from 'src/components/myT2List'
@@ -273,7 +273,7 @@ export default {
         name: 'Welcome to my Tourney...',
         td: this.myPlayer.nick,
         minutes2: 30,
-        bT: jbBoardMix(),
+        bT: jbMix(),
         bN: 2,
         bR: 6,
         state: 0,

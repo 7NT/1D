@@ -100,7 +100,7 @@
 </template>
 
 <script>
-import { jbBidX } from 'src/jb'
+import { jbBidX } from 'src/jbBid'
 
 export default {
   name: 'myBid',
@@ -116,36 +116,26 @@ export default {
       ],
       bidding: '',
       alert: null
-      // showB: 0
     }
   },
   computed: {
-    myBids: {
-      get: function () {
-        return this.myTable.bids
-      }
+    myBids () {
+      return this.myTable.bids
     },
-    myTurn: {
-      get: function () {
-        return this.myTable ? this.myTable.turn : 0
-      }
+    myTurn () {
+      return this.myTable.turn
     },
-    X: function () {
+    X () {
       return jbBidX(this.myBids.info.by, this.myTurn)
     },
-    XX: function () {
+    XX () {
       return jbBidX(this.myBids.info.X, this.myTurn)
     }
   },
   methods: {
-    /*
-    showN (n) {
-      this.showB = n
+    isMyTurn () {
+      return (this.myTurn === this.myPlayer.seat.sId) ? this.myTable.state : 0
     },
-    showM (n) {
-      return this.showB === n
-    },
-    */
     bidN (n) {
       try {
         if (n === this.myBids.info.bidN) return this.myBids.info.bidS < 5
@@ -155,7 +145,6 @@ export default {
     },
     isBid (n, s) {
       try {
-        // console.log(n, s, this.myBids)
         const n1 = n * 10 + s
         const n0 = this.myBids.info.bidN * 10 + this.myBids.info.bidS
         return n1 > n0
@@ -175,10 +164,6 @@ export default {
         default:
           return n + s
       }
-    },
-    isMyTurn () {
-      const b = this.myTurn === this.myPlayer.seat.sId ? this.myTable.state : 0
-      return b
     },
     onBid (bid) {
       this.bidding = bid
@@ -219,16 +204,13 @@ export default {
         .onOk(data => {
           this.alert = data
           this.onBid2()
-          // console.log('>>>> OK, received', data)
         })
         .onCancel(() => {
           this.alert = null
-          // console.log('>>>> Cancel')
         })
         .onDismiss(() => {
           this.alert = null
           this.onBid2()
-          // console.log('I am triggered on both OK and Cancel')
         })
     }
   }

@@ -6,7 +6,7 @@
         square
         hide-bottom
         separator="cell"
-        :data="bData"
+        :data="myBidData"
         :columns="columns"
         row-key="row"
       >
@@ -16,18 +16,18 @@
           :props="props"
         >
           <q-th
-            :class="vul_bgcolor(col.seat)"
+            :class="getVColor(col.seat)"
             v-for="col in props.cols"
             :key="col.seat"
           >
             {{ props.cols[col.seat - 1].label }}
-            <q-tooltip>{{ playerName(col.seat) }}</q-tooltip>
+            <q-tooltip>{{ getNick(col.seat) }}</q-tooltip>
           </q-th>
         </q-tr>
         <template v-slot:body-cell="props">
           <q-td
             :props="props"
-            :class="bid_class(props.value)"
+            :class="getBColor(props.value)"
           >
             {{ getBid(props.value) }}
             <q-tooltip>{{ getAlert(props.value) }}</q-tooltip>
@@ -57,7 +57,6 @@ export default {
       return x
     },
     myBids () {
-      // console.log(this.myTable)
       return this.myTable.bids
     },
     columns () {
@@ -84,68 +83,13 @@ export default {
         default:
           return ''
       }
-    }
-  },
-  methods: {
-    seatX (s) {
-      return ((this.mySeatX + s) % 4) + 1
     },
-    playerName (s) {
-      const pId = this.myTable.seats[s - 1]
-      const p = this.getPlayerById(pId)
-      if (p) return p.nick
-      else return this.seats[s - 1]
-    },
-    getBid (b) {
-      try {
-        return b.bid
-      } catch (err) { }
-      return b
-    },
-    getAlert (a) {
-      try {
-        if (a.alert) return a.alert
-      } catch (err) { }
-      return this.getBid(a)
-    },
-    vul_bgcolor (s) {
-      if (this.myBids) {
-        const x = jbSeatX(s, this.mySeatX) % 2
-        switch (this.myTable.board.bV) {
-          case 0:
-            return 'bg-info'
-          case 3:
-            return 'bg-negative'
-          case 1: {
-            if (x === 0) return 'bg-negative'
-            else return 'bg-info'
-          }
-          case 2: {
-            if (x === 0) return 'bg-info'
-            else return 'bg-negative'
-          }
-          default:
-            return null
-        }
-      }
-    },
-    bid_class (bdata) {
-      if (!bdata) return 'bg-grey'
-      else if (bdata.bid === '?') return 'bg-warning'
-      else {
-        if (bdata.alert) return 'col-3 vul3'
-        else return 'col-3'
-      }
-    },
-    loadBids () {
-      if (!this.myBids) return
-      // let turn = 0
+    myBidData () {
       const data = []
-      const _bid = this.myBids
       try {
         let row = 1
         let rBid = { N: null, E: null, S: null, W: null }
-        _bid.data.forEach(bid => {
+        this.myBids.data.forEach(bid => {
           const bdata = { bid: bid.bid, alert: bid.alert || null }
           switch (bid.sId) {
             case 1: {
@@ -172,34 +116,69 @@ export default {
             rBid = { N: null, E: null, S: null, W: null }
             row++
           }
-          // if (bid.bid === '?') turn = bid.sId
         })
         if (rBid) {
           rBid.row = row
           data.push(rBid)
         }
-        this.$data.bData = data
-      } catch (err) {
-        // console.log(err)
+      } catch (err) { }
+      return data
+    }
+  },
+  methods: {
+    seatX (s) {
+      return ((this.mySeatX + s) % 4) + 1
+    },
+    getNick (s) {
+      const pId = this.myTable.seats[s - 1]
+      const p = this.getPlayerById(pId)
+      if (p) return p.nick
+      else return this.seats[s - 1]
+    },
+    getBid (b) {
+      try {
+        return b.bid
+      } catch (err) { }
+      return b
+    },
+    getAlert (a) {
+      try {
+        if (a.alert) return a.alert
+      } catch (err) { }
+      return this.getBid(a)
+    },
+    getVColor (s) {
+      if (this.myBids) {
+        const x = jbSeatX(s, this.mySeatX) % 2
+        switch (this.myTable.board.bV) {
+          case 0:
+            return 'bg-info'
+          case 3:
+            return 'bg-negative'
+          case 1: {
+            if (x === 0) return 'bg-negative'
+            else return 'bg-info'
+          }
+          case 2: {
+            if (x === 0) return 'bg-info'
+            else return 'bg-negative'
+          }
+          default:
+            return null
+        }
       }
-      // console.log('loadbids', this.$data.bData)
-      // if (turn) this.$emit('onAction', { action: 'bid', turn, bid: _bid })
+    },
+    getBColor (bdata) {
+      if (!bdata) return 'bg-grey'
+      else if (bdata.bid === '?') return 'bg-warning'
+      else {
+        if (bdata.alert) return 'col-3 vul3'
+        else return 'col-3'
+      }
     }
   },
-  watch: {
-    myTable: function (t) {
-      this.loadBids()
-    },
-    myPlayer () {
-      this.loadBids()
-    },
-    myBid () {
-      this.loadBids()
-    }
-  },
-  mounted () {
-    this.loadBids()
-  }
+  watch: {},
+  mounted () { }
 }
 </script>
 

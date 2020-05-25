@@ -248,7 +248,10 @@ export default {
         if (n === 1) {
           if (this.myResult.info.bT === 'MP') return `${100 - this.myResult.mix}%`
           else return -this.myResult.mix
-        } else return this.myResult.mix
+        } else {
+          if (this.myResult.info.bT === 'MP') return `${this.myResult.mix}%`
+          return this.myResult.mix
+        }
       }
       return null
     }

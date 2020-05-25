@@ -9,8 +9,8 @@
         >
           <div class="hand hhand-compact active-hand full-width">
             <img
-              v-for="(c, i) of myPlayCards"
-              :key="`${i}`"
+              v-for="(c, i) of handCards"
+              :key="i"
               :src="cardImg(c)"
               @click="onPlay(c)"
               class="card"
@@ -29,7 +29,7 @@
             class="seat"
           />
           <q-icon
-            :name="flag"
+            :name="handFlag"
             class="flag"
           />
           <q-btn
@@ -39,9 +39,9 @@
             no-caps
             no-wrap
             ellipsis
-            :label="pNick"
-            :color="pTurn"
-            :icon="pAvatar"
+            :label="handNick"
+            :color="handTurn"
+            :icon="handAvatar"
             align="left"
             class="player"
           />
@@ -51,9 +51,9 @@
             push
             ripple
             color="primary"
-            :icon="player ? 'check' : 'event_seat'"
-            :label="player ? 'Ready' : 'Sit'"
-            v-show="!player || isReady === 0"
+            :icon="handPlayer ? 'check' : 'event_seat'"
+            :label="handPlayer ? 'Ready' : 'Sit'"
+            v-show="!handPlayer || isReady === 0"
             class="ready"
             @click="onReady"
           />
@@ -62,10 +62,10 @@
             split
             auto-close
             v-if="isDeclarer"
-            :label="myContract"
+            :label="handContract"
             color="info"
             class="declarer"
-            :disable="showDeclarer"
+            :disable="myDeclarer"
           >
             <q-list dense>
               <q-item
@@ -91,25 +91,22 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { jbIsPlayer, jbSeatX, jbSeat1234 } from 'src/jbPlayer'
+import { jbIsPlayer, jbIsMyPlayer } from 'src/jbPlayer'
+import { jbSeatName, jbSeatX, jbSeat1234 } from 'src/jbSeat'
 
 export default {
   name: 'myHand',
   props: ['handId', 'myPlayer', 'myTable'],
   data () {
     return {
-      NESW: ['North', 'East', 'South', 'West'],
-      // myCards: [],
       claims: ['Concede All', 'Claim Just Make', 'Claim All'],
       isClaim: false
     }
   },
-  components: {
-    // myCards
-  },
+  components: {},
   computed: {
     ...mapGetters('jstore', ['getPlayerById']),
-    myState () {
+    handState () {
       return this.myTable.state
     },
     mySeat () {
@@ -118,61 +115,60 @@ export default {
     seatX () {
       return jbSeatX(this.handId, this.mySeat.sId)
     },
-    player () {
+    seatIcon () {
+      return `img:statics/jbicon/seats/seat${this.seatX}.svg`
+    },
+    handPlayer () {
       const pId = this.myTable.seats[this.seatX - 1]
       return this.getPlayerById(pId)
     },
-    pNick () {
-      return this.player ? this.player.nick : this.NESW[this.seatX - 1]
+    handNick () {
+      return this.handPlayer ? this.handPlayer.nick : jbSeatName(this.seatX - 1)
     },
-    pAvatar () {
-      return this.player ? `img:${this.player.profile.avatar}` : null
+    handAvatar () {
+      return this.handPlayer ? `img:${this.handPlayer.profile.avatar}` : null
     },
-    myCards () {
-      return this.myTable.board.cards[this.seatX - 1]
-    },
-    myPlayCards () {
-      // try {
-      if (this.myState === 2) {
-        const playedCards = this.myTable.plays.data.map(x => x.card.value)
-        // console.log(playedCards, this.myCards)
-        return this.myCards.filter(c => !playedCards.includes(c.value))
-      } else return []
-      // } catch (_) { }
-    },
-    isVisible () {
-      if (this.myTable.state > 2) return true
-      else if (this.myTable.state === 0) return false
-      else if (this.mySeat.sId === 9) return true
-      else if (this.isDummy) return true
-      else return this.seatX === Math.abs(this.mySeat.sId)
-    },
-    pTurn () {
-      if (this.isMyTurn()) return 'warning'
-      else return this.myPlayer ? 'indigo' : 'positive'
-    },
-    flag () {
-      if (this.player) {
+    handFlag () {
+      if (this.handPlayer) {
         try {
-          const flag2 = this.player.profile.flag.toLowerCase()
+          const flag2 = this.handPlayer.profile.flag.toLowerCase()
           return `img:statics/flags/4x3/${flag2}.svg`
         } catch (_) { }
       }
       return null
     },
-    seatIcon () {
-      return `img:statics/jbicon/seats/seat${this.seatX}.svg`
+    handTurn () {
+      if (this.isHandTurn()) return 'warning'
+      else return this.myPlayer ? 'indigo' : 'positive'
+    },
+    handCards () {
+      return this.myTable.board.cards[this.seatX - 1].filter(c => !this.playedCards.includes(c.value))
+    },
+    playedCards () {
+      if (this.handState === 2) {
+        return this.myTable.plays.data.map(x => x.card.value)
+      } else return []
+    },
+    isVisible () {
+      if (this.handState < 1) return false
+      else if (this.handState > 2) return true
+      else if (this.mySeat.sId === 9) return true
+      else if (this.isDummy) return true
+      else return this.seatX === Math.abs(this.mySeat.sId)
     },
     isReady () {
       return this.myTable.ready[this.seatX - 1]
     },
-    showDeclarer () {
-      if (this.myTable.state === 2) {
-        return this.seatX !== this.mySeat.sId
-      } else return true
+    isDummy () {
+      if (this.handState === 2) {
+        if (this.myTable.plays.data.length > 0) {
+          return (this.myTable.bids.info.by + 2) % 4 === this.seatX % 4
+        }
+      }
+      return false
     },
     isDeclarer () {
-      switch (this.myState) {
+      switch (this.handState) {
         case 2:
         case 3:
           return this.myTable.bids.info.by === this.seatX
@@ -180,55 +176,48 @@ export default {
           return false
       }
     },
-    isDummy () {
-      try {
-        if (this.myTable.state > 1) {
-          if (this.myTable.plays.data.length > 0) {
-            return (this.myTable.bids.info.by + 2) % 4 === this.seatX % 4
-          }
-        }
-      } catch (_) {
-        // console.log(err);
-      }
-      return false
+    myDeclarer () {
+      if (this.handState === 2) {
+        return this.seatX !== this.mySeat.sId
+      } else return true
     },
-    myContract () {
+    handReady () {
+      if (!this.handPlayer) return 'Ready...'
+      else if (this.isDeclarer) return this.handContract
+      return null
+    },
+    handContract () {
       let c = this.myTable.bids ? this.myTable.bids.info.contract : null
       if (this.myTable.bids.info.XX) c += 'XX'
       else if (this.myTable.bids.info.X) c += 'X'
       return c
     },
-    playerBtn () {
-      if (!this.player) return 'Ready...'
-      else if (this.isDeclarer) return this.contract
-      return null
-    },
-    myClaim () {
+    handClaim () {
       return this.myTable.claim
     }
   },
   methods: {
     // ...mapActions('jstore', ['addUser']),
     onReady () {
-      if (!this.player) {
+      if (!this.handPlayer) {
         const seat = {
           action: 'sit',
-          state: this.myTable.state,
+          state: this.handState,
           seat: {
             tId: this.myTable.id,
             sId: this.seatX
           }
         }
         this.$emit('onTable', seat)
-      } else if (this.player.id === this.myPlayer.id) {
-        const _ready = [...this.myTable.ready] || [null, null, null, null]
-        _ready[this.seatX - 1] = this.seatX
-        const ready = {
+      } else if (jbIsMyPlayer(this.handPlayer, this.myPlayer)) {
+        const ready = [...this.myTable.ready] || [null, null, null, null]
+        ready[this.seatX - 1] = this.seatX
+        const readyData = {
           action: 'ready',
-          state: this.myTable.state,
-          ready: _ready
+          state: this.handState,
+          ready: ready
         }
-        this.$emit('onTable', ready)
+        this.$emit('onTable', readyData)
         this.$q.notify({ type: 'info', message: 'I am Ready' })
       } else {
         this.$q.notify({ type: 'negative', message: 'This seat is taken' })
@@ -278,9 +267,9 @@ export default {
     },
     onClaimR (accept) {
       let claim
-      claim = Object.assign({}, claim, this.myClaim)
+      claim = Object.assign({}, claim, this.handClaim)
       if (accept) {
-        if (this.myClaim.o1 === -this.mySeat.sId) {
+        if (this.handClaim.o1 === -this.mySeat.sId) {
           claim.o1 = -claim.o1
         } else {
           claim.o2 = -claim.o2
@@ -297,27 +286,6 @@ export default {
       // if (!n52.suit) console.log('error', n52)
       return `statics/cards/${n52.rank + n52.suit}.svg`
     },
-    updateTable () {
-      this.updatePlay()
-    },
-    updatePlay () {
-      /*
-      try {
-        let playCards = this.myTable.board.cards[this.seatX - 1]
-        const _played = this.playedCards.map(x => x.value)
-        if (_played.length) {
-          // console.log(this.handId, playCards)
-          playCards = playCards.filter(c => !_played.includes(c.value))
-          // console.log(_played, playCards)
-        }
-        this.$data.myCards = playCards
-        // console.log(playCards)
-      } catch (err) {
-        // console.log(err)
-        this.$data.myCards = []
-      }
-      */
-    },
     cardCheck (play) {
       const lead = this.myTable.plays.info.lead
       if (!lead) return true
@@ -325,29 +293,30 @@ export default {
         if (lead.card.suit === play.suit) {
           return true
         } else {
-          const _suit = this.myPlayCards.filter(
-            c => c.suit === lead.card.suit
-          )
-          // console.log(lead.card.suit, _suit)
+          const _suit = this.playedCards.filter(c => c.suit === lead.card.suit)
           return _suit.length === 0
         }
       }
     },
     isMyPlay () {
-      if (this.myTable.state === 2) {
+      if (this.handState === 2) {
         return this.isDummy
           ? this.myPlayer.seat.sId === this.myTable.bids.info.by
-          : this.isMyTurn()
+          : this.isHandTurn()
       } else return false
     },
-    isMyTurn () {
-      if (this.myState > 0) return this.myTable.turn === this.seatX
-      else return false
+    isHandTurn () {
+      switch (this.handState) {
+        case 1:
+        case 2:
+          return this.myTable.turn === this.seatX
+        default: return false
+      }
     },
-    isMyClaim (claim) {
+    isHandClaim (claim) {
       const notification = {
         message: 'Declarer is claiming:',
-        caption: `Contract ${this.myContract}: ${claim.claim}`,
+        caption: `Contract ${this.handContract}: ${claim.claim}`,
         color: 'primary',
         icon: 'live_help'
       }
@@ -376,19 +345,11 @@ export default {
     }
   },
   watch: {
-    mySeat (x) {
-      this.updateTable()
-    },
-    myTable (t, o) {
-      this.updateTable()
-    },
-    myClaim (claim) {
-      if (claim && this.myTable.state === 2) this.isMyClaim(claim)
+    handClaim (claim) {
+      if (claim && this.handState === 2) this.isHandClaim(claim)
     }
   },
-  mounted () {
-    this.updateTable()
-  },
+  mounted () { },
   created () { }
 }
 </script>

@@ -4,7 +4,11 @@
       <div class="col">
         <div class="row no-wrap">
           <div class="col-4 items-start">
-            <myBoard :myTable="myTable" :mySeat="mySeat" v-on:onTable="onTable"></myBoard>
+            <myBoard
+              :myTable="myTable"
+              :mySeat="mySeat"
+              v-on:onTable="onTable"
+            ></myBoard>
           </div>
           <div class="col-5">
             <div class="column">
@@ -20,11 +24,23 @@
           </div>
           <div class="col-3 items-end column">
             <q-list bordered>
-              <q-item-label overline class="bg-primary text-white shadow-2">
+              <q-item-label
+                overline
+                class="bg-primary text-white shadow-2"
+              >
                 <div class="full-width">
                   <div class="row statusbar">
                     <q-space />
-                    <q-chip square color="green" text-color="white" icon="alarm" :label="myStatus" />
+                    <q-chip
+                      square
+                      color="green"
+                      text-color="white"
+                      icon="alarm"
+                      :label="myStatus"
+                      class="full-width"
+                    >
+                      <myTimer :timer='timer' />
+                    </q-chip>
                     <q-space />
                     <q-btn-group push>
                       <q-btn
@@ -45,13 +61,23 @@
                         icon="close"
                         @click="onCommand"
                       />
-                      <q-btn size="12px" flat dense round icon="more_vert" />
+                      <q-btn
+                        size="12px"
+                        flat
+                        dense
+                        round
+                        icon="more_vert"
+                      />
                     </q-btn-group>
                   </div>
                 </div>
               </q-item-label>
               <q-item-section v-if="myState >1">
-                <myBidBox :myPlayer="myPlayer" :myTable="myTable" class="fit bbox" />
+                <myBidBox
+                  :myPlayer="myPlayer"
+                  :myTable="myTable"
+                  class="fit bbox"
+                />
               </q-item-section>
             </q-list>
           </div>
@@ -73,13 +99,27 @@
           <div class="col-4">
             <div class="column">
               <div>
-                <q-card class="bbox pbox" v-if="myState === 1">
+                <q-card
+                  class="bbox pbox"
+                  v-if="myState === 1"
+                >
                   <q-card>
-                    <myBidBox :myPlayer="myPlayer" :myTable="myTable" />
+                    <myBidBox
+                      :myPlayer="myPlayer"
+                      :myTable="myTable"
+                    />
                   </q-card>
                 </q-card>
-                <q-card flat class="pbox transparent" v-if="myState === 2">
-                  <myPlayBox :myPlayer="myPlayer" :myTable="myTable" :review="false" />
+                <q-card
+                  flat
+                  class="pbox transparent"
+                  v-if="myState === 2"
+                >
+                  <myPlayBox
+                    :myPlayer="myPlayer"
+                    :myTable="myTable"
+                    :review="false"
+                  />
                 </q-card>
                 <q-space />
               </div>
@@ -102,7 +142,11 @@
         <div class="row no-wrap">
           <div class="col-3">
             <div class="column">
-              <myTricks :myPlayer="myPlayer" :myTable="myTable" class="myHand justify-start" />
+              <myTricks
+                :myPlayer="myPlayer"
+                :myTable="myTable"
+                class="myHand justify-start"
+              />
             </div>
           </div>
           <div class="col-6">
@@ -118,7 +162,11 @@
           </div>
           <div class="col-3 column">
             <div class="justify-start">
-              <myBid :myPlayer="myPlayer" :myTable="myTable" v-on:onTable="onTable" />
+              <myBid
+                :myPlayer="myPlayer"
+                :myTable="myTable"
+                v-on:onTable="onTable"
+              />
             </div>
           </div>
         </div>
@@ -128,6 +176,7 @@
 </template>
 
 <script>
+// import * as moment from 'moment'
 import { mapState, mapGetters } from 'vuex'
 // import say from 'say'
 import { tables$ } from 'src/api'
@@ -137,6 +186,7 @@ import myBid from 'src/components/myBid'
 import myBidBox from 'src/components/myBidBox'
 import myPlayBox from 'src/components/myPlayBox'
 import myTricks from 'src/components/myTricks'
+import myTimer from 'src/components/myTimer'
 
 export default {
   name: 'myPlayTable',
@@ -146,7 +196,8 @@ export default {
       tableData: null,
       state: 0,
       cc: { name: { NS: 'SAYC', EW: 'SAYC' }, card: { NS: '', EW: '' } },
-      alert: null
+      alert: null,
+      timer: new Date().getTime()
     }
   },
   components: {
@@ -155,7 +206,8 @@ export default {
     myBid,
     myBidBox,
     myPlayBox,
-    myTricks
+    myTricks,
+    myTimer
   },
   computed: {
     ...mapState('jstore', ['players', 'tables']),
@@ -177,29 +229,28 @@ export default {
         this.$data.state = s
       }
     },
-    myStatus: {
-      get: function () {
-        switch (this.myState) {
-          case -1:
-            return 'Reviewing...'
-          case 0:
-            return 'Ready...'
-          case 1:
-            return 'Bidding...'
-          case 2:
-            return 'Playing...'
-          default:
-            return null
-        }
+    myTurn () {
+      return this.myTable.turn
+    },
+    myStatus () {
+      switch (this.myState) {
+        case 0:
+          return 'Ready...'
+        case 1:
+          return 'Bidding...'
+        case 2:
+          return 'Playing...'
+        case 3:
+          return 'Reviewing...'
+        default:
+          return null
       }
     },
-    myAlert: {
-      get: function (n) {
-        try {
-          return this.myTable.alert
-        } catch (err) {}
-        return null
-      }
+    myAlert () {
+      try {
+        return this.myTable.alert
+      } catch (err) { }
+      return null
     },
     myBids: {
       get: function () {
@@ -213,7 +264,7 @@ export default {
     }
   },
   methods: {
-    onState (s) {},
+    onState (s) { },
     onTable (action) {
       // console.log('onTable', action)
       switch (action.action) {
@@ -299,6 +350,7 @@ export default {
       for (let s = s0; s <= s1; s++) {
         this.onState(s)
       }
+      this.$data.timer = new Date().getTime()
     },
     myAlert (a) {
       if (a) {
@@ -308,7 +360,9 @@ export default {
         })
       }
     },
-    myTurn (t1, t0) {}
+    myTurn () {
+      this.$data.timer = new Date().getTime()
+    }
   },
   mounted () {
     if (!this.myTable) {
@@ -316,7 +370,7 @@ export default {
       this.onTable({ action: 'sit', seat })
     }
   },
-  beforeDestroy () {}
+  beforeDestroy () { }
 }
 </script>
 <!-- Notice lang='scss' -->

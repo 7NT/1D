@@ -1,5 +1,8 @@
 <template>
-  <div class="bbox column" v-if="isMyTurn() === 1">
+  <div
+    class="bbox column"
+    v-if="isMyTurn() === 1"
+  >
     <div class="col row">
       <q-btn-group push>
         <q-fab
@@ -30,9 +33,18 @@
         </q-fab>
       </q-btn-group>
     </div>
-    <q-separator spaced inset />
-    <div class="col row" style="height:30px">
-      <q-btn-group dense class="full-width">
+    <q-separator
+      spaced
+      inset
+    />
+    <div
+      class="col row"
+      style="height:30px"
+    >
+      <q-btn-group
+        dense
+        class="full-width"
+      >
         <q-btn
           glossy
           label="X"
@@ -49,12 +61,25 @@
           @click="onBid('XX')"
           style="width:25%"
         />
-        <q-btn glaosy label="Pass" color="primary" @click="onBid('pass')" style="width:45%" />
+        <q-btn
+          glaosy
+          label="Pass"
+          color="primary"
+          @click="onBid('pass')"
+          style="width:45%"
+        />
       </q-btn-group>
     </div>
-    <q-separator spaced inset />
+    <q-separator
+      spaced
+      inset
+    />
     <div class="col row items-center">
-      <q-btn-group dense class="full-width" style="height:30px">
+      <q-btn-group
+        dense
+        class="full-width"
+        style="height:30px"
+      >
         <q-btn
           glossy
           :label="`Bid: ${bidding}`"
@@ -62,7 +87,13 @@
           color="positive"
           @click="onBid2()"
         />
-        <q-btn glossy :label="`Alert: ${bidding}`" :disable="!bidding" color="negative" @click="onAlert2()" />
+        <q-btn
+          glossy
+          :label="`Alert: ${bidding}`"
+          :disable="!bidding"
+          color="negative"
+          @click="onAlert2()"
+        />
       </q-btn-group>
     </div>
   </div>
@@ -119,9 +150,7 @@ export default {
       try {
         if (n === this.myBids.info.bidN) return this.myBids.info.bidS < 5
         else return n > this.myBids.info.bidN
-      } catch (_) {
-        // console.log(err)
-      }
+      } catch (_) { }
       return true
     },
     isBid (n, s) {
@@ -130,9 +159,7 @@ export default {
         const n1 = n * 10 + s
         const n0 = this.myBids.info.bidN * 10 + this.myBids.info.bidS
         return n1 > n0
-      } catch (_) {
-        // console.log(err)
-      }
+      } catch (_) { }
       return true
     },
     bidNS (n, s) {

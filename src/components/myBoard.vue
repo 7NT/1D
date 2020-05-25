@@ -246,9 +246,8 @@ export default {
     score (n) {
       if (this.myResult) {
         if (n === 1) {
-          let score = 0
-          if (this.myResult.info.bT === 'MP') score = 100
-          return score - this.myResult.mix
+          if (this.myResult.info.bT === 'MP') return `${100 - this.myResult.mix}%`
+          else return -this.myResult.mix
         } else return this.myResult.mix
       }
       return null

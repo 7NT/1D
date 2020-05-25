@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { jbSeatX } from 'src/jbPlayer'
+import { jbSeatX } from 'src/jbSeat'
 
 export default {
   name: 'myPlayBox',

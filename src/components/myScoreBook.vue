@@ -1,10 +1,20 @@
 <template>
-  <q-list separator bordered dense>
-    <q-item-label header class="text-grey-8">My ScoreBook:</q-item-label>
+  <q-list
+    separator
+    bordered
+    dense
+  >
+    <q-item-label
+      header
+      class="text-grey-8"
+    >My ScoreBook:</q-item-label>
     <q-separator />
-    <q-item v-for="r in results" :key="r._id">
+    <q-item
+      v-for="r in results"
+      :key="r._id"
+    >
       <q-item-section>
-        <q-item-label overline>{{r.info.bT}}#{{r.info.bN}}: {{getPName(r)}}</q-item-label>
+        <q-item-label overline>{{r.info.bT}}#{{r.info.bN}}: {{getPNick(r)}}</q-item-label>
         <q-item-label>
           {{r.info.contract}}{{getResult(r)}}
           <q-badge
@@ -15,7 +25,10 @@
         </q-item-label>
       </q-item-section>
 
-      <q-item-section side top>
+      <q-item-section
+        side
+        top
+      >
         <q-item-label caption>{{playedDate(r.playedAt)}}</q-item-label>
       </q-item-section>
     </q-item>
@@ -55,6 +68,16 @@ export default {
             return by ? r.mix : -r.mix
         }
       }
+    },
+    getPNick (r) {
+      if (r.info.by < 1) return ''
+      const pId = r.players[r.info.by - 1]
+      let pname = this.seatName[r.info.by - 1]
+      if (pId) {
+        const p = this.getPlayerById(pId)
+        if (p) pname = p.nick
+      }
+      return `by ${pname}`
     },
     playedDate (playedAt) {
       return moment(playedAt)

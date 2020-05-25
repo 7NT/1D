@@ -65,7 +65,7 @@
                 <span style="color:red;">@</span>
               </template>
               <template v-else-if="p.status==1">
-                <span style="color:purple;">♥</span>
+                <span style="color:white;">&#xf3a5;</span>
               </template>
               <template v-else-if="isFriend(p.nick)">
                 <q-icon name='mdi-account-heart' />
@@ -95,7 +95,7 @@
           </q-item-section>
         </template>
         <q-card>
-          <q-card-actions v-if='p.id !== myUser._id'>
+          <q-card-actions v-if='p.id !== myPlayer.id'>
             <q-btn
               dense
               flat
@@ -108,12 +108,16 @@
               flat
               size="sm"
               icon='mdi-account-supervisor'
+              v-if='!isMyTable(p)'
+              @click='onWatch(p)'
             >Watch</q-btn>
             <q-btn
               dense
               flat
               size="sm"
               icon='mdi-account-multiple-plus'
+              v-if='!isMyTable(p)'
+              @click='onJoin(p, 0)'
             >Join</q-btn>
           </q-card-actions>
           <q-separator dark />
@@ -139,6 +143,8 @@
 import { mapState, mapGetters, mapActions } from 'vuex'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
+import { players$ } from 'src/api'
+import { jbIsPlayer } from 'src/jbPlayer'
 
 export default {
   name: 'myP1List',
@@ -156,8 +162,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['myUser', 'players', 'jbT0', 'jbT1']),
-    ...mapGetters('jstore', ['getPlayerById', 'getTableById']),
+    ...mapState('jstore', ['players', 'jbT0', 'jbT1']),
+    ...mapGetters('jstore', ['myPlayer', 'getPlayerById', 'getTableById']),
     myPlayers () {
       let players = this.players
       if (this.jbT1.id !== '#Lobby') players = players.filter(p => p.seat.tId === this.jbT1.id)
@@ -171,22 +177,18 @@ export default {
       if (t) return t.name
       else return '#Lobby'
     },
-    getPName (r) {
-      if (r.info.by < 1) return ''
-      const pId = r.players[r.info.by - 1]
-      let pname = this.seatName[r.info.by - 1]
-      if (pId) {
-        const p = this.getPlayerById(pId)
-        if (p) pname = p.nick
-      }
-      return `by ${pname}`
-    },
     getFlag (p) {
       if (p) {
         const flag2 = p.profile.flag.toLowerCase()
         return `img:statics/flags/4x3/${flag2}.svg`
       }
       return null
+    },
+    isPlayer (p) {
+      return jbIsPlayer(p.seat.sId)
+    },
+    isMyTable (p) {
+      return p.seat.tId === this.myPlayer.seat.tId
     },
     isFriend (p) {
       return this.friends.indexOf(p) >= 0
@@ -206,6 +208,17 @@ export default {
     },
     read (p) {
       this.setT04({ id: 0, t0: p.id })
+    },
+    onJoin (p, sId) {
+      const seat = {
+        tId: p.seat.tId,
+        sId: sId
+      }
+      players$.patch(this.myPlayer.id, { seat })
+    },
+    onWatch (p) {
+      if (jbIsPlayer(p.seat.sId)) this.onJoin(p, -p.seat.sId)
+      else this.onJoin(p, 9)
     }
   },
   created () {

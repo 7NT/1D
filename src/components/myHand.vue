@@ -9,7 +9,7 @@
         >
           <div class="hand hhand-compact active-hand full-width">
             <img
-              v-for="(c, i) of myCards"
+              v-for="(c, i) of myPlayCards"
               :key="`${i}`"
               :src="cardImg(c)"
               @click="onPlay(c)"
@@ -91,7 +91,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-// import myCards from 'src/components/myCards';
 import { jbIsPlayer, jbSeatX, jbSeat1234 } from 'src/jbPlayer'
 
 export default {
@@ -100,7 +99,7 @@ export default {
   data () {
     return {
       NESW: ['North', 'East', 'South', 'West'],
-      myCards: [],
+      // myCards: [],
       claims: ['Concede All', 'Claim Just Make', 'Claim All'],
       isClaim: false
     }
@@ -110,36 +109,36 @@ export default {
   },
   computed: {
     ...mapGetters('jstore', ['getPlayerById']),
-    myState: {
-      get: function () {
-        return this.myTable.state
-      }
+    myState () {
+      return this.myTable.state
     },
-    mySeat: {
-      get: function () {
-        return this.myPlayer.seat
-      }
+    mySeat () {
+      return this.myPlayer.seat
     },
-    seatX: {
-      get: function () {
-        return jbSeatX(this.handId, this.mySeat.sId)
-      }
+    seatX () {
+      return jbSeatX(this.handId, this.mySeat.sId)
     },
-    player: {
-      get: function () {
-        const pId = this.myTable.seats[this.seatX - 1]
-        return this.getPlayerById(pId)
-      }
+    player () {
+      const pId = this.myTable.seats[this.seatX - 1]
+      return this.getPlayerById(pId)
     },
-    pNick: {
-      get: function () {
-        return this.player ? this.player.nick : this.NESW[this.seatX - 1]
-      }
+    pNick () {
+      return this.player ? this.player.nick : this.NESW[this.seatX - 1]
     },
-    pAvatar: {
-      get: function () {
-        return this.player ? `img:${this.player.profile.avatar}` : null
-      }
+    pAvatar () {
+      return this.player ? `img:${this.player.profile.avatar}` : null
+    },
+    myCards () {
+      return this.myTable.board.cards[this.seatX - 1]
+    },
+    myPlayCards () {
+      // try {
+      if (this.myState === 2) {
+        const playedCards = this.myTable.plays.data.map(x => x.card.value)
+        // console.log(playedCards, this.myCards)
+        return this.myCards.filter(c => !playedCards.includes(c.value))
+      } else return []
+      // } catch (_) { }
     },
     isVisible () {
       if (this.myTable.state > 2) return true
@@ -173,12 +172,13 @@ export default {
       } else return true
     },
     isDeclarer () {
-      try {
-        if (this.myTable.bids) return this.myTable.bids.info.by === this.seatX
-      } catch (_) {
-        // console.log(err);
+      switch (this.myState) {
+        case 2:
+        case 3:
+          return this.myTable.bids.info.by === this.seatX
+        default:
+          return false
       }
-      return false
     },
     isDummy () {
       try {
@@ -202,15 +202,6 @@ export default {
       if (!this.player) return 'Ready...'
       else if (this.isDeclarer) return this.contract
       return null
-    },
-    playedCards () {
-      try {
-        if (this.myTable.state === 2) {
-          const _played = this.myTable.plays.data.map(x => x.card)
-          return _played
-        }
-      } catch (_) { }
-      return []
     },
     myClaim () {
       return this.myTable.claim
@@ -310,6 +301,7 @@ export default {
       this.updatePlay()
     },
     updatePlay () {
+      /*
       try {
         let playCards = this.myTable.board.cards[this.seatX - 1]
         const _played = this.playedCards.map(x => x.value)
@@ -324,6 +316,7 @@ export default {
         // console.log(err)
         this.$data.myCards = []
       }
+      */
     },
     cardCheck (play) {
       const lead = this.myTable.plays.info.lead
@@ -332,7 +325,7 @@ export default {
         if (lead.card.suit === play.suit) {
           return true
         } else {
-          const _suit = this.$data.myCards.filter(
+          const _suit = this.myPlayCards.filter(
             c => c.suit === lead.card.suit
           )
           // console.log(lead.card.suit, _suit)

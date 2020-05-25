@@ -182,8 +182,8 @@ export default {
         { name: 'ns', label: '', field: 'ns' },
         { name: 'ew', label: '', field: 'ew' }
       ],
-      CCs: ['SAYC', '2over1', 'Prec', 'my CC...'],
-      myResult: null
+      CCs: ['SAYC', '2over1', 'Prec', 'my CC...']
+      // myResult: null
     }
   },
   computed: {
@@ -207,6 +207,13 @@ export default {
     },
     state () {
       return this.myTable.state
+    },
+    myResult () {
+      switch (this.myTable.state) {
+        case 3:
+          return this.getResultById(this.myTable.id)
+        default: return null
+      }
     }
   },
   methods: {
@@ -237,12 +244,12 @@ export default {
       openURL(`http://localhost:8080/statics/cc/${cc}.pdf`)
     },
     score (n) {
-      try {
-        if (this.myResult) {
-          return this.myResult.mix[n]
-        }
-      } catch (err) {
-        // console.log(err)
+      if (this.myResult) {
+        if (n === 1) {
+          let score = 0
+          if (this.myResult.info.bT === 'MP') score = 100
+          return score - this.myResult.mix
+        } else return this.myResult.mix
       }
       return null
     }
@@ -250,14 +257,6 @@ export default {
   watch: {
     mix (bT) {
       this.onBT(bT)
-    },
-    state (s) {
-      switch (s) {
-        case 3:
-          this.myResult = this.getResultById(this.myTable.id)
-          break
-        default:
-      }
     }
   },
   mounted () {

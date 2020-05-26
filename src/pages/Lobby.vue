@@ -59,7 +59,7 @@
             </q-tab-panel>
 
             <q-tab-panel :name="2">
-              <div class="fit">
+              <div class="t2">
                 <myTourney :myPlayer="myPlayer" />
               </div>
             </q-tab-panel>
@@ -185,5 +185,9 @@ export default {
 }
 .messages {
   overflow-x: hidden;
+}
+.t2 {
+  height: 60vh;
+  width: 100%
 }
 </style>

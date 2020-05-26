@@ -188,7 +188,10 @@ export default {
       return jbIsPlayer(p.seat.sId)
     },
     isMyTable (p) {
-      return p.seat.tId === this.myPlayer.seat.tId
+      try {
+        return p.seat.tId === this.myPlayer.seat.tId
+      } catch (err) {}
+      return false
     },
     isFriend (p) {
       return this.friends.indexOf(p) >= 0

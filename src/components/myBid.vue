@@ -1,7 +1,7 @@
 <template>
   <div
     class="bbox column"
-    v-if="isMyTurn() === 1"
+    v-if="isMyTurn()"
   >
     <div class="col row">
       <q-btn-group push>
@@ -134,7 +134,8 @@ export default {
   },
   methods: {
     isMyTurn () {
-      return (this.myTurn === this.myPlayer.seat.sId) ? this.myTable.state : 0
+      if (this.myTable.state === 1) return this.myTurn === this.myPlayer.seat.sId
+      else return false
     },
     bidN (n) {
       try {

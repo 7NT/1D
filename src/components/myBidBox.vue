@@ -20,8 +20,9 @@
             v-for="col in props.cols"
             :key="col.seat"
           >
-            {{ props.cols[col.seat - 1].label }}
-            <q-tooltip>{{ getNick(col.seat) }}</q-tooltip>
+            <!--{{ props.cols[col.seat - 1].field }}-->
+            {{ col.field }}
+            <q-tooltip>{{ col.label }}</q-tooltip>
           </q-th>
         </q-tr>
         <template v-slot:body-cell="props">
@@ -63,9 +64,10 @@ export default {
       const cols = []
       let i
       for (i of [0, 1, 2, 3]) {
-        const x = this.seatX(i) - 1
-        const c = this.seats[x]
-        cols.push({ seat: i + 1, label: c, field: c, align: 'center' })
+        const x = this.seatX(i)
+        const c = this.seats[x - 1]
+        const p = this.getNick(x)
+        cols.push({ seat: i + 1, label: p, field: c, align: 'center' })
       }
       return cols
     },

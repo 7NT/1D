@@ -51,7 +51,9 @@
                         round
                         icon="live_help"
                         @click="onCommand"
-                      />
+                      >
+                        <q-tooltip>Call Admin...</q-tooltip>
+                      </q-btn>
                       <q-btn
                         class="gt-xs"
                         size="12px"
@@ -60,14 +62,18 @@
                         round
                         icon="close"
                         @click="onCommand"
-                      />
+                      >
+                        <q-tooltip>Exit Table</q-tooltip>
+                      </q-btn>
                       <q-btn
                         size="12px"
                         flat
                         dense
                         round
                         icon="more_vert"
-                      />
+                      >
+                        <q-tooltip>Table Settings</q-tooltip>
+                      </q-btn>
                     </q-btn-group>
                   </div>
                 </div>
@@ -193,7 +199,6 @@ export default {
   props: ['myPlayer'],
   data: function () {
     return {
-      tableData: null,
       state: 0,
       cc: { name: { NS: 'SAYC', EW: 'SAYC' }, card: { NS: '', EW: '' } },
       alert: null,
@@ -216,10 +221,8 @@ export default {
     myTable () {
       return this.getTableById(this.myPlayer.seat.tId)
     },
-    mySeat: {
-      get: function () {
-        return this.myPlayer.seat
-      }
+    mySeat () {
+      return this.myPlayer.seat
     },
     myState: {
       get: function () {
@@ -252,15 +255,11 @@ export default {
       } catch (err) { }
       return null
     },
-    myBids: {
-      get: function () {
-        return this.myTable.bids
-      }
+    myBids () {
+      return this.myTable.bids
     },
-    myPlays: {
-      get: function () {
-        return this.myTable.plays
-      }
+    myPlays () {
+      return this.myTable.plays
     }
   },
   methods: {

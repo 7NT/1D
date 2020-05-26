@@ -13,6 +13,27 @@ export const jbBidNS = (n, s) => {
   }
 }
 
+export const jbSuitName = (s) => {
+  switch (s) {
+    case 'C':
+    case '♣':
+      return 'Clubs'
+    case 'D':
+    case '♦':
+      return 'Diamonds'
+    case 'H':
+    case '♥':
+      return 'Hearts'
+    case 'S':
+    case '♠':
+      return 'Spades'
+    case 'NT':
+      return 'No Trump'
+    default:
+      return ''
+  }
+}
+
 export const jbBidX = (by, turn) => {
   if (by < 1) return true
   else return (by - turn) % 2 === 0

@@ -29,7 +29,9 @@
             icon="null"
             :color="s.color"
             @click="onBid(`${n}${s.suit}`)"
-          >{{ bidNS(n, s.suit) }}</q-fab-action>
+          >{{ bidNS(n, s.suit) }}
+            <q-tooltip>{{n}} {{ getSuitName(s.suit) }}</q-tooltip>
+          </q-fab-action>
         </q-fab>
       </q-btn-group>
     </div>
@@ -100,7 +102,7 @@
 </template>
 
 <script>
-import { jbBidX } from 'src/jbBid'
+import { jbBidX, jbSuitName } from 'src/jbBid'
 
 export default {
   name: 'myBid',
@@ -213,6 +215,9 @@ export default {
           this.alert = null
           this.onBid2()
         })
+    },
+    getSuitName (s) {
+      return jbSuitName(s)
     }
   }
 }

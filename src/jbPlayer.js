@@ -18,6 +18,10 @@ export function jbIsMyPlayer (p, p0) {
   return p ? p.id === p0.id : null
 }
 
+export function jbIsMyNick (p, p0) {
+  return p ? p.nick.toLowerCase() === p0.nick.toLowerCase() : null
+}
+
 export const jbIsPlayer = (seat) => {
   switch (seat) {
     case 1:

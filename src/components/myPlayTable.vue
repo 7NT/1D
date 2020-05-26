@@ -233,7 +233,7 @@ export default {
       }
     },
     myTurn () {
-      return this.myTable.turn
+      return this.myTable ? this.myTable.turn : 0
     },
     myStatus () {
       switch (this.myState) {

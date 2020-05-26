@@ -1,14 +1,8 @@
 <template>
   <q-item :class="getBorder(myPair)">
-    <q-item-section
-      avatar
-      class="col-2"
-    >
+    <q-item-section avatar class="col-2">
       <q-chip>
-        <q-avatar
-          color="info"
-          text-color="white"
-        >{{myPair.pN}}</q-avatar>
+        <q-avatar color="info" text-color="white">{{myPair.pN}}</q-avatar>
         {{myPair.cc}}
       </q-chip>
     </q-item-section>
@@ -17,10 +11,7 @@
       <div class="row">
         <div class="col-6">
           <template v-if="isOnline(myPair.player)">
-            <q-icon
-              :name="myFlag(myPair.player)"
-              size="sm"
-            />
+            <q-icon :name="myFlag(myPair.player)" size="sm" />
             <q-btn
               :icon="myAvatar(myPair.player)"
               :label="myNick(myPair.player)"
@@ -30,7 +21,7 @@
           </template>
           <template v-else-if="myPair.player">
             <q-btn
-              :label="myPair.partner.nick"
+              :label="myPair.player.nick"
               icon="person"
               class="player bg-info"
               align="around"
@@ -40,10 +31,7 @@
         </div>
         <div class="col-6">
           <template v-if="isOnline(myPair.partner)">
-            <q-icon
-              :name="myFlag(myPair.partner)"
-              size="sm"
-            />
+            <q-icon :name="myFlag(myPair.partner)" size="sm" />
             <q-btn
               :icon="myAvatar(myPair.partner)"
               :label="myNick(myPair.partner)"
@@ -75,18 +63,11 @@
 
     <q-item-section class="col-2">
       <q-chip square>
-        <q-avatar
-          color="green"
-          text-color="white"
-        >{{myPair.score}}</q-avatar>
+        <q-avatar color="green" text-color="white">{{myPair.score}}</q-avatar>
         {{myPair.boards || 0}} / {{ getBoards ()}}
       </q-chip>
     </q-item-section>
-    <q-item-section
-      side
-      top
-      class="col-2"
-    >
+    <q-item-section side top class="col-2">
       <div class="col-2 q-mt-md">
         <q-fab
           square
@@ -130,7 +111,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { getT2State } from 'src/jbState'
-import { jbIsAdmin, jbIsMyPlayer } from 'src/jbPlayer'
+import { jbIsAdmin, jbIsMyNick } from 'src/jbPlayer'
 
 export default {
   name: 'myT2List',
@@ -152,7 +133,7 @@ export default {
       try {
         const player = this.getPlayerByNick(p.nick)
         return player.state >= 0
-      } catch (err) { }
+      } catch (err) {}
       return false
     },
     getBorder (pair) {
@@ -166,13 +147,13 @@ export default {
       try {
         const flag = player.profile.flag.toLowerCase()
         return `img:statics/flags/4x3/${flag}.svg`
-      } catch (err) { }
+      } catch (err) {}
       return null
     },
     myAvatar (player) {
       try {
         return `img:${player.profile.avatar}`
-      } catch (err) { }
+      } catch (err) {}
       return null
     },
     myT2State (s2) {
@@ -213,35 +194,45 @@ export default {
       this.t2.pairs.forEach(p => {
         if (p.pN === pair.pN) {
           pairs.push(pair)
-        } else {
-          if (p.pN === myPN) {
-            // remove
-            const p0 = JSON.parse(JSON.stringify(p))
-            if (this.isMyPlayer(p.player)) {
-              p0.player = null
-              if (!this.isOnline(p.partner)) p0.partner = null
-            } else if (jbIsMyPlayer(p.partner)) {
-              p0.partner = null
-              if (!this.isOnline(p.player)) p0.player = null
-            }
-            pairs.push(p0)
-          } else pairs.push(p)
-        }
+        } else if (p.pN === myPN) {
+          // remove
+          const p0 = JSON.parse(JSON.stringify(p))
+          if (jbIsMyNick(p.player, this.myPlayer)) {
+            p0.player = null
+            if (!this.isOnline(p.partner)) p0.partner = null
+          } else if (jbIsMyNick(p.partner, this.myPlayer)) {
+            p0.partner = null
+            if (!this.isOnline(p.player)) p0.player = null
+          }
+          pairs.push(p0)
+        } else pairs.push(p)
       })
       this.$emit('onPair', { t2: this.t2, pairs })
     }
   },
   mounted () {
-    // console.log(this.myPair, this.myPlayer)
-    if (
-      jbIsMyPlayer(this.myPair.player, this.myPlayer) ||
-      jbIsMyPlayer(this.myPair.partner, this.myPlayer)
-    ) {
+    this.isMyPair = false
+    if (jbIsMyNick(this.myPair.player, this.myPlayer)) {
+      if (!this.myPair.player.state) { // offline
+        const p0 = JSON.parse(JSON.stringify(this.myPair))
+        p0.player = this.myPlayer
+        this.updatePairs(p0, this.myPair.pN)
+      }
+      this.isMyPair = true
+    } else if (jbIsMyNick(this.myPair.partner, this.myPlayer)) {
+      if (!this.myPair.partner.state) { // offline
+        const p0 = JSON.parse(JSON.stringify(this.myPair))
+        p0.partner = this.myPlayer
+        this.updatePairs(p0, this.myPair.pN)
+      }
+      this.isMyPair = true
+    }
+
+    if (this.isMyPair) {
       this.$emit('onT2', {
         id: 2,
         t2: { _id: this.t2._id, myPair: this.myPair }
       })
-      this.isMyPair = true
     }
   }
 }

@@ -2,7 +2,7 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
 import moment from 'moment'
-import { jbGetVulN, jbGetSuitN52, jbGetRankN52, jbGetSuitN4 } from '../jb'
+import { jbGetVulN, jbGetSuitN52, jbGetRankN52 } from '../jb'
 import { jbGetScore } from '../jbScore'
 
 import mongoose from 'mongoose';

@@ -370,13 +370,7 @@ export default {
   opacity: 1;
   z-index: 100;
 }
-/*
-body.screen--xs {
-  .myCard {
-    max-width: 70px;
-  }
-}
-*/
+/* CARD_WIDTH = 71, CARD_HEIGHT = 96 */
 img.card {
   max-width: 75px;
   margin: 0;

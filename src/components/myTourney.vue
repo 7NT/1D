@@ -8,7 +8,102 @@
         @click="newT2=!newT2"
       />
     </q-toolbar>
-    <myT2Setup v-if='isTD' :myPlayer='myPlayer' v-on:onState='onState' />
+    <q-expansion-item
+      dense
+      expand-separator
+      default-opened
+      icon="event"
+      header-class="bg-info text-white"
+      expand-icon-class="text-white"
+      :label="`Tourney Director: @${t2.td}`"
+      v-show="newT2"
+    >
+      <q-card>
+        <q-card-section>
+          <q-item-label header>
+            <div class="q-ma-md row">
+              <q-input
+                standout="bg-teal text-white"
+                v-model="t2.name"
+                label="Tourney Name"
+                class="col-8"
+              />
+              <q-space />
+              <div class="col">
+                <q-badge color="secondary">Start in: {{ t2.minutes2 }} minutes</q-badge>
+                <q-slider dense v-model="t2.minutes2" color="red" :min="10" :max="30" :step="10" />
+              </div>
+            </div>
+          </q-item-label>
+          <q-separator>
+            <q-space />
+          </q-separator>
+          <q-item>
+            <q-item-section side>
+              <q-btn-toggle
+                v-model="t2.bT"
+                push
+                glossy
+                toggle-color="primary"
+                :options="[
+                {label: 'MP', value: 'MP'},
+                {label: 'IMP', value: 'IMP'},
+                {label: 'XIMP', value: 'XIMP'},
+              ]"
+              />
+              <q-space />
+            </q-item-section>
+            <q-separator />
+            <q-item-section>
+              <div class="q-ma-md row">
+                <q-slider
+                  dense
+                  v-model="t2.bN"
+                  :min="1"
+                  :max="5"
+                  :step="1"
+                  markers
+                  snap
+                  label
+                  label-always
+                  :label-value="`boards/round: ${t2.bN}`"
+                  color="blue"
+                  class="col-5"
+                />
+                <q-separator>
+                  <q-space />
+                </q-separator>
+                <q-slider
+                  dense
+                  v-model="t2.bR"
+                  :min="4"
+                  :max="10"
+                  :step="1"
+                  markers
+                  snap
+                  label
+                  label-always
+                  :label-value="`rounds: ${t2.bR}`"
+                  color="green"
+                  class="col-5"
+                />
+              </div>
+            </q-item-section>
+            <q-item-section side top />
+          </q-item>
+        </q-card-section>
+        <q-separator dark />
+        <q-card-actions align="right">
+          <q-btn
+            push
+            :disable='isTD'
+            @click="onState(t2, 0)"
+          >
+            Submit
+          </q-btn>
+        </q-card-actions>
+      </q-card>
+    </q-expansion-item>
     <q-list
       bordered
       separator
@@ -17,6 +112,7 @@
         dense
         dense-toggle
         switch-toggle-side
+        expand-icon-toggle
         expand-separator
         header-class="bg-teal text-white"
         expand-icon-class="text-white"
@@ -161,8 +257,9 @@
 import moment from 'moment'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import { jbIsAdmin, jbIsMyPlayer, jbIsPlayer } from 'src/jbPlayer'
+import { jbMix } from 'src/jbBoard'
 import { tourneys$, chats$ } from 'src/api'
-import myT2Setup from 'src/components/myT2Setup'
+// import myT2Setup from 'src/components/myT2Setup'
 import myT2List from 'src/components/myT2List'
 
 export default {
@@ -171,13 +268,23 @@ export default {
 
   data () {
     return {
+      t2: {
+        name: 'Welcome to my Tourney...',
+        td: this.myPlayer.nick,
+        minutes2: 30,
+        bT: jbMix(),
+        bN: 2,
+        bR: 6,
+        state: 0,
+        pairs: []
+      },
       newT2: false,
       myPd: null,
       myCC: 'SAYC'
     }
   },
   components: {
-    myT2Setup,
+    // myT2Setup,
     myT2List
   },
   computed: {
@@ -265,8 +372,8 @@ export default {
     onPair (pair) {
       tourneys$.patch(pair.t2._id, { pairs: pair.pairs })
     },
-    onState (t) {
-      switch (t.state) {
+    onState (t, s) {
+      switch (s) {
         case -1:
           tourneys$.remove(t._id)
           break
@@ -274,7 +381,7 @@ export default {
           tourneys$.create(t)
           break
         case 1:
-          tourneys$.patch(t._id, { state: t.state })
+          tourneys$.patch(t._id, { state: s })
           break
         default:
       }

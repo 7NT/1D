@@ -79,7 +79,6 @@ export default {
     }
   },
   mounted () {
-    // console.log('card4x', this.card4, this.myPlayer)
     this.updatePlayed(this.myPlays)
   }
 }

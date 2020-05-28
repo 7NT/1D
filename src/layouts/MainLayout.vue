@@ -20,28 +20,11 @@
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
         -->
-        <q-btn
-          flat
-          @click="goTo('signin')"
-          v-show="!authenticated"
-        >Sign In</q-btn>
-        <q-btn
-          flat
-          @click="goTo('register')"
-          v-show="!authenticated"
-        >Register</q-btn>
-        <q-btn
-          flat
-          round
-          @click="goTo('lobby')"
-          v-if="authenticated"
-        >
+        <q-btn flat @click="goTo('signin')" v-show="!authenticated">Sign In</q-btn>
+        <q-btn flat @click="goTo('register')" v-show="!authenticated">Register</q-btn>
+        <q-btn flat round @click="goTo('lobby')" v-if="authenticated">
           <q-icon name="home" />
-          <q-tooltip
-            anchor="bottom middle"
-            self="top middle"
-            :offset="[0, 20]"
-          >Lobby</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
@@ -52,33 +35,15 @@
           aria-label="ScoreBook"
           v-show="authenticated"
         />
-        <q-btn
-          flat
-          round
-          @click="goTo('profile')"
-          v-if="authenticated"
-        >
+        <q-btn flat round @click="goTo('profile')" v-if="authenticated">
           <q-avatar class="gt-xs">
             <img :src="user.profile.avatar" />
           </q-avatar>
-          <q-tooltip
-            anchor="bottom middle"
-            self="top middle"
-            :offset="[0, 20]"
-          >Profile</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Profile</q-tooltip>
         </q-btn>
-        <q-btn
-          flat
-          round
-          @click="signout"
-          v-show="authenticated"
-        >
+        <q-btn flat round @click="signout" v-show="authenticated">
           <q-icon name="exit_to_app" />
-          <q-tooltip
-            anchor="bottom middle"
-            self="top middle"
-            :offset="[0, 20]"
-          >Signout</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Signout</q-tooltip>
         </q-btn>
         <q-btn
           color="secondary"
@@ -90,13 +55,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="playerList"
-      v-if="authenticated"
-      bordered
-      elevated
-      content-class="bg-grey-1"
-    >
+    <q-drawer v-model="playerList" v-if="authenticated" bordered elevated content-class="bg-grey-1">
       <myP1List />
     </q-drawer>
 
@@ -151,11 +110,15 @@ export default {
       scoreBook: false,
       page: '',
       user: null,
-      from: null
+      following: null
     }
   },
   computed: {
-    ...mapGetters('jstore', ['getPlayerById', 'getTableById', 'getTourneyById']),
+    ...mapGetters('jstore', [
+      'getPlayerById',
+      'getTableById',
+      'getT2ById'
+    ]),
     authenticated () {
       return this.user != null
     }
@@ -178,7 +141,7 @@ export default {
     ]),
     goTo (route) {
       if (this.$route.name !== route) {
-        this.$router.push({ name: route }).catch(e => { })
+        this.$router.push({ name: route }).catch(e => {})
       }
     },
     signin (user) {
@@ -262,7 +225,10 @@ export default {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
         if (chat.to === `@${this.user._id}`) {
           if (chat.request) {
-            this.$q.notify({ type: 'info', message: 'You received a request from: ' + chat.from.nick })
+            this.$q.notify({
+              type: 'info',
+              message: 'You received a request from: ' + chat.from.nick
+            })
             const notification = {
               message: `Tourney Request from: ${chat.from.nick}`,
               caption: chat.text,
@@ -287,7 +253,12 @@ export default {
               }
             ]
             this.$q.notify(notification)
-          } else this.$q.notify({ type: 'info', message: 'You received a message from: ' + chat.from.nick })
+          } else {
+            this.$q.notify({
+              type: 'info',
+              message: 'You received a message from: ' + chat.from.nick
+            })
+          }
         }
         this.setChat(chat)
       })
@@ -349,7 +320,7 @@ export default {
       if (chat) {
         const { request } = chat
         if (request) {
-          const t2 = this.getTourneyById(request.id)
+          const t2 = this.getT2ById(request.id)
           const pairs = JSON.parse(JSON.stringify(t2.pairs))
           const player = this.getPlayerById(chat.from._id)
           const partner = this.getPlayerById(chat.to.substring(1))
@@ -404,7 +375,9 @@ export default {
       } else this.goTo('home')
     }
   },
-  beforeDestroy () { }
+  beforeDestroy () {
+    this.signout()
+  }
 }
 </script>
 <style scoped>

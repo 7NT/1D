@@ -87,8 +87,7 @@ export const addTourney = (state, tourney) => {
 
 export const setChat = (state, chat) => {
   if (chat.to === `@${state.myUser._id}`) {
-    state.jbT0.push(chat.userId)
-    // console.log(state.jbT0)
+    if (state.jbT0.indexOf(chat.userId) < 0) state.jbT0.push(chat.userId)
   }
   state.chats.push(chat)
 }
@@ -106,6 +105,10 @@ export const setT04 = (state, t04) => {
     }
     case 2: {
       state.jbT2 = t04.t2
+      break
+    }
+    case 3: {
+      state.jbT3 = t04.t3 // following
       break
     }
     case 4: {

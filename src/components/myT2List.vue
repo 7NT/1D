@@ -76,8 +76,17 @@
           icon="keyboard_arrow_left"
           direction="left"
           padding="none sm"
-          :disable="!(isMyPair || isTD)"
+          :v-show="isMyPair || isTD"
         >
+          <q-fab-action
+            square
+            padding="3px"
+            color="accent"
+            @click="onPairLeave(myPair)"
+            icon="exit_to_app"
+            label="Leave"
+            v-show='isMyPair'
+          />
           <q-fab-action
             square
             padding="3px"
@@ -85,6 +94,7 @@
             @click="onPairState(0)"
             icon="hourglass_full"
             label="Waiting"
+            v-show='isTD'
           />
           <q-fab-action
             square
@@ -93,6 +103,7 @@
             @click="onPairState(-1)"
             icon="hourglass_empty"
             label="Close"
+            v-show='isTD'
           />
           <q-fab-action
             square
@@ -101,6 +112,7 @@
             @click="onPairState(-2)"
             icon="close"
             label="Remove"
+            v-show='isTD'
           />
         </q-fab>
       </div>
@@ -187,6 +199,12 @@ export default {
     onPair (pair) {
       const pair0 = JSON.parse(JSON.stringify(pair))
       pair0.partner = this.myPlayer
+      this.updatePairs(pair0, this.jbT2.myPair.pN)
+    },
+    onPairLeave (pair) {
+      const pair0 = JSON.parse(JSON.stringify(pair))
+      if (jbIsMyNick(pair0.player, this.myPlayer)) pair0.player = null
+      else if (jbIsMyNick(pair0.partner, this.myPlayer)) pair0.partner = null
       this.updatePairs(pair0, this.jbT2.myPair.pN)
     },
     updatePairs (pair, myPN) {

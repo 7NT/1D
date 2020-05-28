@@ -222,6 +222,8 @@ export default {
     onWatch (p) {
       if (jbIsPlayer(p.seat.sId)) this.onJoin(p, -p.seat.sId)
       else this.onJoin(p, 9)
+      // this.$root.following = p
+      // this.$attrs.user
     }
   },
   created () {

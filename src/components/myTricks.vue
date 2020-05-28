@@ -95,9 +95,7 @@ export default {
     }
   },
   watch: {},
-  mounted () {
-    // console.log('t', this.myTable)
-  }
+  mounted () {}
 }
 </script>
 <style scoped>

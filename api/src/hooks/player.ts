@@ -99,16 +99,14 @@ async function leaveTable(tables$: any, pId: any, seat: any) {
     }
     if (jbIsPlayer(seat.sId0)) {
       let p = tdata.seats[seat.sId0 - 1]
-      if (p) {
-        if (p === pId) {
-          tdata.seats[seat.sId0 - 1] = null
-          if (table.state < 1) tdata.ready[seat.sId0 - 1] = 0
-        }
-        let uIds = table.seats.filter((x: any) => x != null)
-        if (uIds.length === 0) {
-          table.state = 0
-          table.ready = [0, 0, 0, 0]
-        }
+      if (p == pId) {
+        tdata.seats[seat.sId0 - 1] = null
+        if (table.state < 1) tdata.ready[seat.sId0 - 1] = 0
+      }
+      let uIds = table.seats.filter((x: any) => x != null)
+      if (uIds.length < 1) {
+        table.state = 0
+        table.ready = [0, 0, 0, 0]
       }
     }
     tables$.patch(table.id, tdata)

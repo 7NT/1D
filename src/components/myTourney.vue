@@ -2,21 +2,15 @@
   <div class="q-pa-md">
     <q-toolbar class="bg-primary text-white shadow-2">
       <q-toolbar-title>Tourney List:</q-toolbar-title>
-      <q-btn
-        :icon="newT2 ? 'close' : 'add'"
-        :disable="!isTD"
-        @click="newT2=!newT2"
-      />
+      <q-btn :icon="newT2 ? 'close' : 'add'" :disable="!isTD" @click="newT2=!newT2" />
     </q-toolbar>
     <q-expansion-item
       dense
       expand-separator
-      default-opened
       icon="event"
       header-class="bg-info text-white"
       expand-icon-class="text-white"
       :label="`Tourney Director: @${t2.td}`"
-      v-show="newT2"
     >
       <q-card>
         <q-card-section>
@@ -95,19 +89,13 @@
         <q-separator dark />
         <q-card-actions align="right">
           <q-btn
-            push
-            :disable='isTD'
-            @click="onState(t2, 0)"
-          >
-            Submit
-          </q-btn>
+          push
+          :disable="t2.state > 0"
+          @click="onState(t2, 0)" :label="t2._id ? 'Update' : ' Create'"></q-btn>
         </q-card-actions>
       </q-card>
     </q-expansion-item>
-    <q-list
-      bordered
-      separator
-    >
+    <q-list dense bordered separator>
       <q-expansion-item
         dense
         dense-toggle
@@ -132,17 +120,10 @@
             </q-item-label>
             <q-item-label caption>
               <q-badge color="blue">{{t.bT}}</q-badge>
-              <q-badge
-                transparent
-                align="middle"
-                color="orange"
-              >{{t.bN}} x {{t.bR}}</q-badge>
+              <q-badge transparent align="middle" color="orange">{{t.bN}} x {{t.bR}}</q-badge>
             </q-item-label>
           </q-item-section>
-          <q-item-section
-            side
-            top
-          >
+          <q-item-section side top>
             <q-badge color="info">start in: {{startAt(t.startAt)}}</q-badge>
           </q-item-section>
           <q-item-section side>
@@ -150,8 +131,8 @@
               <q-fab
                 color="primary"
                 square
-                icon="keyboard_arrow_down"
-                label="Status"
+                icon="keyboard_arrow_left"
+                :label='getT2Status(t.state)'
                 vertical-actions-align="left"
                 direction="left"
                 padding="none sm"
@@ -167,20 +148,22 @@
                   label="Close"
                 />
                 <q-fab-action
+                  v-show="t.state === 1"
                   square
                   padding="5px"
                   label-position="right"
                   color="positive"
-                  @click="onState(t, 1)"
+                  @click="onState(t, 2)"
                   icon="hourglass_full"
                   label="Start"
                 />
                 <q-fab-action
+                  v-show="t.state === 0"
                   square
                   padding="5px"
                   label-position="right"
                   color="warning"
-                  @click="onState(t,  0)"
+                  @click="onState(t,  1)"
                   icon="alarm_on"
                   label="Ready..."
                 />
@@ -198,18 +181,11 @@
               :myPair="p"
               v-on:onT2="onT2"
               v-on:onPair="onPair"
-              class="pair"
             />
           </q-card-section>
           <q-card-section class="justify-start"></q-card-section>
-          <q-separator
-            color="orange"
-            inset
-          />
-          <q-card-actions
-            align="right"
-            v-if="t.state===0"
-          >
+          <q-separator color="orange" inset />
+          <q-card-actions align="right" v-if="t.state===0">
             <q-btn-toggle
               v-model="myCC"
               push
@@ -221,30 +197,14 @@
                 {label: 'Precision', value: 'Precision'},
               ]"
             />
-            <q-separator
-              vertical
-              inset
-            />
-            <q-input
-              filled
-              dense
-              v-model="myCC"
-              label="My CC..."
-            />
+            <q-separator vertical inset />
+            <q-input filled dense v-model="myCC" label="My CC..." />
             <q-space />
-            <q-input
-              filled
-              dense
-              v-model="myPd"
-              label="My Partner"
-            />
+            <q-input filled dense v-model="myPd" label="My Partner" />
             <q-space>
               <q-separator />
             </q-space>
-            <q-btn
-              push
-              @click="onRegister(t)"
-            >{{register(t)}}</q-btn>
+            <q-btn push @click="onRegister(t)">{{register(t)}}</q-btn>
           </q-card-actions>
         </q-card>
       </q-expansion-item>
@@ -269,6 +229,7 @@ export default {
   data () {
     return {
       t2: {
+        id: null,
         name: 'Welcome to my Tourney...',
         td: this.myPlayer.nick,
         minutes2: 30,
@@ -289,7 +250,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['tourneys', 'jbT2']),
-    ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick']),
+    ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick', 'getT2ByTD']),
     myTourneys () {
       return this.tourneys
     },
@@ -302,13 +263,13 @@ export default {
     isOnline (nick) {
       try {
         return this.getPlayerByNick(nick).state >= 0
-      } catch (err) { }
+      } catch (err) {}
       return false
     },
     register (t) {
       try {
         if (this.jbT2._id === t._id) return 'Update'
-      } catch (err) { }
+      } catch (err) {}
       return 'Join'
     },
     onRegister (t) {
@@ -320,9 +281,16 @@ export default {
       let message = null
 
       if (this.myPd) {
-        const players = t.pairs.map(p => (p.player || p.partner)).map(n => n.nick)
+        const players = t.pairs
+          .map(p => p.player || p.partner)
+          .map(n => n.nick)
         if (this.jbT2._id === t._id) {
-          if (jbIsMyPlayer(this.jbT2.myPair.player, this.myPlayer) || jbIsMyPlayer(this.jbT2.myPair.partner, this.myPlayer)) pN = this.jbT2.myPair.pN
+          if (
+            jbIsMyPlayer(this.jbT2.myPair.player, this.myPlayer) ||
+            jbIsMyPlayer(this.jbT2.myPair.partner, this.myPlayer)
+          ) {
+            pN = this.jbT2.myPair.pN
+          }
         }
         if (players.includes(this.myPd)) {
           message = `${this.Pd} has already JOINED this tourney`
@@ -372,15 +340,37 @@ export default {
     onPair (pair) {
       tourneys$.patch(pair.t2._id, { pairs: pair.pairs })
     },
+    getT2Status (s) {
+      switch (s) {
+        case 0: return 'Status: Waiting...'
+        case 1: return 'Status: Ready...'
+        case 2: return 'Status: Playing...'
+        case -1: return 'Status: Closed'
+        default: return 'Status'
+      }
+    },
     onState (t, s) {
       switch (s) {
         case -1:
           tourneys$.remove(t._id)
           break
         case 0:
-          tourneys$.create(t)
+          if (t._id) {
+            if (t.td !== this.myPlayer.nick) {
+              if (!this.isOnline(t.td)) t.td = this.myPlayer.nick
+              else {
+                this.$q.notify({
+                  type: 'positive',
+                  message: `TD: ${t.td} is online`
+                })
+                return
+              }
+            }
+            tourneys$.patch(t._id, t)
+          } else tourneys$.create(t)
           break
         case 1:
+        case 2:
           tourneys$.patch(t._id, { state: s })
           break
         default:
@@ -398,14 +388,19 @@ export default {
     }
   },
   mounted () {
-    // console.log(this.jbT2)
+    if (this.isTD) {
+      const t2 = this.getT2ByTD(this.myPlayer.nick)
+      if (t2) this.$data.t2 = t2
+    }
     if (this.jbT2._id) {
       this.myCC = this.jbT2.myPair.cc || 'SAYC'
-      this.myPd = this.jbT2.myPair.partner ? this.jbT2.myPair.partner.nick : null
+      this.myPd = this.jbT2.myPair.partner
+        ? this.jbT2.myPair.partner.nick
+        : null
     }
   },
   watch: {
-    newT2 (t2) {}
+    // newT2 (t2) {}
   }
 }
 </script>

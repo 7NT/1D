@@ -1,14 +1,8 @@
 <template>
-  <q-toolbar class='bg-primary text-white rounded-borders'>
-    <q-btn
-      round
-      dense
-      flat
-      icon='chat'
-      class='q-mr-xs'
-    />
+  <q-toolbar class="bg-primary text-white rounded-borders">
+    <q-btn round dense flat icon="chat" class="q-mr-xs" />
     <q-space />
-    <div class='full-width'>
+    <div class="full-width">
       <q-input
         dark
         dense
@@ -16,20 +10,12 @@
         autofocus
         color="silver"
         label="Chat"
-        v-model='chat'
-        @keypress='onChat'
+        v-model="chat"
+        @keypress="onChat"
       >
         <template v-slot:append>
-          <q-icon
-            v-if='!chat'
-            name='chat'
-          />
-          <q-icon
-            v-else
-            name='clear'
-            class='cursor-pointer'
-            @click='chat = null'
-          />
+          <q-icon v-if="!chat" name="chat" />
+          <q-icon v-else name="clear" class="cursor-pointer" @click="chat = null" />
         </template>
       </q-input>
     </div>
@@ -60,9 +46,14 @@ export default {
           to: this.sendTo,
           text: this.chat
         }
-        chats$.create(chatData).then(() => {
-          this.chat = null
-        })
+        chats$
+          .create(chatData)
+          .then(() => {
+            this.chat = null
+          })
+          .catch(err => {
+            console.error(err)
+          })
       }
     }
   }

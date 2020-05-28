@@ -349,8 +349,8 @@ export default {
       if (claim && this.handState === 2) this.isHandClaim(claim)
     }
   },
-  mounted () { },
-  created () { }
+  mounted () {},
+  created () {}
 }
 </script>
 

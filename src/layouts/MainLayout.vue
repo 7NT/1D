@@ -79,7 +79,7 @@
 
 <script>
 // import EssentialLink from 'components/EssentialLink'
-import { mapGetters, mapActions } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import myP1List from 'src/components/myP1List'
 import myScoreBook from 'src/components/myScoreBook'
 
@@ -93,6 +93,7 @@ import {
   teams$
 } from 'src/api'
 import auth from 'src/auth'
+import { jbIsPlayer } from 'src/jbPlayer'
 
 export default {
   name: 'MainLayout',
@@ -114,6 +115,7 @@ export default {
     }
   },
   computed: {
+    ...mapState('jstore', ['jbP1']),
     ...mapGetters('jstore', [
       'getPlayerById',
       'getTableById',
@@ -285,6 +287,16 @@ export default {
       players$.on('patched', p => {
         console.log('player patched', p)
         this.addPlayer(p)
+
+        if (p.id === this.jbP1) {
+          let sId = 9
+          if (jbIsPlayer(p.seat.sId)) sId = -p.seat.sId
+          const seat = {
+            tId: p.seat.tId,
+            sId: sId
+          }
+          players$.patch(this.user._id, { seat })
+        }
       })
       results$.on('patched', r => {
         console.log('patched result', r)

@@ -33,65 +33,63 @@
             <q-space />
           </q-separator>
           <q-item>
-            <q-item-section side>
-              <q-btn-toggle
-                v-model="t2.bT"
-                push
-                glossy
-                toggle-color="primary"
-                :options="[
+            <q-item-section>
+              <div class="row justify-around">
+                <div class="col-3">
+                  <q-btn-toggle
+                    v-model="t2.bT"
+                    push
+                    glossy
+                    toggle-color="primary"
+                    :options="[
                 {label: 'MP', value: 'MP'},
                 {label: 'IMP', value: 'IMP'},
                 {label: 'XIMP', value: 'XIMP'},
               ]"
-              />
-              <q-space />
-            </q-item-section>
-            <q-separator />
-            <q-item-section>
-              <div class="q-ma-md row">
-                <q-slider
-                  dense
-                  v-model="t2.bN"
-                  :min="1"
-                  :max="5"
-                  :step="1"
-                  markers
-                  snap
-                  label
-                  label-always
-                  :label-value="`boards/round: ${t2.bN}`"
-                  color="blue"
-                  class="col-5"
-                />
-                <q-separator>
-                  <q-space />
-                </q-separator>
-                <q-slider
-                  dense
-                  v-model="t2.bR"
-                  :min="4"
-                  :max="10"
-                  :step="1"
-                  markers
-                  snap
-                  label
-                  label-always
-                  :label-value="`rounds: ${t2.bR}`"
-                  color="green"
-                  class="col-5"
-                />
+                  />
+                </div>
+                <div class="col-3">
+                  <q-slider
+                    dense
+                    v-model="t2.bN"
+                    :min="1"
+                    :max="5"
+                    :step="1"
+                    markers
+                    snap
+                    label
+                    label-always
+                    :label-value="`boards/round: ${t2.bN}`"
+                    color="blue"
+                  />
+                </div>
+                <div class="col-3">
+                  <q-slider
+                    dense
+                    v-model="t2.bR"
+                    :min="4"
+                    :max="10"
+                    :step="1"
+                    markers
+                    snap
+                    label
+                    label-always
+                    :label-value="`rounds: ${t2.bR}`"
+                    color="green"
+                  />
+                </div>
               </div>
             </q-item-section>
-            <q-item-section side top />
           </q-item>
         </q-card-section>
         <q-separator dark />
         <q-card-actions align="right">
           <q-btn
-          push
-          :disable="t2.state > 0"
-          @click="onState(t2, 0)" :label="t2._id ? 'Update' : ' Create'"></q-btn>
+            push
+            :disable="t2.state > 0"
+            @click="onState(t2, 0)"
+            :label="t2._id ? 'Update' : ' Create'"
+          ></q-btn>
         </q-card-actions>
       </q-card>
     </q-expansion-item>
@@ -132,7 +130,7 @@
                 color="primary"
                 square
                 icon="keyboard_arrow_left"
-                :label='getT2Status(t.state)'
+                :label="getT2Status(t.state)"
                 vertical-actions-align="left"
                 direction="left"
                 padding="none sm"
@@ -342,11 +340,16 @@ export default {
     },
     getT2Status (s) {
       switch (s) {
-        case 0: return 'Status: Waiting...'
-        case 1: return 'Status: Ready...'
-        case 2: return 'Status: Playing...'
-        case -1: return 'Status: Closed'
-        default: return 'Status'
+        case 0:
+          return 'Status: Waiting...'
+        case 1:
+          return 'Status: Ready...'
+        case 2:
+          return 'Status: Playing...'
+        case -1:
+          return 'Status: Closed'
+        default:
+          return 'Status'
       }
     },
     onState (t, s) {

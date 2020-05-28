@@ -46,8 +46,10 @@ export const addPlayer = (state, player) => {
   // if (player.state < 0) state.players.delete(player.id) else state.players.set(player.id, player)
   const i = state.players.findIndex(p => p.id === player.id)
   if (i >= 0) {
-    if (player.state < 0) state.players.splice(i, 1)
-    else state.players.splice(i, 1, player)
+    if (player.state < 0) {
+      state.players.splice(i, 1)
+      if (player.id === state.jbP1) state.jbP1 = null // following exits
+    } else state.players.splice(i, 1, player)
   } else {
     state.players.push(player)
   }
@@ -87,7 +89,7 @@ export const addTourney = (state, tourney) => {
 
 export const setChat = (state, chat) => {
   if (chat.to === `@${state.myUser._id}`) {
-    if (state.jbT0.indexOf(chat.userId) < 0) state.jbT0.push(chat.userId)
+    if (state.jbP0.indexOf(chat.userId) < 0) state.jbP0.push(chat.userId)
   }
   state.chats.push(chat)
 }
@@ -95,8 +97,8 @@ export const setChat = (state, chat) => {
 export const setT04 = (state, t04) => {
   switch (t04.id) {
     case 0: { // remove
-      const i = state.jbT0.findIndex(p => p === t04.t0)
-      if (i >= 0) state.jbT0.splice(i, 1)
+      const i = state.jbP0.findIndex(p => p === t04.p0)
+      if (i >= 0) state.jbP0.splice(i, 1)
       break
     }
     case 1: {
@@ -108,7 +110,8 @@ export const setT04 = (state, t04) => {
       break
     }
     case 3: {
-      state.jbT3 = t04.t3 // following
+      state.jbP1 = t04.p1 // following
+      console.log(state.jbP1)
       break
     }
     case 4: {

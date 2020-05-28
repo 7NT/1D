@@ -8,9 +8,9 @@ export default {
   tourneys: [],
   teams: [],
   chats: [],
-  jbT0: [], // private players
+  jbP0: [], // private players
+  jbP1: null, // following
   jbT1: { id: '#Lobby', name: '#Lobby' }, // my pair tables
   jbT2: {}, // tourney
-  jbT3: null, // following
   jbT4: {} // teams
 }

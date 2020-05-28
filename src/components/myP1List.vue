@@ -162,7 +162,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['players', 'jbT0', 'jbT1']),
+    ...mapState('jstore', ['players', 'jbP0', 'jbT1']),
     ...mapGetters('jstore', ['myPlayer', 'getPlayerById', 'getTableById']),
     myPlayers () {
       let players = this.players
@@ -206,11 +206,11 @@ export default {
       }
     },
     newMessage (p) {
-      const i = this.jbT0.findIndex(p0 => p0 === p.id)
+      const i = this.jbP0.findIndex(p0 => p0 === p.id)
       return i >= 0
     },
     read (p) {
-      this.setT04({ id: 0, t0: p.id })
+      this.setT04({ id: 0, p0: p.id })
     },
     onJoin (p, sId) {
       const seat = {
@@ -222,8 +222,7 @@ export default {
     onWatch (p) {
       if (jbIsPlayer(p.seat.sId)) this.onJoin(p, -p.seat.sId)
       else this.onJoin(p, 9)
-      // this.$root.following = p
-      // this.$attrs.user
+      this.setT04({ id: 3, p1: p.id })
     }
   },
   created () {

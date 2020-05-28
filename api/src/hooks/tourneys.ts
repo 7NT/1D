@@ -16,10 +16,13 @@ const created = (): Hook => {
 
 const pairUp = (): Hook => {
   return async (context: HookContext) => {
-    const { pairs, pair } = context.data
+    const { pairs, state } = context.data
 
+    console.log(context)
     if (pairs) {
       context.data.pairs = pairNo(pairs)
+    } else if (state) {
+
     }
     return Promise.resolve(context)
   }
@@ -29,13 +32,17 @@ function pairNo (pairs: any[]) {
   let n: number = 1
   let pairs2: any[] = []
   pairs.forEach(p => {
-    if (p.state > -2 && (p.player || p.partner)) {
+    if (p.state > -2 && (p.player || p.partner)) {  // state: -2 remove, -1 pause, 0: waiting, 1 playing
       p.pN = n
       n++
       pairs2.push(p)
     }
   })
   return pairs2
+}
+
+function online(pair: any) {
+
 }
 
 export {

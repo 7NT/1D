@@ -90,6 +90,15 @@
           <q-fab-action
             square
             padding="3px"
+            color="info"
+            @click="onPairChange(myPair)"
+            icon="cached"
+            label="Change"
+            v-show='isTD'
+          />
+          <q-fab-action
+            square
+            padding="3px"
             color="green"
             @click="onPairState(0)"
             icon="hourglass_full"

@@ -2,7 +2,7 @@ import * as authentication from '@feathersjs/authentication';
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const { authenticate } = authentication.hooks;
-import { created, pairUp } from '../../hooks/tourneys'
+import { created, onPairs } from '../../hooks/tourneys'
 
 export default {
   before: {
@@ -11,7 +11,7 @@ export default {
     get: [],
     create: [created()],
     update: [],
-    patch: [pairUp()],
+    patch: [onPairs()],
     remove: []
   },
 

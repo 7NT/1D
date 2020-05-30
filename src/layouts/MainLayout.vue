@@ -237,7 +237,7 @@ export default {
               color: 'primary',
               icon: 'live_help'
             }
-            notification.timeout = 5000
+            notification.timeout = 10000
             notification.actions = [
               {
                 label: 'Accept',
@@ -304,6 +304,10 @@ export default {
       })
       tourneys$.on('patched', t2 => {
         console.log('tourney patched', t2)
+        this.addTourney(t2)
+      })
+      tourneys$.on('updated', t2 => {
+        console.log('tourney updated', t2)
         this.addTourney(t2)
       })
 

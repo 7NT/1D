@@ -6,11 +6,13 @@
     </q-toolbar>
     <q-expansion-item
       dense
+      default-opened
       expand-separator
       icon="event"
       header-class="bg-info text-white"
       expand-icon-class="text-white"
       :label="`Tourney Director: @${t2.td}`"
+      v-show="newT2"
     >
       <q-card>
         <q-card-section>
@@ -98,7 +100,6 @@
         dense
         dense-toggle
         switch-toggle-side
-        expand-icon-toggle
         expand-separator
         header-class="bg-teal text-white"
         expand-icon-class="text-white"
@@ -329,14 +330,16 @@ export default {
         }
 
         this.onT2({ id: 2, t2: { _id: t._id, myPair: pair } })
-        tourneys$.patch(t._id, { pairs })
+        // tourneys$.patch(t._id, { state: t.state, pairs })
+        this.onPair({ _id: t._id, pairs })
       }
     },
     onT2 (jbT2) {
       if (this.jbT2 !== jbT2) this.setT04(jbT2)
     },
-    onPair (pair) {
-      tourneys$.patch(pair.t2._id, { pairs: pair.pairs })
+    onPair (pair2) {
+      // tourneys$.patch(t2.t._id, { state: t2.t.state, pairs: t2.pairs })
+      tourneys$.patch(pair2._id, { pairs: pair2.pairs })
     },
     getT2Status (s) {
       switch (s) {
@@ -369,12 +372,12 @@ export default {
                 return
               }
             }
-            tourneys$.patch(t._id, t)
+            tourneys$.update(t._id, t)
           } else tourneys$.create(t)
           break
         case 1:
         case 2:
-          tourneys$.patch(t._id, { state: s })
+          tourneys$.patch(t._id, { state: s, pairs: t.pairs })
           break
         default:
       }
@@ -402,9 +405,7 @@ export default {
         : null
     }
   },
-  watch: {
-    // newT2 (t2) {}
-  }
+  watch: {}
 }
 </script>
 

@@ -20,12 +20,7 @@
             />
           </template>
           <template v-else-if="myPair.player">
-            <q-btn
-              :label="myPair.player.nick"
-              icon="person"
-              class="player bg-info"
-              align="around"
-            />
+            <q-btn :label="myPair.player.nick" icon="person" class="player bg-info" align="around" />
             <q-tooltip>player is offline</q-tooltip>
           </template>
         </div>
@@ -85,7 +80,7 @@
             @click="onPairLeave(myPair)"
             icon="exit_to_app"
             label="Leave"
-            v-show='isMyPair'
+            v-show="isMyPair"
           />
           <q-fab-action
             square
@@ -94,7 +89,7 @@
             @click="onPairChange(myPair)"
             icon="cached"
             label="Change"
-            v-show='isTD'
+            v-show="isTD"
           />
           <q-fab-action
             square
@@ -103,7 +98,7 @@
             @click="onPairState(0)"
             icon="hourglass_full"
             label="Waiting"
-            v-show='isTD'
+            v-show="isTD"
           />
           <q-fab-action
             square
@@ -112,7 +107,7 @@
             @click="onPairState(-1)"
             icon="hourglass_empty"
             label="Close"
-            v-show='isTD'
+            v-show="isTD"
           />
           <q-fab-action
             square
@@ -121,7 +116,7 @@
             @click="onPairState(-2)"
             icon="close"
             label="Remove"
-            v-show='isTD'
+            v-show="isTD"
           />
         </q-fab>
       </div>
@@ -133,6 +128,7 @@
 import { mapState, mapGetters } from 'vuex'
 import { getT2State } from 'src/jbState'
 import { jbIsAdmin, jbIsMyNick } from 'src/jbPlayer'
+import myT2Pair from 'src/components/myT2Pair'
 
 export default {
   name: 'myT2List',
@@ -147,6 +143,9 @@ export default {
     ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick']),
     isTD () {
       return jbIsAdmin(this.myPlayer)
+    },
+    t2Stat () {
+      return this.t2.state
     }
   },
   methods: {
@@ -216,6 +215,48 @@ export default {
       else if (jbIsMyNick(pair0.partner, this.myPlayer)) pair0.partner = null
       this.updatePairs(pair0, this.jbT2.myPair.pN)
     },
+    onPairChange (pair) {
+      const pair0 = JSON.parse(JSON.stringify(pair))
+      this.$q
+        .dialog({
+          component: myT2Pair,
+
+          // optional if you want to have access to
+          // Router, Vuex store, and so on, in your
+          // custom component:
+          parent: this, // becomes child of this Vue node
+          // ("this" points to your Vue component)
+          // (prop was called "root" in < 1.1.0 and
+          // still works, but recommending to switch
+          // to the more appropriate "parent" name)
+
+          // props forwarded to component
+          // (everything except "component" and "parent" props above):
+          pair: pair0
+          // ...more.props...
+        })
+        .onOk(() => {
+          // console.log('OK', pair0)
+          const p0 = this.getPlayerByNick(pair0.player.nick)
+          const p1 = this.getPlayerByNick(pair0.partner.nick)
+          if (p0 && p1) {
+            pair0.player = p0
+            pair0.partner = p1
+            this.updatePairs(pair0, pair0.pN)
+          } else {
+            this.$q.notify({
+              type: 'info',
+              message: 'the sub player is not online'
+            })
+          }
+        })
+        .onCancel(() => {
+          // console.log('Cancel', pair0)
+        })
+        .onDismiss(() => {
+          // console.log('Called on OK or Cancel', pair0)
+        })
+    },
     updatePairs (pair, myPN) {
       const pairs = []
       this.t2.pairs.forEach(p => {
@@ -234,20 +275,22 @@ export default {
           pairs.push(p0)
         } else pairs.push(p)
       })
-      this.$emit('onPair', { t2: this.t2, pairs })
+      this.$emit('onPair', { _id: this.t2._id, pairs })
     }
   },
   mounted () {
     this.isMyPair = false
     if (jbIsMyNick(this.myPair.player, this.myPlayer)) {
-      if (!this.myPair.player.state) { // offline
+      if (!this.myPair.player.state) {
+        // offline
         const p0 = JSON.parse(JSON.stringify(this.myPair))
         p0.player = this.myPlayer
         this.updatePairs(p0, this.myPair.pN)
       }
       this.isMyPair = true
     } else if (jbIsMyNick(this.myPair.partner, this.myPlayer)) {
-      if (!this.myPair.partner.state) { // offline
+      if (!this.myPair.partner.state) {
+        // offline
         const p0 = JSON.parse(JSON.stringify(this.myPair))
         p0.partner = this.myPlayer
         this.updatePairs(p0, this.myPair.pN)
@@ -260,6 +303,19 @@ export default {
         id: 2,
         t2: { _id: this.t2._id, myPair: this.myPair }
       })
+    }
+  },
+  watch: {
+    t2State (s) {
+      switch (s) {
+        case 1:
+          this.$q.notify({
+            type: 'info',
+            message: 'Tourney is about to start, please stay in #Lobby'
+          })
+          break
+        default:
+      }
     }
   }
 }

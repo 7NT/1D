@@ -14,21 +14,21 @@ const created = (): Hook => {
   }
 }
 
-const pairUp = (): Hook => {
+const onPairs = (): Hook => {
   return async (context: HookContext) => {
     const { pairs, state } = context.data
 
-    console.log(context)
-    if (pairs) {
-      context.data.pairs = pairNo(pairs)
-    } else if (state) {
-
+    // console.log(context)
+    if (state) {
+      context.data.pairs = onState(state, pairs)
+    } else if (pairs) {
+      context.data.pairs = onPair(pairs)
     }
     return Promise.resolve(context)
   }
 }
 
-function pairNo (pairs: any[]) {
+function onPair (pairs: any[]) {
   let n: number = 1
   let pairs2: any[] = []
   pairs.forEach(p => {
@@ -41,11 +41,14 @@ function pairNo (pairs: any[]) {
   return pairs2
 }
 
-function online(pair: any) {
+function onState(state: number, pairs: any[]) {
+  const n = pairs.length
+  const pairs1 = []
+
 
 }
 
 export {
   created,
-  pairUp
+  onPairs
 }

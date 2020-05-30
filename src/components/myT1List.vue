@@ -29,7 +29,6 @@
 
 <script>
 import { mapGetters } from 'vuex'
-// import { getNick, getFlag, getAvatar } from 'src/jbPlayer'
 import { getT2State } from 'src/jbState'
 
 export default {

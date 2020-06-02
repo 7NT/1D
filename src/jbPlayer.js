@@ -15,11 +15,11 @@ export function jbGetAvatar (p) {
 }
 
 export function jbIsMyPlayer (p, p0) {
-  return p ? p.id === p0.id : null
+  return p ? p.id === p0.id : false
 }
 
 export function jbIsMyNick (p, p0) {
-  return p ? p.nick.toLowerCase() === p0.nick.toLowerCase() : null
+  return p ? p.nick.toLowerCase() === p0.nick.toLowerCase() : false
 }
 
 export const jbIsPlayer = (seat) => {

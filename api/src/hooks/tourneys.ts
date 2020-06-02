@@ -52,6 +52,7 @@ function onState (app: any, state: number, pairs: any[]) {
     pairs1[N + i].state = state
 
   }
+  console.log(pairs, pairs1)
   return pairs1
 }
 

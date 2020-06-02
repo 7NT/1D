@@ -203,6 +203,7 @@
             <q-space>
               <q-separator />
             </q-space>
+            <q-btn push @click="onAddPair(t)" v-if="isTD">Add Pair</q-btn>
             <q-btn push @click="onRegister(t)">{{register(t)}}</q-btn>
           </q-card-actions>
         </q-card>
@@ -215,11 +216,12 @@
 <script>
 import moment from 'moment'
 import { mapState, mapGetters, mapActions } from 'vuex'
-import { jbIsAdmin, jbIsMyPlayer, jbIsPlayer } from 'src/jbPlayer'
+import { jbIsAdmin, jbIsMyNick, jbIsPlayer } from 'src/jbPlayer'
 import { jbMix } from 'src/jbBoard'
 import { tourneys$, chats$ } from 'src/api'
 // import myT2Setup from 'src/components/myT2Setup'
 import myT2List from 'src/components/myT2List'
+import myT2Pair from 'src/components/myT2Pair'
 
 export default {
   name: 'myTourney',
@@ -243,10 +245,7 @@ export default {
       myCC: 'SAYC'
     }
   },
-  components: {
-    // myT2Setup,
-    myT2List
-  },
+  components: { myT2List },
   computed: {
     ...mapState('jstore', ['tourneys', 'jbT2']),
     ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick', 'getT2ByTD']),
@@ -271,6 +270,53 @@ export default {
       } catch (err) {}
       return 'Join'
     },
+    onAddPair (t) {
+      const pair0 = {
+        pN: 0,
+        cc: 'SAYC',
+        player: { nick: '' },
+        partner: { nick: '' }
+      }
+      this.$q
+        .dialog({
+          component: myT2Pair,
+
+          // optional if you want to have access to
+          // Router, Vuex store, and so on, in your
+          // custom component:
+          parent: this, // becomes child of this Vue node
+          // ("this" points to your Vue component)
+          // (prop was called "root" in < 1.1.0 and
+          // still works, but recommending to switch
+          // to the more appropriate "parent" name)
+
+          // props forwarded to component
+          // (everything except "component" and "parent" props above):
+          pair: pair0
+          // ...more.props...
+        })
+        .onOk(() => {
+          // console.log('OK', pair0)
+          const p0 = this.getPlayerByNick(pair0.player.nick)
+          const p1 = this.getPlayerByNick(pair0.partner.nick)
+          if (p0 && p1) {
+            pair0.player = p0
+            pair0.partner = p1
+            this.updatePairs(pair0, pair0.pN)
+          } else {
+            this.$q.notify({
+              type: 'info',
+              message: 'the sub player is not online'
+            })
+          }
+        })
+        .onCancel(() => {
+          // console.log('Cancel', pair0)
+        })
+        .onDismiss(() => {
+          // console.log('Called on OK or Cancel', pair0)
+        })
+    },
     onRegister (t) {
       // const pairs = [...t.pairs] // .slice(0)
       const pairs = JSON.parse(JSON.stringify(t.pairs))
@@ -284,55 +330,53 @@ export default {
           .map(p => p.player || p.partner)
           .map(n => n.nick)
         if (this.jbT2._id === t._id) {
-          if (
-            jbIsMyPlayer(this.jbT2.myPair.player, this.myPlayer) ||
-            jbIsMyPlayer(this.jbT2.myPair.partner, this.myPlayer)
-          ) {
-            pN = this.jbT2.myPair.pN
-          }
+          if (jbIsMyNick(this.jbT2.myPair.partner, this.myPlayer)) {
+            pN = -1
+            message = `You and ${this.myPd} have already JOINED this tourney, your partner can UPDATE cc card`
+          } else if (players.includes(this.myPd)) {
+            pN = -1
+            message = `${this.myPd} has already JOINED this tourney`
+          } else pN = this.jbT2.myPair.pN
         }
-        if (players.includes(this.myPd)) {
-          message = `${this.Pd} has already JOINED this tourney`
-        } else if (this.isOnline(this.myPd)) {
-          pd = this.getPlayerByNick(this.myPd)
-          if (jbIsPlayer(pd)) message = `${this.myPd} is playing`
-          else {
-            const chatData = {
-              to: `@${pd.id}`,
-              request: { t: 2, id: t._id, cc: this.myCC },
-              text: 'Join me in Tourney?'
-            }
-            chats$.create(chatData)
-            message = `sending tourney partner request to ${this.myPd}...`
-          }
-        } else if (t.state > 0) {
-          message = `${this.Pd} is not online`
-        } else pd = { nick: this.myPd }
       }
 
-      if (message) {
+      if (pN < 0) {
         this.$q.notify({ type: 'info', message })
-      } else {
-        if (pN > 0 && pN <= pairs.length) {
-          pair = pairs[pN - 1]
-          pair.partner = pd
-          pair.cc = this.myCC
-        } else {
-          pair = {
-            player: this.myPlayer,
-            partner: pd,
-            cc: this.myCC,
-            boards: 0,
-            score: null,
-            state: 0
+        return
+      } else if (this.isOnline(this.myPd)) {
+        pd = this.getPlayerByNick(this.myPd)
+        if (jbIsPlayer(pd)) message = `${this.myPd} is playing`
+        else {
+          const chatData = {
+            to: `@${pd.id}`,
+            request: { t: 2, id: t._id, cc: this.myCC },
+            text: 'Join me in Tourney?'
           }
-          pairs.push(pair)
+          chats$.create(chatData)
+          message = `sending tourney partner request to ${this.myPd}...`
         }
+      } else if (t.state > 0) {
+        message = `${this.Pd} is not online`
+      } else pd = { nick: this.myPd }
 
-        this.onT2({ id: 2, t2: { _id: t._id, myPair: pair } })
-        // tourneys$.patch(t._id, { state: t.state, pairs })
-        this.onPair({ _id: t._id, pairs })
+      if (pN > 0 && pN <= pairs.length) {
+        pair = pairs[pN - 1]
+        pair.partner = pd
+        pair.cc = this.myCC
+      } else {
+        pair = {
+          player: this.myPlayer,
+          partner: pd,
+          cc: this.myCC,
+          boards: 0,
+          score: null,
+          state: 0
+        }
+        pairs.push(pair)
       }
+
+      this.onT2({ id: 2, t2: { _id: t._id, myPair: pair } })
+      this.onPair({ _id: t._id, pairs })
     },
     onT2 (jbT2) {
       if (this.jbT2 !== jbT2) this.setT04(jbT2)
@@ -400,9 +444,7 @@ export default {
     }
     if (this.jbT2._id) {
       this.myCC = this.jbT2.myPair.cc || 'SAYC'
-      this.myPd = this.jbT2.myPair.partner
-        ? this.jbT2.myPair.partner.nick
-        : null
+      if (jbIsMyNick(this.jbT2.myPair.partner, this.myPlayer)) { this.myPd = this.jbT2.myPair.player.nick } else if (jbIsMyNick(this.jbT2.myPair.player, this.myPlayer)) { this.myPd = this.jbT2.myPair.partner.nick }
     }
   },
   watch: {}

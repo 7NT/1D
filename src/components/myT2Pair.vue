@@ -16,7 +16,7 @@
       </q-card-section>
       <!-- buttons example -->
       <q-card-actions align="right">
-        <q-btn color="primary" label="Change" @click="onOKClick" />
+        <q-btn color="primary" label="Submit" @click="onOKClick" />
         <q-btn color="primary" label="Cancel" @click="onCancelClick" />
       </q-card-actions>
     </q-card>

@@ -1,8 +1,5 @@
 <template>
-  <q-page
-    class="no-padding no-margin"
-    v-if="myPlayer"
-  >
+  <q-page class="no-padding no-margin" v-if="myPlayer">
     <!-- content -->
     <div class="column">
       <div class="col-8">
@@ -23,22 +20,13 @@
               :name="r.value"
               :icon="r.icon"
               :label="r.name"
-              :disable="!r.open"
+              :disable="!isOpen(r)"
             />
           </q-tabs>
-          <q-tab-panels
-            keep-alive
-            v-model="rId"
-            animated
-            class="bg-teal"
-          >
+          <q-tab-panels keep-alive v-model="rId" animated class="bg-teal">
             <q-tab-panel :name="0">
               <div class="fit">
-                <q-list
-                  dense
-                  bordered
-                  separator
-                >
+                <q-list dense bordered separator>
                   <myT1List
                     v-for="t in myTables"
                     :key="t.id"
@@ -51,10 +39,7 @@
 
             <q-tab-panel :name="1">
               <div class="fit">
-                <myPlayTable
-                  :myPlayer="myPlayer"
-                  v-on:onPlayer="onPlayer"
-                />
+                <myPlayTable :myPlayer="myPlayer" v-on:onPlayer="onPlayer" />
               </div>
             </q-tab-panel>
 
@@ -98,35 +83,31 @@ export default {
   data () {
     return {
       user: null,
-      splitterModel: 50, // start at 50%
+      // splitterModel: 50, // start at 50%
       rId: 0,
       rooms: [
         {
           name: 'Lobby',
           value: 0,
           icon: 'people',
-          open: true,
           id: '#Lobby'
         },
         {
           name: 'My Table',
           value: 1,
           icon: 'local_play',
-          open: true,
           id: 't1'
         },
         {
           name: 'Tourney',
           value: 2,
           icon: 'emoji_events',
-          open: true,
           id: '#Lobby'
         },
         {
           name: 'Team Game',
           value: 4,
           icon: 'group_add',
-          open: false,
           id: '#Lobby'
         }
       ],
@@ -154,6 +135,17 @@ export default {
       seat.tId0 = this.mySeat.tId
       seat.sId0 = this.mySeat.sId
       players$.patch(this.myPlayer.id, { seat })
+    },
+    isOpen (r) {
+      switch (r.value) {
+        case 0: // lobby
+        case 2:
+          return true
+        case 1:
+          return this.myPlayer.seat.tId !== '#Lobby'
+        default:
+          return false
+      }
     }
   },
   mounted () {
@@ -162,14 +154,17 @@ export default {
   },
   watch: {
     myPlayer (p) {
-      if (!p) this.$router.push({ name: 'home' }).catch(e => { })
+      if (!p) this.$router.push({ name: 'home' }).catch(e => {})
     },
     mySeat (n) {
       this.rooms[1].id = n.tId
       this.rId = n.tId === '#Lobby' ? 0 : 1
     },
     rId (r) {
-      this.setT04({ id: 1, t1: { id: this.rooms[r].id, name: this.rooms[r].name } })
+      this.setT04({
+        id: 1,
+        t1: { id: this.rooms[r].id, name: this.rooms[r].name }
+      })
     }
   },
   created () {
@@ -188,6 +183,6 @@ export default {
 }
 .t2 {
   height: 60vh;
-  width: 100%
+  width: 100%;
 }
 </style>

@@ -153,8 +153,8 @@ export default {
     if (!this.myPlayer.profile.flag) this.$router.push({ name: 'profile' })
   },
   watch: {
-    myPlayer (p) {
-      if (!p) this.$router.push({ name: 'home' }).catch(e => {})
+    user (u) {
+      if (!u) this.$router.push({ name: 'home' }).catch(e => {})
     },
     mySeat (n) {
       this.rooms[1].id = n.tId

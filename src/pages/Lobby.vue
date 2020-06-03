@@ -142,7 +142,7 @@ export default {
         case 2:
           return true
         case 1:
-          return this.myPlayer.seat.tId !== '#Lobby'
+          return this.mySeat ? this.mySeat.tId !== '#Lobby' : false
         default:
           return false
       }

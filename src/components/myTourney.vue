@@ -421,7 +421,7 @@ export default {
           break
         case 1:
         case 2:
-          tourneys$.patch(t._id, { state: s, pairs: t.pairs })
+          if (t.state < s) tourneys$.patch(t._id, { state: s, t2: t })
           break
         default:
       }

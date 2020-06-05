@@ -11,7 +11,6 @@ const onTable = (): Hook => {
   return async (context: HookContext) => {
     const { ready, bids, plays, claim } = context.data
     if (ready) {
-      console.log('onReady', context)
       context.data = await onReady(context)
     } else if (claim) {
       if (!claim) {

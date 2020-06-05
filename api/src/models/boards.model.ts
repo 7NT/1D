@@ -9,7 +9,7 @@ export default function (app: Application) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    YYWW: { type: String },
+    bId: { type: String },
     bN: { type: Number, required: true },
     bT: { type: String, required: true },
     cards: { type: Array, required: true },

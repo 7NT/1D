@@ -1,6 +1,7 @@
 
 import { Hook, HookContext } from '@feathersjs/feathers'
 import mongoose from 'mongoose';
+import { jbGetVulN, jbGetSuitN52, jbGetRankN52 } from '../jb'
 
 const created = (): Hook => {
   return async (context: HookContext) => {
@@ -21,7 +22,7 @@ const onPairs = (): Hook => {
 
     if (state) {
       console.log(context.data)
-      context.data = onState(context, state, t2)
+      context.data = onState(context.app, state, t2)
     } else if (pairs) {
       context.data.pairs = onPair(pairs)
     }
@@ -43,7 +44,8 @@ function onPair(pairs: any[]) {
 }
 
 function onState(app: any, state: number, t2: any) {
-  if (state === 1) t2Boards(app, t2)
+  state = 1
+  if (state > 0) t2Boards(app, t2)
 
   const pairs = shufflePair(t2.pairs)
   const N = Math.floor(pairs.length / 2)
@@ -65,13 +67,12 @@ async function t2Boards(app: any, t2: any) {
   const N: number = t2.bR * (t2.bN + 1)
   for (let n: number = 1; n < N; n++) {
     const b2data = {
-      t2Id: t2._id,
+      bId: t2._id,
       bN: n,
       bT: t2.bT,
       played: 0,
       cards: shuffle()
     }
-    console.log(b2data)
     await boards$.create(b2data)
   }
 }
@@ -83,9 +84,9 @@ async function t2Board(app: any, t2: any, p1: any, p2: any) {
   let played = await played$.find({
     query: {
       $select: ['bN'],
-      t2Id: t2.id,
-      bT: t2.bT,
-      pId: { $in: [p1.pN, p2.pN] }
+      bId: t2._id,
+      // bT: t2.bT,
+      sId: { $in: [p1.pN, p2.pN] }
     }
   })
 
@@ -93,28 +94,28 @@ async function t2Board(app: any, t2: any, p1: any, p2: any) {
   let notPlayed = await boards$.find({
     query: {
       $select: ['_id'],
-      t2Id: t2.id,
-      bT: t2.bT,
+      bId: t2._id,
+      // bT: t2.bT,
       bN: { $nin: played_bIds }
     }
   })
 
   const notPlayed_bIds = notPlayed.data.map((x: { _id: any }) => x._id)
-  const b2Id = notPlayed_bIds[Math.floor(Math.random() * notPlayed_bIds.length)];
+  const b2Id = notPlayed_bIds[Math.floor(Math.random() * notPlayed_bIds.length)]
   const board = await boards$.get(b2Id)
 
   let playedb = {
-    t2Id: t2.id,
+    bId: t2.id,
     bN: board.bN,
-    bT: board.bT,
-    pId: p1.pN
+    // bT: board.bT,
+    sId: p1.pN
   }
   played$.create(playedb)
   playedb = {
-    t2Id: t2.id,
+    bId: t2.id,
     bN: board.bN,
-    bT: board.bT,
-    pId: p2.pN
+    // bT: board.bT,
+    sId: p2.pN
   }
   played$.create(playedb)
 
@@ -148,24 +149,22 @@ async function t2Table(app: any, t2: any, p1: any, p2: any) {
     seats: [p1.player.nick, p2.partner.nick, p1.partner.nick, p2.player.nick],
     ready: [1, 2, 3, 4]
   }
-
   await tables$.create(tdata)
-  t2Players(players$, p1, p2)
-
+  t2Players(players$, name, p1, p2)
 }
 
-function t2Players(players$: any, p1: any, p2: any) {
+function t2Players(players$: any, name: any, p1: any, p2: any) {
   let seat = { tId: name, sId: 1 }
-  players$.pitch(p1.player.id, { seat })
+  players$.patch(p1.player.id, { seat })
 
   seat = { tId: name, sId: 2 }
-  players$.pitch(p2.partner.id, { seat })
+  players$.patch(p2.partner.id, { seat })
 
   seat = { tId: name, sId: 3 }
-  players$.pitch(p1.partner.id, { seat })
+  players$.patch(p1.partner.id, { seat })
 
   seat = { tId: name, sId: 4 }
-  players$.pitch(p2.player.id, { seat })
+  players$.patch(p2.player.id, { seat })
 
 }
 

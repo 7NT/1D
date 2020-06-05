@@ -10,7 +10,7 @@ export default function (app: Application) {
   const { Schema } = mongooseClient;
   const schema = new Schema({
     tId: { type: String },
-    boardId: { type: String },
+    bId: { type: String },
     info: {
       YYWW: { type: String },
       bN: { type: Number },

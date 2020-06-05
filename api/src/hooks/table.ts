@@ -11,6 +11,7 @@ const onTable = (): Hook => {
   return async (context: HookContext) => {
     const { ready, bids, plays, claim } = context.data
     if (ready) {
+      // console.log('onReady', context.data)
       context.data = await onReady(context)
     } else if (claim) {
       if (!claim) {
@@ -52,14 +53,14 @@ async function getBoard (context: any) {
   let uIds = table.seats.filter((u: string) => u != null)
   let played = await played$.find({
     query: {
-      $select: ['boardId'],
+      $select: ['bId'],
       bT: table.bT,
       uId: { $in: uIds }
     }
   })
   let board: any
   try {
-    const played_bIds = played.data.map((x: { boardId: any }) => mongoose.Types.ObjectId(x.boardId))
+    const played_bIds = played.data.map((x: { bId: any }) => mongoose.Types.ObjectId(x.bId))
     let notPlayed = await boards$.find({
       query: {
         $limit: 1,
@@ -101,7 +102,7 @@ async function getBoard (context: any) {
   table.seats.forEach((u: any, index: number) => {
     if (u) {
       const playedb = {
-        boardId: board._id,
+        bId: board._id,
         bT: board.bT,
         uId: u + '',
         sId: index + 1
@@ -392,7 +393,7 @@ const onResult = (): Hook => {
       const score = onScore(rdata)
       const sdata = {
         tId: t.id ,
-        boardId: t.board._id + '',
+        bId: t.board._id + '',
         info: {
           YYWW: t.board.YYWW,
           bN: t.board.bN,

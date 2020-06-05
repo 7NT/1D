@@ -20,14 +20,14 @@
             <div class="q-ma-md row">
               <q-input
                 standout="bg-teal text-white"
-                v-model="t2.name"
+                v-model="myT2.name"
                 label="Tourney Name"
                 class="col-8"
               />
               <q-space />
               <div class="col">
-                <q-badge color="secondary">Start in: {{ t2.minutes2 }} minutes</q-badge>
-                <q-slider dense v-model="t2.minutes2" color="red" :min="10" :max="30" :step="10" />
+                <q-badge color="secondary">Start in: {{ myT2.minutes2 }} minutes</q-badge>
+                <q-slider dense v-model="myT2.minutes2" color="red" :min="10" :max="30" :step="10" />
               </div>
             </div>
           </q-item-label>
@@ -88,9 +88,9 @@
         <q-card-actions align="right">
           <q-btn
             push
-            :disable="t2.state > 0"
-            @click="onState(t2, 0)"
-            :label="t2._id ? 'Update' : ' Create'"
+            :disable="myT2.state > 0"
+            @click="onState(myT2, 0)"
+            label="Submit"
           ></q-btn>
         </q-card-actions>
       </q-card>
@@ -251,6 +251,11 @@ export default {
     ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick', 'getT2ByTD']),
     myTourneys () {
       return this.tourneys
+    },
+    myT2 () {
+      const t2 = this.getT2ByTD(this.myPlayer.nick)
+      if (t2) return t2
+      else return this.$data.t2
     },
     isTD () {
       return jbIsAdmin(this.myPlayer)
@@ -438,10 +443,6 @@ export default {
     }
   },
   mounted () {
-    if (this.isTD) {
-      const t2 = this.getT2ByTD(this.myPlayer.nick)
-      if (t2) this.$data.t2 = t2
-    }
     if (this.jbT2._id) {
       this.myCC = this.jbT2.myPair.cc || 'SAYC'
       if (jbIsMyNick(this.jbT2.myPair.partner, this.myPlayer)) { this.myPd = this.jbT2.myPair.player.nick } else if (jbIsMyNick(this.jbT2.myPair.player, this.myPlayer)) { this.myPd = this.jbT2.myPair.partner.nick }

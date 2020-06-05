@@ -120,7 +120,7 @@ export default {
     },
     handPlayer () {
       const pId = this.myTable.seats[this.seatX - 1]
-      if (this.myTable.id.startsWith('#@')) return this.getPlayerByNIck(pId)
+      if (this.myTable.id.startsWith('#@')) return this.getPlayerByNick(pId)
       else return this.getPlayerById(pId)
     },
     handNick () {
@@ -211,14 +211,17 @@ export default {
         }
         this.$emit('onTable', seat)
       } else if (jbIsMyPlayer(this.handPlayer, this.myPlayer)) {
-        const ready = [...this.myTable.ready] || [null, null, null, null]
-        ready[this.seatX - 1] = this.seatX
-        const readyData = {
-          action: 'ready',
-          state: this.handState,
-          ready: ready
+        const ready = [...this.myTable.ready] || [0, 0, 0, 0]
+
+        if (ready[this.seatX - 1] !== this.seatX) {
+          ready[this.seatX - 1] = this.seatX
+          const readyData = {
+            action: 'ready',
+            state: this.handState,
+            ready: ready
+          }
+          this.$emit('onTable', readyData)
         }
-        this.$emit('onTable', readyData)
         this.$q.notify({ type: 'info', message: 'I am Ready' })
       } else {
         this.$q.notify({ type: 'negative', message: 'This seat is taken' })

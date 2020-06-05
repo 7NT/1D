@@ -1,5 +1,5 @@
 // played-model.js - A mongoose model
-// 
+//
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 import { Application } from '../declarations';
@@ -9,8 +9,9 @@ export default function (app: Application) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    boardId: { type: Schema.Types.ObjectId, ref: "boards" },
-    bT: { type: String, required: true },
+    bId: { type: String },
+    bT: { type: String },
+    bN: { type: Number },
     uId: { type: Schema.Types.ObjectId, ref: "users" },
     sId: { type: Number },
     played: { type: Date, default: Date.now }

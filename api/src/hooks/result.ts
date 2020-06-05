@@ -11,14 +11,14 @@ const onFind = (): Hook => {
         let played = await played$.find({
           query: {
             $limit: 10,
-            $select: ['boardId'],
+            $select: ['bId'],
             uId: user._id
           }
         })
         if (played.data.length > 0) {
-          const boardIds = played.data.map((x: { boardId: any }) => x.boardId)
+          const boardIds = played.data.map((x: { bId: any }) => x.bId)
           context.params.query = {
-            boardId: { $in: boardIds }
+            bId: { $in: boardIds }
           }
           return Promise.resolve(context)
         }

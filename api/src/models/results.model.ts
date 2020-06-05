@@ -12,15 +12,15 @@ export default function (app: Application) {
     tId: { type: String },
     bId: { type: String },
     info: {
-      YYWW: { type: String },
       bN: { type: Number },
       bT: { type: String },
       bV: { type: Number },
       contract: { type: String },
       by: { type: Number },
+      pairs: { type: Array },
       cc: { type: Array }
     },
-    players: { type: String },  //JSON string
+    players: { type: Array },  //JSON string
     bids: { type: String },
     plays: { type: String },
     result: { type: Number },

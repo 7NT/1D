@@ -1,7 +1,7 @@
 
 import { Hook, HookContext } from '@feathersjs/feathers'
 import mongoose from 'mongoose';
-import { jbGetVulN, jbGetSuitN52, jbGetRankN52 } from '../jb'
+import { jbShuffleCards, jbGetVulN, jbGetSuitN52, jbGetRankN52 } from '../jb'
 
 const created = (): Hook => {
   return async (context: HookContext) => {
@@ -21,7 +21,7 @@ const onPairs = (): Hook => {
     const { pairs, state, t2 } = context.data
 
     if (state) {
-      console.log(context.data)
+      // console.log(context.data)
       context.data = onState(context.app, state, t2)
     } else if (pairs) {
       context.data.pairs = onPair(pairs)
@@ -47,7 +47,7 @@ function onState(app: any, state: number, t2: any) {
   state = 1
   if (state > 0) t2Boards(app, t2)
 
-  const pairs = shufflePair(t2.pairs)
+  const pairs = shufflePairs(t2.pairs)
   const N = Math.floor(pairs.length / 2)
   for (let i = 0; i < N; i++) {
     const p1 = pairs[i]
@@ -71,138 +71,51 @@ async function t2Boards(app: any, t2: any) {
       bN: n,
       bT: t2.bT,
       played: 0,
-      cards: shuffle()
+      cards: jbShuffleCards()
     }
     await boards$.create(b2data)
   }
-}
-
-async function t2Board(app: any, t2: any, p1: any, p2: any) {
-  const played$ = app.service('played')
-  const boards$ = app.service('boards')
-
-  let played = await played$.find({
-    query: {
-      $select: ['bN'],
-      bId: t2._id,
-      // bT: t2.bT,
-      sId: { $in: [p1.pN, p2.pN] }
-    }
-  })
-
-  const played_bIds = played.data.map((x: { bN: number }) => mongoose.Types.ObjectId(x.bN))
-  let notPlayed = await boards$.find({
-    query: {
-      $select: ['_id'],
-      bId: t2._id,
-      // bT: t2.bT,
-      bN: { $nin: played_bIds }
-    }
-  })
-
-  const notPlayed_bIds = notPlayed.data.map((x: { _id: any }) => x._id)
-  const b2Id = notPlayed_bIds[Math.floor(Math.random() * notPlayed_bIds.length)]
-  const board = await boards$.get(b2Id)
-
-  let playedb = {
-    bId: t2.id,
-    bN: board.bN,
-    // bT: board.bT,
-    sId: p1.pN
-  }
-  played$.create(playedb)
-  playedb = {
-    bId: t2.id,
-    bN: board.bN,
-    // bT: board.bT,
-    sId: p2.pN
-  }
-  played$.create(playedb)
-
-  return board
 }
 
 async function t2Table(app: any, t2: any, p1: any, p2: any) {
   const tables$ = app.service('tables')
   const players$ = app.service('players')
 
-  const board = await t2Board(app, t2, p1, p2)
-  let dealer = (board.bN - 1) % 4
-  dealer++
-  let bids = {
-    info: { bidN: 0, bidS: 0, by: 0, P: 0, X: 0, XX: 0 },
-    data: [{ sId: dealer, bid: '?' }]
-  }
-
-  const name = `#@${t2.td}_${t2.bT}:${t2.bR}x${t2.bN}:${p1.pN}_${p2.pN}`
+  const t2Id = `#@${t2._id} : ${p1.pN} : ${p2.pN}`
+  const name = `#@${t2.td} ${t2.bT}:${t2.bR}x${t2.bN}: ${p1.pN}-${p2.pN}`
   const tdata = {
-    id: name,
+    id: t2Id,
     name,
     action: 'bid',
-    board,
-    bids,
-    state: 1,
-    turn: dealer,
+    // board,
+    state: 0,
+    turn: 0,
     bT: t2.bT,
     players: 4,
     cc: [p1.cc, p2.cc],
-    seats: [p1.player.nick, p2.partner.nick, p1.partner.nick, p2.player.nick],
-    ready: [1, 2, 3, 4]
+    seats: [p1.player.id, p2.partner.id, p1.partner.id, p2.player.id],
+    ready: [0, 0, 0, 0]
   }
   await tables$.create(tdata)
-  t2Players(players$, name, p1, p2)
+  t2Players(players$, t2Id, p1, p2)
 }
 
-function t2Players(players$: any, name: any, p1: any, p2: any) {
-  let seat = { tId: name, sId: 1 }
+function t2Players(players$: any, t2Id: any, p1: any, p2: any) {
+  let seat = { tId: t2Id, sId: 1 }
   players$.patch(p1.player.id, { seat })
 
-  seat = { tId: name, sId: 2 }
+  seat = { tId: t2Id, sId: 2 }
   players$.patch(p2.partner.id, { seat })
 
-  seat = { tId: name, sId: 3 }
+  seat = { tId: t2Id, sId: 3 }
   players$.patch(p1.partner.id, { seat })
 
-  seat = { tId: name, sId: 4 }
+  seat = { tId: t2Id, sId: 4 }
   players$.patch(p2.player.id, { seat })
 
 }
 
-const shuffle = function () {
-  /**
-   * Shuffles array in place. ES6 version
-   * @param {Array} n items An array containing the items.
-   */
-  let n = [...Array(52).keys()]  //.map(x => x + 1)
-  for (let i = n.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [n[i], n[j]] = [n[j], n[i]]
-  }
-
-  let sort4 = []
-  // for (let h in [0, 1, 2, 3]) {
-  for (let h = 0; h < 4; h++) {
-    const h1 = h * 13
-    sort4.push(n.slice(h1, h1 + 13).sort((a, b) => b - a))
-  }
-
-  let card4: any = [[], [], [], []]
-  for (let h in [0, 1, 2, 3]) {
-    for (let i = 0; i < 13; i++) {
-      let c = sort4[h][i] + 1
-      let card = {
-        value: c,
-        suit: jbGetSuitN52(c),
-        rank: jbGetRankN52(c)
-      }
-      card4[h].push(card)
-    }
-  }
-
-  return card4
-}
-
-function shufflePair(array: any[]) {
+function shufflePairs(array: any[]) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
   // While there remain elements to shuffle...

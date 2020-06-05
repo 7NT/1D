@@ -51,7 +51,7 @@ export default {
     bData: []
   }),
   computed: {
-    ...mapGetters('jstore', ['getPlayerById','getPlayerByNick']),
+    ...mapGetters('jstore', ['getPlayerById']),
     mySeatX () {
       let x = Math.abs(this.myPlayer.seat.sId)
       if (x < 1 || x > 4) x = 3
@@ -132,8 +132,8 @@ export default {
       return ((this.mySeatX + s) % 4) + 1
     },
     getPlayer (pId) {
-      if (this.myTable.id.startsWith('#@')) return this.getPlayerByNick(pId)
-      else return this.getPlayerById(pId)
+      // if (this.myTable.id.startsWith('#@')) return this.getPlayerByNick(pId) else
+      return this.getPlayerById(pId)
     },
     getNick (s) {
       const pId = this.myTable.seats[s - 1]

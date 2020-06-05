@@ -105,7 +105,7 @@ export default {
   },
   components: {},
   computed: {
-    ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick']),
+    ...mapGetters('jstore', ['getPlayerById']),
     handState () {
       return this.myTable.state
     },
@@ -120,8 +120,8 @@ export default {
     },
     handPlayer () {
       const pId = this.myTable.seats[this.seatX - 1]
-      if (this.myTable.id.startsWith('#@')) return this.getPlayerByNick(pId)
-      else return this.getPlayerById(pId)
+      // if (this.myTable.id.startsWith('#@')) return this.getPlayerByNick(pId) else
+      return this.getPlayerById(pId)
     },
     handNick () {
       return this.handPlayer ? this.handPlayer.nick : jbSeatName(this.seatX - 1)

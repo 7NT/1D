@@ -39,7 +39,7 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick']),
+    ...mapGetters('jstore', ['getPlayerById']),
     state () {
       if (this.myTable.name === '#Lobby') return 'Welcome'
       else return getT2State(this.myTable.state)
@@ -65,11 +65,9 @@ export default {
       if (!pId) {
         return 'SIT...'
       } else {
-        if (this.myTable.id.startsWith('#@')) return pId
-        else {
-          const p = this.getPlayerById(pId)
-          return p ? p.nick : 'SIT...'
-        }
+        // if (this.myTable.id.startsWith('#@')) return pId else {
+        const p = this.getPlayerById(pId)
+        return p ? p.nick : 'SIT...'
       }
     },
     mySeatIcon (sId) {

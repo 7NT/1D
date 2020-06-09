@@ -67,15 +67,15 @@
         </q-item>
 
         <q-item dense class="row boardItem">
-          <q-item-section top class="col-2 gt-sm">
-            <q-item-label class="q-mt-sm">{{mix}}:</q-item-label>
+          <q-item-section top class="col-4 gt-sm">
+            <q-item-label class="q-mt-sm">{{mix}}/Score:</q-item-label>
           </q-item-section>
           <q-item-section side class="col-10 gt-sm">
             <div class="row q-pa-xs q-gutter-xs no-wrap text-orange full-width">
-              <div class="col-6">
+              <div class="col-4">
                 <q-badge color="info" text-color="black" :label="score(0)" />
               </div>
-              <div class="col-6">
+              <div class="col-4">
                 <q-badge color="info" text-color="black" :label="score(1)" />
               </div>
             </div>
@@ -175,11 +175,19 @@ export default {
     },
     score (n) {
       if (this.myResult) {
-        if (n === 1) {
-          if (this.myResult.info.bT === 'MP') { return `${100 - this.myResult.mix}%` } else return -this.myResult.mix
-        } else {
-          if (this.myResult.info.bT === 'MP') return `${this.myResult.mix}%`
-          return this.myResult.mix
+        const raw = this.myResult.score
+        const mix = this.myResult.mix
+        let dupscore
+        if (n === 1) { // EW
+          if (this.myResult.info.bT === 'MP') dupscore = `${100 - mix}%`
+          else dupscore = -mix
+          if (raw < 0) dupscore += `/${-raw}`
+          return dupscore
+        } else { // NS
+          if (this.myResult.info.bT === 'MP') dupscore = `${mix}%`
+          else dupscore = mix
+          if (raw > 0) dupscore += `/${raw}`
+          return dupscore
         }
       }
       return null

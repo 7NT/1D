@@ -184,27 +184,29 @@
           </q-card-section>
           <q-card-section class="justify-start"></q-card-section>
           <q-separator color="orange" inset />
-          <q-card-actions align="right" v-if="t.state===0">
-            <q-btn-toggle
-              v-model="myCC"
-              push
-              glossy
-              toggle-color="primary"
-              :options="[
-                {label: 'SAYC', value: 'SAYC'},
-                {label: '2/1', value: '2/1'},
-                {label: 'Precision', value: 'Precision'},
-              ]"
-            />
-            <q-separator vertical inset />
-            <q-input filled dense v-model="myCC" label="My CC..." />
-            <q-space />
-            <q-input filled dense v-model="myPd" label="My Partner" />
-            <q-space>
-              <q-separator />
-            </q-space>
+          <q-card-actions align="right">
+            <div v-if="t.state===0">
+              <q-btn-toggle
+                v-model="myCC"
+                push
+                glossy
+                toggle-color="primary"
+                :options="[
+                  {label: 'SAYC', value: 'SAYC'},
+                  {label: '2/1', value: '2/1'},
+                  {label: 'Precision', value: 'Precision'},
+                ]"
+              />
+              <q-separator vertical inset />
+              <q-input filled dense v-model="myCC" label="My CC..." />
+              <q-space />
+              <q-input filled dense v-model="myPd" label="My Partner" />
+              <q-space>
+                <q-separator />
+              </q-space>
+              <q-btn push @click="onRegister(t)">{{register(t)}}</q-btn>
+            </div>
             <q-btn push @click="onAddPair(t)" v-if="isTD">Add Pair</q-btn>
-            <q-btn push @click="onRegister(t)">{{register(t)}}</q-btn>
           </q-card-actions>
         </q-card>
       </q-expansion-item>
@@ -276,7 +278,7 @@ export default {
       return 'Join'
     },
     onAddPair (t) {
-      const pair0 = {
+      const pair = {
         pN: 0,
         cc: 'SAYC',
         player: { nick: '' },
@@ -285,7 +287,6 @@ export default {
       this.$q
         .dialog({
           component: myT2Pair,
-
           // optional if you want to have access to
           // Router, Vuex store, and so on, in your
           // custom component:
@@ -297,17 +298,22 @@ export default {
 
           // props forwarded to component
           // (everything except "component" and "parent" props above):
-          pair: pair0
+          pair: pair
           // ...more.props...
         })
         .onOk(() => {
           // console.log('OK', pair0)
-          const p0 = this.getPlayerByNick(pair0.player.nick)
-          const p1 = this.getPlayerByNick(pair0.partner.nick)
+          const p0 = this.getPlayerByNick(pair.player.nick)
+          const p1 = this.getPlayerByNick(pair.partner.nick)
           if (p0 && p1) {
-            pair0.player = p0
-            pair0.partner = p1
-            this.updatePairs(pair0, pair0.pN)
+            pair.player = p0
+            pair.partner = p1
+            pair.state = 0
+            // this.addPair(t, pair0)
+            const pairs = JSON.parse(JSON.stringify(t.pairs))
+            pairs.push(pair)
+            console.log(t, pairs)
+            tourneys$.patch(t._id, { pairs })
           } else {
             this.$q.notify({
               type: 'info',
@@ -426,7 +432,7 @@ export default {
           break
         case 1:
         case 2:
-          if (t.state < s) tourneys$.patch(t._id, { state: s, t2: t })
+          if (t.state < s) tourneys$.patch(t._id, { state: s })
           break
         default:
       }

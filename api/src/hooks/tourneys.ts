@@ -18,13 +18,14 @@ const created = (): Hook => {
 
 const onPairs = (): Hook => {
   return async (context: HookContext) => {
-    const { pairs, state, t2 } = context.data
+    const { pairs, state, pstate } = context.data
 
     if (state) {
-      // console.log(context.data)
-      context.data = onState(context.app, state, t2)
+      context.data = onState(context, state)
     } else if (pairs) {
       context.data.pairs = onPair(pairs)
+    } else if (pstate) {
+
     }
     return Promise.resolve(context)
   }
@@ -43,9 +44,11 @@ function onPair(pairs: any[]) {
   return pairs2
 }
 
-function onState(app: any, state: number, t2: any) {
+async function onState(context: any, state: number) {
   state = 1
-  if (state > 0) t2Boards(app, t2)
+  let t2 = context.service.store[context.id]
+  if (!t2) t2 = await context.service.get(context.id)
+  if (state > 0) t2Boards(context.app, t2)
 
   const pairs = shufflePairs(t2.pairs)
   const N = Math.floor(pairs.length / 2)
@@ -54,7 +57,7 @@ function onState(app: any, state: number, t2: any) {
     const p2 = pairs[N + i]
     p1.state = state
     p2.state = state
-    t2Table(app, t2, p1, p2)
+    t2Table(context.app, t2, p1, p2)
   }
 
   t2.state = state
@@ -87,14 +90,20 @@ async function t2Table(app: any, t2: any, p1: any, p2: any) {
     id: t2Id,
     name,
     action: 'bid',
-    // board,
     state: 0,
     turn: 0,
     bT: t2.bT,
     players: 4,
     cc: [p1.cc, p2.cc],
     seats: [p1.player.id, p2.partner.id, p1.partner.id, p2.player.id],
-    ready: [0, 0, 0, 0]
+    ready: [0, 0, 0, 0],
+    t2: {
+      t2Id: t2._id,
+      p1,
+      p2,
+      bN: t2.bN,
+      bn: 0
+    }
   }
   await tables$.create(tdata)
   t2Players(players$, t2Id, p1, p2)

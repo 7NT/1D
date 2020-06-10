@@ -28,9 +28,9 @@
               <div class="fit">
                 <q-list dense bordered separator>
                   <myT1List
-                    v-for="t in myTables"
-                    :key="t.id"
-                    :myTable="t"
+                    v-for="t1 in myTables"
+                    :key="t1.id"
+                    :myTable="t1"
                     v-on:onPlayer="onPlayer"
                   />
                 </q-list>

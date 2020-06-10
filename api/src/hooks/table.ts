@@ -49,12 +49,17 @@ async function getBoard(context: any) {
   if (id.startsWith('#@')) {
     let t1 = context.service.store[context.id]
     if (!t1) t1 = await context.service.get(context.id)
-    if (t1.t2.bn < t1.t2.bN ) return t2Board(context, t1.t2)
-    else {
+    if (t1.t2.bn < t1.t2.bN) return t2Board(context, t1.t2)
+    /*
+    } else {
       t1.t2.p1.state = 0
       t1.t2.p2.state = 0
-      context.app.service('tourneys').patch(t1.t2.t2Id, { pstate: t1.t2 })
+      const pairs = []
+      pairs.push(t1.t2.p1)
+      pairs.push(t1.t2.p2)
+      context.app.service('tourneys').patch(t1.t2.t2Id, { pstate: pairs })
     }
+    */
   } else if (id.startsWith('##')) return t4Board(context)
   else if (id.startsWith('#')) return t1Board(context)
 }
@@ -171,14 +176,12 @@ async function t2Board(context: any, t2: any) {
   let playedb = {
     bId: t2.t2Id,
     bN: board.bN,
-    // bT: board.bT,
     sId: t2.p1.pN
   }
   played$.create(playedb)
   playedb = {
     bId: t2.t2Id,
     bN: board.bN,
-    // bT: board.bT,
     sId: t2.p2.pN
   }
   played$.create(playedb)
@@ -421,40 +424,41 @@ const onResult = (): Hook => {
       const results$ = context.app.service('results')
       const tourneys$ = context.app.service('tourneys')
 
-      let t = context.service.store[context.id]
-      if (!t) t = await context.service.get(context.id)
+      let t1 = context.service.store[context.id]
+      if (!t1) t1 = await context.service.get(context.id)
 
       const rdata = {
-        bV: jbGetVulN(t.board.bN),
-        contract: t.bids.info,
+        bV: jbGetVulN(t1.board.bN),
+        contract: t1.bids.info,
         tricks: result.tricks,
       }
       const score = onScore(rdata)
-      const pairs = t.id.split(' : ')
       const sdata = {
-        tId: pairs[0], // t.id ,
-        bId: t.board._id + '',
+        tId: t1.id,
+        bId: t1.board._id + '',
         info: {
-          bN: t.board.bN,
-          bT: t.board.bT,
-          bV: t.board.bV,
-          contract: getContract(t.bids.info),
-          by: t.bids.info.by,
-          pairs: [pairs[1], pairs[2]],
-          cc: t.cc
+          bN: t1.board.bN,
+          bT: t1.board.bT,
+          bV: t1.board.bV,
+          contract: getContract(t1.bids.info),
+          by: t1.bids.info.by,
+          cc: t1.cc
         },
-        players: t.seats,
-        bids: JSON.stringify(t.bids),
-        plays: JSON.stringify(t.plays),
+        players: t1.seats,
+        bids: JSON.stringify(t1.bids),
+        plays: JSON.stringify(t1.plays),
         result: score.result,
         score: score.score,
-        mix: t.board.bT === 'MP' ? 50 : 0,
-        played: new Date()
+        mix: t1.board.bT === 'MP' ? 50 : 0,
+        played: new Date().getTime()
       }
       await results$.create(sdata)
-      if (t.id.startsWith('#@')) {
-        const matches = { pair1: pairs[1], pair2: pairs[2]}
-        // const t2 = tourneys$.patch(pairs[0], { matches })
+
+      if (t1.id.startsWith('#@')) {
+        if (t1.t2.bn === t1.t2.bN) {
+          // const matches = { pair1: pairs[1], pair2: pairs[2] }
+          // const t2 = tourneys$.patch(pairs[0], { matches })
+        }
       }
     }
     return Promise.resolve(context)

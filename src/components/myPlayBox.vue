@@ -87,25 +87,26 @@ export default {
 <style scoped>
 #playBox {
   position: relative;
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   margin: auto;
-  overflow: visible;
+  border:indigo solid 1px;
+  overflow: hidden;
 }
 #playCard1 {
   position: absolute;
   top: 0px;
-  left: 20px;
+  left: 30px;
 }
 #playCard2 {
   position: absolute;
   top: 20px;
-  right: 0px;
+  right: 10px;
 }
 #playCard3 {
   position: absolute;
   bottom: 0px;
-  left: 40px;
+  left: 50px;
 }
 #playCard4 {
   position: absolute;
@@ -113,7 +114,7 @@ export default {
   left: 0px;
 }
 img.card {
-  max-height: 80px;
+  max-height: 96px;
   /*max-width: 76px;*/
 }
 </style>

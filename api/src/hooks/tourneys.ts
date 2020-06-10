@@ -3,7 +3,7 @@ import { Hook, HookContext } from '@feathersjs/feathers'
 import mongoose from 'mongoose';
 import { jbShuffleCards, jbGetVulN, jbGetSuitN52, jbGetRankN52 } from '../jb'
 
-const created = (): Hook => {
+const onCreat = (): Hook => {
   return async (context: HookContext) => {
     const { minutes2 } = context.data
 
@@ -16,16 +16,16 @@ const created = (): Hook => {
   }
 }
 
-const onPairs = (): Hook => {
+const onState = (): Hook => {
   return async (context: HookContext) => {
     const { pairs, state, pstate } = context.data
 
     if (state) {
-      context.data = onState(context, state)
+      context.data = onT2State(context, state)
     } else if (pairs) {
       context.data.pairs = onPair(pairs)
     } else if (pstate) {
-
+      context.data.pairs = onPState(context, pstate)
     }
     return Promise.resolve(context)
   }
@@ -44,7 +44,7 @@ function onPair(pairs: any[]) {
   return pairs2
 }
 
-async function onState(context: any, state: number) {
+async function onT2State(context: any, state: number) {
   state = 1
   let t2 = context.service.store[context.id]
   if (!t2) t2 = await context.service.get(context.id)
@@ -84,8 +84,8 @@ async function t2Table(app: any, t2: any, p1: any, p2: any) {
   const tables$ = app.service('tables')
   const players$ = app.service('players')
 
-  const t2Id = `#@${t2._id} : ${p1.pN} : ${p2.pN}`
-  const name = `#@${t2.td} ${t2.bT}:${t2.bR}x${t2.bN}: ${p1.pN}-${p2.pN}`
+  const t2Id = `#@${t2._id}:${p1.pN}-${p2.pN}`
+  const name = `#@${t2.td} ${t2.bT}:${t2.bR}x${t2.bN}:${p1.pN}-${p2.pN}`
   const tdata = {
     id: t2Id,
     name,
@@ -143,7 +143,23 @@ function shufflePairs(array: any[]) {
   return array;
 }
 
+async function onPState(context: any, t2pairs: any) {
+  // t2: { t2Id: t2._id, p1, p2, bN: t2.bN, bn: 0 }
+  let t2 = context.service.store[context.id]
+  if (!t2) t2 = await context.service.get(context.id)
+  const pairs = t2.pairs.map((p:any) => p.state === 0)
+
+  t2pairs.forEach((p: any) => {
+    console.log(p)
+    if (p.state === 0) {
+
+    }
+  })
+
+  return
+}
+
 export {
-  created,
-  onPairs
+  onCreat,
+  onState
 }

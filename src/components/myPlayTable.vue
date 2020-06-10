@@ -86,8 +86,8 @@
             </div>
           </div>
           <div class="col-4">
-            <div class="column">
-              <div>
+            <div class="column justify-start">
+              <div class='centerbox'>
                 <q-card class="bbox pbox" v-if="myState === 1">
                   <q-card>
                     <myBidBox :myPlayer="myPlayer" :myTable="myTable" />
@@ -304,8 +304,8 @@ export default {
     }
   },
   watch: {
-    myTable (t) {
-      if (t) this.myState = t.state
+    myTable (t1) {
+      if (t1) this.myState = t1.state
     },
     myState (s1, s0) {
       // s0++
@@ -354,6 +354,10 @@ export default {
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */
+}
+.centerbox {
+  align-items: center;
+  justify-content: center;
 }
 .bbox {
   margin: auto;

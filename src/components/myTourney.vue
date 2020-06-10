@@ -11,7 +11,7 @@
       icon="event"
       header-class="bg-info text-white"
       expand-icon-class="text-white"
-      :label="`Tourney Director: @${t2.td}`"
+      :label="`Tourney Director: @${t0.td}`"
       v-show="newT2"
     >
       <q-card>
@@ -39,7 +39,7 @@
               <div class="row justify-around">
                 <div class="col-3">
                   <q-btn-toggle
-                    v-model="t2.bT"
+                    v-model="t0.bT"
                     push
                     glossy
                     toggle-color="primary"
@@ -53,7 +53,7 @@
                 <div class="col-3">
                   <q-slider
                     dense
-                    v-model="t2.bN"
+                    v-model="t0.bN"
                     :min="1"
                     :max="5"
                     :step="1"
@@ -61,14 +61,14 @@
                     snap
                     label
                     label-always
-                    :label-value="`boards/round: ${t2.bN}`"
+                    :label-value="`boards/round: ${t0.bN}`"
                     color="blue"
                   />
                 </div>
                 <div class="col-3">
                   <q-slider
                     dense
-                    v-model="t2.bR"
+                    v-model="t0.bR"
                     :min="4"
                     :max="10"
                     :step="1"
@@ -76,7 +76,7 @@
                     snap
                     label
                     label-always
-                    :label-value="`rounds: ${t2.bR}`"
+                    :label-value="`rounds: ${t0.bR}`"
                     color="green"
                   />
                 </div>
@@ -86,12 +86,7 @@
         </q-card-section>
         <q-separator dark />
         <q-card-actions align="right">
-          <q-btn
-            push
-            :disable="myT2.state > 0"
-            @click="onState(myT2, 0)"
-            label="Submit"
-          ></q-btn>
+          <q-btn push :disable="myT2.state > 0" @click="onState(myT2, 0)" label="Submit"></q-btn>
         </q-card-actions>
       </q-card>
     </q-expansion-item>
@@ -103,8 +98,8 @@
         expand-separator
         header-class="bg-teal text-white"
         expand-icon-class="text-white"
-        v-for="t in myTourneys"
-        :key="t.id"
+        v-for="t2 in myTourneys"
+        :key="t2.id"
       >
         <template v-slot:header>
           <q-item-section>
@@ -115,15 +110,15 @@
                 color="green"
                 text-color="white"
                 icon="emoji_events"
-              >@{{t.td}}: {{t.name}}</q-chip>
+              >@{{t2.td}}: {{t2.name}}</q-chip>
             </q-item-label>
             <q-item-label caption>
-              <q-badge color="blue">{{t.bT}}</q-badge>
-              <q-badge transparent align="middle" color="orange">{{t.bN}} x {{t.bR}}</q-badge>
+              <q-badge color="blue">{{t2.bT}}</q-badge>
+              <q-badge transparent align="middle" color="orange">{{t2.bN}} x {{t2.bR}}</q-badge>
             </q-item-label>
           </q-item-section>
           <q-item-section side top>
-            <q-badge color="info">start in: {{startAt(t.startAt)}}</q-badge>
+            <q-badge color="info">start in: {{startAt(t2.startAt)}}</q-badge>
           </q-item-section>
           <q-item-section side>
             <q-item-section avatar>
@@ -131,7 +126,7 @@
                 color="primary"
                 square
                 icon="keyboard_arrow_left"
-                :label="getT2Status(t.state)"
+                :label="getT2Status(t2.state)"
                 vertical-actions-align="left"
                 direction="left"
                 padding="none sm"
@@ -142,27 +137,27 @@
                   padding="5px"
                   label-position="right"
                   color="negative"
-                  @click="onState(t, -1)"
+                  @click="onState(t2, -1)"
                   icon="hourglass_empty"
                   label="Close"
                 />
                 <q-fab-action
-                  v-show="t.state === 1"
+                  v-show="t2.state === 1"
                   square
                   padding="5px"
                   label-position="right"
                   color="positive"
-                  @click="onState(t, 2)"
+                  @click="onState(t2, 2)"
                   icon="hourglass_full"
                   label="Start"
                 />
                 <q-fab-action
-                  v-show="t.state === 0"
+                  v-show="t2.state === 0"
                   square
                   padding="5px"
                   label-position="right"
                   color="warning"
-                  @click="onState(t,  1)"
+                  @click="onState(t2,  1)"
                   icon="alarm_on"
                   label="Ready..."
                 />
@@ -173,19 +168,18 @@
         <q-card>
           <q-card-section>
             <myT2List
-              v-for="p in t.pairs"
-              :key="p.pN"
-              :t2="t"
+              v-for="p2 in t2.pairs"
+              :key="p2.pN"
+              :t2="t2"
               :myPlayer="myPlayer"
-              :myPair="p"
-              v-on:onT2="onT2"
-              v-on:onPair="onPair"
+              :myPair="p2"
+              v-on:onPairs="onPairs"
             />
           </q-card-section>
           <q-card-section class="justify-start"></q-card-section>
           <q-separator color="orange" inset />
           <q-card-actions align="right">
-            <div v-if="t.state===0">
+            <div v-if="t2.state===0">
               <q-btn-toggle
                 v-model="myCC"
                 push
@@ -204,9 +198,9 @@
               <q-space>
                 <q-separator />
               </q-space>
-              <q-btn push @click="onRegister(t)">{{register(t)}}</q-btn>
+              <q-btn push @click="onRegister(t2)">{{register(t2)}}</q-btn>
             </div>
-            <q-btn push @click="onAddPair(t)" v-if="isTD">Add Pair</q-btn>
+            <q-btn push @click="onAddPair(t2)" v-if="isTD">Add Pair</q-btn>
           </q-card-actions>
         </q-card>
       </q-expansion-item>
@@ -231,7 +225,7 @@ export default {
 
   data () {
     return {
-      t2: {
+      t0: {
         id: null,
         name: 'Welcome to my Tourney...',
         td: this.myPlayer.nick,
@@ -255,9 +249,9 @@ export default {
       return this.tourneys
     },
     myT2 () {
-      const t2 = this.getT2ByTD(this.myPlayer.nick)
-      if (t2) return t2
-      else return this.$data.t2
+      const t0 = this.getT2ByTD(this.myPlayer.nick)
+      if (t0) return t0
+      else return this.$data.t0
     },
     isTD () {
       return jbIsAdmin(this.myPlayer)
@@ -271,13 +265,13 @@ export default {
       } catch (err) {}
       return false
     },
-    register (t) {
+    register (t2) {
       try {
-        if (this.jbT2._id === t._id) return 'Update'
+        if (this.jbT2._id === t2._id) return 'Update'
       } catch (err) {}
       return 'Join'
     },
-    onAddPair (t) {
+    onAddPair (t2) {
       const pair = {
         pN: 0,
         cc: 'SAYC',
@@ -310,10 +304,9 @@ export default {
             pair.partner = p1
             pair.state = 0
             // this.addPair(t, pair0)
-            const pairs = JSON.parse(JSON.stringify(t.pairs))
+            const pairs = JSON.parse(JSON.stringify(t2.pairs))
             pairs.push(pair)
-            console.log(t, pairs)
-            tourneys$.patch(t._id, { pairs })
+            tourneys$.patch(t2._id, { pairs })
           } else {
             this.$q.notify({
               type: 'info',
@@ -328,19 +321,19 @@ export default {
           // console.log('Called on OK or Cancel', pair0)
         })
     },
-    onRegister (t) {
+    onRegister (t2) {
       // const pairs = [...t.pairs] // .slice(0)
-      const pairs = JSON.parse(JSON.stringify(t.pairs))
+      const pairs = JSON.parse(JSON.stringify(t2.pairs))
       let pd
       let pair
       let pN = 0
       let message = null
 
       if (this.myPd) {
-        const players = t.pairs
+        const players = t2.pairs
           .map(p => p.player || p.partner)
           .map(n => n.nick)
-        if (this.jbT2._id === t._id) {
+        if (this.jbT2._id === t2._id) {
           if (jbIsMyNick(this.jbT2.myPair.partner, this.myPlayer)) {
             pN = -1
             message = `You and ${this.myPd} have already JOINED this tourney, your partner can UPDATE cc card`
@@ -360,13 +353,13 @@ export default {
         else {
           const chatData = {
             to: `@${pd.id}`,
-            request: { t: 2, id: t._id, cc: this.myCC },
+            request: { q: 2, id: t2._id, cc: this.myCC },
             text: 'Join me in Tourney?'
           }
           chats$.create(chatData)
           message = `sending tourney partner request to ${this.myPd}...`
         }
-      } else if (t.state > 0) {
+      } else if (t2.state > 0) {
         message = `${this.Pd} is not online`
       } else pd = { nick: this.myPd }
 
@@ -381,20 +374,25 @@ export default {
           cc: this.myCC,
           boards: 0,
           score: null,
-          state: 0
+          state: 0,
+          time: new Date().getTime()
         }
         pairs.push(pair)
       }
 
-      this.onT2({ id: 2, t2: { _id: t._id, myPair: pair } })
-      this.onPair({ _id: t._id, pairs })
+      // this.onT2({ id: 2, t2: { _id: t2._id, myPair: pair } })
+      this.onPairs({
+        _id: t2._id,
+        pairs,
+        myPair: pair
+      })
     },
     onT2 (jbT2) {
       if (this.jbT2 !== jbT2) this.setT04(jbT2)
     },
-    onPair (pair2) {
-      // tourneys$.patch(t2.t._id, { state: t2.t.state, pairs: t2.pairs })
-      tourneys$.patch(pair2._id, { pairs: pair2.pairs })
+    onPairs (p2) {
+      if (p2.pairs) tourneys$.patch(p2._id, { pairs: p2.pairs })
+      if (p2.myPair) { this.setT04({ id: 2, t2: { _id: p2._id, myPair: p2.myPair } }) }
     },
     getT2Status (s) {
       switch (s) {
@@ -410,37 +408,37 @@ export default {
           return 'Status'
       }
     },
-    onState (t, s) {
+    onState (t2, s) {
       switch (s) {
         case -1:
-          tourneys$.remove(t._id)
+          tourneys$.remove(t2._id)
           break
         case 0:
-          if (t._id) {
-            if (t.td !== this.myPlayer.nick) {
-              if (!this.isOnline(t.td)) t.td = this.myPlayer.nick
+          if (t2._id) {
+            if (t2.td !== this.myPlayer.nick) {
+              if (!this.isOnline(t2.td)) t2.td = this.myPlayer.nick
               else {
                 this.$q.notify({
                   type: 'positive',
-                  message: `TD: ${t.td} is online`
+                  message: `TD: ${t2.td} is online`
                 })
                 return
               }
             }
-            tourneys$.update(t._id, t)
-          } else tourneys$.create(t)
+            tourneys$.update(t2._id, t2)
+          } else tourneys$.create(t2)
           break
         case 1:
         case 2:
-          if (t.state < s) tourneys$.patch(t._id, { state: s })
+          if (t2.state < s) tourneys$.patch(t2._id, { state: s })
           break
         default:
       }
       this.newT2 = false
     },
-    getTourney (t) {
-      let tinfo = `${t.td}: ${t.Name}`
-      tinfo += `: ${t.bN} x ${t.bR}`
+    getTourney (t2) {
+      let tinfo = `${t2.td}: ${t2.Name}`
+      tinfo += `: ${t2.bN} x ${t2.bR}`
       return tinfo
     },
     startAt (startAt) {
@@ -451,7 +449,11 @@ export default {
   mounted () {
     if (this.jbT2._id) {
       this.myCC = this.jbT2.myPair.cc || 'SAYC'
-      if (jbIsMyNick(this.jbT2.myPair.partner, this.myPlayer)) { this.myPd = this.jbT2.myPair.player.nick } else if (jbIsMyNick(this.jbT2.myPair.player, this.myPlayer)) { this.myPd = this.jbT2.myPair.partner.nick }
+      if (jbIsMyNick(this.jbT2.myPair.partner, this.myPlayer)) {
+        this.myPd = this.jbT2.myPair.player.nick
+      } else if (jbIsMyNick(this.jbT2.myPair.player, this.myPlayer)) {
+        this.myPd = this.jbT2.myPair.partner.nick
+      }
     }
   },
   watch: {}

@@ -173,8 +173,8 @@ export default {
   methods: {
     ...mapActions('jstore', ['setT04']),
     getTName (p) {
-      const t = this.getTableById(p.seat.tId)
-      if (t) return t.name
+      const t1 = this.getTableById(p.seat.tId)
+      if (t1) return t1.name
       else return '#Lobby'
     },
     getFlag (p) {

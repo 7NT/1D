@@ -49,7 +49,7 @@
               icon="person_add"
               class="player bg-info"
               align="around"
-              @click="onPair(myPair)"
+              @click="onP2Join(myPair)"
             />
           </template>
         </div>
@@ -77,7 +77,7 @@
             square
             padding="3px"
             color="accent"
-            @click="onPairLeave(myPair)"
+            @click="onP2Leave(myPair)"
             icon="exit_to_app"
             label="Leave"
             v-show="isMyPair"
@@ -86,7 +86,7 @@
             square
             padding="3px"
             color="info"
-            @click="onPairChange(myPair)"
+            @click="onP2Change(myPair)"
             icon="cached"
             label="Change"
             v-show="isTD"
@@ -95,7 +95,7 @@
             square
             padding="3px"
             color="green"
-            @click="onPairState(0)"
+            @click="onP2State(0)"
             icon="hourglass_full"
             label="Waiting"
             v-show="isTD"
@@ -104,7 +104,7 @@
             square
             padding="3px"
             color="warning"
-            @click="onPairState(-1)"
+            @click="onP2State(-1)"
             icon="hourglass_empty"
             label="Close"
             v-show="isTD"
@@ -113,7 +113,7 @@
             square
             padding="3px"
             color="negative"
-            @click="onPairState(-2)"
+            @click="onP2State(-2)"
             icon="close"
             label="Remove"
             v-show="isTD"
@@ -192,7 +192,7 @@ export default {
     getBoards () {
       return this.t2.bN * this.t2.bR
     },
-    onPairState (p2) {
+    onP2State (p2) {
       const pair2 = JSON.parse(JSON.stringify(this.myPair))
       switch (p2) {
         case 0:
@@ -204,18 +204,18 @@ export default {
       }
       this.updatePairs(pair2, 0)
     },
-    onPair (pair) {
-      const pair0 = JSON.parse(JSON.stringify(pair))
-      pair0.partner = this.myPlayer
-      this.updatePairs(pair0, this.jbT2.myPair.pN)
+    onP2Join (p2) {
+      const p0 = JSON.parse(JSON.stringify(p2))
+      p0.partner = this.myPlayer
+      this.onP2Update(p0)
     },
-    onPairLeave (pair) {
-      const pair0 = JSON.parse(JSON.stringify(pair))
-      if (jbIsMyNick(pair0.player, this.myPlayer)) pair0.player = null
-      else if (jbIsMyNick(pair0.partner, this.myPlayer)) pair0.partner = null
-      this.updatePairs(pair0, this.jbT2.myPair.pN)
+    onP2Leave (p2) {
+      const p0 = JSON.parse(JSON.stringify(p2))
+      if (jbIsMyNick(p0.player, this.myPlayer)) p0.player = null
+      else if (jbIsMyNick(p0.partner, this.myPlayer)) p0.partner = null
+      this.onP2Update(p0)
     },
-    onPairChange (pair) {
+    onP2Change (pair) {
       const pair0 = JSON.parse(JSON.stringify(pair))
       this.$q
         .dialog({
@@ -257,11 +257,12 @@ export default {
           // console.log('Called on OK or Cancel', pair0)
         })
     },
-    updatePairs (pair, myPN) {
+    onP2Update (p2) {
       const pairs = []
+      const myPN = this.jbT2.myPair.pN
       this.t2.pairs.forEach(p => {
-        if (p.pN === pair.pN) {
-          pairs.push(pair)
+        if (p.pN === p2.pN) {
+          pairs.push(p2)
         } else if (p.pN === myPN) {
           // remove
           const p0 = JSON.parse(JSON.stringify(p))
@@ -275,7 +276,7 @@ export default {
           pairs.push(p0)
         } else pairs.push(p)
       })
-      this.$emit('onPair', { _id: this.t2._id, pairs })
+      this.$emit('onPairs', { _id: this.t2._id, pairs })
     }
   },
   mounted () {
@@ -299,10 +300,8 @@ export default {
     }
 
     if (this.isMyPair) {
-      this.$emit('onT2', {
-        id: 2,
-        t2: { _id: this.t2._id, myPair: this.myPair }
-      })
+      // if (this.jbT2.myPair.pN !== this.myPair.pN)
+      this.$emit('onPairs', { _id: this.t2._id, myPair: this.myPair })
     }
   },
   watch: {

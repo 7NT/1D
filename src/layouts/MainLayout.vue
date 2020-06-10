@@ -116,11 +116,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['jbP1']),
-    ...mapGetters('jstore', [
-      'getPlayerById',
-      'getTableById',
-      'getT2ById'
-    ]),
+    ...mapGetters('jstore', ['getPlayerById', 'getTableById', 'getT2ById']),
     authenticated () {
       return this.user != null
     }
@@ -180,6 +176,7 @@ export default {
       await players$.find().then(response => {
         this.setPlayers(response.data)
       })
+      /*
       results$
         .find({
           // query: { players: { $in: this.user._id }}
@@ -187,6 +184,7 @@ export default {
         .then(response => {
           if (response.data.length > 0) this.setResults(response.data)
         })
+      */
       tourneys$.find().then(response => {
         this.setTourneys(response.data)
       })
@@ -195,14 +193,14 @@ export default {
       })
 
       // creation
-      tables$.on('created', t => {
-        console.log('table created', t)
-        this.addTable(t)
+      tables$.on('created', t1 => {
+        console.log('table created', t1)
+        this.addTable(t1)
       })
-      players$.on('created', p => {
-        console.log('create player', p, this.user)
-        this.addPlayer(p)
-        if (p.id === this.user._id) {
+      players$.on('created', p1 => {
+        console.log('create player', p1, this.user)
+        this.addPlayer(p1)
+        if (p1.id === this.user._id) {
           const { seat0 } = this.user
           if (seat0 && seat0.tId) {
             // rejoin
@@ -213,13 +211,13 @@ export default {
                 sId: seat0.sId,
                 tId0: null
               }
-              players$.patch(p.id, { seat })
+              players$.patch(p1.id, { seat })
             }
           }
         } else {
           this.$q.notify({
             color: 'into',
-            message: `[JOIN]: ${p.nick}`
+            message: `[JOIN]: ${p1.nick}`
           })
         }
       })
@@ -227,34 +225,36 @@ export default {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
         if (chat.to === `@${this.user._id}`) {
           if (chat.request) {
-            this.$q.notify({
-              type: 'info',
-              message: 'You received a request from: ' + chat.from.nick
-            })
-            const notification = {
-              message: `Tourney Request from: ${chat.from.nick}`,
-              caption: chat.text,
-              color: 'primary',
-              icon: 'live_help'
-            }
-            notification.timeout = 10000
-            notification.actions = [
-              {
-                label: 'Accept',
-                color: 'yellow',
-                handler: () => {
-                  this.onRequestR(chat)
-                }
-              },
-              {
-                label: 'Decline',
-                color: 'white',
-                handler: () => {
-                  this.onRequestR(null)
-                }
+            if (chat.request.q === 2) { // tourney request
+              this.$q.notify({
+                type: 'info',
+                message: 'You received a request from: ' + chat.from.nick
+              })
+              const notification = {
+                message: `Tourney Request from: ${chat.from.nick}`,
+                caption: chat.text,
+                color: 'primary',
+                icon: 'live_help'
               }
-            ]
-            this.$q.notify(notification)
+              notification.timeout = 10000
+              notification.actions = [
+                {
+                  label: 'Accept',
+                  color: 'yellow',
+                  handler: () => {
+                    this.onRequestR(chat)
+                  }
+                },
+                {
+                  label: 'Decline',
+                  color: 'white',
+                  handler: () => {
+                    this.onRequestR(null)
+                  }
+                }
+              ]
+              this.$q.notify(notification)
+            }
           } else {
             this.$q.notify({
               type: 'info',
@@ -264,9 +264,9 @@ export default {
         }
         this.setChat(chat)
       })
-      results$.on('created', r => {
-        console.log('create result', r)
-        if (r.players.includes(this.user._id)) this.addResult(r)
+      results$.on('created', r1 => {
+        console.log('create result', r1)
+        if (r1.players.includes(this.user._id)) this.addResult(r1)
       })
       tourneys$.on('created', t2 => {
         console.log('tourney created', t2)
@@ -280,27 +280,27 @@ export default {
           this.setUser(user)
         }
       })
-      tables$.on('patched', t => {
-        console.log('table patched', t)
-        this.addTable(t)
+      tables$.on('patched', t1 => {
+        console.log('table patched', t1)
+        this.addTable(t1)
       })
-      players$.on('patched', p => {
-        console.log('player patched', p)
-        this.addPlayer(p)
+      players$.on('patched', p1 => {
+        console.log('player patched', p1)
+        this.addPlayer(p1)
 
-        if (p.id === this.jbP1) {
+        if (p1.id === this.jbP1) {
           let sId = 9
-          if (jbIsPlayer(p.seat.sId)) sId = -p.seat.sId
+          if (jbIsPlayer(p1.seat.sId)) sId = -p1.seat.sId
           const seat = {
-            tId: p.seat.tId,
+            tId: p1.seat.tId,
             sId: sId
           }
           players$.patch(this.user._id, { seat })
         }
       })
-      results$.on('patched', r => {
-        console.log('patched result', r)
-        if (r.players.includes(this.user._id)) this.addResult(r)
+      results$.on('patched', r1 => {
+        console.log('patched result', r1)
+        if (r1.players.includes(this.user._id)) this.addResult(r1)
       })
       tourneys$.on('patched', t2 => {
         console.log('tourney patched', t2)
@@ -312,24 +312,24 @@ export default {
       })
 
       // removed
-      tables$.on('removed', t => {
-        console.log('table removed', t)
-        t.state = -1
-        this.addTable(t)
+      tables$.on('removed', t1 => {
+        console.log('table removed', t1)
+        t1.state = -1
+        this.addTable(t1)
       })
-      players$.on('removed', p => {
-        console.log('player removed', p)
-        p.state = -1
-        this.addPlayer(p)
+      players$.on('removed', p1 => {
+        console.log('player removed', p1)
+        p1.state = -1
+        this.addPlayer(p1)
         this.$q.notify({
           color: 'into',
-          message: `[EXIT]: ${p.nick}`
+          message: `[EXIT]: ${p1.nick}`
         })
       })
-      tourneys$.on('removed', t => {
-        t.state = -1
-        this.addTourney(t)
-        console.log('t2 removed', t)
+      tourneys$.on('removed', t2 => {
+        t2.state = -1
+        this.addTourney(t2)
+        console.log('t2 removed', t2)
       })
     },
     onRequestR (chat) {

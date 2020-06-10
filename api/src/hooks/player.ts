@@ -40,29 +40,29 @@ async function beforeSit(context: any) {
 }
 
 async function getTable(tables$: any, user: any, seat: any) {
-  let table: { seats: any[]; ready: any[]; state: number; id: any }
+  let t1: { seats: any[]; ready: any[]; state: number; id: any }
   if (!seat.tId) {  //new table
-    table = await newTable(tables$, user, jbGetMIX(), seat)
+    t1 = await newTable(tables$, user, jbGetMIX(), seat)
   } else {
-    table = await tables$.get(seat.tId)
+    t1 = await tables$.get(seat.tId)
     let action = 'sit'
-    let seats = table.seats
-    let ready = table.ready
+    let seats = t1.seats
+    let ready = t1.ready
     let players = 0
-    table.seats.forEach((p: any, i: number) => {
+    t1.seats.forEach((p: any, i: number) => {
       if (i == seat.sId - 1 && p == null) {
         seats[i] = user._id
         // ready[i] = sId
       } else if (p == user._id) {
         seats[i] = null
-        if (table.state < 1) ready[i] = 0
+        if (t1.state < 1) ready[i] = 0
       }
       if (seats[i] != null) players++
     })
     const tdata = { action, players, seats, ready }
-    tables$.patch(table.id, tdata)
+    tables$.patch(t1.id, tdata)
   }
-  return table
+  return t1
 }
 
 async function newTable(tables$: any, user: any, mix: any, seat: any) {
@@ -86,30 +86,30 @@ async function newTable(tables$: any, user: any, mix: any, seat: any) {
 async function leaveTable(tables$: any, pId: any, seat: any) {
   if (seat.tId0 === '#Lobby') return
 
-  let table = await tables$.get(seat.tId0)
+  let t1 = await tables$.get(seat.tId0)
   // free seat
-  if (table.players < 2) {
-    tables$.remove(table.id)
+  if (t1.players < 2) {
+    tables$.remove(t1.id)
   } else {
     let tdata = {
       action: 'sit',
-      players: table.players - 1,
-      seats: table.seats,
-      ready: table.ready
+      players: t1.players - 1,
+      seats: t1.seats,
+      ready: t1.ready
     }
     if (jbIsPlayer(seat.sId0)) {
       let p = tdata.seats[seat.sId0 - 1]
       if (p == pId) {
         tdata.seats[seat.sId0 - 1] = null
-        if (table.state < 1) tdata.ready[seat.sId0 - 1] = 0
+        if (t1.state < 1) tdata.ready[seat.sId0 - 1] = 0
       }
-      let uIds = table.seats.filter((x: any) => x != null)
+      let uIds = t1.seats.filter((x: any) => x != null)
       if (uIds.length < 1) {
-        table.state = 0
-        table.ready = [0, 0, 0, 0]
+        t1.state = 0
+        t1.ready = [0, 0, 0, 0]
       }
     }
-    tables$.patch(table.id, tdata)
+    tables$.patch(t1.id, tdata)
   }
 }
 const onLogout = (): Hook => {
@@ -125,9 +125,9 @@ const onLogout = (): Hook => {
         const { seat } = player
 
         if (seat.tId !== '#Lobby') {
-          let t = await tables$.get(seat.tId)
-          if (t.players < 2) {
-            tables$.remove(t.id)
+          let t1 = await tables$.get(seat.tId)
+          if (t1.players < 2) {
+            tables$.remove(t1.id)
           } else {
             seat.tId0 = seat.tId
             seat.sId0 = seat.sId

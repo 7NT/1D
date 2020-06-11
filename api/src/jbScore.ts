@@ -98,3 +98,30 @@ function downScoreX (n: number, v: boolean, x: boolean, xx: boolean) {
   }
 }
 
+export const jbIMPs = function(s: number) {
+  if (s < 20) return 0
+  else if (s < 50) return 1
+  else if (s < 90) return 2
+  else if (s < 130) return 3
+  else if (s < 170) return 4
+  else if (s < 220) return 5
+  else if (s < 270) return 6
+  else if (s < 320) return 7
+  else if (s < 370) return 8
+  else if (s < 430) return 9
+  else if (s < 500) return 10
+  else if (s < 600) return 11
+  else if (s < 750) return 12
+  else if (s < 900) return 13
+  else if (s < 1100) return 14
+  else if (s < 1300) return 15
+  else if (s < 1500) return 16
+  else if (s < 1750) return 17
+  else if (s < 2000) return 18
+  else if (s < 2250) return 19
+  else if (s < 2500) return 20
+  else if (s < 3000) return 21
+  else if (s < 3500) return 22
+  else if (s < 4000) return 23
+  else return 24
+}

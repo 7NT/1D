@@ -77,7 +77,7 @@
             square
             padding="3px"
             color="accent"
-            @click="onP2Leave(myPair)"
+            @click="onP2Part(myPair)"
             icon="exit_to_app"
             label="Leave"
             v-show="isMyPair"
@@ -125,7 +125,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 import { getT2State } from 'src/jbState'
 import { jbIsAdmin, jbIsMyNick } from 'src/jbPlayer'
 import myT2Pair from 'src/components/myT2Pair'
@@ -149,6 +149,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('jstore', ['setT04']),
     isOnline (p) {
       try {
         const player = this.getPlayerByNick(p.nick)
@@ -202,21 +203,21 @@ export default {
           break
         default:
       }
-      this.updatePairs(pair2, 0)
+      // this.onP2Update(pair2, 0)
     },
     onP2Join (p2) {
       const p0 = JSON.parse(JSON.stringify(p2))
       p0.partner = this.myPlayer
       this.onP2Update(p0)
     },
-    onP2Leave (p2) {
+    onP2Part (p2) {
       const p0 = JSON.parse(JSON.stringify(p2))
       if (jbIsMyNick(p0.player, this.myPlayer)) p0.player = null
       else if (jbIsMyNick(p0.partner, this.myPlayer)) p0.partner = null
       this.onP2Update(p0)
     },
     onP2Change (pair) {
-      const pair0 = JSON.parse(JSON.stringify(pair))
+      const p0 = JSON.parse(JSON.stringify(pair))
       this.$q
         .dialog({
           component: myT2Pair,
@@ -232,17 +233,17 @@ export default {
 
           // props forwarded to component
           // (everything except "component" and "parent" props above):
-          pair: pair0
+          pair: p0
           // ...more.props...
         })
         .onOk(() => {
           // console.log('OK', pair0)
-          const p0 = this.getPlayerByNick(pair0.player.nick)
-          const p1 = this.getPlayerByNick(pair0.partner.nick)
+          const p1 = this.getPlayerByNick(p0.player.nick)
+          const p2 = this.getPlayerByNick(p0.partner.nick)
           if (p0 && p1) {
-            pair0.player = p0
-            pair0.partner = p1
-            this.updatePairs(pair0, pair0.pN)
+            p0.player = p1
+            p0.partner = p2
+            this.onP2Update(p0)
           } else {
             this.$q.notify({
               type: 'info',
@@ -258,50 +259,55 @@ export default {
         })
     },
     onP2Update (p2) {
-      const pairs = []
-      const myPN = this.jbT2.myPair.pN
-      this.t2.pairs.forEach(p => {
-        if (p.pN === p2.pN) {
-          pairs.push(p2)
-        } else if (p.pN === myPN) {
-          // remove
-          const p0 = JSON.parse(JSON.stringify(p))
-          if (jbIsMyNick(p.player, this.myPlayer)) {
-            p0.player = null
-            if (!this.isOnline(p.partner)) p0.partner = null
-          } else if (jbIsMyNick(p.partner, this.myPlayer)) {
-            p0.partner = null
-            if (!this.isOnline(p.player)) p0.player = null
-          }
-          pairs.push(p0)
-        } else pairs.push(p)
-      })
-      this.$emit('onPairs', { _id: this.t2._id, pairs })
+      switch (this.t2.state) {
+        case 1: {
+          this.$emit('onPairs', { _id: this.t2._id, pstate: p2 })
+          break
+        }
+        case 0: {
+          const pairs = []
+          const myPN = this.jbT2.myPair.pN
+          this.t2.pairs.forEach(p => {
+            if (p.pN === p2.pN) {
+              pairs.push(p2)
+            } else if (p.pN === myPN) {
+              // remove
+              const p0 = JSON.parse(JSON.stringify(p))
+              if (jbIsMyNick(p.player, this.myPlayer)) {
+                p0.player = null
+                if (!this.isOnline(p.partner)) p0.partner = null
+              } else if (jbIsMyNick(p.partner, this.myPlayer)) {
+                p0.partner = null
+                if (!this.isOnline(p.player)) p0.player = null
+              }
+              pairs.push(p0)
+            } else pairs.push(p)
+          })
+          this.$emit('onPairs', { _id: this.t2._id, pairs })
+          break
+        }
+        default:
+      }
     }
   },
   mounted () {
     this.isMyPair = false
+    const p0 = JSON.parse(JSON.stringify(this.myPair))
     if (jbIsMyNick(this.myPair.player, this.myPlayer)) {
-      if (!this.myPair.player.state) {
-        // offline
-        const p0 = JSON.parse(JSON.stringify(this.myPair))
+      if (!this.myPair.player.state) { // offline
         p0.player = this.myPlayer
-        this.updatePairs(p0, this.myPair.pN)
       }
       this.isMyPair = true
     } else if (jbIsMyNick(this.myPair.partner, this.myPlayer)) {
-      if (!this.myPair.partner.state) {
-        // offline
-        const p0 = JSON.parse(JSON.stringify(this.myPair))
+      if (!this.myPair.partner.state) { // offline
         p0.partner = this.myPlayer
-        this.updatePairs(p0, this.myPair.pN)
       }
       this.isMyPair = true
     }
 
     if (this.isMyPair) {
-      // if (this.jbT2.myPair.pN !== this.myPair.pN)
-      this.$emit('onPairs', { _id: this.t2._id, myPair: this.myPair })
+      this.setT04({ id: 2, t2: { _id: this.t2._id, myPair: this.myPair } })
+      if (p0 !== this.myPair) this.onP2Update(p0)
     }
   },
   watch: {

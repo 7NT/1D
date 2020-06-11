@@ -1,11 +1,11 @@
-import { onFind, onResult } from '../../hooks/result'
+import { onFind, onCreate } from '../../hooks/result'
 
 export default {
   before: {
     all: [],
     find: [],
     get: [],
-    create: [onResult()],
+    create: [onCreate()],
     update: [],
     patch: [],
     remove: []

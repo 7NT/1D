@@ -178,29 +178,33 @@
           </q-card-section>
           <q-card-section class="justify-start"></q-card-section>
           <q-separator color="orange" inset />
-          <q-card-actions align="right">
-            <div v-if="t2.state===0">
-              <q-btn-toggle
-                v-model="myCC"
-                push
-                glossy
-                toggle-color="primary"
-                :options="[
-                  {label: 'SAYC', value: 'SAYC'},
-                  {label: '2/1', value: '2/1'},
-                  {label: 'Precision', value: 'Precision'},
-                ]"
-              />
-              <q-separator vertical inset />
-              <q-input filled dense v-model="myCC" label="My CC..." />
-              <q-space />
-              <q-input filled dense v-model="myPd" label="My Partner" />
-              <q-space>
-                <q-separator />
-              </q-space>
-              <q-btn push @click="onRegister(t2)">{{register(t2)}}</q-btn>
-            </div>
-            <q-btn push @click="onAddPair(t2)" v-if="isTD">Add Pair</q-btn>
+          <q-card-actions align='right'>
+            <template v-if="t2.state===0">
+              <div class='row'>
+                <q-btn-toggle
+                  v-model="myCC"
+                  push
+                  glossy
+                  toggle-color="primary"
+                  :options="[
+                    {label: 'SAYC', value: 'SAYC'},
+                    {label: '2/1', value: '2/1'},
+                    {label: 'Precision', value: 'Precision'},
+                  ]"
+                />
+                <q-separator vertical inset />
+                <q-input filled dense v-model="myCC" label="My CC..." />
+                <q-space />
+                <q-input filled dense v-model="myPd" label="My Partner" />
+                <q-space>
+                  <q-separator />
+                </q-space>
+                <q-btn push @click="onRegister(t2)">{{register(t2)}}</q-btn>
+              </div>
+            </template>
+            <template v-if="isTD">
+              <q-btn push @click="onAddPair(t2)" v-if="isTD">Add Pair</q-btn>
+            </template>
           </q-card-actions>
         </q-card>
       </q-expansion-item>
@@ -272,11 +276,13 @@ export default {
       return 'Join'
     },
     onAddPair (t2) {
-      const pair = {
-        pN: 0,
+      const p0 = {
+        pN: t2.pairs.length + 1,
         cc: 'SAYC',
         player: { nick: '' },
-        partner: { nick: '' }
+        partner: { nick: '' },
+        state: 0,
+        bN: 0
       }
       this.$q
         .dialog({
@@ -292,20 +298,18 @@ export default {
 
           // props forwarded to component
           // (everything except "component" and "parent" props above):
-          pair: pair
+          pair: p0
           // ...more.props...
         })
         .onOk(() => {
           // console.log('OK', pair0)
-          const p0 = this.getPlayerByNick(pair.player.nick)
-          const p1 = this.getPlayerByNick(pair.partner.nick)
-          if (p0 && p1) {
-            pair.player = p0
-            pair.partner = p1
-            pair.state = 0
-            // this.addPair(t, pair0)
+          const p1 = this.getPlayerByNick(p0.player.nick)
+          const p2 = this.getPlayerByNick(p0.partner.nick)
+          if (p1 && p2) {
+            p0.player = p1
+            p0.partner = p2
             const pairs = JSON.parse(JSON.stringify(t2.pairs))
-            pairs.push(pair)
+            pairs.push(p0)
             tourneys$.patch(t2._id, { pairs })
           } else {
             this.$q.notify({
@@ -391,8 +395,10 @@ export default {
       if (this.jbT2 !== jbT2) this.setT04(jbT2)
     },
     onPairs (p2) {
-      if (p2.pairs) tourneys$.patch(p2._id, { pairs: p2.pairs })
+      console.log(p2)
       if (p2.myPair) { this.setT04({ id: 2, t2: { _id: p2._id, myPair: p2.myPair } }) }
+      if (p2.pairs) tourneys$.patch(p2._id, { pairs: p2.pairs })
+      else if (p2.pstate) tourneys$.patch(p2._id, { pstate: p2.pstate })
     },
     getT2Status (s) {
       switch (s) {

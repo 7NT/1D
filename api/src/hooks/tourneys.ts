@@ -3,7 +3,7 @@ import { Hook, HookContext } from '@feathersjs/feathers'
 import mongoose from 'mongoose';
 import { jbShuffleCards, jbGetVulN, jbGetSuitN52, jbGetRankN52 } from '../jb'
 
-const onCreat = (): Hook => {
+const onCreate = (): Hook => {
   return async (context: HookContext) => {
     const { minutes2 } = context.data
 
@@ -20,18 +20,19 @@ const onState = (): Hook => {
   return async (context: HookContext) => {
     const { pairs, state, pstate } = context.data
 
+    console.log(context.data)
     if (state) {
       context.data = onT2State(context, state)
     } else if (pairs) {
-      context.data.pairs = onPair(pairs)
+      context.data.pairs = onT2Pairs(pairs)
     } else if (pstate) {
-      context.data.pairs = onPState(context, pstate)
+      context.data.pairs = onP2State(context, pstate)
     }
     return Promise.resolve(context)
   }
 }
 
-function onPair(pairs: any[]) {
+function onT2Pairs(pairs: any[]) {
   let n: number = 1
   let pairs2: any[] = []
   pairs.forEach(p => {
@@ -143,23 +144,31 @@ function shufflePairs(array: any[]) {
   return array;
 }
 
-async function onPState(context: any, t2pairs: any) {
+async function onP2State(context: any, p2: any) {
+  const results$ = context.app.service("results")
+
+  console.log(p2)
+  /*
+  let results = await results$.find({
+    query: {
+      $select: ['mix'],
+      bT: table.bT,
+      uId: { $in: uIds }
+    }
+  })
+  */
+  // return
+}
+
+async function onP2PairUp(context: any, p2: any) {
   // t2: { t2Id: t2._id, p1, p2, bN: t2.bN, bn: 0 }
   let t2 = context.service.store[context.id]
   if (!t2) t2 = await context.service.get(context.id)
   const pairs = t2.pairs.map((p:any) => p.state === 0)
-
-  t2pairs.forEach((p: any) => {
-    console.log(p)
-    if (p.state === 0) {
-
-    }
-  })
-
-  return
+  return null
 }
 
 export {
-  onCreat,
+  onCreate,
   onState
 }

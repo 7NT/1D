@@ -2,6 +2,8 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
 
+import { jbIMPs } from '../jbScore'
+
 const onFind = (): Hook => {
   return async (context: HookContext) => {
     if (context.method === 'find') {
@@ -29,20 +31,19 @@ const onFind = (): Hook => {
   }
 }
 
-const onResult = (): Hook => {
+const onCreate = (): Hook => {
   return async (context: HookContext) => {
     const result = context.data
     if (result) {
-      const bT = result.info.bT
-      const results$ = context.app.service('results')
+      const results$ = context.service
 
       let results = await results$.find({
         query: {
           $select: ['_id', 'score'],
           // $sort: { score: -1 },
-          'info.bT': bT,
+          'info.bT': result.info.bT,
           'info.bN': result.info.bN,
-          'info.YYWW': result.info.YYWW
+          'bId': result.bId
         },
         paginate: false
       })
@@ -52,7 +53,7 @@ const onResult = (): Hook => {
         const boardIds = results.map((s: { _id: any }) => s._id)
         const rawscores = results.map((s: { score: number }) => s.score)
         let scoreMap: any
-        switch (bT) {
+        switch (result.info.bT) {
           case 'MP': {
             scoreMap = scoreM(rawscores)
             break;
@@ -77,6 +78,25 @@ const onResult = (): Hook => {
           }
         })
         context.data.updated = new Date().getTime()
+
+        if (result.info.t2) {
+          results = await results$.find({
+            query: {
+              $select: ['info.pairs', 'score'],
+              'info.t2.t2Id': result.info.t2.t2Id
+            },
+            paginate: false
+          })
+          console.log(results)
+          const pscores = []
+
+          /*
+          const tourney = context.app.service('tourneys').get(result.info.t2.t2Id)
+          tourney.pairs.forEach((p:any) => {
+            if (p.pN === result.info.t2.p1.pN || p.pN === result.info.t2.p2.pN) p.bN++
+          })
+          */
+        }
       }
     }
     return Promise.resolve(context)
@@ -117,7 +137,7 @@ function scoreI(scores: number[]) {
 
   scoreSet.forEach(s => {
     const diff = s - avg
-    const i = Math.sign(diff) * IMP_table(Math.abs(diff))
+    const i = Math.sign(diff) * jbIMPs(Math.abs(diff))
     scoreMap.set(s, i)
   })
 
@@ -130,7 +150,7 @@ function scoreX(scores: number[]) {
 
   scores.forEach(s => {
     const diff = scores.map(d => {
-      return Math.sign(s - d) * IMP_table(Math.abs(s - d))
+      return Math.sign(s - d) * jbIMPs(Math.abs(s - d))
     })
     const x = diff.reduce((a, b) => a + b, 0)
     scoreMap.set(s, x)
@@ -139,35 +159,7 @@ function scoreX(scores: number[]) {
   return scoreMap
 }
 
-function IMP_table(s: number) {
-  if (s < 20) return 0
-  else if (s < 50) return 1
-  else if (s < 90) return 2
-  else if (s < 130) return 3
-  else if (s < 170) return 4
-  else if (s < 220) return 5
-  else if (s < 270) return 6
-  else if (s < 320) return 7
-  else if (s < 370) return 8
-  else if (s < 430) return 9
-  else if (s < 500) return 10
-  else if (s < 600) return 11
-  else if (s < 750) return 12
-  else if (s < 900) return 13
-  else if (s < 1100) return 14
-  else if (s < 1300) return 15
-  else if (s < 1500) return 16
-  else if (s < 1750) return 17
-  else if (s < 2000) return 18
-  else if (s < 2250) return 19
-  else if (s < 2500) return 20
-  else if (s < 3000) return 21
-  else if (s < 3500) return 22
-  else if (s < 4000) return 23
-  else return 24
-}
-
 export {
   onFind,
-  onResult
+  onCreate
 }

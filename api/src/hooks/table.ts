@@ -50,22 +50,12 @@ async function getBoard(context: any) {
     let t1 = context.service.store[context.id]
     if (!t1) t1 = await context.service.get(context.id)
     if (t1.t2.bn < t1.t2.bN) return t2Board(context, t1.t2)
-    /*
-    } else {
-      t1.t2.p1.state = 0
-      t1.t2.p2.state = 0
-      const pairs = []
-      pairs.push(t1.t2.p1)
-      pairs.push(t1.t2.p2)
-      context.app.service('tourneys').patch(t1.t2.t2Id, { pstate: pairs })
-    }
-    */
   } else if (id.startsWith('##')) return t4Board(context)
   else if (id.startsWith('#')) return t1Board(context)
 }
 
 async function t1Board(context: any) {
-  const tables$ = context.app.service('tables')
+  const tables$ = context.service // context.app.service('tables')
   const boards$ = context.app.service('boards')
   const played$ = context.app.service('played')
 
@@ -422,7 +412,6 @@ const onResult = (): Hook => {
     let { result } = context.data
     if (result && context.id) {
       const results$ = context.app.service('results')
-      const tourneys$ = context.app.service('tourneys')
 
       let t1 = context.service.store[context.id]
       if (!t1) t1 = await context.service.get(context.id)
@@ -442,7 +431,8 @@ const onResult = (): Hook => {
           bV: t1.board.bV,
           contract: getContract(t1.bids.info),
           by: t1.bids.info.by,
-          cc: t1.cc
+          cc: t1.cc,
+          t2: t1.t2 || null
         },
         players: t1.seats,
         bids: JSON.stringify(t1.bids),
@@ -453,13 +443,6 @@ const onResult = (): Hook => {
         played: new Date().getTime()
       }
       await results$.create(sdata)
-
-      if (t1.id.startsWith('#@')) {
-        if (t1.t2.bn === t1.t2.bN) {
-          // const matches = { pair1: pairs[1], pair2: pairs[2] }
-          // const t2 = tourneys$.patch(pairs[0], { matches })
-        }
-      }
     }
     return Promise.resolve(context)
   }
@@ -474,6 +457,7 @@ function getContract(info: any) {
     return c
   }
 }
+
 function onScore(rdata: any) {
   let result = 0
   let scores = [0, 0]

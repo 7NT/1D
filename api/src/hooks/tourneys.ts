@@ -20,7 +20,6 @@ const onState = (): Hook => {
   return async (context: HookContext) => {
     const { pairs, state, pstate } = context.data
 
-    console.log(context.data)
     if (state) {
       context.data = onT2State(context, state)
     } else if (pairs) {
@@ -32,7 +31,7 @@ const onState = (): Hook => {
   }
 }
 
-function onT2Pairs(pairs: any[]) {
+function onT2Pairs (pairs: any[]) {
   let n: number = 1
   let pairs2: any[] = []
   pairs.forEach(p => {
@@ -45,10 +44,10 @@ function onT2Pairs(pairs: any[]) {
   return pairs2
 }
 
-async function onT2State(context: any, state: number) {
+async function onT2State (context: any, state: number) {
   state = 1
-  let t2 = context.service.store[context.id]
-  if (!t2) t2 = await context.service.get(context.id)
+  let t2 = await context.service.get(context.id)
+
   if (state > 0) t2Boards(context.app, t2)
 
   const pairs = shufflePairs(t2.pairs)
@@ -65,7 +64,7 @@ async function onT2State(context: any, state: number) {
   return t2
 }
 
-async function t2Boards(app: any, t2: any) {
+async function t2Boards (app: any, t2: any) {
   const boards$ = app.service('boards')
 
   const N: number = t2.bR * (t2.bN + 1)
@@ -81,7 +80,7 @@ async function t2Boards(app: any, t2: any) {
   }
 }
 
-async function t2Table(app: any, t2: any, p1: any, p2: any) {
+async function t2Table (app: any, t2: any, p1: any, p2: any) {
   const tables$ = app.service('tables')
   const players$ = app.service('players')
 
@@ -110,7 +109,7 @@ async function t2Table(app: any, t2: any, p1: any, p2: any) {
   t2Players(players$, t2Id, p1, p2)
 }
 
-function t2Players(players$: any, t2Id: any, p1: any, p2: any) {
+function t2Players (players$: any, t2Id: any, p1: any, p2: any) {
   let seat = { tId: t2Id, sId: 1 }
   players$.patch(p1.player.id, { seat })
 
@@ -125,7 +124,7 @@ function t2Players(players$: any, t2Id: any, p1: any, p2: any) {
 
 }
 
-function shufflePairs(array: any[]) {
+function shufflePairs (array: any[]) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
   // While there remain elements to shuffle...
@@ -144,7 +143,7 @@ function shufflePairs(array: any[]) {
   return array;
 }
 
-async function onP2State(context: any, p2: any) {
+async function onP2State (context: any, p2: any) {
   const results$ = context.app.service("results")
 
   console.log(p2)
@@ -160,11 +159,10 @@ async function onP2State(context: any, p2: any) {
   // return
 }
 
-async function onP2PairUp(context: any, p2: any) {
+async function onP2PairUp (context: any, p2: any) {
   // t2: { t2Id: t2._id, p1, p2, bN: t2.bN, bn: 0 }
-  let t2 = context.service.store[context.id]
-  if (!t2) t2 = await context.service.get(context.id)
-  const pairs = t2.pairs.map((p:any) => p.state === 0)
+  let t2 = await context.service.get(context.id)
+  const pairs = t2.pairs.map((p: any) => p.state === 0)
   return null
 }
 

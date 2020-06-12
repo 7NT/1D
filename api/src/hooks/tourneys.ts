@@ -19,7 +19,6 @@ const onCreate = (): Hook => {
 const onState = (): Hook => {
   return async (context: HookContext) => {
     const { pairs, state, pstate } = context.data
-
     if (state) {
       context.data = onT2State(context, state)
     } else if (pairs) {
@@ -48,7 +47,7 @@ async function onT2State (context: any, state: number) {
   state = 1
   let t2 = await context.service.get(context.id)
 
-  if (state > 0) t2Boards(context.app, t2)
+  if (t2.state === 0) t2Boards(context.app, t2)
 
   const pairs = shufflePairs(t2.pairs)
   const N = Math.floor(pairs.length / 2)

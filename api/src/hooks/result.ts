@@ -34,10 +34,10 @@ const onFind = (): Hook => {
 const onCreate = (): Hook => {
   return async (context: HookContext) => {
     const result = context.data
+
     if (result) {
       const results$ = context.service
-
-      let results = await results$.find({
+      const results = await results$.find({
         query: {
           $select: ['_id', 'score'],
           // $sort: { score: -1 },
@@ -47,11 +47,13 @@ const onCreate = (): Hook => {
         },
         paginate: false
       })
+
       if (results.length > 0) {
         results.push({ _id: null, score: result.score })
         results.sort((a: { score: number }, b: { score: number }) => (a.score > b.score) ? 1 : -1)
         const boardIds = results.map((s: { _id: any }) => s._id)
         const rawscores = results.map((s: { score: number }) => s.score)
+
         let scoreMap: any
         switch (result.info.bT) {
           case 'MP': {
@@ -68,35 +70,37 @@ const onCreate = (): Hook => {
           }
           default: return
         }
-
         results.forEach((r: any) => {
           const mix = scoreMap.get(r.score)
           if (!r._id) {
             context.data.mix = mix
-          }else {
+          } else {
             results$.patch(r._id, { mix })
           }
         })
         context.data.updated = new Date().getTime()
-
-        if (result.info.t2) {
-          results = await results$.find({
-            query: {
-              $select: ['info.pairs', 'score'],
-              'info.t2.t2Id': result.info.t2.t2Id
-            },
-            paginate: false
-          })
-          console.log(results)
-          const pscores = []
-
-          /*
-          const tourney = context.app.service('tourneys').get(result.info.t2.t2Id)
-          tourney.pairs.forEach((p:any) => {
-            if (p.pN === result.info.t2.p1.pN || p.pN === result.info.t2.p2.pN) p.bN++
-          })
-          */
-        }
+      }
+      if (result.info.pairs) {  // tourney
+        const presults = await results$.find({
+          query: {
+            $select: ['info.pairs', 'score'],
+            'info.tId': result.info.tId
+          },
+          paginate: false
+        })
+        console.log(presults)
+        const pscores: any[] = []
+        presults.data.forEach((p: any) => {
+          pscores.push({ pair: p.pairs[0], score: p.score })
+          pscores.push({ pair: p.pairs[1], score: -p.score })
+        })
+        const tourneys$ = context.app.service("tourneys")
+        const pairs = [...new Set(pscores.map(p => p.pair))]
+        console.log(pscores, pairs)
+        pairs.forEach((p:any) => {
+          const scores = pscores.filter(p0 => p0.pair === p).map(p1 => p1.score)
+          console.log(p, scores)
+        })
       }
     }
     return Promise.resolve(context)

@@ -2,7 +2,7 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
 import moment from 'moment'
-import { jbShuffleCards, jbGetVulN, jbGetSuitN52, jbGetRankN52 } from '../jb'
+import { jbShuffleCards, jbGetVulN } from '../jbBoard'
 import { jbGetScore } from '../jbScore'
 
 import mongoose from 'mongoose';
@@ -48,7 +48,7 @@ async function getBoard (context: any) {
 
   if (id.startsWith('#@')) {
     let t1 = await context.service.get(context.id)
-    console.log(t1)
+    // console.log(t1)
     if (t1.t2.bn < t1.t2.bN) return t2Board(context, t1.t2)
   } else if (id.startsWith('##')) return t4Board(context)
   else if (id.startsWith('#')) return t1Board(context)
@@ -154,14 +154,15 @@ async function t2Board (context: any, t2: any) {
   let notPlayed = await boards$.find({
     query: {
       $select: ['_id'],
-      bId: context.id,
+      bId: t2.t2Id,
       bN: { $nin: played_bIds }
     }
   })
 
   const notPlayed_bIds = notPlayed.data.map((x: { _id: any }) => x._id)
-  const b2Id = notPlayed_bIds[Math.floor(Math.random() * notPlayed_bIds.length)]
-  const board = await boards$.get(b2Id)
+  // console.log(played_bIds, notPlayed_bIds)
+  const b1Id = notPlayed_bIds[Math.floor(Math.random() * notPlayed_bIds.length)]
+  const board = await boards$.get(b1Id)
 
   let playedb = {
     bId: t2.t2Id,
@@ -413,7 +414,8 @@ const onResult = (): Hook => {
     if (result && context.id) {
       const results$ = context.app.service('results')
 
-      let t1 = await context.service.get(context.id)
+      const t1 = await context.service.get(context.id)
+      // console.log(t1)
 
       const rdata = {
         bV: jbGetVulN(t1.board.bN),
@@ -422,16 +424,17 @@ const onResult = (): Hook => {
       }
       const score = onScore(rdata)
       const sdata = {
-        tId: t1.id,
+        tId: t1.t2 ? t1.t2.t2Id : t1.id,
         bId: t1.board._id + '',
         info: {
           bN: t1.board.bN,
           bT: t1.board.bT,
-          bV: t1.board.bV,
+          bV: rdata.bV,
           contract: getContract(t1.bids.info),
           by: t1.bids.info.by,
           cc: t1.cc,
-          t2: t1.t2 || null
+          //t2: t1.t2 || null
+          pairs: t1.t2 ? [t1.t2.p1.pN, t1.t2.p2.pN] : []
         },
         players: t1.seats,
         bids: JSON.stringify(t1.bids),

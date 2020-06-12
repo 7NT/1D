@@ -138,7 +138,7 @@ export default {
     myResult () {
       switch (this.myTable.state) {
         case 3: {
-          const tId = this.myTable.id.split(' : ')[0]
+          const tId = this.myTable.t2 ? this.myTable.t2.t2Id : this.myTable.id
           return this.getResultById(tId)
         }
         default:

@@ -19,20 +19,20 @@ const onCreate = (): Hook => {
 const onState = (): Hook => {
   return async (context: HookContext) => {
     const { action, pairs, state, pstate } = context.data
-    console.log(context.data)
+    // console.log(context)
     if (state) {
-      context.data = onT2State(context, state)
-      console.log(context.data)
+      context.data = await onT2State(context, state)
+      // console.log('c', context.data)
     } else if (pairs) {
       context.data.pairs = onT2Pairs(state, pairs)
     } else if (pstate) {
-      context.data.pairs = onP2State(context, pstate)
+      context.data.pairs = await onP2State(context, pstate)
     }
     return Promise.resolve(context)
   }
 }
 
-function onT2Pairs(state: number, pairs: any[]) {
+function onT2Pairs (state: number, pairs: any[]) {
   switch (state) {
     case 0: {
       let n: number = 1
@@ -53,7 +53,7 @@ function onT2Pairs(state: number, pairs: any[]) {
   }
 }
 
-async function onT2State(context: any, state: number) {
+async function onT2State (context: any, state: number) {
   let t2 = await context.service.get(context.id)
   console.log(state, t2)
   switch (state) {
@@ -63,12 +63,13 @@ async function onT2State(context: any, state: number) {
         p.update = new Date().getTime()
         p.boards = 0
         p.played = []
+        console.log(p)
       })
       t2.state = state
-      break
+      return t2
     }
     case 2: {
-      // t2Boards(context.app, t2)
+      t2Boards(context.app, t2)
       const pairs = shufflePairs(t2.pairs)
       const N = Math.floor(pairs.length / 2)
       for (let i = 0; i < N; i++) {
@@ -85,15 +86,13 @@ async function onT2State(context: any, state: number) {
 
       t2.pairs = pairs
       t2.state = state
-      break
+      return t2
     }
-    default:
+    default: return t2
   }
-
-  return t2
 }
 
-async function t2Boards(app: any, t2: any) {
+async function t2Boards (app: any, t2: any) {
   const boards$ = app.service('boards')
 
   const N: number = t2.bR * (t2.bN + 1)
@@ -109,7 +108,7 @@ async function t2Boards(app: any, t2: any) {
   }
 }
 
-async function t2Table(app: any, t2: any, p1: any, p2: any) {
+async function t2Table (app: any, t2: any, p1: any, p2: any) {
   const tables$ = app.service('tables')
   const players$ = app.service('players')
 
@@ -138,7 +137,7 @@ async function t2Table(app: any, t2: any, p1: any, p2: any) {
   t2Players(players$, t2Id, p1, p2)
 }
 
-function t2Players(players$: any, t2Id: any, p1: any, p2: any) {
+function t2Players (players$: any, t2Id: any, p1: any, p2: any) {
   let seat = { tId: t2Id, sId: 1 }
   players$.patch(p1.player.id, { seat })
 
@@ -153,7 +152,7 @@ function t2Players(players$: any, t2Id: any, p1: any, p2: any) {
 
 }
 
-function shufflePairs(array: any[]) {
+function shufflePairs (array: any[]) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
   // While there remain elements to shuffle...
@@ -172,7 +171,7 @@ function shufflePairs(array: any[]) {
   return array;
 }
 
-async function onP2State(context: any, p2: any) {
+async function onP2State (context: any, p2: any) {
   const results$ = context.app.service("results")
 
   console.log(p2)
@@ -188,7 +187,7 @@ async function onP2State(context: any, p2: any) {
   // return
 }
 
-async function onP2PairUp(context: any, p2: any) {
+async function onP2PairUp (context: any, p2: any) {
   // t2: { t2Id: t2._id, p1, p2, bN: t2.bN, bn: 0 }
   let t2 = await context.service.get(context.id)
   const pairs = t2.pairs.map((p: any) => p.state === 0)

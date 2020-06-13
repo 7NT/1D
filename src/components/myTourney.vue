@@ -466,6 +466,7 @@ export default {
       }
     },
     onState (t2, s) {
+      console.log(s, t2)
       switch (s) {
         case -1:
           tourneys$.remove(t2._id)
@@ -487,6 +488,7 @@ export default {
           break
         case 1:
         case 2:
+          console.log(s, t2)
           if (t2.state < s) tourneys$.patch(t2._id, { state: s })
           break
         default:

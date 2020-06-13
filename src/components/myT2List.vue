@@ -1,8 +1,14 @@
 <template>
   <q-item :class="getBorder(myPair)">
-    <q-item-section avatar class="col-2">
+    <q-item-section
+      avatar
+      class="col-2"
+    >
       <q-chip>
-        <q-avatar color="info" text-color="white">{{myPair.pN}}</q-avatar>
+        <q-avatar
+          color="info"
+          text-color="white"
+        >{{myPair.pN}}</q-avatar>
         {{myPair.cc}}
       </q-chip>
     </q-item-section>
@@ -11,7 +17,10 @@
       <div class="row">
         <div class="col-6">
           <template v-if="isOnline(myPair.player)">
-            <q-icon :name="myFlag(myPair.player)" size="sm" />
+            <q-icon
+              :name="myFlag(myPair.player)"
+              size="sm"
+            />
             <q-btn
               :icon="myAvatar(myPair.player)"
               :label="myNick(myPair.player)"
@@ -20,13 +29,21 @@
             />
           </template>
           <template v-else-if="myPair.player">
-            <q-btn :label="myPair.player.nick" icon="person" class="player bg-info" align="around" />
+            <q-btn
+              :label="myPair.player.nick"
+              icon="person"
+              class="player bg-info"
+              align="around"
+            />
             <q-tooltip>player is offline</q-tooltip>
           </template>
         </div>
         <div class="col-6">
           <template v-if="isOnline(myPair.partner)">
-            <q-icon :name="myFlag(myPair.partner)" size="sm" />
+            <q-icon
+              :name="myFlag(myPair.partner)"
+              size="sm"
+            />
             <q-btn
               :icon="myAvatar(myPair.partner)"
               :label="myNick(myPair.partner)"
@@ -58,11 +75,18 @@
 
     <q-item-section class="col-2">
       <q-chip square>
-        <q-avatar color="green" text-color="white">{{myPair.score}}</q-avatar>
+        <q-avatar
+          color="green"
+          text-color="white"
+        >{{myPair.score}}</q-avatar>
         {{myPair.boards || 0}} / {{ getBoards ()}}
       </q-chip>
     </q-item-section>
-    <q-item-section side top class="col-2">
+    <q-item-section
+      side
+      top
+      class="col-2"
+    >
       <div class="col-2 q-mt-md">
         <q-fab
           square
@@ -154,7 +178,7 @@ export default {
       try {
         const player = this.getPlayerByNick(p.nick)
         return player.state >= 0
-      } catch (err) {}
+      } catch (err) { }
       return false
     },
     getBorder (pair) {
@@ -168,13 +192,13 @@ export default {
       try {
         const flag = player.profile.flag.toLowerCase()
         return `img:statics/flags/4x3/${flag}.svg`
-      } catch (err) {}
+      } catch (err) { }
       return null
     },
     myAvatar (player) {
       try {
         return `img:${player.profile.avatar}`
-      } catch (err) {}
+      } catch (err) { }
       return null
     },
     myT2State (s2) {
@@ -259,6 +283,7 @@ export default {
         })
     },
     onP2Update (p2) {
+      console.log(p2)
       switch (this.t2.state) {
         case 1: {
           this.$emit('onPairs', { _id: this.t2._id, pstate: p2 })
@@ -296,18 +321,17 @@ export default {
     if (jbIsMyNick(this.myPair.player, this.myPlayer)) {
       if (!this.myPair.player.state) { // offline
         p0.player = this.myPlayer
+        this.setT04({ id: 2, t2: { _id: this.t2._id, myPair: this.myPair } })
+        this.onP2Update(p0)
       }
       this.isMyPair = true
     } else if (jbIsMyNick(this.myPair.partner, this.myPlayer)) {
       if (!this.myPair.partner.state) { // offline
         p0.partner = this.myPlayer
+        this.setT04({ id: 2, t2: { _id: this.t2._id, myPair: this.myPair } })
+        this.onP2Update(p0)
       }
       this.isMyPair = true
-    }
-
-    if (this.isMyPair) {
-      this.setT04({ id: 2, t2: { _id: this.t2._id, myPair: this.myPair } })
-      if (p0 !== this.myPair) this.onP2Update(p0)
     }
   },
   watch: {

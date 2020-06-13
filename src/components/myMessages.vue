@@ -1,5 +1,8 @@
 <template>
-  <div class='fit'>
+  <div
+    class='fit'
+    v-if='!!sendTo'
+  >
     <q-card
       flat
       bordered

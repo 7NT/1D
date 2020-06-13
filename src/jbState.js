@@ -15,10 +15,12 @@ export function getT1State (s1) {
 export function getT2State (s1) {
   switch (s1) {
     case 1:
+      return 'Waiting'
+    case 2:
       return 'Playing'
     case -1:
       return 'closed'
     default:
-      return 'Waiting'
+      return ''
   }
 }

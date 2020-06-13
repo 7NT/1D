@@ -48,7 +48,6 @@ async function getBoard (context: any) {
 
   if (id.startsWith('#@')) {
     let t1 = await context.service.get(context.id)
-    // console.log(t1)
     if (t1.t2.bn < t1.t2.bN) return t2Board(context, t1.t2)
   } else if (id.startsWith('##')) return t4Board(context)
   else if (id.startsWith('#')) return t1Board(context)
@@ -415,7 +414,6 @@ const onResult = (): Hook => {
       const results$ = context.app.service('results')
 
       const t1 = await context.service.get(context.id)
-      // console.log(t1)
 
       const rdata = {
         bV: jbGetVulN(t1.board.bN),
@@ -434,7 +432,7 @@ const onResult = (): Hook => {
           by: t1.bids.info.by,
           cc: t1.cc,
           //t2: t1.t2 || null
-          pairs: t1.t2 ? [t1.t2.p1.pN, t1.t2.p2.pN] : []
+          pairs: t1.t2 ? [t1.t2.p1.pN, t1.t2.p2.pN] : null
         },
         players: t1.seats,
         bids: JSON.stringify(t1.bids),

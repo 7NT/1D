@@ -65,9 +65,7 @@ export default {
   methods: {
     tricks (n) {
       try {
-        if (this.myTable.plays) {
-          return this.myTable.plays.info.tricks[n]
-        }
+        return this.myTable.plays.info.tricks[n]
       } catch (err) {
         // console.log(err)
       }

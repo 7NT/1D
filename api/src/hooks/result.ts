@@ -80,27 +80,57 @@ const onCreate = (): Hook => {
         })
         context.data.updated = new Date().getTime()
       }
+
       if (result.info.pairs) {  // tourney
         const presults = await results$.find({
           query: {
-            $select: ['info.pairs', 'score'],
-            'info.tId': result.info.tId
+            $select: ['info.pairs', 'mix'],
+            'tId': result.tId
           },
           paginate: false
         })
-        console.log(presults)
+
         const pscores: any[] = []
-        presults.data.forEach((p: any) => {
-          pscores.push({ pair: p.pairs[0], score: p.score })
-          pscores.push({ pair: p.pairs[1], score: -p.score })
+        const score2 = result.info.bT === 'MP' ? 100 : 0
+        presults.forEach((p: any) => {
+          pscores.push({ pair: p.info.pairs[0], score: p.mix })
+          pscores.push({ pair: p.info.pairs[1], score: score2 - p.mix })
         })
+
+        // const pairs = [...new Set(pscores.map(p => p.pair))]
         const tourneys$ = context.app.service("tourneys")
-        const pairs = [...new Set(pscores.map(p => p.pair))]
-        console.log(pscores, pairs)
-        pairs.forEach((p:any) => {
-          const scores = pscores.filter(p0 => p0.pair === p).map(p1 => p1.score)
-          console.log(p, scores)
+        const t2 = await tourneys$.get(result.tId)
+        let t2pairs0 = t2.pairs.map((p: any) => p.state === 0).sort((a: { update: number }, b: { update: number }) => a.update - b.update)  // waiting pairs
+        const t2pair1 = t2.pairs.filter((p: any) => p.pN === result.info.pairs[0])[0]
+        const t2pair2 = t2.pairs.filter((p: any) => p.pN === result.info.pairs[1])[0]
+
+        console.log(t2pairs0, t2pair1, t2pair2)
+        const Boards = t2.bN * t2.bR
+        const pairUp = []
+        t2.pairs.forEach((p: any) => {
+          const scores = pscores.filter(p0 => p0.pair === p.pN).map(p1 => p1.score)
+          p.boards = scores.length
+          if (scores.length > 0) {
+            p.score = scores.reduce((a, b) => a + b, 0) / scores.length
+            if (p.boards >= Boards) p.state = -1 // closed
+            else if (p.boards % t2.bN === 0) {
+              if (p.pN === t2pair1.pN || p.pN === t2pair2.pN) {
+                const t2pairs3 = t2pairs0.filter((p3: any) => !p.played.includes(p3.pN))
+                if (t2pairs3.length > 0) {
+                  const p3 = t2pairs3.pop()
+                  t2pairs0 = t2pairs0.filter((p0: any) => p0.pN !== p3.pN)
+                  pairUp.push({p1: p3.pN, p2: p.pN})
+                  console.log(t2pairs3, p3, t2pairs0, pairUp)
+                } else {
+                  p.state = 0
+                  p.update = new Date().getTime()
+                }
+              }
+            }
+          }
         })
+
+        tourneys$.patch(result.tId, { action: 'update', state: t2.state, pairs: t2.pairs })
       }
     }
     return Promise.resolve(context)

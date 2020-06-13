@@ -68,7 +68,7 @@
 
         <q-item dense class="row boardItem">
           <q-item-section top class="col-4 gt-sm">
-            <q-item-label class="q-mt-sm">{{mix}}/Score:</q-item-label>
+            <q-item-label class="q-mt-sm">{{mix}}:</q-item-label>
           </q-item-section>
           <q-item-section side class="col-10 gt-sm">
             <div class="row q-pa-xs q-gutter-xs no-wrap text-orange full-width">
@@ -175,19 +175,13 @@ export default {
     },
     score (n) {
       if (this.myResult) {
-        const raw = this.myResult.score
         const mix = this.myResult.mix
-        let dupscore
         if (n === 1) { // EW
-          if (this.myResult.info.bT === 'MP') dupscore = `${100 - mix}%`
-          else dupscore = -mix
-          if (raw < 0) dupscore += `/${-raw}`
-          return dupscore
+          if (this.myResult.info.bT === 'MP') return `${100 - mix}%`
+          else return -mix
         } else { // NS
-          if (this.myResult.info.bT === 'MP') dupscore = `${mix}%`
-          else dupscore = mix
-          if (raw > 0) dupscore += `/${raw}`
-          return dupscore
+          if (this.myResult.info.bT === 'MP') return `${mix}%`
+          else return mix
         }
       }
       return null

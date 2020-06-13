@@ -87,7 +87,7 @@
           </div>
           <div class="col-4">
             <div class="column justify-start">
-              <div class='centerbox'>
+              <div class="centerbox">
                 <q-card class="bbox pbox" v-if="myState === 1">
                   <q-card>
                     <myBidBox :myPlayer="myPlayer" :myTable="myTable" />
@@ -226,7 +226,7 @@ export default {
   },
   methods: {
     ...mapActions('jstore', ['addTable']),
-    onState (s) {},
+    // onState (s) {},
     onTable (action) {
       // console.log('onTable', action)
       switch (action.action) {
@@ -309,8 +309,26 @@ export default {
     },
     myState (s1, s0) {
       // s0++
+      /*
       for (let s = s0; s <= s1; s++) {
         this.onState(s)
+      }
+      */
+      if (s1 === 4) {
+        // review
+        let message = this.myTable.info.contract
+        let score = this.myTable.score
+        if (this.myTable.result === 0) message += '=' + this.myTable.result
+        else if (this.myTable.result > 0) message += '+' + this.myTable.result
+        else message += this.myTable.result
+
+        if (this.myTable.info.by % 2 === 0) score = -score
+
+        this.$q.notify({
+          message: message,
+          caption: score,
+          color: 'info'
+        })
       }
       this.$data.timer = new Date().getTime()
     },

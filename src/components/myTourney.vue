@@ -184,7 +184,7 @@
                   padding="5px"
                   label-position="right"
                   color="warning"
-                  @click="onState(t2,  1)"
+                  @click="onState(t2, 1)"
                   icon="alarm_on"
                   label="Ready..."
                 />

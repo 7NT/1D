@@ -1,5 +1,5 @@
 // tables-model.js - A mongoose model
-// 
+//
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
 import { Application } from '../declarations';
@@ -9,7 +9,8 @@ export default function (app: Application) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
-    id: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    // id: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    id: { type: String },
     name: { type: String },
     seats: { type: Array },
     ready: { type: Array },

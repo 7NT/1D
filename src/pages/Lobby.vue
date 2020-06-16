@@ -132,8 +132,10 @@ export default {
       this.updateuser(user)
     },
     onPlayer (seat) {
-      seat.tId0 = this.mySeat.tId
-      seat.sId0 = this.mySeat.sId
+      if (this.mySeat) {
+        seat.tId0 = this.mySeat.tId
+        seat.sId0 = this.mySeat.sId
+      }
       players$.patch(this.myPlayer.id, { seat })
     },
     isOpen (r) {
@@ -142,7 +144,7 @@ export default {
         case 2:
           return true
         case 1:
-          return this.mySeat ? this.mySeat.tId !== '#Lobby' : false
+          return !!this.mySeat
         default:
           return false
       }
@@ -157,8 +159,10 @@ export default {
       if (!u) this.$router.push({ name: 'home' }).catch(e => {})
     },
     mySeat (n) {
-      this.rooms[1].id = n.tId
-      this.rId = n.tId === '#Lobby' ? 0 : 1
+      if (n) {
+        this.rooms[1].id = n.tId
+        this.rId = n.tId ? 1 : 0
+      } else this.rId = 0
     },
     rId (r) {
       this.setT04({

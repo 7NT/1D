@@ -235,7 +235,7 @@ export default {
           break
         }
         case 'ready': {
-          tables$.patch(this.myTable.id, {
+          tables$.patch(this.myTable._id, {
             action: 'play',
             state: action.state,
             ready: action.ready
@@ -243,14 +243,14 @@ export default {
           break
         }
         case 'bT': {
-          tables$.patch(this.myTable.id, {
+          tables$.patch(this.myTable._id, {
             action: 'play',
             bT: action.bT
           })
           break
         }
         case 'cc': {
-          tables$.patch(this.myTable.id, {
+          tables$.patch(this.myTable._id, {
             action: 'play',
             cc: action.cc
           })
@@ -261,7 +261,7 @@ export default {
             action: 'play',
             bids: action.bid.bids
           }
-          tables$.patch(this.myTable.id, bids)
+          tables$.patch(this.myTable._id, bids)
           break
         }
         case 'play': {
@@ -274,12 +274,12 @@ export default {
               action: 'play',
               plays: { info: _info, data: _data }
             }
-            tables$.patch(this.myTable.id, plays)
+            tables$.patch(this.myTable._id, plays)
           }
           break
         }
         case 'claim': {
-          tables$.patch(this.myTable.id, {
+          tables$.patch(this.myTable._id, {
             action: 'play',
             claim: action.claim
           })
@@ -293,7 +293,7 @@ export default {
       const cmd = action.target.innerText
       switch (cmd) {
         case 'close': {
-          this.onTable({ action: 'sit', seat: { tId: '#Lobby', sId: 0 } })
+          this.onTable({ action: 'sit', seat: null })
           break
         }
         case 'live_help': {
@@ -344,23 +344,7 @@ export default {
       this.$data.timer = new Date().getTime()
     }
   },
-  mounted () {
-    /*
-    if (!this.myTable) {
-      // const seat = { sId: 0 }
-      const tId = `#${this.myPlayer.id}`
-      const t = {
-        id: tId,
-        name: `#${this.myPlayer.nick}`,
-        info: 'Welcome',
-        players: 0,
-        state: 0,
-        seats: [null, null, null, null]
-      }
-      this.addTable(t)
-    }
-    */
-  },
+  mounted () {},
   beforeDestroy () {}
 }
 </script>

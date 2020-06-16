@@ -17,7 +17,7 @@ interface UserData {
   status?: number;
   state?: number;
   profile?: any;
-  seat: any,
+  seat?: any,
   created?: number;
 }
 
@@ -41,7 +41,6 @@ export class Users extends Service {
       status: 0,
       state: 0,
       profile,
-      seat: { tId: '#Lobby', sId: 0 },
       created: new Date()
     };
 

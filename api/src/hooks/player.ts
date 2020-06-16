@@ -1,95 +1,101 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
+// import mongoose from 'mongoose';
 import { jbIsPlayer, jbGetMIX } from '../jb'
 
 const onPlayer = (): Hook => {
   return async (context: HookContext) => {
     const { seat } = context.data
     if (seat) {
-      context.data = await beforeSit(context)
+      context.data = await playerSit(context)
     }
     return Promise.resolve(context)
   }
 }
 
-async function beforeSit(context: any) {
+async function playerSit(context: any) {
   const { connection } = context.params
   if (connection) {
     const tables$ = context.app.service('tables')
     const { user } = connection
     const { seat } = context.data
 
-    if (seat.tId0 !== seat.tId) {  //leave table
-      if (seat.tId0) {
-        leaveTable(tables$, user._id, seat)
+    if (seat.tId0) {
+      if (seat.tId0 !== seat.tId) {  //leave table
+        const pId = user._id.toString()
+        playerPart(tables$, pId, seat)
         context.app.channel(`#${seat.tId0}`).leave(connection)
       }
     }
 
-    if (seat.tId === '#Lobby') {  //go to lobby
-      context.data.seat.tId = '#Lobby'
+    if (seat.tId0 && !seat.tId) {  //go to lobby
+      context.data.seat.tId = null
       context.data.seat.sId = 0
     } else {
       let t1 = await getTable(tables$, user, seat)
-      context.data.seat.tId = t1.id
-      context.app.channel(t1.id).join(connection);
+      context.data.seat.tId = t1._id
+      context.app.channel(t1._id).join(connection);
     }
   }
   return context.data
 }
 
 async function getTable(tables$: any, user: any, seat: any) {
-  let t1: { seats: any[]; ready: any[]; state: number; id: any }
+  let t1: { _id: any, seats: any[]; ready: any[]; state: number; id: any }
+
   if (!seat.tId) {  //new table
-    t1 = await newTable(tables$, user, jbGetMIX(), seat)
+    t1 = await newTable(tables$, user, seat)
   } else {
-    t1 = await tables$.get(seat.tId)
+    const _id = seat.tId  // mongoose.Types.ObjectId(seat.tId)
+    t1 = await tables$.get(_id)
     let action = 'sit'
     let seats = t1.seats
     let ready = t1.ready
     let players = 0
+    const pId = user._id.toString()
     t1.seats.forEach((p: any, i: number) => {
       if (i == seat.sId - 1 && p == null) {
-        seats[i] = user._id
+        seats[i] = pId
         // ready[i] = sId
-      } else if (p == user._id) {
+      } else if (p === pId) {
         seats[i] = null
         if (t1.state < 1) ready[i] = 0
       }
       if (seats[i] != null) players++
     })
     const tdata = { action, players, seats, ready }
-    tables$.patch(t1.id, tdata)
+    tables$.patch(_id, tdata)
   }
   return t1
 }
 
-async function newTable(tables$: any, user: any, mix: any, seat: any) {
+async function newTable(tables$: any, user: any, seat: any) {
   const tdata = {
-    id: '#' + user._id,
+    // id: '#' + user._id,
     name: '#' + user.nick,
     action: 'open',
     state: 0,
     turn: 0,
-    bT: mix,
+    bT: jbGetMIX(),
     players: 1,
     cc: ['SAYC', 'SAYC'],
     seats: [null, null, null, null],
     ready: [0, 0, 0, 0]
   }
-  tdata.seats[seat.sId - 1] = user._id
 
+  tdata.seats[seat.sId - 1] = user._id.toString()
   return await tables$.create(tdata)
 }
 
-async function leaveTable(tables$: any, pId: any, seat: any) {
-  if (seat.tId0 === '#Lobby') return
+async function playerPart(tables$: any, pId: any, seat: any) {
+  if (!seat.tId0) return
 
-  let t1 = await tables$.get(seat.tId0)
-  // free seat
-  if (t1.players < 2) {
-    tables$.remove(t1.id)
+  const _id = seat.tId0  // mongoose.Types.ObjectId(seat.tId)
+  let t1 = await tables$.get(_id)
+
+  if (t1.players < 2) {   // free seat
+    tables$.remove(_id)
   } else {
     let tdata = {
       action: 'sit',
@@ -99,7 +105,7 @@ async function leaveTable(tables$: any, pId: any, seat: any) {
     }
     if (jbIsPlayer(seat.sId0)) {
       let p = tdata.seats[seat.sId0 - 1]
-      if (p == pId) {
+      if (p === pId) {
         tdata.seats[seat.sId0 - 1] = null
         if (t1.state < 1) tdata.ready[seat.sId0 - 1] = 0
       }
@@ -109,10 +115,11 @@ async function leaveTable(tables$: any, pId: any, seat: any) {
         t1.ready = [0, 0, 0, 0]
       }
     }
-    tables$.patch(t1.id, tdata)
+    tables$.patch(_id, tdata)
   }
 }
-const onLogout = (): Hook => {
+
+const playerLogout = (): Hook => {
   return async (context: HookContext) => {
     const pId = context.id
     if (pId) {
@@ -124,14 +131,15 @@ const onLogout = (): Hook => {
       if (player) {
         const { seat } = player
 
-        if (seat.tId !== '#Lobby') {
-          let t1 = await tables$.get(seat.tId)
+        if (seat.tId) {
+          const _id = seat.tId  // mongoose.Types.ObjectId(seat.tId)
+          let t1 = await tables$.get(_id)
           if (t1.players < 2) {
-            tables$.remove(t1.id)
+            tables$.remove(_id)
           } else {
             seat.tId0 = seat.tId
             seat.sId0 = seat.sId
-            leaveTable(tables$, pId, seat)
+            playerPart(tables$, pId, seat)
           }
         }
         const userData = { seat, state: 0, logoutAt: new Date().getTime() }
@@ -144,5 +152,5 @@ const onLogout = (): Hook => {
 
 export {
   onPlayer,
-  onLogout
+  playerLogout
 }

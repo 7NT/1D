@@ -65,7 +65,7 @@ export default {
       if (!pId) {
         return 'SIT...'
       } else {
-        // if (this.myTable.id.startsWith('#@')) return pId else {
+        // if (this.myTable._id.startsWith('#@')) return pId else {
         const p = this.getPlayerById(pId)
         return p ? p.nick : 'SIT...'
       }
@@ -81,7 +81,7 @@ export default {
       const pId = this.getPid(sId)
       if (!pId) {
         const seat = {
-          tId: this.myTable.id,
+          tId: this.myTable._id,
           sId
         }
         this.$emit('onPlayer', seat)

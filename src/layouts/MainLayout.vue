@@ -204,8 +204,8 @@ export default {
           const { seat0 } = this.user
           if (seat0 && seat0.tId) {
             // rejoin
-            const t = this.getTableById(seat0.tId) // if table still exists
-            if (t) {
+            const t1 = this.getTableById(seat0.tId) // if table still exists
+            if (t1) {
               const seat = {
                 tId: seat0.tId,
                 sId: seat0.sId,

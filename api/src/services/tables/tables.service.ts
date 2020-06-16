@@ -2,6 +2,7 @@
 import { ServiceAddons } from '@feathersjs/feathers';
 import { Application } from '../../declarations';
 import { Tables } from './tables.class';
+import createModel from '../../models/tables.model';
 import hooks from './tables.hooks';
 
 // Add this service to the service type index
@@ -13,6 +14,7 @@ declare module '../../declarations' {
 
 export default function (app: Application) {
   const options = {
+    Model: createModel(app),
     paginate: app.get('paginate')
   };
 
@@ -23,10 +25,4 @@ export default function (app: Application) {
   const service = app.service('tables');
 
   service.hooks(hooks);
-
-  service.publish('patched', (data, context) => {
-    const { id, action } = data
-    if (id && action ==='play') app.channel(id)
-    return app.channel('#Lobby')
-  })
 }

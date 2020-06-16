@@ -2,10 +2,9 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
 import moment from 'moment'
+import mongoose from 'mongoose';
 import { jbShuffleCards, jbGetVulN } from '../jbBoard'
 import { jbGetScore } from '../jbScore'
-
-import mongoose from 'mongoose';
 
 const onTable = (): Hook => {
   return async (context: HookContext) => {
@@ -58,12 +57,12 @@ async function t1Board (context: any) {
   const boards$ = context.app.service('boards')
   const played$ = context.app.service('played')
 
-  let table = await tables$.get(context.id)
-  let uIds = table.seats.filter((u: string) => u != null)
+  let t1 = await tables$.get(context.id)
+  let uIds = t1.seats.filter((u: string) => u != null)
   let played = await played$.find({
     query: {
       $select: ['bId'],
-      bT: table.bT,
+      bT: t1.bT,
       uId: { $in: uIds }
     }
   })
@@ -74,7 +73,7 @@ async function t1Board (context: any) {
       query: {
         $limit: 1,
         $select: ['_id'],
-        bT: table.bT,
+        bT: t1.bT,
         _id: { $nin: played_bIds }
       }
     })
@@ -86,7 +85,7 @@ async function t1Board (context: any) {
       query: {
         $limit: 1,
         $select: ['bN'],
-        bT: table.bT,
+        bT: t1.bT,
         $sort: {
           bN: -1
         }
@@ -101,14 +100,14 @@ async function t1Board (context: any) {
     const bdata = {
       YYWW,
       bN,
-      bT: table.bT,
+      bT: t1.bT,
       played: 0,
       cards: jbShuffleCards()
     }
     board = await boards$.create(bdata)
   }
 
-  table.seats.forEach((u: any, index: number) => {
+  t1.seats.forEach((u: any, index: number) => {
     if (u) {
       const playedb = {
         bId: board._id,
@@ -120,7 +119,7 @@ async function t1Board (context: any) {
     }
   })
 
-  board.players = table.seats //download uIds
+  board.players = t1.seats //download uIds
   let dealer = (board.bN - 1) % 4
   dealer++
   let bids = {
@@ -128,13 +127,13 @@ async function t1Board (context: any) {
     data: [{ sId: dealer, bid: '?' }]
   }
 
-  table.state = 1
-  table.board = board
-  table.bids = bids
-  table.turn = dealer
-  table.ready = [1, 2, 3, 4]
+  t1.state = 1
+  t1.board = board
+  t1.bids = bids
+  t1.turn = dealer
+  t1.ready = [1, 2, 3, 4]
 
-  return table
+  return t1
 }
 
 async function t2Board (context: any, t2: any) {

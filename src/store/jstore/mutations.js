@@ -57,7 +57,7 @@ export const addPlayer = (state, player) => {
 
 export const addTable = (state, table) => {
   // if (table.state < 0) state.tables.delete(table.id) else state.tables.set(table.id, table)
-  const i = state.tables.findIndex(t => t.id === table.id)
+  const i = state.tables.findIndex(t => t._id === table._id)
   if (i >= 0) {
     if (table.state < 0) state.tables.splice(i, 1)
     else state.tables.splice(i, 1, table)

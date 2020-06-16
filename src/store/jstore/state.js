@@ -10,7 +10,7 @@ export default {
   chats: [],
   jbP0: [], // private players
   jbP1: null, // following
-  jbT1: { id: '#Lobby', name: '#Lobby' }, // my pair tables
+  jbT1: { id: null, name: '#Lobby' }, // my pair tables
   jbT2: {}, // tourney
   jbT4: {} // teams
 }

@@ -16,7 +16,7 @@ export const getPlayerByNick = state => nick => {
 }
 
 export const getTableById = state => id => {
-  return state.tables.find(t => t.id === id)
+  return state.tables.find(t => t._id === id)
 }
 
 export const getResultById = state => tId => {

@@ -132,7 +132,7 @@ export default {
       return ((this.mySeatX + s) % 4) + 1
     },
     getPlayer (pId) {
-      // if (this.myTable.id.startsWith('#@')) return this.getPlayerByNick(pId) else
+      // if (this.myTable._id.startsWith('#@')) return this.getPlayerByNick(pId) else
       return this.getPlayerById(pId)
     },
     getNick (s) {

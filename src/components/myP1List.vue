@@ -50,7 +50,7 @@
           <q-item-section side>
             <div class="row items-center">
               <q-icon
-                :name="`img:statics/jbicon/seats/seat${p.seat.sId}.svg`"
+                :name="getSeatIcon(p)"
                 size="24px"
               />
               <q-avatar size="24px">
@@ -166,7 +166,8 @@ export default {
     ...mapGetters('jstore', ['myPlayer', 'getPlayerById', 'getTableById']),
     myPlayers () {
       let players = this.players
-      if (this.jbT1.id !== '#Lobby') players = players.filter(p => p.seat.tId === this.jbT1.id)
+      if (this.jbT1.id) players = players.filter(p => p.seat.tId === this.jbT1.id)
+      else players = players.filter(p => !p.seat)
       return players
     }
   },
@@ -184,8 +185,12 @@ export default {
       }
       return null
     },
+    getSeatIcon (p) {
+      const s = p.seat ? p.seat.sId : 0
+      return `img:statics/jbicon/seats/seat${s}.svg`
+    },
     isPlayer (p) {
-      return jbIsPlayer(p.seat.sId)
+      return p.seat ? jbIsPlayer(p.seat.sId) : false
     },
     isMyTable (p) {
       try {
@@ -220,7 +225,7 @@ export default {
       players$.patch(this.myPlayer.id, { seat })
     },
     onWatch (p) {
-      if (jbIsPlayer(p.seat.sId)) this.onJoin(p, -p.seat.sId)
+      if (p.seat && jbIsPlayer(p.seat.sId)) this.onJoin(p, -p.seat.sId)
       else this.onJoin(p, 9)
       this.setT04({ id: 3, p1: p.id })
     }

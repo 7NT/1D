@@ -120,7 +120,7 @@ export default {
     },
     handPlayer () {
       const pId = this.myTable.seats[this.seatX - 1]
-      // if (this.myTable.id.startsWith('#@')) return this.getPlayerByNick(pId) else
+      // if (this.myTable._id.startsWith('#@')) return this.getPlayerByNick(pId) else
       return this.getPlayerById(pId)
     },
     handNick () {
@@ -205,7 +205,7 @@ export default {
           action: 'sit',
           state: this.handState,
           seat: {
-            tId: this.myTable.id,
+            tId: this.myTable._id,
             sId: this.seatX
           }
         }

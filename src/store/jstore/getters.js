@@ -1,40 +1,37 @@
-/*
-export function someGetter (state) {}
-*/
-export const myPlayer = state => {
-  const p = state.players.find(p => p.id === state.myUser._id)
+export const jsPlayer = state => {
+  const p = state.jsPlayers.find(p => p.id === state.jsUser._id)
   if (p) return p
-  else return state.myUser
+  else return state.jsUser
 }
 
-export const getPlayerById = state => id => {
-  return state.players.find(p => p.id === id)
+export const jsPlayerById = state => id => {
+  return state.jsPlayers.find(p => p.id === id)
 }
 
-export const getPlayerByNick = state => nick => {
-  return state.players.find(p => p.nick === nick)
+export const jsPlayerByNick = state => nick => {
+  return state.jsPlayers.find(p => p.nick === nick)
 }
 
-export const getTableById = state => id => {
-  return state.tables.find(t => t._id === id)
+export const jsT1ById = state => id => {
+  return state.jsTables.find(t => t._id === id)
 }
 
-export const getResultById = state => tId => {
-  return state.results.find(t => t.tId === tId)
+export const jsT2ById = state => id => {
+  return state.jsTourneys.find(t => t._id === id)
 }
 
-export const getT2ById = state => id => {
-  return state.tourneys.find(t => t._id === id)
+export const jsT2ByTD = state => td => {
+  return state.jsTourneys.find(t => t.td === td)
 }
 
-export const getT2ByTD = state => td => {
-  return state.tourneys.find(t => t.td === td)
+export const jsTeamById = state => id => {
+  return state.jsTeams.find(t => t.id === id)
 }
 
-export const getTeamById = state => id => {
-  return state.teams.find(t => t.id === id)
+export const jsResultById = state => tId => {
+  return state.jsResults.find(t => t.tId === tId)
 }
 
-export const getChatById = state => id => {
-  return state.chats.find(c => c.to === id)
+export const jsChatById = state => id => {
+  return state.jsChats.find(c => c.to === id)
 }

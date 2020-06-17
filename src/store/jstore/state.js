@@ -1,16 +1,18 @@
 export default {
-  //
-  myUser: null,
-  users: [], // new Map() change not detcted in Map
-  players: [], // new Map()
-  tables: [], // new Map()
-  results: [], // new Map()
-  tourneys: [],
-  teams: [],
-  chats: [],
-  jbP0: [], // private players
-  jbP1: null, // following
-  jbT1: { id: null, name: '#Lobby' }, // my pair tables
-  jbT2: {}, // tourney
-  jbT4: {} // teams
+  jsUser: null,
+  jsPlayers: [], // new Map()
+  jsTables: [], // new Map()
+  jsResults: [], // new Map()
+  jsTourneys: [],
+  jsTeams: [],
+  jsChats: [],
+  jsSet: new Set(),
+  jsMap: new Map()
+  /*
+  jsP0: [], // private players
+  jsP1: null, // following
+  jsT1: null, // my pair tables
+  jsT2: null, // tourney
+  jsT4: null // teams
+  */
 }

@@ -167,7 +167,6 @@ export default {
     myPlayers () {
       let players = this.players
       if (this.jbT1.id) players = players.filter(p => p.seat.tId === this.jbT1.id)
-      else players = players.filter(p => !p.seat)
       return players
     }
   },
@@ -195,7 +194,7 @@ export default {
     isMyTable (p) {
       try {
         return p.seat.tId === this.myPlayer.seat.tId
-      } catch (err) {}
+      } catch (err) { }
       return false
     },
     isFriend (p) {

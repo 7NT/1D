@@ -1,9 +1,5 @@
-/*
-export function someAction (context) {
-}
-*/
-export const setMyUser = (context, payload) => {
-  context.commit('setMyUser', payload)
+export const setJsUser = (context, payload) => {
+  context.commit('setJsUser', payload)
 }
 
 export const setPlayers = (context, payload) => {
@@ -46,6 +42,6 @@ export const setChat = (context, payload) => {
   context.commit('setChat', payload)
 }
 
-export const setT04 = (context, payload) => {
-  context.commit('setT04', payload)
+export const setJsMap = (context, payload) => {
+  context.commit('setJsMap', payload)
 }

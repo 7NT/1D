@@ -14,6 +14,10 @@ export function jbGetAvatar (p) {
   return p ? p.profile.avatar : null
 }
 
+export function jbSamePlayer (p, p0) {
+  return p === p0
+}
+
 export function jbIsMyPlayer (p, p0) {
   return p ? p.id === p0.id : false
 }

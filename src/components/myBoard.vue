@@ -93,7 +93,7 @@ import { jbIsPlayer } from 'src/jbPlayer'
 
 export default {
   name: 'myBoard',
-  props: ['myTable', 'mySeat'],
+  props: ['jsTable', 'mySeat'],
 
   data () {
     return {
@@ -114,17 +114,17 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('jstore', ['getResultById']),
+    ...mapGetters('jstore', ['jsResultById']),
     bdata: function () {
       try {
-        if (this.myTable.board) {
-          return this.myTable.board.bT + ': ' + this.myTable.board.bN
+        if (this.jsTable.board) {
+          return this.jsTable.board.bT + ': ' + this.jsTable.board.bN
         }
       } catch (err) {}
       return 'Board'
     },
     cc: function () {
-      return this.myTable.cc || ['SAYC', 'SAYC']
+      return this.jsTable.cc || ['SAYC', 'SAYC']
     },
     isMyCC: function () {
       if (jbIsPlayer(this.mySeat.sId)) {
@@ -133,12 +133,12 @@ export default {
       return null
     },
     state () {
-      return this.myTable.state
+      return this.jsTable.state
     },
     myResult () {
-      switch (this.myTable.state) {
+      switch (this.jsTable.state) {
         case 3: {
-          const tId = this.myTable.t2 ? this.myTable.t2.t2Id : this.myTable._id
+          const tId = this.jsTable.t2 ? this.jsTable.t2.t2Id : this.jsTable._id
           return this.getResultById(tId)
         }
         default:
@@ -193,7 +193,7 @@ export default {
     }
   },
   mounted () {
-    this.mix = this.myTable.bT
+    this.mix = this.jsTable.bT
   }
 }
 </script>

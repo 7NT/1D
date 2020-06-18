@@ -3,6 +3,8 @@ export const setJsUser = (state, user) => {
 }
 
 export const setPlayers = (state, players) => {
+  state.jsMap.clear()
+  // state.jsMap.put('t1', null)
   state.jsPlayers = players
 }
 
@@ -79,9 +81,10 @@ export const setChat = (state, chat) => {
 }
 
 export const setJsSet = (state, set) => {
-  state.jbSet.add(set)
+  if (state.jsSet.has(set)) state.jsSet.delete(set)
+  else state.jsSet.add(set)
 }
 
 export const setJsMap = (state, map) => {
-  state.jsMap.set(map.id, map.value)
+  state.jsMap.set(map.key, map.value)
 }

@@ -32,7 +32,7 @@ import { jbSeatX } from 'src/jbSeat'
 
 export default {
   name: 'myPlayBox',
-  props: ['myPlayer', 'myTable', 'review'],
+  props: ['jsPlayer', 'jsTable', 'review'],
   data: function () {
     return {
       card4: []
@@ -40,16 +40,16 @@ export default {
   },
   computed: {
     mySeat () {
-      return this.myPlayer.seat
+      return this.jsPlayer.seat
     },
     myPlays () {
-      return this.myTable.plays || null
+      return this.jsTable.plays || null
     }
   },
   methods: {
     updatePlayed (plays) {
       try {
-        if (this.myTable.state > 1) {
+        if (this.jsTable.state > 1) {
           const l4 = plays.data.length
           let n4 = l4 % 4
           if (!n4) n4 = 4

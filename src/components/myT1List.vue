@@ -17,7 +17,7 @@
             style="width:100px"
           />
         </q-btn-group>
-        <q-btn flat @click="sit(9)" round dense icon="person_pin" />
+        <q-btn flat @click="sit(9)" round dense icon="remove_red_eye" />
       </q-item-label>
     </q-item-section>
 
@@ -29,7 +29,8 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { getT2State } from 'src/jbState'
+import { jbT2State } from 'src/jbState'
+import { jbSeatIcon } from 'src/jbPlayer'
 
 export default {
   name: 'myT1List',
@@ -39,10 +40,11 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters('jstore', ['getPlayerById']),
+    ...mapGetters('jstore', ['jsPlayerById']),
+
     state () {
       if (this.myTable.name === '#Lobby') return 'Welcome'
-      else return getT2State(this.myTable.state)
+      else return jbT2State(this.myTable.state)
     },
     myT1Info () {
       return `${this.myTable.name}: ${this.state}`
@@ -65,13 +67,12 @@ export default {
       if (!pId) {
         return 'SIT...'
       } else {
-        // if (this.myTable._id.startsWith('#@')) return pId else {
-        const p = this.getPlayerById(pId)
+        const p = this.jsPlayerById(pId)
         return p ? p.nick : 'SIT...'
       }
     },
     mySeatIcon (sId) {
-      return `img:statics/jbicon/seats/seat${sId}.svg`
+      return jbSeatIcon(sId)
     },
     mySeatColor (sId) {
       const pId = this.getPid(sId)

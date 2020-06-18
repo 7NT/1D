@@ -15,7 +15,7 @@
       >
         <template v-slot:append>
           <q-icon v-if="!chat" name="chat" />
-          <q-icon v-else name="clear" class="cursor-pointer" @click="chat = null" />
+          <q-icon v-else name="clear" class="cursor-pointer" @click="!chat" />
         </template>
       </q-input>
     </div>
@@ -36,9 +36,7 @@ export default {
   computed: {},
   methods: {
     onChat (event) {
-      if (event.key === 'Enter') {
-        this.send()
-      }
+      if (event.key === 'Enter') this.send()
     },
     send () {
       if (this.chat) {
@@ -46,14 +44,8 @@ export default {
           to: this.sendTo,
           text: this.chat
         }
-        chats$
-          .create(chatData)
-          .then(() => {
-            this.chat = null
-          })
-          .catch(err => {
-            console.error(err)
-          })
+        chats$.create(chatData)
+        this.chat = null
       }
     }
   }

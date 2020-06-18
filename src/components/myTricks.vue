@@ -11,7 +11,7 @@
               <span v-for="(c, i) of playedCards" :key="`${i}`" class="card">
                 <img :src="cardback(c)" :class="trickClass(c, i)" :style="`z-index:${i}`" />
                 <q-tooltip content-class="bg-info" anchor="top right" self="bottom left">
-                  <myPlayBox :myPlayer="myPlayer" :myTable="myTable" :review="true" />
+                  <myPlayBox :jsPlayer="jsPlayer" :jsTable="jsTable" :review="true" />
                 </q-tooltip>
               </span>
             </div>
@@ -42,7 +42,7 @@ import myPlayBox from 'src/components/myPlayBox'
 
 export default {
   name: 'myTricks',
-  props: ['myPlayer', 'myTable'],
+  props: ['jsPlayer', 'jsTable'],
   data () {
     return {
       offset: 0
@@ -51,12 +51,12 @@ export default {
   },
   components: { myPlayBox },
   computed: {
-    // ...mapGetters('jstore', ['myPlayer', 'myTable']),
+    // ...mapGetters('jstore', ['jsPlayer', 'jsTable']),
     isVisible () {
-      return this.myTable.state > 1 || this.myTable.state < 0
+      return this.jsTable.state > 1 || this.jsTable.state < 0
     },
     playedCards () {
-      return this.myTable.plays.data
+      return this.jsTable.plays.data
         .slice(0)
         .filter(c => c.winner > 0)
         .map(c => c.winner)
@@ -65,7 +65,7 @@ export default {
   methods: {
     tricks (n) {
       try {
-        return this.myTable.plays.info.tricks[n]
+        return this.jsTable.plays.info.tricks[n]
       } catch (err) {
         // console.log(err)
       }
@@ -73,7 +73,7 @@ export default {
     },
     isWinner (w) {
       // const w = c.winner
-      const sId = Math.abs(this.myPlayer.seat.sId)
+      const sId = Math.abs(this.jsPlayer.seat.sId)
 
       if (jbIsPlayer(sId)) {
         return w % 2 === sId % 2

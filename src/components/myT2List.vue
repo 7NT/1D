@@ -150,23 +150,24 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
-import { getT2State } from 'src/jbState'
+import { jbT2State } from 'src/jbState'
 import { jbIsAdmin, jbIsMyNick } from 'src/jbPlayer'
 import myT2Pair from 'src/components/myT2Pair'
 
 export default {
   name: 'myT2List',
-  props: ['t2', 'myPlayer', 'myPair'],
+  props: ['t2', 'jsPlayer', 'myPair'],
   data () {
     return {
       isMyPair: false
     }
   },
   computed: {
-    ...mapState('jstore', ['jbT2']),
-    ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick']),
+    ...mapState('jstore', ['jsMap']),
+    ...mapGetters('jstore', ['jsPlayerById', 'jsPlayerByNick']),
+
     isTD () {
-      return jbIsAdmin(this.myPlayer)
+      return jbIsAdmin(this.jsPlayer)
     },
     t2Stat () {
       return this.t2.state
@@ -174,9 +175,10 @@ export default {
   },
   methods: {
     ...mapActions('jstore', ['setT04']),
+
     isOnline (p) {
       try {
-        const player = this.getPlayerByNick(p.nick)
+        const player = this.jsPlayerByNick(p.nick)
         return player.state >= 0
       } catch (err) { }
       return false
@@ -202,7 +204,7 @@ export default {
       return null
     },
     myT2State (s2) {
-      return getT2State(s2)
+      return jbT2State(s2)
     },
     myT2Color (s2) {
       switch (s2) {
@@ -231,13 +233,13 @@ export default {
     },
     onP2Join (p2) {
       const p0 = JSON.parse(JSON.stringify(p2))
-      p0.partner = this.myPlayer
+      p0.partner = this.jsPlayer
       this.onP2Update(p0)
     },
     onP2Part (p2) {
       const p0 = JSON.parse(JSON.stringify(p2))
-      if (jbIsMyNick(p0.player, this.myPlayer)) p0.player = null
-      else if (jbIsMyNick(p0.partner, this.myPlayer)) p0.partner = null
+      if (jbIsMyNick(p0.player, this.jsPlayer)) p0.player = null
+      else if (jbIsMyNick(p0.partner, this.jsPlayer)) p0.partner = null
       this.onP2Update(p0)
     },
     onP2Change (pair) {
@@ -298,10 +300,10 @@ export default {
             } else if (p.pN === myPN) {
               // remove
               const p0 = JSON.parse(JSON.stringify(p))
-              if (jbIsMyNick(p.player, this.myPlayer)) {
+              if (jbIsMyNick(p.player, this.jsPlayer)) {
                 p0.player = null
                 if (!this.isOnline(p.partner)) p0.partner = null
-              } else if (jbIsMyNick(p.partner, this.myPlayer)) {
+              } else if (jbIsMyNick(p.partner, this.jsPlayer)) {
                 p0.partner = null
                 if (!this.isOnline(p.player)) p0.player = null
               }
@@ -318,16 +320,16 @@ export default {
   mounted () {
     this.isMyPair = false
     const p0 = JSON.parse(JSON.stringify(this.myPair))
-    if (jbIsMyNick(this.myPair.player, this.myPlayer)) {
+    if (jbIsMyNick(this.myPair.player, this.jsPlayer)) {
       if (!this.myPair.player.state) { // offline
-        p0.player = this.myPlayer
+        p0.player = this.jsPlayer
         this.setT04({ id: 2, t2: { _id: this.t2._id, myPair: this.myPair } })
         this.onP2Update(p0)
       }
       this.isMyPair = true
-    } else if (jbIsMyNick(this.myPair.partner, this.myPlayer)) {
+    } else if (jbIsMyNick(this.myPair.partner, this.jsPlayer)) {
       if (!this.myPair.partner.state) { // offline
-        p0.partner = this.myPlayer
+        p0.partner = this.jsPlayer
         this.setT04({ id: 2, t2: { _id: this.t2._id, myPair: this.myPair } })
         this.onP2Update(p0)
       }

@@ -30,6 +30,7 @@
 <script>
 import * as moment from 'moment'
 import { mapState } from 'vuex'
+import { jbSameId } from 'src/jbPlayer'
 
 export default {
   name: 'myMessages',
@@ -38,13 +39,14 @@ export default {
     return {}
   },
   computed: {
-    ...mapState('jstore', ['myUser', 'chats']),
+    ...mapState('jstore', ['jsUser', 'jsChats']),
+
     myChats () {
       if (this.sendTo.startsWith('@')) {
-        return this.chats.filter(m => {
-          return m.to === `@${this.myUser._id}` || m.userId === this.myUser._id
+        return this.jsChats.filter(m => {
+          return m.to === `@${this.jsUser._id}` || jbSameId(m.userId, this.jsUser._id)
         }).slice(-10).reverse()
-      } else return this.chats.filter(m => m.to === this.sendTo).slice(-10).reverse()
+      } else return this.jsChats.filter(m => m.to === this.sendTo).slice(-10).reverse()
     },
     msgFrom () {
       if (this.sendTo.startsWith('@')) return '@Private'
@@ -54,7 +56,7 @@ export default {
   },
   methods: {
     isSent (from) {
-      return from._id === this.myUser._id
+      return jbSameId(from._id, this.jsUser._id)
     },
     chatDate (created) {
       // return moment(created).format('MMM Do, hh:mm:ss')

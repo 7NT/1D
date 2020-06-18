@@ -15,13 +15,13 @@
         dark
         dense
         standout
-        v-model="player"
+        v-model="searchPlayer"
         input-class="text-right"
         class="q-ml-md"
       >
         <template v-slot:append>
           <q-icon
-            v-if="!player"
+            v-if="!searchPlayer"
             name="search"
           />
           <q-icon
@@ -35,7 +35,7 @@
     </q-toolbar>
 
     <q-list bordered>
-      <q-item-label header>{{jbT1.name}} Players:</q-item-label>
+      <q-item-label header>{{myRoom}} Players:</q-item-label>
       <q-separator />
       <q-expansion-item
         dense
@@ -44,13 +44,13 @@
         v-for="p in myPlayers"
         :key="p.id"
         group='players'
-        @input='read(p)'
+        @input='readMessage(p)'
       >
         <template v-slot:header>
           <q-item-section side>
             <div class="row items-center">
               <q-icon
-                :name="getSeatIcon(p)"
+                :name="seatIcon(p)"
                 size="24px"
               />
               <q-avatar size="24px">
@@ -94,8 +94,8 @@
             />
           </q-item-section>
         </template>
-        <q-card>
-          <q-card-actions v-if='p.id !== myPlayer.id'>
+        <q-card v-if='!isMyPlayer(p)'>
+          <q-card-actions>
             <q-btn
               dense
               flat
@@ -144,7 +144,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
 import { players$ } from 'src/api'
-import { jbIsPlayer } from 'src/jbPlayer'
+import { jbIsPlayer, jbSameId, jbSeatIcon, jbFlag } from 'src/jbPlayer'
 
 export default {
   name: 'myP1List',
@@ -156,46 +156,48 @@ export default {
   },
   data () {
     return {
-      player: null,
+      searchPlayer: null,
       friends: [],
       room: '#Lobby'
     }
   },
   computed: {
-    ...mapState('jstore', ['players', 'jbP0', 'jbT1']),
-    ...mapGetters('jstore', ['myPlayer', 'getPlayerById', 'getTableById']),
+    ...mapState('jstore', ['jsPlayers', 'jsSet', 'jsMap']),
+    ...mapGetters('jstore', ['jsPlayer', 'jsPlayerById', 'jsTableById']),
+
+    myRoom () {
+      if (this.jsMap.has('t1')) return this.jsMap.get('t1')
+      else return null
+    },
     myPlayers () {
-      let players = this.players
-      if (this.jbT1.id) players = players.filter(p => p.seat.tId === this.jbT1.id)
+      const players = this.jsPlayers
+      if (this.myRoom) return players.filter(p => p.seat.tId === this.myRoom)
       return players
     }
   },
   methods: {
-    ...mapActions('jstore', ['setT04']),
-    getTName (p) {
-      const t1 = this.getTableById(p.seat.tId)
+    ...mapActions('jstore', ['setJsSet', 'setJsMap']),
+    /*
+    getT1Name (p) {
+      const t1 = this.jsTableById(p.seat.tId)
       if (t1) return t1.name
       else return '#Lobby'
     },
+    */
     getFlag (p) {
-      if (p) {
-        const flag2 = p.profile.flag.toLowerCase()
-        return `img:statics/flags/4x3/${flag2}.svg`
-      }
-      return null
+      return jbFlag(p)
     },
-    getSeatIcon (p) {
-      const s = p.seat ? p.seat.sId : 0
-      return `img:statics/jbicon/seats/seat${s}.svg`
+    seatIcon (p) {
+      return jbSeatIcon(p)
     },
     isPlayer (p) {
       return p.seat ? jbIsPlayer(p.seat.sId) : false
     },
+    isMyPlayer (p) {
+      return jbSameId(p.id, this.jsPlayer.id)
+    },
     isMyTable (p) {
-      try {
-        return p.seat.tId === this.myPlayer.seat.tId
-      } catch (err) { }
-      return false
+      return jbSameId(p.seat.tId, this.jsPlayer.seat.tId)
     },
     isFriend (p) {
       return this.friends.indexOf(p) >= 0
@@ -210,23 +212,22 @@ export default {
       }
     },
     newMessage (p) {
-      const i = this.jbP0.findIndex(p0 => p0 === p.id)
-      return i >= 0
+      if (!this.isMyPlayer(p)) return this.jsSet.has(p.id)
     },
-    read (p) {
-      this.setT04({ id: 0, p0: p.id })
+    readMessage (p) {
+      this.setJsSet(p.id)
     },
     onJoin (p, sId) {
       const seat = {
         tId: p.seat.tId,
         sId: sId
       }
-      players$.patch(this.myPlayer.id, { seat })
+      players$.patch(this.jsPlayer.id, { seat })
     },
     onWatch (p) {
       if (p.seat && jbIsPlayer(p.seat.sId)) this.onJoin(p, -p.seat.sId)
       else this.onJoin(p, 9)
-      this.setT04({ id: 3, p1: p.id })
+      this.setJsMap({ key: 'following', value: p.id })
     }
   },
   created () {

@@ -1,5 +1,5 @@
 <template>
-  <q-page class="no-padding no-margin" v-if="myPlayer">
+  <q-page class="no-padding no-margin" v-if="jsPlayer">
     <!-- content -->
     <div class="column">
       <div class="col-8">
@@ -16,8 +16,8 @@
           >
             <q-tab
               v-for="r in rooms"
-              :key="r.value"
-              :name="r.value"
+              :key="r.id"
+              :name="r.id"
               :icon="r.icon"
               :label="r.name"
               :disable="!isOpen(r)"
@@ -39,13 +39,13 @@
 
             <q-tab-panel :name="1">
               <div class="fit">
-                <myPlayTable :myPlayer="myPlayer" v-on:onPlayer="onPlayer" />
+                <myPlayTable :jsPlayer="jsPlayer" v-on:onPlayer="onPlayer" />
               </div>
             </q-tab-panel>
 
             <q-tab-panel :name="2">
               <div class="t2">
-                <myTourney :myPlayer="myPlayer" />
+                <myTourney :jsPlayer="jsPlayer" />
               </div>
             </q-tab-panel>
           </q-tab-panels>
@@ -53,11 +53,11 @@
       </div>
       <q-space />
       <div class="col-3 messages">
-        <myMessages :sendTo="rooms[rId].id" />
+        <myMessages :sendTo="rooms[rId].room" />
       </div>
     </div>
     <q-footer elevated>
-      <myChat :sendTo="rooms[rId].id" />
+      <myChat :sendTo="rooms[rId].room" />
     </q-footer>
   </q-page>
 </template>
@@ -82,64 +82,66 @@ export default {
   },
   data () {
     return {
-      user: null,
       // splitterModel: 50, // start at 50%
+      user: null,
       rId: 0,
       rooms: [
         {
           name: 'Lobby',
-          value: 0,
+          id: 0,
           icon: 'people',
-          id: '#Lobby'
+          room: '#Lobby'
         },
         {
           name: 'My Table',
-          value: 1,
+          id: 1,
           icon: 'local_play',
-          id: 't1'
+          room: 't1'
         },
         {
           name: 'Tourney',
-          value: 2,
+          id: 2,
           icon: 'emoji_events',
-          id: '#Lobby'
+          room: '#Lobby'
         },
         {
           name: 'Team Game',
-          value: 4,
+          id: 4,
           icon: 'group_add',
-          id: '#Lobby'
+          room: '#Lobby'
         }
-      ],
-      MIX: ['MP', 'IMP', 'XIMP'],
-      myBT: null
+      ]
+      // MIX: ['MP', 'IMP', 'XIMP'],
+      // myBT: null
     }
   },
   computed: {
-    ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['myPlayer', 'getTableById']),
+    ...mapState('jstore', ['jsPlayers', 'jsTables']),
+    ...mapGetters('jstore', ['jsPlayer', 'jsTableById']),
 
-    mySeat () {
-      return this.myPlayer.seat
-    },
     myTables () {
-      return this.tables
+      return this.jsTables
+    },
+    mySeat () {
+      return this.jsPlayer.seat
     }
   },
   methods: {
-    ...mapActions('jstore', ['setT04']),
+    ...mapActions('jstore', ['setJsMap']),
+    /*
     onUser (user) {
       this.updateuser(user)
     },
+    */
     onPlayer (seat) {
       if (this.mySeat) {
         seat.tId0 = this.mySeat.tId
         seat.sId0 = this.mySeat.sId
       }
-      players$.patch(this.myPlayer.id, { seat })
+      players$.patch(this.jsPlayer.id, { seat })
     },
     isOpen (r) {
-      switch (r.value) {
+      switch (r.id) {
         case 0: // lobby
         case 2:
           return true
@@ -152,22 +154,22 @@ export default {
   },
   mounted () {
     this.$parent.page = 'Lobby'
-    if (!this.myPlayer.profile.flag) this.$router.push({ name: 'profile' })
+    if (!this.jsPlayer.profile.flag) this.$router.push({ name: 'profile' })
   },
   watch: {
     user (u) {
       if (!u) this.$router.push({ name: 'home' }).catch(e => {})
     },
     mySeat (n) {
-      if (n) {
-        this.rooms[1].id = n.tId
-        this.rId = n.tId ? 1 : 0
+      if (n && n.tId) {
+        this.rooms[1].room = n.tId
+        this.rId = 1
       } else this.rId = 0
     },
     rId (r) {
-      this.setT04({
-        id: 1,
-        t1: { id: this.rooms[r].id, name: this.rooms[r].name }
+      this.setJsMap({
+        key: 't1',
+        value: this.rooms[r].room
       })
     }
   },

@@ -96,7 +96,7 @@ import { jbSeatName, jbSeatX, jbSeat1234 } from 'src/jbSeat'
 
 export default {
   name: 'myHand',
-  props: ['handId', 'myPlayer', 'myTable'],
+  props: ['handId', 'jsPlayer', 'jsTable'],
   data () {
     return {
       claims: ['Concede All', 'Claim Just Make', 'Claim All'],
@@ -105,12 +105,12 @@ export default {
   },
   components: {},
   computed: {
-    ...mapGetters('jstore', ['getPlayerById']),
+    ...mapGetters('jstore', ['jsPlayerById']),
     handState () {
-      return this.myTable.state
+      return this.jsTable.state
     },
     mySeat () {
-      return this.myPlayer.seat
+      return this.jsPlayer.seat
     },
     seatX () {
       return jbSeatX(this.handId, this.mySeat.sId)
@@ -119,8 +119,8 @@ export default {
       return `img:statics/jbicon/seats/seat${this.seatX}.svg`
     },
     handPlayer () {
-      const pId = this.myTable.seats[this.seatX - 1]
-      // if (this.myTable._id.startsWith('#@')) return this.getPlayerByNick(pId) else
+      const pId = this.jsTable.seats[this.seatX - 1]
+      // if (this.jsTable._id.startsWith('#@')) return this.getPlayerByNick(pId) else
       return this.getPlayerById(pId)
     },
     handNick () {
@@ -140,14 +140,14 @@ export default {
     },
     handTurn () {
       if (this.isHandTurn()) return 'warning'
-      else return this.myPlayer ? 'indigo' : 'positive'
+      else return this.jsPlayer ? 'indigo' : 'positive'
     },
     handCards () {
-      return this.myTable.board.cards[this.seatX - 1].filter(c => !this.playedCards.includes(c.value))
+      return this.jsTable.board.cards[this.seatX - 1].filter(c => !this.playedCards.includes(c.value))
     },
     playedCards () {
       if (this.handState === 2) {
-        return this.myTable.plays.data.map(x => x.card.value)
+        return this.jsTable.plays.data.map(x => x.card.value)
       } else return []
     },
     isVisible () {
@@ -158,12 +158,12 @@ export default {
       else return this.seatX === Math.abs(this.mySeat.sId)
     },
     isReady () {
-      return this.myTable.ready[this.seatX - 1]
+      return this.jsTable.ready[this.seatX - 1]
     },
     isDummy () {
       if (this.handState === 2) {
-        if (this.myTable.plays.data.length > 0) {
-          return (this.myTable.bids.info.by + 2) % 4 === this.seatX % 4
+        if (this.jsTable.plays.data.length > 0) {
+          return (this.jsTable.bids.info.by + 2) % 4 === this.seatX % 4
         }
       }
       return false
@@ -172,7 +172,7 @@ export default {
       switch (this.handState) {
         case 2:
         case 3:
-          return this.myTable.bids.info.by === this.seatX
+          return this.jsTable.bids.info.by === this.seatX
         default:
           return false
       }
@@ -188,13 +188,13 @@ export default {
       return null
     },
     handContract () {
-      let c = this.myTable.bids ? this.myTable.bids.info.contract : null
-      if (this.myTable.bids.info.XX) c += 'XX'
-      else if (this.myTable.bids.info.X) c += 'X'
+      let c = this.jsTable.bids ? this.jsTable.bids.info.contract : null
+      if (this.jsTable.bids.info.XX) c += 'XX'
+      else if (this.jsTable.bids.info.X) c += 'X'
       return c
     },
     handClaim () {
-      return this.myTable.claim
+      return this.jsTable.claim
     }
   },
   methods: {
@@ -205,13 +205,13 @@ export default {
           action: 'sit',
           state: this.handState,
           seat: {
-            tId: this.myTable._id,
+            tId: this.jsTable._id,
             sId: this.seatX
           }
         }
         this.$emit('onTable', seat)
-      } else if (jbIsMyPlayer(this.handPlayer, this.myPlayer)) {
-        const ready = [...this.myTable.ready] || [0, 0, 0, 0]
+      } else if (jbIsMyPlayer(this.handPlayer, this.jsPlayer)) {
+        const ready = [...this.jsTable.ready] || [0, 0, 0, 0]
 
         if (ready[this.seatX - 1] !== this.seatX) {
           ready[this.seatX - 1] = this.seatX
@@ -233,10 +233,10 @@ export default {
           this.$emit('onTable', {
             action: 'play',
             play: {
-              uId: this.myPlayer.id,
+              uId: this.jsPlayer.id,
               sId: this.seatX,
               winner: 0,
-              z: this.myTable.plays.data.length || 0,
+              z: this.jsTable.plays.data.length || 0,
               card: n
             }
           })
@@ -255,13 +255,13 @@ export default {
       }
     },
     onClaim (c) {
-      // console.log(this.myTable)
+      // console.log(this.jsTable)
       this.$emit('onTable', {
         action: 'claim',
         claim: {
-          // bV: this.myTable.board.bV,
-          contract: this.myTable.bids.info,
-          tricks: this.myTable.plays.info.tricks,
+          // bV: this.jsTable.board.bV,
+          contract: this.jsTable.bids.info,
+          tricks: this.jsTable.plays.info.tricks,
           claim: c,
           declarer: this.mySeat.sId,
           o1: -jbSeat1234(this.mySeat.sId - 1),
@@ -291,7 +291,7 @@ export default {
       return `statics/cards/${n52.rank + n52.suit}.svg`
     },
     cardCheck (play) {
-      const lead = this.myTable.plays.info.lead
+      const lead = this.jsTable.plays.info.lead
       if (!lead) return true
       else {
         if (lead.card.suit === play.suit) {
@@ -305,7 +305,7 @@ export default {
     isMyPlay () {
       if (this.handState === 2) {
         return this.isDummy
-          ? this.myPlayer.seat.sId === this.myTable.bids.info.by
+          ? this.jsPlayer.seat.sId === this.jsTable.bids.info.by
           : this.isHandTurn()
       } else return false
     },
@@ -313,7 +313,7 @@ export default {
       switch (this.handState) {
         case 1:
         case 2:
-          return this.myTable.turn === this.seatX
+          return this.jsTable.turn === this.seatX
         default: return false
       }
     },

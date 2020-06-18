@@ -6,13 +6,6 @@ export default {
   jsTourneys: [],
   jsTeams: [],
   jsChats: [],
-  jsSet: new Set(),
+  jsSet: new Set(), // new message
   jsMap: new Map()
-  /*
-  jsP0: [], // private players
-  jsP1: null, // following
-  jsT1: null, // my pair tables
-  jsT2: null, // tourney
-  jsT4: null // teams
-  */
 }

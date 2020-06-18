@@ -45,20 +45,20 @@ import { jbSeatX } from 'src/jbSeat'
 
 export default {
   name: 'myBidBox',
-  props: ['myPlayer', 'myTable'],
+  props: ['jsPlayer', 'jsTable'],
   data: () => ({
     seats: ['N', 'E', 'S', 'W'],
     bData: []
   }),
   computed: {
-    ...mapGetters('jstore', ['getPlayerById']),
+    ...mapGetters('jstore', ['jsPlayerById']),
     mySeatX () {
-      let x = Math.abs(this.myPlayer.seat.sId)
+      let x = Math.abs(this.jsPlayer.seat.sId)
       if (x < 1 || x > 4) x = 3
       return x
     },
     myBids () {
-      return this.myTable.bids
+      return this.jsTable.bids
     },
     columns () {
       const cols = []
@@ -73,7 +73,7 @@ export default {
     },
     myVul () {
       const s1 = this.mySeatX % 2
-      switch (this.myTable.board.bV) {
+      switch (this.jsTable.board.bV) {
         case 0:
           return 'vul0'
         case 3:
@@ -132,11 +132,11 @@ export default {
       return ((this.mySeatX + s) % 4) + 1
     },
     getPlayer (pId) {
-      // if (this.myTable._id.startsWith('#@')) return this.getPlayerByNick(pId) else
+      // if (this.jsTable._id.startsWith('#@')) return this.getPlayerByNick(pId) else
       return this.getPlayerById(pId)
     },
     getNick (s) {
-      const pId = this.myTable.seats[s - 1]
+      const pId = this.jsTable.seats[s - 1]
       const p = this.getPlayer(pId)
       if (p) return p.nick
       else return this.seats[s - 1]
@@ -156,7 +156,7 @@ export default {
     getVColor (s) {
       if (this.myBids) {
         const x = jbSeatX(s, this.mySeatX) % 2
-        switch (this.myTable.board.bV) {
+        switch (this.jsTable.board.bV) {
           case 0:
             return 'bg-info'
           case 3:

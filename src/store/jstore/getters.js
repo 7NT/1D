@@ -12,15 +12,15 @@ export const jsPlayerByNick = state => nick => {
   return state.jsPlayers.find(p => p.nick === nick)
 }
 
-export const jsT1ById = state => id => {
+export const jsTableById = state => id => {
   return state.jsTables.find(t => t._id === id)
 }
 
-export const jsT2ById = state => id => {
+export const jsTourneyById = state => id => {
   return state.jsTourneys.find(t => t._id === id)
 }
 
-export const jsT2ByTD = state => td => {
+export const jsTourneyByTD = state => td => {
   return state.jsTourneys.find(t => t.td === td)
 }
 

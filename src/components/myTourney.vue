@@ -198,7 +198,7 @@
               v-for="p2 in t2.pairs"
               :key="p2.pN"
               :t2="t2"
-              :myPlayer="myPlayer"
+              :jsPlayer="jsPlayer"
               :myPair="p2"
               v-on:onPairs="onPairs"
             />
@@ -275,14 +275,14 @@ import myT2Pair from 'src/components/myT2Pair'
 
 export default {
   name: 'myTourney',
-  props: ['myPlayer'],
+  props: ['jsPlayer'],
 
   data () {
     return {
       t0: {
         id: null,
         name: 'Welcome to my Tourney...',
-        td: this.myPlayer.nick,
+        td: this.jsPlayer.nick,
         minutes2: 30,
         bT: jbMix(),
         bN: 2,
@@ -297,25 +297,25 @@ export default {
   },
   components: { myT2List },
   computed: {
-    ...mapState('jstore', ['tourneys', 'jbT2']),
-    ...mapGetters('jstore', ['getPlayerById', 'getPlayerByNick', 'getT2ByTD']),
+    ...mapState('jstore', ['jsTourneys', 'jsMap']),
+    ...mapGetters('jstore', ['jsPlayerById', 'jsPlayerByNick', 'jsTourneyByTD']),
     myTourneys () {
       return this.tourneys
     },
     myT2 () {
-      const t0 = this.getT2ByTD(this.myPlayer.nick)
+      const t0 = this.getTourneyByTD(this.jsPlayer.nick)
       if (t0) return t0
       else return this.$data.t0
     },
     isTD () {
-      return jbIsAdmin(this.myPlayer)
+      return jbIsAdmin(this.jsPlayer)
     }
   },
   methods: {
-    ...mapActions('jstore', ['setT04']),
+    ...mapActions('jstore', ['jsSetMap']),
     isOnline (nick) {
       try {
-        return this.getPlayerByNick(nick).state >= 0
+        return this.jsPlayerByNick(nick).state >= 0
       } catch (err) { }
       return false
     },
@@ -389,7 +389,7 @@ export default {
           .map(p => p.player || p.partner)
           .map(n => n.nick)
         if (this.jbT2._id === t2._id) {
-          if (jbIsMyNick(this.jbT2.myPair.partner, this.myPlayer)) {
+          if (jbIsMyNick(this.jbT2.myPair.partner, this.jsPlayer)) {
             pN = -1
             message = `You and ${this.myPd} have already JOINED this tourney, your partner can UPDATE cc card`
           } else if (players.includes(this.myPd)) {
@@ -424,7 +424,7 @@ export default {
         pair.cc = this.myCC
       } else {
         pair = {
-          player: this.myPlayer,
+          player: this.jsPlayer,
           partner: pd,
           cc: this.myCC,
           boards: 0,
@@ -473,8 +473,8 @@ export default {
           break
         case 0:
           if (t2._id) {
-            if (t2.td !== this.myPlayer.nick) {
-              if (!this.isOnline(t2.td)) t2.td = this.myPlayer.nick
+            if (t2.td !== this.jsPlayer.nick) {
+              if (!this.isOnline(t2.td)) t2.td = this.jsPlayer.nick
               else {
                 this.$q.notify({
                   type: 'positive',
@@ -508,9 +508,9 @@ export default {
   mounted () {
     if (this.jbT2._id) {
       this.myCC = this.jbT2.myPair.cc || 'SAYC'
-      if (jbIsMyNick(this.jbT2.myPair.partner, this.myPlayer)) {
+      if (jbIsMyNick(this.jbT2.myPair.partner, this.jsPlayer)) {
         this.myPd = this.jbT2.myPair.player.nick
-      } else if (jbIsMyNick(this.jbT2.myPair.player, this.myPlayer)) {
+      } else if (jbIsMyNick(this.jbT2.myPair.player, this.jsPlayer)) {
         this.myPd = this.jbT2.myPair.partner.nick
       }
     }

@@ -134,7 +134,7 @@ import {
   teams$
 } from 'src/api'
 import auth from 'src/auth'
-import { jbSamePlayer, jbIsPlayer } from 'src/jbPlayer'
+import { jbSameId, jbIsPlayer } from 'src/jbPlayer'
 
 export default {
   name: 'MainLayout',
@@ -157,7 +157,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['jsSet', 'jsMap']),
-    ...mapGetters('jstore', ['jsPlayerById', 'jsTableById', 'jsT2ById']),
+    ...mapGetters('jstore', ['jsPlayerById', 'jsTableById', 'jsTourneyById']),
     authenticated () {
       return this.user != null
     }
@@ -234,7 +234,7 @@ export default {
 
       chats$.on('created', chat => {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
-        if (jbSamePlayer(chat.to, this.user._id)) {
+        if (jbSameId(chat.to, this.user._id)) {
           if (chat.request) {
             this.onRequest(chat)
           } else {
@@ -249,7 +249,7 @@ export default {
 
       users$.on('patched', u0 => {
         console.log('user patched', u0)
-        if (jbSamePlayer(u0._id, this.user._id)) this.setUser(u0)
+        if (jbSameId(u0._id, this.user._id)) this.setUser(u0)
       })
 
       tables$.on('created', t1 => {
@@ -269,7 +269,7 @@ export default {
       players$.on('created', p1 => {
         console.log('create player', p1, this.user)
         this.addPlayer(p1)
-        if (jbSamePlayer(p1.id, this.user._id)) {
+        if (jbSameId(p1.id, this.user._id)) {
           const { seat0 } = this.user
           if (seat0 && seat0.tId) { // rejoin
             const t1 = this.jsTableById(seat0.tId) // if table still exists
@@ -293,7 +293,7 @@ export default {
         console.log('player patched', p1)
         this.addPlayer(p1)
 
-        if (jbSamePlayer(p1.id, this.jsMap.get('following'))) {
+        if (jbSameId(p1.id, this.jsMap.get('following'))) {
           let sId = 9
           if (jbIsPlayer(p1.seat.sId)) sId = -p1.seat.sId
           const seat = {

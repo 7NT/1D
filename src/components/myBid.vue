@@ -106,7 +106,7 @@ import { jbBidX, jbSuitName } from 'src/jbBid'
 
 export default {
   name: 'myBid',
-  props: ['myPlayer', 'myTable'],
+  props: ['jsPlayer', 'jsTable'],
   data () {
     return {
       suits: [
@@ -122,10 +122,10 @@ export default {
   },
   computed: {
     myBids () {
-      return this.myTable.bids
+      return this.jsTable.bids
     },
     myTurn () {
-      return this.myTable.turn
+      return this.jsTable.turn
     },
     X () {
       return jbBidX(this.myBids.info.by, this.myTurn)
@@ -136,7 +136,7 @@ export default {
   },
   methods: {
     isMyTurn () {
-      if (this.myTable.state === 1) return this.myTurn === this.myPlayer.seat.sId
+      if (this.jsTable.state === 1) return this.myTurn === this.jsPlayer.seat.sId
       else return false
     },
     bidN (n) {

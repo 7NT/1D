@@ -10,7 +10,7 @@
     >My ScoreBook:</q-item-label>
     <q-separator />
     <q-item
-      v-for="r in results"
+      v-for="r in jsResults"
       :key="r._id"
     >
       <q-item-section>
@@ -47,8 +47,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['results']),
-    ...mapGetters('jstore', ['getPlayerById'])
+    ...mapState('jstore', ['jsResults']),
+    ...mapGetters('jstore', ['jsPlayerById'])
   },
   methods: {
     getResult (r) {
@@ -74,7 +74,7 @@ export default {
       const pId = r.players[r.info.by - 1]
       let pname = this.seatName[r.info.by - 1]
       if (pId) {
-        const p = this.getPlayerById(pId)
+        const p = this.jsPlayerById(pId)
         if (p) pname = p.nick
       }
       return `by ${pname}`

@@ -1,17 +1,17 @@
 <template padding>
-  <div v-if="myTable">
+  <div v-if="jsTable">
     <div class="column jbtable">
       <div class="col">
         <div class="row no-wrap">
           <div class="col-4 items-start">
-            <myBoard :myTable="myTable" :mySeat="mySeat" v-on:onTable="onTable"></myBoard>
+            <myBoard :jsTable="jsTable" :mySeat="mySeat" v-on:onTable="onTable"></myBoard>
           </div>
           <div class="col-5">
             <div class="column">
               <myHand
                 :handId="1"
-                :myPlayer="myPlayer"
-                :myTable="myTable"
+                :jsPlayer="jsPlayer"
+                :jsTable="jsTable"
                 v-on:onTable="onTable"
                 class="myHand justify-start"
                 offset="[10, 10]"
@@ -66,7 +66,7 @@
                 </div>
               </q-item-label>
               <q-item-section v-if="myState >1">
-                <myBidBox :myPlayer="myPlayer" :myTable="myTable" class="fit bbox" />
+                <myBidBox :jsPlayer="jsPlayer" :jsTable="jsTable" class="fit bbox" />
               </q-item-section>
             </q-list>
           </div>
@@ -78,8 +78,8 @@
             <div class="column">
               <myHand
                 :handId="4"
-                :myPlayer="myPlayer"
-                :myTable="myTable"
+                :jsPlayer="jsPlayer"
+                :jsTable="jsTable"
                 v-on:onTable="onTable"
                 class="myHand justify-center"
               />
@@ -90,11 +90,11 @@
               <div class="centerbox">
                 <q-card class="bbox pbox" v-if="myState === 1">
                   <q-card>
-                    <myBidBox :myPlayer="myPlayer" :myTable="myTable" />
+                    <myBidBox :jsPlayer="jsPlayer" :jsTable="jsTable" />
                   </q-card>
                 </q-card>
                 <q-card flat class="pbox transparent" v-if="myState === 2">
-                  <myPlayBox :myPlayer="myPlayer" :myTable="myTable" :review="false" />
+                  <myPlayBox :jsPlayer="jsPlayer" :jsTable="jsTable" :review="false" />
                 </q-card>
                 <q-space />
               </div>
@@ -104,8 +104,8 @@
             <div class="column">
               <myHand
                 :handId="2"
-                :myPlayer="myPlayer"
-                :myTable="myTable"
+                :jsPlayer="jsPlayer"
+                :jsTable="jsTable"
                 v-on:onTable="onTable"
                 class="myHand justify-start"
               />
@@ -117,15 +117,15 @@
         <div class="row no-wrap">
           <div class="col-3">
             <div class="column">
-              <myTricks :myPlayer="myPlayer" :myTable="myTable" class="myHand justify-start" />
+              <myTricks :jsPlayer="jsPlayer" :jsTable="jsTable" class="myHand justify-start" />
             </div>
           </div>
           <div class="col-6">
             <div class="column">
               <myHand
                 :handId="3"
-                :myPlayer="myPlayer"
-                :myTable="myTable"
+                :jsPlayer="jsPlayer"
+                :jsTable="jsTable"
                 v-on:onTable="onTable"
                 class="myHand justify-center"
               />
@@ -133,7 +133,7 @@
           </div>
           <div class="col-3 column">
             <div class="justify-start">
-              <myBid :myPlayer="myPlayer" :myTable="myTable" v-on:onTable="onTable" />
+              <myBid :jsPlayer="jsPlayer" :jsTable="jsTable" v-on:onTable="onTable" />
             </div>
           </div>
         </div>
@@ -157,7 +157,7 @@ import myTimer from 'src/components/myTimer'
 
 export default {
   name: 'myPlayTable',
-  props: ['myPlayer'],
+  props: ['jsPlayer'],
   data: function () {
     return {
       state: 0,
@@ -176,15 +176,15 @@ export default {
     myTimer
   },
   computed: {
-    ...mapState('jstore', ['players', 'tables']),
-    ...mapGetters('jstore', ['getTableById']),
+    ...mapState('jstore', ['jsPlayers', 'jsTables']),
+    ...mapGetters('jstore', ['jsTableById']),
 
-    myTable () {
-      const tId = this.myPlayer.seat.tId
-      return this.getTableById(tId)
+    jsTable () {
+      const tId = this.jsPlayer.seat.tId
+      return this.jsTableById(tId)
     },
     mySeat () {
-      return this.myPlayer.seat
+      return this.jsPlayer.seat
     },
     myState: {
       get: function () {
@@ -195,7 +195,7 @@ export default {
       }
     },
     myTurn () {
-      return this.myTable ? this.myTable.turn : 0
+      return this.jsTable ? this.jsTable.turn : 0
     },
     myStatus () {
       switch (this.myState) {
@@ -213,19 +213,20 @@ export default {
     },
     myAlert () {
       try {
-        return this.myTable.alert
+        return this.jsTable.alert
       } catch (err) {}
       return null
     },
     myBids () {
-      return this.myTable.bids
+      return this.jsTable.bids
     },
     myPlays () {
-      return this.myTable.plays
+      return this.jsTable.plays
     }
   },
   methods: {
     ...mapActions('jstore', ['addTable']),
+
     // onState (s) {},
     onTable (action) {
       // console.log('onTable', action)
@@ -235,7 +236,7 @@ export default {
           break
         }
         case 'ready': {
-          tables$.patch(this.myTable._id, {
+          tables$.patch(this.jsTable._id, {
             action: 'play',
             state: action.state,
             ready: action.ready
@@ -243,14 +244,14 @@ export default {
           break
         }
         case 'bT': {
-          tables$.patch(this.myTable._id, {
+          tables$.patch(this.jsTable._id, {
             action: 'play',
             bT: action.bT
           })
           break
         }
         case 'cc': {
-          tables$.patch(this.myTable._id, {
+          tables$.patch(this.jsTable._id, {
             action: 'play',
             cc: action.cc
           })
@@ -261,7 +262,7 @@ export default {
             action: 'play',
             bids: action.bid.bids
           }
-          tables$.patch(this.myTable._id, bids)
+          tables$.patch(this.jsTable._id, bids)
           break
         }
         case 'play': {
@@ -274,12 +275,12 @@ export default {
               action: 'play',
               plays: { info: _info, data: _data }
             }
-            tables$.patch(this.myTable._id, plays)
+            tables$.patch(this.jsTable._id, plays)
           }
           break
         }
         case 'claim': {
-          tables$.patch(this.myTable._id, {
+          tables$.patch(this.jsTable._id, {
             action: 'play',
             claim: action.claim
           })
@@ -304,7 +305,7 @@ export default {
     }
   },
   watch: {
-    myTable (t1) {
+    jsTable (t1) {
       if (t1) this.myState = t1.state
     },
     myState (s1, s0) {
@@ -314,15 +315,15 @@ export default {
         this.onState(s)
       }
       */
-      if (s1 === 4) {
+      if (s1 === 3) {
         // review
-        let message = this.myTable.info.contract
-        let score = this.myTable.score
-        if (this.myTable.result === 0) message += '=' + this.myTable.result
-        else if (this.myTable.result > 0) message += '+' + this.myTable.result
-        else message += this.myTable.result
+        let message = this.jsTable.info.contract
+        let score = this.jsTable.score
+        if (this.jsTable.result === 0) message += '=' + this.jsTable.result
+        else if (this.jsTable.result > 0) message += '+' + this.jsTable.result
+        else message += this.jsTable.result
 
-        if (this.myTable.info.by % 2 === 0) score = -score
+        if (this.jsTable.info.by % 2 === 0) score = -score
 
         this.$q.notify({
           message: message,

@@ -1,4 +1,4 @@
-export function getT1State (s1) {
+export function jbT1State (s1) {
   switch (s1) {
     case 0:
       return 'Ready'
@@ -6,13 +6,13 @@ export function getT1State (s1) {
       return 'Bidding'
     case 2:
       return 'Playing'
-    case -1:
+    case 3:
       return 'Reviewing'
     default:
       return 'Waiting'
   }
 }
-export function getT2State (s1) {
+export function jbT2State (s1) {
   switch (s1) {
     case 1:
       return 'Waiting'

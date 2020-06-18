@@ -86,5 +86,6 @@ export const setJsSet = (state, set) => {
 }
 
 export const setJsMap = (state, map) => {
-  state.jsMap.set(map.key, map.value)
+  if (map.key === 't1') state.jsRoom = map.value
+  else state.jsMap.set(map.key, map.value)
 }

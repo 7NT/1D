@@ -378,8 +378,8 @@ export default {
         if (request) {
           const t2 = this.getT2ById(request.id)
           const pairs = JSON.parse(JSON.stringify(t2.pairs))
-          const player = this.getPlayerById(chat.from._id)
-          const partner = this.getPlayerById(chat.to.substring(1))
+          const player = this.tsPlayerById(chat.from._id)
+          const partner = this.tsPlayerById(chat.to.substring(1))
           const pair = {
             player,
             partner,

@@ -35,7 +35,7 @@
     </q-toolbar>
 
     <q-list bordered>
-      <q-item-label header>{{myRoom}} Players:</q-item-label>
+      <q-item-label header>{{getRoomName()}} Players:</q-item-label>
       <q-separator />
       <q-expansion-item
         dense
@@ -162,7 +162,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['jsPlayers', 'jsSet', 'jsMap']),
+    ...mapState('jstore', ['jsPlayers', 'jsSet', 'jsMap', 'jsRoom']),
     ...mapGetters('jstore', ['jsPlayer', 'jsPlayerById', 'jsTableById']),
 
     myRoom () {
@@ -177,13 +177,15 @@ export default {
   },
   methods: {
     ...mapActions('jstore', ['setJsSet', 'setJsMap']),
-    /*
-    getT1Name (p) {
-      const t1 = this.jsTableById(p.seat.tId)
+
+    getRoomName () {
+      return this.getT1Name(this.jsRoom)
+    },
+    getT1Name (t) {
+      const t1 = this.jsTableById(t)
       if (t1) return t1.name
       else return '#Lobby'
     },
-    */
     getFlag (p) {
       return jbFlag(p)
     },

@@ -7,5 +7,6 @@ export default {
   jsTeams: [],
   jsChats: [],
   jsSet: new Set(), // new message
-  jsMap: new Map()
+  jsMap: new Map(),
+  jsRoom: '#Lobby'
 }

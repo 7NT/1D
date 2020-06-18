@@ -106,6 +106,7 @@ export default {
   components: {},
   computed: {
     ...mapGetters('jstore', ['jsPlayerById']),
+
     handState () {
       return this.jsTable.state
     },
@@ -121,7 +122,7 @@ export default {
     handPlayer () {
       const pId = this.jsTable.seats[this.seatX - 1]
       // if (this.jsTable._id.startsWith('#@')) return this.getPlayerByNick(pId) else
-      return this.getPlayerById(pId)
+      return this.jsPlayerById(pId)
     },
     handNick () {
       return this.handPlayer ? this.handPlayer.nick : jbSeatName(this.seatX - 1)
@@ -353,8 +354,8 @@ export default {
       if (claim && this.handState === 2) this.isHandClaim(claim)
     }
   },
-  mounted () {},
-  created () {}
+  mounted () { },
+  created () { }
 }
 </script>
 

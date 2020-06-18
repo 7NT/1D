@@ -133,7 +133,7 @@ export default {
     },
     getPlayer (pId) {
       // if (this.jsTable._id.startsWith('#@')) return this.getPlayerByNick(pId) else
-      return this.getPlayerById(pId)
+      return this.tsPlayerById(pId)
     },
     getNick (s) {
       const pId = this.jsTable.seats[s - 1]

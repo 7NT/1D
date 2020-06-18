@@ -1,5 +1,8 @@
 <template>
-  <q-page class="no-padding no-margin" v-if="jsPlayer">
+  <q-page
+    class="no-padding no-margin"
+    v-if="jsPlayer"
+  >
     <!-- content -->
     <div class="column">
       <div class="col-8">
@@ -23,10 +26,19 @@
               :disable="!isOpen(r)"
             />
           </q-tabs>
-          <q-tab-panels keep-alive v-model="rId" animated class="bg-teal">
+          <q-tab-panels
+            keep-alive
+            v-model="rId"
+            animated
+            class="bg-teal"
+          >
             <q-tab-panel :name="0">
               <div class="fit">
-                <q-list dense bordered separator>
+                <q-list
+                  dense
+                  bordered
+                  separator
+                >
                   <myT1List
                     v-for="t1 in myTables"
                     :key="t1.id"
@@ -39,7 +51,10 @@
 
             <q-tab-panel :name="1">
               <div class="fit">
-                <myPlayTable :jsPlayer="jsPlayer" v-on:onPlayer="onPlayer" />
+                <myPlayTable
+                  :jsPlayer="jsPlayer"
+                  v-on:onPlayer="onPlayer"
+                />
               </div>
             </q-tab-panel>
 
@@ -158,7 +173,7 @@ export default {
   },
   watch: {
     user (u) {
-      if (!u) this.$router.push({ name: 'home' }).catch(e => {})
+      if (!u) this.$router.push({ name: 'home' }).catch(e => { })
     },
     mySeat (n) {
       if (n && n.tId) {
@@ -167,6 +182,7 @@ export default {
       } else this.rId = 0
     },
     rId (r) {
+      // console.log(r, this.rooms[r].room)
       this.setJsMap({
         key: 't1',
         value: this.rooms[r].room

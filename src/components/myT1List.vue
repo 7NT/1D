@@ -1,9 +1,19 @@
 <template>
-  <q-item dense clickable>
+  <q-item
+    dense
+    clickable
+  >
     <q-item-section>
-      <q-item-label overline class="bg-warning">{{ myT1Info }}</q-item-label>
+      <q-item-label
+        overline
+        class="bg-warning"
+      >{{ myT1Info }}</q-item-label>
       <q-item-label>
-        <q-btn-group push v-for="n in 4" :key="n">
+        <q-btn-group
+          push
+          v-for="n in 4"
+          :key="n"
+        >
           <q-btn
             push
             glassy
@@ -17,12 +27,24 @@
             style="width:100px"
           />
         </q-btn-group>
-        <q-btn flat @click="sit(9)" round dense icon="remove_red_eye" />
+        <q-btn
+          flat
+          @click="sit(9)"
+          round
+          dense
+          icon="remove_red_eye"
+        />
       </q-item-label>
     </q-item-section>
 
-    <q-item-section side top>
-      <q-badge color="info" :label="myTable.players" />
+    <q-item-section
+      side
+      top
+    >
+      <q-badge
+        color="info"
+        :label="myTable.players"
+      />
     </q-item-section>
   </q-item>
 </template>
@@ -92,7 +114,7 @@ export default {
     }
   },
   watch: {},
-  mounted () {}
+  mounted () { }
 }
 </script>
 

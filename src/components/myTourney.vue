@@ -299,11 +299,12 @@ export default {
   computed: {
     ...mapState('jstore', ['jsTourneys', 'jsMap']),
     ...mapGetters('jstore', ['jsPlayerById', 'jsPlayerByNick', 'jsTourneyByTD']),
+
     myTourneys () {
       return this.tourneys
     },
     myT2 () {
-      const t0 = this.getTourneyByTD(this.jsPlayer.nick)
+      const t0 = this.jsTourneyByTD(this.jsPlayer.nick)
       if (t0) return t0
       else return this.$data.t0
     },
@@ -313,6 +314,7 @@ export default {
   },
   methods: {
     ...mapActions('jstore', ['jsSetMap']),
+
     isOnline (nick) {
       try {
         return this.jsPlayerByNick(nick).state >= 0

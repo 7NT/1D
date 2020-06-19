@@ -22,7 +22,7 @@ export const jbShuffleCards = () => {
     [n[i], n[j]] = [n[j], n[i]]
   }
 
-  let data = n.join('')
+  let data = n.join()
   let buff = new Buffer(data)
   let buff64 = buff.toString('base64')
   // let decodedData = Buffer.from(buff64, 'base64').toString('ascii')

@@ -103,7 +103,7 @@ async function t1Board (context: any) {
       bN,
       bT: t1.bT,
       played: 0,
-      cards: jbShuffleCards()
+      data: jbShuffleCards()
     }
 
     board = await boards$.create(bdata)
@@ -413,12 +413,6 @@ const onState = (): Hook => {
     let { state } = context.data
 
     switch (state) {
-      case 2: // play
-        {
-          console.log(context.data)
-          onSortCard(context)
-          break
-        }
       case 3: //review
         {
           onResult(context)
@@ -427,29 +421,6 @@ const onState = (): Hook => {
       default:
     }
   }
-}
-
-async function onSortCard (context: any) {
-  const t1 = await context.service.get(context.id)
-  const { trump } = t1.plays.info
-  console.log(t1.board.cards, trump, t1.plays)
-  /*
-  switch (trump) {
-    case '♣':
-    case 'C':
-    case '♦':
-    case 'D':
-    case '♥':
-    case 'H':
-      {
-        break
-      }
-    // case '♠':
-    // case 'S': return 4
-    // case 'NT': return 5
-    default:
-  }
-  */
 }
 
 async function onResult (context: any) {

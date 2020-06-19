@@ -100,7 +100,7 @@ async function t2Boards (app: any, t2: any) {
       bN: n,
       bT: t2.bT,
       played: 0,
-      cards: jbShuffleCards()
+      data: jbShuffleCards()
     }
     await boards$.create(b2data)
   }

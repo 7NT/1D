@@ -91,6 +91,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { jbCards, jbCardImg } from 'src/jbBoard'
 import { jbIsPlayer, jbIsMyPlayer, jbAvatar, jbFlag } from 'src/jbPlayer'
 import { jbSeatName, jbSeatX, jbSeat1234 } from 'src/jbSeat'
 
@@ -138,7 +139,12 @@ export default {
       else return this.jsPlayer ? 'indigo' : 'positive'
     },
     handCards () {
-      return this.jsTable.board.cards[this.seatX - 1].filter(c => !this.playedCards.includes(c.value))
+      if (this.jsTable.board.data) {
+        let t = 'S' // sort SHCD
+        if (this.handState === 2) t = this.jsTable.plays.info.trump
+        const cards = jbCards(this.jsTable.board.data, this.seatX, t)
+        return cards.filter(c => !this.playedCards.includes(c.value))
+      } else return []
     },
     playedCards () {
       if (this.handState === 2) {
@@ -222,9 +228,9 @@ export default {
         this.$q.notify({ type: 'negative', message: 'This seat is taken' })
       }
     },
-    onPlay (n) {
+    onPlay (card) {
       if (this.isMyPlay()) {
-        if (this.cardCheck(n)) {
+        if (this.cardCheck(card)) {
           this.$emit('onTable', {
             action: 'play',
             play: {
@@ -232,10 +238,9 @@ export default {
               sId: this.seatX,
               winner: 0,
               z: this.jsTable.plays.data.length || 0,
-              card: n
+              card
             }
           })
-          // this.updateCards()
         } else {
           this.$q.notify({
             type: 'positive',
@@ -281,9 +286,9 @@ export default {
         claim
       })
     },
-    cardImg (n52) {
-      // if (!n52.suit) console.log('error', n52)
-      return `statics/cards/${n52.rank + n52.suit}.svg`
+    cardImg (c52) {
+      // return `statics/cards/${n52.rank + n52.suit}.svg`
+      return jbCardImg(c52)
     },
     cardCheck (play) {
       const lead = this.jsTable.plays.info.lead
@@ -292,8 +297,8 @@ export default {
         if (lead.card.suit === play.suit) {
           return true
         } else {
-          const _suit = this.playedCards.filter(c => c.suit === lead.card.suit)
-          return _suit.length === 0
+          const suit = this.handCards.filter(c => c.suit === lead.card.suit)
+          return suit.length === 0
         }
       }
     },

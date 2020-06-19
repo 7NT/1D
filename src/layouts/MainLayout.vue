@@ -13,7 +13,7 @@
         />
 
         <q-toolbar-title>
-          <q-icon name="img:statics/jbicon/seats/seat0.svg" />1D App
+          <q-icon name="img:statics/jbicon/seats/seat0.svg" />1♦ App
         </q-toolbar-title>
 
         <div>1D v{{ $q.version }}</div>

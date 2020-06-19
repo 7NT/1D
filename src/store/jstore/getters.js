@@ -13,7 +13,7 @@ export const jsPlayerByNick = state => nick => {
 }
 
 export const jsTableById = state => id => {
-  return state.jsTables.find(t => t._id === id)
+  return state.jsTables.find(t => t.id === id)
 }
 
 export const jsTourneyById = state => id => {

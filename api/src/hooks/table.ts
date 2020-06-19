@@ -11,9 +11,7 @@ const onTable = (): Hook => {
     const { ready, bids, plays, claim } = context.data
 
     if (ready) {
-      console.log(context.data)
       context.data = await onReady(context)
-      console.log(context.data)
     } else if (claim) {
       if (!claim) {
         context.data.alert = 'Claim is declined'
@@ -60,7 +58,6 @@ async function t1Board (context: any) {
   const played$ = context.app.service('played')
 
   let t1 = await context.service.get(context.id)
-  console.log('t1', t1)
   let uIds = t1.seats.filter((u: string) => u != null)
   let played_data = await played$.find({
     query: {
@@ -82,7 +79,7 @@ async function t1Board (context: any) {
   const notPlayed_bIds = notPlayed_data.data.map((x: { _id: any }) => x._id)
 
   let board: any
-  if (notPlayed_bIds.length >0) board = await boards$.get(notPlayed_bIds[0])
+  if (notPlayed_bIds.length > 0) board = await boards$.get(notPlayed_bIds[0])
   else {
     let bN_data: any = await boards$.find({
       query: {
@@ -98,7 +95,6 @@ async function t1Board (context: any) {
     let bN = 0
     if (bNs.length > 0) bN = bNs[0]
     bN++
-    console.log(bN_data, bNs, bN)
 
     const dt = new Date()
     const yyww = moment(dt).format('YY-WW')
@@ -226,6 +222,7 @@ function onBid (tdata: any) {
       }
       tdata.result = result // onScore(result)
     } else {
+      // tdata.board.cards = resortCards(tdata.board.cards)
       tdata.state = 2
       tdata.turn = (info.by % 4) + 1
     }
@@ -411,44 +408,84 @@ function onClaim (tdata: any) {
   return tdata
 }
 
-const onResult = (): Hook => {
+const onState = (): Hook => {
   return async (context: HookContext) => {
-    let { result } = context.data
-    if (result && context.id) {
-      const results$ = context.app.service('results')
+    let { state } = context.data
 
-      const t1 = await context.service.get(context.id)
-
-      const rdata = {
-        bV: jbVulN(t1.board.bN),
-        contract: t1.bids.info,
-        tricks: result.tricks,
-      }
-      const score = onScore(rdata)
-      const sdata = {
-        tId: t1.t2 ? t1.t2.t2Id : t1.id,
-        bId: t1.board._id + '',
-        info: {
-          bN: t1.board.bN,
-          bT: t1.board.bT,
-          bV: rdata.bV,
-          contract: getContract(t1.bids.info),
-          by: t1.bids.info.by,
-          cc: t1.cc,
-          //t2: t1.t2 || null
-          pairs: t1.t2 ? [t1.t2.p1.pN, t1.t2.p2.pN] : null
-        },
-        players: t1.seats,
-        bids: JSON.stringify(t1.bids),
-        plays: JSON.stringify(t1.plays),
-        result: score.result,
-        score: score.score,
-        mix: t1.board.bT === 'MP' ? 50 : 0,
-        played: new Date().getTime()
-      }
-      await results$.create(sdata)
+    switch (state) {
+      case 2: // play
+        {
+          console.log(context.data)
+          onSortCard(context)
+          break
+        }
+      case 3: //review
+        {
+          onResult(context)
+          break;
+        }
+      default:
     }
-    return Promise.resolve(context)
+  }
+}
+
+async function onSortCard (context: any) {
+  const t1 = await context.service.get(context.id)
+  const { trump } = t1.plays.info
+  console.log(t1.board.cards, trump, t1.plays)
+  /*
+  switch (trump) {
+    case '♣':
+    case 'C':
+    case '♦':
+    case 'D':
+    case '♥':
+    case 'H':
+      {
+        break
+      }
+    // case '♠':
+    // case 'S': return 4
+    // case 'NT': return 5
+    default:
+  }
+  */
+}
+
+async function onResult (context: any) {
+  let { result } = context.data
+  if (result && context.id) {
+    const results$ = context.app.service('results')
+    const t1 = await context.service.get(context.id)
+
+    const rdata = {
+      bV: jbVulN(t1.board.bN),
+      contract: t1.bids.info,
+      tricks: result.tricks,
+    }
+    const score = onScore(rdata)
+    const sdata = {
+      tId: t1.t2 ? t1.t2.t2Id : t1.id,
+      bId: t1.board._id + '',
+      info: {
+        bN: t1.board.bN,
+        bT: t1.board.bT,
+        bV: rdata.bV,
+        contract: getContract(t1.bids.info),
+        by: t1.bids.info.by,
+        cc: t1.cc,
+        //t2: t1.t2 || null
+        pairs: t1.t2 ? [t1.t2.p1.pN, t1.t2.p2.pN] : null
+      },
+      players: t1.seats,
+      bids: JSON.stringify(t1.bids),
+      plays: JSON.stringify(t1.plays),
+      result: score.result,
+      score: score.score,
+      mix: t1.board.bT === 'MP' ? 50 : 0,
+      played: new Date().getTime()
+    }
+    await results$.create(sdata)
   }
 }
 
@@ -483,5 +520,5 @@ function onScore (rdata: any) {
 
 export {
   onTable,
-  onResult
+  onState
 }

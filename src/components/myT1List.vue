@@ -105,7 +105,7 @@ export default {
       const pId = this.getPid(sId)
       if (!pId) {
         const seat = {
-          tId: this.myTable._id,
+          tId: this.myTable.id,
           sId
         }
         this.$emit('onPlayer', seat)

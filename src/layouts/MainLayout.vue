@@ -401,7 +401,6 @@ export default {
     // this.user = null
   },
   mounted () {
-    console.log(this.jsTables)
     // Check if there is already a session running
     auth
       .login()

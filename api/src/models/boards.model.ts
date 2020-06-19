@@ -12,7 +12,7 @@ export default function (app: Application) {
     bId: { type: String },
     bN: { type: Number, required: true },
     bT: { type: String, required: true },
-    cards: { type: Array, required: true },
+    cards: { type: String, required: true },
     played: { type: Number },
     created: { type: Date, default: Date.now }
   });

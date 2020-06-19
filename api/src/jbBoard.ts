@@ -15,12 +15,22 @@ export const jbShuffleCards = () => {
    * Shuffles array in place. ES6 version
    * @param {Array} n items An array containing the items.
    */
+
   let n = [...Array(52).keys()]  //.map(x => x + 1)
   for (let i = n.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [n[i], n[j]] = [n[j], n[i]]
   }
 
+  let data = n.join('')
+  let buff = new Buffer(data)
+  let buff64 = buff.toString('base64')
+  // let decodedData = Buffer.from(buff64, 'base64').toString('ascii')
+  // console.log(data, buff, buff64, decodedData)
+  return buff64
+}
+
+export const jbSortCards = (cards: any) => {
   let sort4 = []
   // for (let h in [0, 1, 2, 3]) {
   for (let h = 0; h < 4; h++) {
@@ -32,16 +42,16 @@ export const jbShuffleCards = () => {
   for (let h in [0, 1, 2, 3]) {
     for (let i = 0; i < 13; i++) {
       let c = sort4[h][i] + 1
+      /*
       let card = {
         value: c,
         suit: jbSuitN52(c),
         rank: jbRankN52(c)
       }
-      card4[h].push(card)
+      */
+      card4[h].push(c)
     }
   }
-
-  return card4
 }
 
 export const jbVulN = (bN: number) => {

@@ -4,7 +4,11 @@
       <div class="col">
         <div class="row no-wrap">
           <div class="col-4 items-start">
-            <myBoard :jsTable="jsTable" :mySeat="mySeat" v-on:onTable="onTable"></myBoard>
+            <myBoard
+              :jsTable="jsTable"
+              :mySeat="mySeat"
+              v-on:onTable="onTable"
+            ></myBoard>
           </div>
           <div class="col-5">
             <div class="column">
@@ -20,7 +24,10 @@
           </div>
           <div class="col-3 items-end column">
             <q-list bordered>
-              <q-item-label overline class="bg-primary text-white shadow-2">
+              <q-item-label
+                overline
+                class="bg-primary text-white shadow-2"
+              >
                 <div class="full-width">
                   <div class="row statusbar">
                     <q-space />
@@ -58,7 +65,13 @@
                       >
                         <q-tooltip>Exit Table</q-tooltip>
                       </q-btn>
-                      <q-btn size="12px" flat dense round icon="more_vert">
+                      <q-btn
+                        size="12px"
+                        flat
+                        dense
+                        round
+                        icon="more_vert"
+                      >
                         <q-tooltip>Table Settings</q-tooltip>
                       </q-btn>
                     </q-btn-group>
@@ -66,7 +79,11 @@
                 </div>
               </q-item-label>
               <q-item-section v-if="myState >1">
-                <myBidBox :jsPlayer="jsPlayer" :jsTable="jsTable" class="fit bbox" />
+                <myBidBox
+                  :jsPlayer="jsPlayer"
+                  :jsTable="jsTable"
+                  class="fit bbox"
+                />
               </q-item-section>
             </q-list>
           </div>
@@ -88,13 +105,27 @@
           <div class="col-4">
             <div class="column justify-start">
               <div class="centerbox">
-                <q-card class="bbox pbox" v-if="myState === 1">
+                <q-card
+                  class="bbox pbox"
+                  v-if="myState === 1"
+                >
                   <q-card>
-                    <myBidBox :jsPlayer="jsPlayer" :jsTable="jsTable" />
+                    <myBidBox
+                      :jsPlayer="jsPlayer"
+                      :jsTable="jsTable"
+                    />
                   </q-card>
                 </q-card>
-                <q-card flat class="pbox transparent" v-if="myState === 2">
-                  <myPlayBox :jsPlayer="jsPlayer" :jsTable="jsTable" :review="false" />
+                <q-card
+                  flat
+                  class="pbox transparent"
+                  v-if="myState === 2"
+                >
+                  <myPlayBox
+                    :jsPlayer="jsPlayer"
+                    :jsTable="jsTable"
+                    :review="false"
+                  />
                 </q-card>
                 <q-space />
               </div>
@@ -117,7 +148,11 @@
         <div class="row no-wrap">
           <div class="col-3">
             <div class="column">
-              <myTricks :jsPlayer="jsPlayer" :jsTable="jsTable" class="myHand justify-start" />
+              <myTricks
+                :jsPlayer="jsPlayer"
+                :jsTable="jsTable"
+                class="myHand justify-start"
+              />
             </div>
           </div>
           <div class="col-6">
@@ -133,7 +168,11 @@
           </div>
           <div class="col-3 column">
             <div class="justify-start">
-              <myBid :jsPlayer="jsPlayer" :jsTable="jsTable" v-on:onTable="onTable" />
+              <myBid
+                :jsPlayer="jsPlayer"
+                :jsTable="jsTable"
+                v-on:onTable="onTable"
+              />
             </div>
           </div>
         </div>
@@ -214,7 +253,7 @@ export default {
     myAlert () {
       try {
         return this.jsTable.alert
-      } catch (err) {}
+      } catch (err) { }
       return null
     },
     myBids () {
@@ -236,7 +275,7 @@ export default {
           break
         }
         case 'ready': {
-          tables$.patch(this.jsTable._id, {
+          tables$.patch(this.jsTable.id, {
             action: 'ready',
             state: action.state,
             ready: action.ready
@@ -244,14 +283,14 @@ export default {
           break
         }
         case 'bT': {
-          tables$.patch(this.jsTable._id, {
+          tables$.patch(this.jsTable.id, {
             action: 'play',
             bT: action.bT
           })
           break
         }
         case 'cc': {
-          tables$.patch(this.jsTable._id, {
+          tables$.patch(this.jsTable.id, {
             action: 'play',
             cc: action.cc
           })
@@ -262,7 +301,7 @@ export default {
             action: 'play',
             bids: action.bid.bids
           }
-          tables$.patch(this.jsTable._id, bids)
+          tables$.patch(this.jsTable.id, bids)
           break
         }
         case 'play': {
@@ -275,12 +314,12 @@ export default {
               action: 'play',
               plays: { info: _info, data: _data }
             }
-            tables$.patch(this.jsTable._id, plays)
+            tables$.patch(this.jsTable.id, plays)
           }
           break
         }
         case 'claim': {
-          tables$.patch(this.jsTable._id, {
+          tables$.patch(this.jsTable.id, {
             action: 'play',
             claim: action.claim
           })
@@ -345,8 +384,8 @@ export default {
       this.$data.timer = new Date().getTime()
     }
   },
-  mounted () {},
-  beforeDestroy () {}
+  mounted () { },
+  beforeDestroy () { }
 }
 </script>
 <!-- Notice lang='scss' -->

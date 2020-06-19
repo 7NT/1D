@@ -16,28 +16,63 @@
         :label="bdata"
       >
         <template v-slot:append>
-          <q-icon name="img:statics/jbicon/svg/mix.svg" color="orange" />
+          <q-icon
+            name="img:statics/jbicon/svg/mix.svg"
+            color="orange"
+          />
         </template>
       </q-select>
-      <q-list dense bordered separator class="rounded-borders">
-        <q-item dense class="row boardItem">
+      <q-list
+        dense
+        bordered
+        separator
+        class="rounded-borders"
+      >
+        <q-item
+          dense
+          class="row boardItem"
+        >
           <q-item-section class="col-2 gt-sm">
             <q-item-label class="q-mt-sm">System:</q-item-label>
           </q-item-section>
-          <q-item-section side class="col-10 gt-sm">
+          <q-item-section
+            side
+            class="col-10 gt-sm"
+          >
             <div class="row q-pa-xs q-gutter-xs no-wrap full-width">
               <div class="col-6">
-                <q-btn dense size="xs" icon="img:statics/jbicon/seats/seat13.svg">
-                  <q-badge class="cc" color="orange" text-color="black" align="top" :label="cc[0]" />
-                  <q-menu dense auto-close>
+                <q-btn
+                  dense
+                  size="xs"
+                  icon="img:statics/jbicon/seats/seat13.svg"
+                >
+                  <q-badge
+                    class="cc"
+                    color="orange"
+                    text-color="black"
+                    align="top"
+                    :label="cc[0]"
+                  />
+                  <q-menu
+                    dense
+                    auto-close
+                  >
                     <q-list dense>
                       <template v-if="isMyCC===0">
-                        <q-item clickable v-for="c in CCs" :key="c" @click="onCC(0,c)">
+                        <q-item
+                          clickable
+                          v-for="c in CCs"
+                          :key="c"
+                          @click="onCC(0,c)"
+                        >
                           <q-item-section>{{c}}</q-item-section>
                         </q-item>
                         <q-separator />
                       </template>
-                      <q-item clickable @click="onCCView(0)">
+                      <q-item
+                        clickable
+                        @click="onCCView(0)"
+                      >
                         <q-item-section>view...</q-item-section>
                       </q-item>
                     </q-list>
@@ -45,17 +80,38 @@
                 </q-btn>
               </div>
               <div class="col-6">
-                <q-btn dense size="xs" icon="img:statics/jbicon/seats/seat24.svg">
-                  <q-badge class="cc" color="orange" text-color="black" align="top" :label="cc[1]" />
-                  <q-menu dense auto-close>
+                <q-btn
+                  dense
+                  size="xs"
+                  icon="img:statics/jbicon/seats/seat24.svg"
+                >
+                  <q-badge
+                    class="cc"
+                    color="orange"
+                    text-color="black"
+                    align="top"
+                    :label="cc[1]"
+                  />
+                  <q-menu
+                    dense
+                    auto-close
+                  >
                     <q-list dense>
                       <template v-if="isMyCC===1">
-                        <q-item clickable v-for="c in CCs" :key="c" @click="onCC(1,c)">
+                        <q-item
+                          clickable
+                          v-for="c in CCs"
+                          :key="c"
+                          @click="onCC(1,c)"
+                        >
                           <q-item-section>{{c}}</q-item-section>
                         </q-item>
                         <q-separator />
                       </template>
-                      <q-item clickable @click="onCCView(1)">
+                      <q-item
+                        clickable
+                        @click="onCCView(1)"
+                      >
                         <q-item-section>view...</q-item-section>
                       </q-item>
                     </q-list>
@@ -66,17 +122,34 @@
           </q-item-section>
         </q-item>
 
-        <q-item dense class="row boardItem">
-          <q-item-section top class="col-4 gt-sm">
+        <q-item
+          dense
+          class="row boardItem"
+        >
+          <q-item-section
+            top
+            class="col-4 gt-sm"
+          >
             <q-item-label class="q-mt-sm">{{mix}}:</q-item-label>
           </q-item-section>
-          <q-item-section side class="col-10 gt-sm">
+          <q-item-section
+            side
+            class="col-10 gt-sm"
+          >
             <div class="row q-pa-xs q-gutter-xs no-wrap text-orange full-width">
               <div class="col-4">
-                <q-badge color="info" text-color="black" :label="score(0)" />
+                <q-badge
+                  color="info"
+                  text-color="black"
+                  :label="score(0)"
+                />
               </div>
               <div class="col-4">
-                <q-badge color="info" text-color="black" :label="score(1)" />
+                <q-badge
+                  color="info"
+                  text-color="black"
+                  :label="score(1)"
+                />
               </div>
             </div>
           </q-item-section>
@@ -120,7 +193,7 @@ export default {
         if (this.jsTable.board) {
           return this.jsTable.board.bT + ': ' + this.jsTable.board.bN
         }
-      } catch (err) {}
+      } catch (err) { }
       return 'Board'
     },
     cc: function () {
@@ -138,7 +211,7 @@ export default {
     myResult () {
       switch (this.jsTable.state) {
         case 3: {
-          const tId = this.jsTable.t2 ? this.jsTable.t2.t2Id : this.jsTable._id
+          const tId = this.jsTable.t2 ? this.jsTable.t2.t2Id : this.jsTable.id
           return this.getResultById(tId)
         }
         default:

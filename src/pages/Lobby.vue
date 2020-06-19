@@ -182,7 +182,6 @@ export default {
       } else this.rId = 0
     },
     rId (r) {
-      // console.log(r, this.rooms[r].room)
       this.setJsMap({
         key: 't1',
         value: this.rooms[r].room

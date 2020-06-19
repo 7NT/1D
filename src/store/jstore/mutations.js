@@ -44,7 +44,7 @@ export const addPlayer = (state, player) => {
 }
 
 export const addTable = (state, table) => {
-  const i = state.jsTables.findIndex(t1 => t1.id === table._id)
+  const i = state.jsTables.findIndex(t1 => t1.id === table.id)
   if (i >= 0) {
     if (table.state < 0) state.jsTables.splice(i, 1)
     else state.jsTables.splice(i, 1, table)

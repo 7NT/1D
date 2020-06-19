@@ -1,13 +1,13 @@
 import * as authentication from '@feathersjs/authentication';
 // Don't remove this comment. It's needed to format import lines nicely.
 
-import { onTable, onResult } from '../../hooks/table'
+import { onTable, onState } from '../../hooks/table'
 
 const { authenticate } = authentication.hooks;
 
 export default {
   before: {
-    all: [ authenticate('jwt') ],
+    all: [authenticate('jwt')],
     find: [],
     get: [],
     create: [],
@@ -22,7 +22,7 @@ export default {
     get: [],
     create: [],
     update: [],
-    patch: [onResult()],
+    patch: [onState()],
     remove: []
   },
 

@@ -121,8 +121,8 @@ export default {
     },
     handPlayer () {
       const pId = this.jsTable.seats[this.seatX - 1]
-      // if (this.jsTable._id.startsWith('#@')) return this.getPlayerByNick(pId) else
-      return this.jsPlayerById(pId)
+      if (this.jsTable.id.startsWith('#@')) return this.getPlayerByNick(pId)
+      else return this.jsPlayerById(pId)
     },
     handNick () {
       return this.handPlayer ? this.handPlayer.nick : jbSeatName(this.seatX - 1)
@@ -200,7 +200,7 @@ export default {
           action: 'sit',
           state: this.handState,
           seat: {
-            tId: this.jsTable._id,
+            tId: this.jsTable.id,
             sId: this.seatX
           }
         }

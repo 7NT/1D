@@ -54,7 +54,7 @@
                 size="24px"
               />
               <q-avatar size="24px">
-                <img :src="p.profile.avatar" />
+                <img :src="playerAvatar(p)" />
               </q-avatar>
             </div>
           </q-item-section>
@@ -88,7 +88,7 @@
           >
             <q-icon
               dense
-              :name="getFlag(p)"
+              :name="playerFlag(p)"
               class="q-ml-md"
               size="sm"
             />
@@ -144,7 +144,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
 import { players$ } from 'src/api'
-import { jbIsPlayer, jbSameId, jbSeatIcon, jbFlag } from 'src/jbPlayer'
+import { jbIsPlayer, jbSameId, jbSeatIcon, jbAvatar, jbFlag } from 'src/jbPlayer'
 
 export default {
   name: 'myP1List',
@@ -162,31 +162,39 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['jsPlayers', 'jsSet', 'jsMap', 'jsRoom']),
+    ...mapState('jstore', ['jsPlayers', 'jsT1', 'jsPM']),
     ...mapGetters('jstore', ['jsPlayer', 'jsPlayerById', 'jsTableById']),
 
     myRoom () {
-      if (this.jsMap.has('t1')) return this.jsMap.get('t1')
-      else return null
+      return this.jsT1
     },
     myPlayers () {
-      const players = this.jsPlayers
-      if (this.myRoom) return players.filter(p => p.seat.tId === this.myRoom)
-      return players
+      switch (this.jsT1) {
+        case null:
+        case '#Lobby':
+          return this.jsPlayers
+        default:
+          return this.jsPlayers.filter(p => p.seat.tId === this.jsT1)
+      }
     }
   },
   methods: {
-    ...mapActions('jstore', ['setJsSet', 'setJsMap']),
+    ...mapActions('jstore', ['setJsMap']),
 
     getRoomName () {
-      return this.getT1Name(this.jsRoom)
+      return this.getT1Name(this.jsT1)
     },
     getT1Name (t) {
-      const t1 = this.jsTableById(t)
-      if (t1) return t1.name
-      else return '#Lobby'
+      if (t) {
+        const t1 = this.jsTableById(t)
+        if (t1) return t1.name
+      }
+      return '#Lobby'
     },
-    getFlag (p) {
+    playerAvatar (p) {
+      return jbAvatar(p)
+    },
+    playerFlag (p) {
       return jbFlag(p)
     },
     seatIcon (p) {
@@ -214,10 +222,11 @@ export default {
       }
     },
     newMessage (p) {
-      if (!this.isMyPlayer(p)) return this.jsSet.has(p.id)
+      if (!this.isMyPlayer(p)) return this.jsPM.indexOf(p.id) >= 0
+      else return false
     },
     readMessage (p) {
-      this.setJsSet(p.id)
+      if (!this.isMyPlayer(p)) this.setJsMap({ key: 'pm', value: p.id }) // reset PM
     },
     onJoin (p, sId) {
       const seat = {
@@ -229,7 +238,7 @@ export default {
     onWatch (p) {
       if (p.seat && jbIsPlayer(p.seat.sId)) this.onJoin(p, -p.seat.sId)
       else this.onJoin(p, 9)
-      this.setJsMap({ key: 'following', value: p.id })
+      this.setJsMap({ key: 'pf', value: p.id })
     }
   },
   created () {

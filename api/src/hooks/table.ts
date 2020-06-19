@@ -3,14 +3,17 @@
 import { Hook, HookContext } from '@feathersjs/feathers'
 import moment from 'moment'
 import mongoose from 'mongoose';
-import { jbShuffleCards, jbGetVulN } from '../jbBoard'
+import { jbShuffleCards, jbVulN } from '../jbBoard'
 import { jbGetScore } from '../jbScore'
 
 const onTable = (): Hook => {
   return async (context: HookContext) => {
     const { ready, bids, plays, claim } = context.data
+
     if (ready) {
+      console.log(context.data)
       context.data = await onReady(context)
+      console.log(context.data)
     } else if (claim) {
       if (!claim) {
         context.data.alert = 'Claim is declined'
@@ -53,35 +56,35 @@ async function getBoard (context: any) {
 }
 
 async function t1Board (context: any) {
-  const tables$ = context.service // context.app.service('tables')
   const boards$ = context.app.service('boards')
   const played$ = context.app.service('played')
 
-  let t1 = await tables$.get(context.id)
+  let t1 = await context.service.get(context.id)
+  console.log('t1', t1)
   let uIds = t1.seats.filter((u: string) => u != null)
-  let played = await played$.find({
+  let played_data = await played$.find({
     query: {
       $select: ['bId'],
-      bT: t1.bT,
+      // bT: t1.bT,
       uId: { $in: uIds }
     }
   })
-  let board: any
-  try {
-    const played_bIds = played.data.map((x: { bId: any }) => mongoose.Types.ObjectId(x.bId))
-    let notPlayed = await boards$.find({
-      query: {
-        $limit: 1,
-        $select: ['_id'],
-        bT: t1.bT,
-        _id: { $nin: played_bIds }
-      }
-    })
 
-    const notPlayed_bIds = notPlayed.data.map((x: { _id: any }) => x._id)
-    board = await boards$.get(notPlayed_bIds[0])
-  } catch (err) {
-    let bNs: any = await boards$.find({
+  const played_bIds = played_data.data.map((x: { bId: any }) => mongoose.Types.ObjectId(x.bId))
+  let notPlayed_data = await boards$.find({
+    query: {
+      $limit: 1,
+      $select: ['_id'],
+      bT: t1.bT,
+      _id: { $nin: played_bIds }
+    }
+  })
+  const notPlayed_bIds = notPlayed_data.data.map((x: { _id: any }) => x._id)
+
+  let board: any
+  if (notPlayed_bIds.length >0) board = await boards$.get(notPlayed_bIds[0])
+  else {
+    let bN_data: any = await boards$.find({
       query: {
         $limit: 1,
         $select: ['bN'],
@@ -91,19 +94,22 @@ async function t1Board (context: any) {
         }
       }
     })
-    let bN: number = bNs.data.map((x: { bN: number }) => x.bN)[0]
-    if (typeof bN === 'undefined') bN = 1
-    else bN++
+    let bNs: any = bN_data.data.map((x: { bN: number }) => x.bN)
+    let bN = 0
+    if (bNs.length > 0) bN = bNs[0]
+    bN++
+    console.log(bN_data, bNs, bN)
 
     const dt = new Date()
-    const YYWW = moment(dt).format('YY-ww')
+    const yyww = moment(dt).format('YY-WW')
     const bdata = {
-      YYWW,
+      yyww,
       bN,
       bT: t1.bT,
       played: 0,
       cards: jbShuffleCards()
     }
+
     board = await boards$.create(bdata)
   }
 
@@ -158,7 +164,6 @@ async function t2Board (context: any, t2: any) {
   })
 
   const notPlayed_bIds = notPlayed.data.map((x: { _id: any }) => x._id)
-  // console.log(played_bIds, notPlayed_bIds)
   const b1Id = notPlayed_bIds[Math.floor(Math.random() * notPlayed_bIds.length)]
   const board = await boards$.get(b1Id)
 
@@ -415,7 +420,7 @@ const onResult = (): Hook => {
       const t1 = await context.service.get(context.id)
 
       const rdata = {
-        bV: jbGetVulN(t1.board.bN),
+        bV: jbVulN(t1.board.bN),
         contract: t1.bids.info,
         tricks: result.tricks,
       }

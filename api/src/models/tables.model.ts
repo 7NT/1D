@@ -18,6 +18,24 @@ export default function (app: Application) {
     players: { type: Number },
     turn: { type: Number },
     state: { type: Number },
+    board: {
+      bN: { type: Number},
+      bT: { type: String },
+      cards: { type: Array },
+      played: { type: Number },
+      created: { type: Date }
+    },
+    bids: {
+      info: {
+        bidN: { type: Number },
+        bidS: { type: Number },
+        by: { type: Number },
+        P: { type: Number },
+        X: { type: Number },
+        XX: { type: Number },
+      },
+      data: { type: Array }
+    }
   });
 
   // This is necessary to avoid model compilation errors in watch mode

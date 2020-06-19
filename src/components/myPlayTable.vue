@@ -229,7 +229,7 @@ export default {
 
     // onState (s) {},
     onTable (action) {
-      // console.log('onTable', action)
+      console.log('onTable', action, this.jsTable)
       switch (action.action) {
         case 'sit': {
           this.$emit('onPlayer', action.seat)
@@ -237,7 +237,7 @@ export default {
         }
         case 'ready': {
           tables$.patch(this.jsTable._id, {
-            action: 'play',
+            action: 'ready',
             state: action.state,
             ready: action.ready
           })

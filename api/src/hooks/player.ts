@@ -2,11 +2,13 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
 // import mongoose from 'mongoose';
-import { jbIsPlayer, jbGetMIX } from '../jb'
+import { jbIsPlayer } from '../jbPlayer'
+import { jbMIX } from '../jbBoard'
 
 const onPlayer = (): Hook => {
   return async (context: HookContext) => {
     const { seat } = context.data
+
     if (seat) {
       context.data = await playerSit(context)
     }
@@ -34,8 +36,8 @@ async function playerSit(context: any) {
       context.data.seat.sId = 0
     } else {
       let t1 = await getTable(tables$, user, seat)
-      context.data.seat.tId = t1._id
-      context.app.channel(t1._id).join(connection);
+      context.data.seat.tId = t1.id
+      context.app.channel(t1.id).join(connection);
     }
   }
   return context.data
@@ -72,12 +74,12 @@ async function getTable(tables$: any, user: any, seat: any) {
 
 async function newTable(tables$: any, user: any, seat: any) {
   const tdata = {
-    // id: '#' + user._id,
+    id: '#' + user._id,
     name: '#' + user.nick,
     action: 'open',
     state: 0,
     turn: 0,
-    bT: jbGetMIX(),
+    bT: jbMIX(),
     players: 1,
     cc: ['SAYC', 'SAYC'],
     seats: [null, null, null, null],
@@ -128,9 +130,9 @@ const playerLogout = (): Hook => {
       const tables$ = context.app.service('tables')
 
       let player = await players$.get(pId)
+      console.log('logout', pId, player)
       if (player) {
         const { seat } = player
-
         if (seat.tId) {
           const _id = seat.tId  // mongoose.Types.ObjectId(seat.tId)
           let t1 = await tables$.get(_id)

@@ -10,11 +10,11 @@ export function jbSeatIcon (p) {
   const s = p.seat ? p.seat.sId : 0
   return `img:statics/jbicon/seats/seat${s}.svg`
 }
-
+/*
 export function jbPFlag (p) {
   return p ? p.profile.flag : null
 }
-
+*/
 export function jbFlag (p) {
   if (p) {
     const flag2 = p.profile.flag.toLowerCase()
@@ -22,7 +22,7 @@ export function jbFlag (p) {
   } else return null
 }
 
-export function jbGetAvatar (p) {
+export function jbAvatar (p) {
   return p ? p.profile.avatar : null
 }
 

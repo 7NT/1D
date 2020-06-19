@@ -132,8 +132,7 @@ export default {
       return ((this.mySeatX + s) % 4) + 1
     },
     getPlayer (pId) {
-      // if (this.jsTable._id.startsWith('#@')) return this.getPlayerByNick(pId) else
-      return this.tsPlayerById(pId)
+      return this.jsPlayerById(pId)
     },
     getNick (s) {
       const pId = this.jsTable.seats[s - 1]

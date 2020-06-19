@@ -297,7 +297,7 @@ export default {
   },
   components: { myT2List },
   computed: {
-    ...mapState('jstore', ['jsTourneys', 'jsMap']),
+    ...mapState('jstore', ['jsTourneys', 'jsT2']),
     ...mapGetters('jstore', ['jsPlayerById', 'jsPlayerByNick', 'jsTourneyByTD']),
 
     myTourneys () {

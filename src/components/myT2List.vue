@@ -163,7 +163,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['jsMap']),
+    ...mapState('jstore', ['jsT2']),
     ...mapGetters('jstore', ['jsPlayerById', 'jsPlayerByNick']),
 
     isTD () {

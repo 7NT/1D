@@ -156,7 +156,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['jsSet', 'jsMap']),
+    ...mapState('jstore', ['jsPF']),
     ...mapGetters('jstore', ['jsPlayerById', 'jsTableById', 'jsTourneyById']),
     authenticated () {
       return this.user != null
@@ -186,6 +186,7 @@ export default {
     signin (user) {
       // console.log('signin', user)
       this.setUser(user)
+      // this.onServices()
     },
     signout () {
       auth
@@ -293,7 +294,7 @@ export default {
         console.log('player patched', p1)
         this.addPlayer(p1)
 
-        if (jbSameId(p1.id, this.jsMap.get('following'))) {
+        if (jbSameId(p1.id, this.jsPF)) {
           let sId = 9
           if (jbIsPlayer(p1.seat.sId)) sId = -p1.seat.sId
           const seat = {
@@ -396,7 +397,11 @@ export default {
       }
     }
   },
+  beforeMount () {
+    // this.user = null
+  },
   mounted () {
+    console.log(this.jsTables)
     // Check if there is already a session running
     auth
       .login()
@@ -420,15 +425,22 @@ export default {
     // On logout
     auth.onLogout(() => {
       this.goTo('home')
-      this.user = null
+      this.setUser(null)
     })
+
+    window.onbeforeunload = function () {
+      this.signout()
+    }
   },
   watch: {
     user (user) {
       if (user) {
         this.onServices()
         this.goTo('lobby')
-      } else this.goTo('home')
+      } else {
+        this.signout()
+        this.goTo('home')
+      }
     }
   },
   beforeDestroy () {

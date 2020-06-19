@@ -1,7 +1,7 @@
 
 import { Hook, HookContext } from '@feathersjs/feathers'
 // import mongoose from 'mongoose';
-import { jbShuffleCards, jbGetVulN, jbGetSuitN52, jbGetRankN52 } from '../jb'
+import { jbShuffleCards, jbVulN, jbSuitN52, jbRankN52 } from '../jbBoard'
 
 const onCreate = (): Hook => {
   return async (context: HookContext) => {
@@ -19,10 +19,8 @@ const onCreate = (): Hook => {
 const onState = (): Hook => {
   return async (context: HookContext) => {
     const { action, pairs, state, pstate } = context.data
-    // console.log(context)
     if (state) {
       context.data = await onT2State(context, state)
-      // console.log('c', context.data)
     } else if (pairs) {
       context.data.pairs = onT2Pairs(state, pairs)
     } else if (pstate) {

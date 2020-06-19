@@ -3,8 +3,6 @@ export const setJsUser = (state, user) => {
 }
 
 export const setPlayers = (state, players) => {
-  state.jsMap.clear()
-  // state.jsMap.put('t1', null)
   state.jsPlayers = players
 }
 
@@ -37,7 +35,8 @@ export const addPlayer = (state, player) => {
   if (i >= 0) {
     if (player.state < 0) {
       state.jsPlayers.splice(i, 1)
-      if (player.id === state.jsMap.get('following')) state.jsMap.delete('following') // following exits
+      // if (player.id === state.jsMap.get('following')) state.jsMap.delete('following') // following exits
+      if (player.id === state.jsPF) state.jsPF = null
     } else state.jsPlayers.splice(i, 1, player)
   } else {
     state.jsPlayers.push(player)
@@ -45,7 +44,7 @@ export const addPlayer = (state, player) => {
 }
 
 export const addTable = (state, table) => {
-  const i = state.jsTables.findIndex(t1 => t1._id === table._id)
+  const i = state.jsTables.findIndex(t1 => t1.id === table._id)
   if (i >= 0) {
     if (table.state < 0) state.jsTables.splice(i, 1)
     else state.jsTables.splice(i, 1, table)
@@ -75,17 +74,44 @@ export const addTourney = (state, tourney) => {
 
 export const setChat = (state, chat) => {
   if (chat.to === state.jsUser._id) {
-    if (!state.jsSet.has(chat.userId)) state.jsMap.add(chat.userId)
+    // if (!state.jsSet.has(chat.userId)) state.jsMap.add(chat.userId)
+    if (state.jsPM.findIndex(chat.userId) < 0) state.jsPM.push(chat.userId)
   }
   state.jsChats.push(chat)
 }
-
+/*
 export const setJsSet = (state, set) => {
   if (state.jsSet.has(set)) state.jsSet.delete(set)
   else state.jsSet.add(set)
 }
-
+*/
 export const setJsMap = (state, map) => {
-  if (map.key === 't1') state.jsRoom = map.value
-  else state.jsMap.set(map.key, map.value)
+  switch (map.key) {
+    case 't1': {
+      state.jsT1 = map.value
+      break
+    }
+    case 't2': {
+      state.jsT2 = map.value
+      break
+    }
+    case 't4': {
+      state.jsT4 = map.value
+      break
+    }
+    case 'pm': { // private message
+      const i = state.jsPM.findIndex(p => p.id === map.value)
+      if (i >= 0) {
+        state.jsPM.splice(i, 1)
+      } else {
+        state.jsPM.push(map.value)
+      }
+      break
+    }
+    case 'pf': { // player following
+      state.jsPF = map.value
+      break
+    }
+    default:
+  }
 }

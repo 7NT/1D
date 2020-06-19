@@ -36,7 +36,7 @@ export default function (/* { store, ssrContext } */) {
       console.log('Not authenticated')
       // Cancel the route change and redirect back to the Home page
       next({
-        path: '/home'
+        path: '/'
       })
     }
   })

@@ -1,6 +1,8 @@
 import * as authentication from '@feathersjs/authentication';
 // Don't remove this comment. It's needed to format import lines nicely.
 
+import { onTable, onResult } from '../../hooks/table'
+
 const { authenticate } = authentication.hooks;
 
 export default {
@@ -10,7 +12,7 @@ export default {
     get: [],
     create: [],
     update: [],
-    patch: [],
+    patch: [onTable()],
     remove: []
   },
 
@@ -20,7 +22,7 @@ export default {
     get: [],
     create: [],
     update: [],
-    patch: [],
+    patch: [onResult()],
     remove: []
   },
 

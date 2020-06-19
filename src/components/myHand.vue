@@ -91,7 +91,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { jbIsPlayer, jbIsMyPlayer } from 'src/jbPlayer'
+import { jbIsPlayer, jbIsMyPlayer, jbAvatar, jbFlag } from 'src/jbPlayer'
 import { jbSeatName, jbSeatX, jbSeat1234 } from 'src/jbSeat'
 
 export default {
@@ -128,16 +128,10 @@ export default {
       return this.handPlayer ? this.handPlayer.nick : jbSeatName(this.seatX - 1)
     },
     handAvatar () {
-      return this.handPlayer ? `img:${this.handPlayer.profile.avatar}` : null
+      return jbAvatar(this.handPlayer)
     },
     handFlag () {
-      if (this.handPlayer) {
-        try {
-          const flag2 = this.handPlayer.profile.flag.toLowerCase()
-          return `img:statics/flags/4x3/${flag2}.svg`
-        } catch (_) { }
-      }
-      return null
+      return jbFlag(this.handPlayer)
     },
     handTurn () {
       if (this.isHandTurn()) return 'warning'

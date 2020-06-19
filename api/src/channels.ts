@@ -70,7 +70,8 @@ export default function (app: Application) {
         nick: user.nick,
         profile: user.profile,
         status: user.status || 0,
-        state: 0
+        state: 0,
+        seat: {tId: null, sId: 0}
       }
       players$.create(player)
     }

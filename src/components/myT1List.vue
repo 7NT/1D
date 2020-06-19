@@ -52,7 +52,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { jbT2State } from 'src/jbState'
-import { jbSeatIcon } from 'src/jbPlayer'
+// import { jbSeatIcon } from 'src/jbPlayer'
 
 export default {
   name: 'myT1List',
@@ -94,7 +94,8 @@ export default {
       }
     },
     mySeatIcon (sId) {
-      return jbSeatIcon(sId)
+      // return jbSeatIcon(sId)
+      return `img:statics/jbicon/seats/seat${sId}.svg`
     },
     mySeatColor (sId) {
       const pId = this.getPid(sId)

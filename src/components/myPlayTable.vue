@@ -356,13 +356,13 @@ export default {
       */
       if (s1 === 3) {
         // review
-        let message = this.jsTable.info.contract
+        let message = this.jsTable.bids.info.contract
         let score = this.jsTable.score
         if (this.jsTable.result === 0) message += '=' + this.jsTable.result
         else if (this.jsTable.result > 0) message += '+' + this.jsTable.result
         else message += this.jsTable.result
 
-        if (this.jsTable.info.by % 2 === 0) score = -score
+        if (this.jsTable.bids.info.by % 2 === 0) score = -score
 
         this.$q.notify({
           message: message,

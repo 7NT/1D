@@ -89,7 +89,7 @@ const jbCardValue = (c52) => {
 
 const jbCard52 = (c52) => {
   return {
-    value: (c52 % 52) || 52,
+    value: (c52 % 52),
     suit: jbCardSuit(c52),
     rank: jbCardValue(c52)
   }

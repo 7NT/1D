@@ -212,7 +212,7 @@ export default {
       switch (this.jsTable.state) {
         case 3: {
           const tId = this.jsTable.t2 ? this.jsTable.t2.t2Id : this.jsTable.id
-          return this.getResultById(tId)
+          return this.jsResultById(tId)
         }
         default:
           return null

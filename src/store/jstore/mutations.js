@@ -58,7 +58,7 @@ export const addResult = (state, result) => {
   if (i >= 0) {
     state.jsResults.splice(i, 1, result)
   } else {
-    state.jsResults.splice(1, 0, result)
+    state.jsResults.unshift(result)
   }
 }
 
@@ -68,7 +68,7 @@ export const addTourney = (state, tourney) => {
     if (tourney.state < 0) state.jsTourneys.splice(i, 1)
     else state.jsTourneys.splice(i, 1, tourney)
   } else if (tourney.state >= 0) {
-    state.jsTourneys.splice(1, 0, tourney)
+    state.jsTourneys.unshift(tourney)
   }
 }
 

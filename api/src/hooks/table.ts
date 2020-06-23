@@ -67,7 +67,7 @@ async function t1Board (context: any) {
     }
   })
 
-  const played_bIds = played_data.data.map((x: { bId: any }) => mongoose.Types.ObjectId(x.bId))
+  const played_bIds = played_data.data.map((x: { bId: any }) => x.bId) // mongoose.Types.ObjectId(x.bId))
   let notPlayed_data = await boards$.find({
     query: {
       $limit: 1,
@@ -77,7 +77,7 @@ async function t1Board (context: any) {
     }
   })
   const notPlayed_bIds = notPlayed_data.data.map((x: { _id: any }) => x._id)
-
+  // console.log(played_bIds, notPlayed_bIds)
   let board: any
   if (notPlayed_bIds.length > 0) board = await boards$.get(notPlayed_bIds[0])
   else {
@@ -114,6 +114,7 @@ async function t1Board (context: any) {
       const playedb = {
         bId: board._id,
         bT: board.bT,
+        bN: board.bN,
         uId: u + '',
         sId: index + 1
       }
@@ -206,7 +207,7 @@ function onBid (tdata: any) {
 
     tdata.plays = {
       info: {
-        trump: CDHSNT12345(info.bidS),
+        trump: C1D2H3S4NT5(info.bidS),
         lead: null,
         winner: null,
         tricks: [0, 0],
@@ -221,6 +222,7 @@ function onBid (tdata: any) {
         tricks: [0, 0]
       }
       tdata.result = result // onScore(result)
+      tdata.score = 0
     } else {
       // tdata.board.cards = resortCards(tdata.board.cards)
       tdata.state = 2
@@ -306,7 +308,7 @@ function bidSuit (b: any) {
   }
 }
 
-function CDHSNT12345 (n: number) {
+function C1D2H3S4NT5 (n: number) {
   const suits = ['C', 'D', 'H', 'S', 'NT']
   switch (n) {
     case 1:
@@ -374,6 +376,7 @@ function onPlay (tdata: any) {
     tdata.turn = 0
     const result = { tricks }
     tdata.result = result //onScore(result)
+    tdata.score = 0
   }
   return tdata
 }
@@ -404,7 +407,7 @@ function onClaim (tdata: any) {
   tdata.turn = 0
   const result = { tricks: claim.tricks }
   tdata.result = result // onScore(result)
-
+  tdata.score = 0
   return tdata
 }
 
@@ -427,21 +430,17 @@ async function onResult (context: any) {
   let { result } = context.data
   if (result && context.id) {
     const results$ = context.app.service('results')
-    const t1 = await context.service.get(context.id)
+    // const t1 = await context.service.get(context.id)
+    const t1 = context.result
 
-    const rdata = {
-      bV: jbVulN(t1.board.bN),
-      contract: t1.bids.info,
-      tricks: result.tricks,
-    }
-    const score = onScore(rdata)
+    const score = onScore(t1)
     const sdata = {
       tId: t1.t2 ? t1.t2.t2Id : t1.id,
       bId: t1.board._id + '',
       info: {
         bN: t1.board.bN,
         bT: t1.board.bT,
-        bV: rdata.bV,
+        bV: jbVulN(t1.board.bN),
         contract: getContract(t1.bids.info),
         by: t1.bids.info.by,
         cc: t1.cc,
@@ -456,6 +455,7 @@ async function onResult (context: any) {
       mix: t1.board.bT === 'MP' ? 50 : 0,
       played: new Date().getTime()
     }
+    context.result.score = score
     await results$.create(sdata)
   }
 }
@@ -470,7 +470,15 @@ function getContract (info: any) {
   }
 }
 
-function onScore (rdata: any) {
+function onScore (tdata: any) {
+  const rdata = {
+    bV: jbVulN(tdata.board.bN),
+    contract: tdata.bids.info,
+    tricks: tdata.result.tricks,
+    result: 0,
+    score: 0
+  }
+
   let result = 0
   let scores = [0, 0]
   if (rdata.contract.by > 0) { //passed
@@ -482,11 +490,9 @@ function onScore (rdata: any) {
     scores[by1] = -score
   }
 
-  rdata.result = result
   // rdata.scores = scores
-  rdata.score = scores[0]   //NS score
-
-  return rdata
+  // score = scores[0]   //NS score
+  return { result, score: scores[0] }
 }
 
 export {

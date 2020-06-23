@@ -194,6 +194,8 @@ import myPlayBox from 'src/components/myPlayBox'
 import myTricks from 'src/components/myTricks'
 import myTimer from 'src/components/myTimer'
 
+import { jbContractBy } from 'src/jbBid'
+
 export default {
   name: 'myPlayTable',
   props: ['jsPlayer'],
@@ -268,7 +270,7 @@ export default {
 
     // onState (s) {},
     onTable (action) {
-      console.log('onTable', action, this.jsTable)
+      // console.log('onTable', action, this.jsTable)
       switch (action.action) {
         case 'sit': {
           this.$emit('onPlayer', action.seat)
@@ -349,26 +351,24 @@ export default {
     },
     myState (s1, s0) {
       // s0++
-      /*
-      for (let s = s0; s <= s1; s++) {
-        this.onState(s)
-      }
-      */
       if (s1 === 3) {
         // review
-        let message = this.jsTable.bids.info.contract
-        let score = this.jsTable.score
-        if (this.jsTable.result === 0) message += '=' + this.jsTable.result
-        else if (this.jsTable.result > 0) message += '+' + this.jsTable.result
-        else message += this.jsTable.result
+        let message = jbContractBy(this.jsTable.bids.info)
+        const score = this.jsTable.score
+        let caption = score.score
 
-        if (this.jsTable.bids.info.by % 2 === 0) score = -score
+        if (score.result === 0) message += ' = MADE'
+        else if (score.result > 0) message += '+' + score.result
+        else message += score.result
+
+        if (this.jsTable.bids.info.by % 2 === 0) caption = -score.score
 
         this.$q.notify({
           message: message,
-          caption: score,
+          caption: caption,
           color: 'info'
         })
+        // console.log(message, score)
       }
       this.$data.timer = new Date().getTime()
     },

@@ -51,7 +51,7 @@ const onCreate = (): Hook => {
       if (results.length > 0) {
         results.push({ _id: null, score: result.score })
         results.sort((a: { score: number }, b: { score: number }) => (a.score > b.score) ? 1 : -1)
-        const boardIds = results.map((s: { _id: any }) => s._id)
+        // const boardIds = results.map((s: { _id: any }) => s._id)
         const rawscores = results.map((s: { score: number }) => s.score)
 
         let scoreMap: any
@@ -106,7 +106,7 @@ const onCreate = (): Hook => {
 
         console.log(t2pairs0, t2pair1, t2pair2)
         const Boards = t2.bN * t2.bR
-        const pairUp = []
+        const pairUp: any[] = []
         t2.pairs.forEach((p: any) => {
           const scores = pscores.filter(p0 => p0.pair === p.pN).map(p1 => p1.score)
           p.boards = scores.length

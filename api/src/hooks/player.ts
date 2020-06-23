@@ -130,7 +130,7 @@ const playerLogout = (): Hook => {
       const tables$ = context.app.service('tables')
 
       let player = await players$.get(pId)
-      console.log('logout', pId, player)
+      // console.log('logout', pId, player)
       if (player) {
         const { seat } = player
         if (seat.tId) {

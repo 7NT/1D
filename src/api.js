@@ -27,25 +27,25 @@ const results$ = api.service('/results')
 const tourneys$ = api.service('/tourneys')
 const teams$ = api.service('/teams')
 
-api.on('connection', (reason) => {
+socket.on('connection', (reason) => {
   // Show offline message
   console.log('connection', reason)
 })
 
-api.on('disconnect', (reason) => {
+socket.on('disconnect', (reason) => {
   // Show offline message
   console.log('disconnect', reason)
 })
 
-api.on('reconnect_attempt', (reason) => {
+socket.on('reconnect_attempt', (reason) => {
   console.log('reconnect', reason)
 })
 
-api.on('ping', (reason) => {
+socket.on('ping', (reason) => {
   console.log('ping', reason)
 })
 
-api.on('pong', (reason) => {
+socket.on('pong', (reason) => {
   console.log('pong', reason)
 })
 // export default api

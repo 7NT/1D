@@ -1,3 +1,5 @@
+const seatName = ['North', 'East', 'South', 'West']
+
 export const jbBidNS = (n, s) => {
   switch (s) {
     case 'C':
@@ -42,4 +44,13 @@ export const jbBidX = (by, turn) => {
 export const jbBidXX = (X, turn) => {
   if (X < 1) return true
   else return (X - turn) % 2 === 0
+}
+
+export const jbContractBy = (info) => {
+  let c = info ? info.contract : null
+  if (info.XX) c += 'XX'
+  else if (info.X) c += 'X'
+
+  if (info.by) c += ' by ' + seatName[info.by - 1]
+  return c
 }

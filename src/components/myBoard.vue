@@ -130,7 +130,7 @@
             top
             class="col-4 gt-sm"
           >
-            <q-item-label class="q-mt-sm">{{mix}}:</q-item-label>
+            <q-item-label class="q-mt-sm">{{mix}}/score:</q-item-label>
           </q-item-section>
           <q-item-section
             side
@@ -209,20 +209,13 @@ export default {
       return this.jsTable.state
     },
     myResult () {
-      switch (this.jsTable.state) {
-        case 3: {
-          const tId = this.jsTable.t2 ? this.jsTable.t2.t2Id : this.jsTable.id
-          return this.jsResultById(tId)
-        }
-        default:
-          return null
-      }
+      // const tId = this.jsTable.t2 ? this.jsTable.t2.t2Id : this.jsTable.id
+      return this.jsResultById(this.jsTable.id)
     }
   },
   methods: {
     onBT (bT) {
       let message
-      // console.log('bT', this.mySeat)
       if (jbIsPlayer(this.mySeat.sId)) {
         this.$emit('onTable', { action: 'bT', bT })
         message = `Board will switch to ${bT} next`
@@ -248,16 +241,21 @@ export default {
     },
     score (n) {
       if (this.myResult) {
+        let score
         const mix = this.myResult.mix
+        const by = this.myResult.info.by % 2
         if (n === 1) { // EW
-          if (this.myResult.info.bT === 'MP') return `${100 - mix}%`
-          else return -mix
+          if (this.myResult.info.bT === 'MP') score = `${100 - mix}%`
+          else score = -mix
+          if (by === 0) score += '/' + (-this.myResult.score)
         } else { // NS
-          if (this.myResult.info.bT === 'MP') return `${mix}%`
-          else return mix
+          if (this.myResult.info.bT === 'MP') score = `${mix}%`
+          else score = mix
+          if (by === 1) score += '/' + this.myResult.score
         }
+        return score
       }
-      return null
+      // return null
     }
   },
   watch: {

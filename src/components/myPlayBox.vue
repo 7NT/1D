@@ -57,7 +57,7 @@ export default {
           else this.card4 = plays.data.slice(-n4)
         }
       } catch (err) {
-        console.log(err)
+        // console.log(err)
       }
     },
     cardImg (n) {

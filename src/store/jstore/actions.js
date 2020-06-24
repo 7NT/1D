@@ -34,6 +34,10 @@ export const addResult = (context, payload) => {
   context.commit('addResult', payload)
 }
 
+export const resetResults = (context, payload) => {
+  context.commit('resetResults', payload)
+}
+
 export const addTourney = (context, payload) => {
   context.commit('addTourney', payload)
 }

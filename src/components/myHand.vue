@@ -349,6 +349,14 @@ export default {
     }
   },
   watch: {
+    handTurn (t) {
+      if (t && this.isMyPlay()) {
+        if (this.handCards.length === 1) {
+          const card = this.handCards[0]
+          this.onPlay(card)
+        }
+      }
+    },
     handClaim (claim) {
       if (claim && this.handState === 2) this.isHandClaim(claim)
     }

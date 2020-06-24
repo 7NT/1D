@@ -62,6 +62,10 @@ export const addResult = (state, result) => {
   }
 }
 
+export const resetResults = (state, result) => {
+  state.jsResults = []
+}
+
 export const addTourney = (state, tourney) => {
   const i = state.jsTourneys.findIndex(t => t._id === tourney._id)
   if (i >= 0) {

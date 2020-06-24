@@ -57,6 +57,7 @@ module.exports = function (ctx) {
         'Notify',
         'Dialog',
         'AppFullscreen',
+        'BottomSheet',
         'LocalStorage',
         'SessionStorage'
       ],

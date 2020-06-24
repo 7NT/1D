@@ -52,6 +52,7 @@ export default {
   }),
   computed: {
     ...mapGetters('jstore', ['jsPlayerById']),
+
     mySeatX () {
       let x = Math.abs(this.jsPlayer.seat.sId)
       if (x < 1 || x > 4) x = 3

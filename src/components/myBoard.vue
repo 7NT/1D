@@ -122,15 +122,20 @@
           </q-item-section>
         </q-item>
 
-        <q-item
-          dense
-          class="row boardItem"
-        >
+      <q-slide-item @left="onScoreReset" @right="onScoreReset">
+        <template v-slot:left>
+          <q-icon name="done" />Score Reset?
+        </template>
+        <template v-slot:right>
+          <q-icon name="alarm" />Score Reset
+        </template>
+
+        <q-item>
           <q-item-section
             top
             class="col-4 gt-sm"
           >
-            <q-item-label class="q-mt-sm">{{mix}}/score:</q-item-label>
+            <q-item-label class="q-mt-sm">{{mix}}/Boards:</q-item-label>
           </q-item-section>
           <q-item-section
             side
@@ -154,6 +159,7 @@
             </div>
           </q-item-section>
         </q-item>
+      </q-slide-item>
       </q-list>
     </div>
   </div>
@@ -182,8 +188,9 @@ export default {
         { name: 'ns', label: '', field: 'ns' },
         { name: 'ew', label: '', field: 'ew' }
       ],
-      CCs: ['SAYC', '2over1', 'Prec', 'my CC...']
-      // myResult: null
+      CCs: ['SAYC', '2over1', 'Prec', 'my CC...'],
+      myScores: [0, 0],
+      myBoards: [0, 0]
     }
   },
   computed: {
@@ -208,9 +215,8 @@ export default {
     state () {
       return this.jsTable.state
     },
-    myResult () {
-      // const tId = this.jsTable.t2 ? this.jsTable.t2.t2Id : this.jsTable.id
-      return this.jsResultById(this.jsTable.id)
+    myTid () {
+      return this.jsTable.id
     }
   },
   methods: {
@@ -240,31 +246,58 @@ export default {
       openURL(`http://localhost:8080/statics/cc/${cc}.pdf`)
     },
     score (n) {
-      if (this.myResult) {
-        let score
-        const mix = this.myResult.mix
-        const by = this.myResult.info.by % 2
-        if (n === 1) { // EW
-          if (this.myResult.info.bT === 'MP') score = `${100 - mix}%`
-          else score = -mix
-          if (by === 0) score += '/' + (-this.myResult.score)
-        } else { // NS
-          if (this.myResult.info.bT === 'MP') score = `${mix}%`
-          else score = mix
-          if (by === 1) score += '/' + this.myResult.score
-        }
-        return score
+      return this.myScores[n] + '/' + this.myBoards[n]
+    },
+    scoreReset () {
+      switch (this.mix) {
+        case 'MP':
+          this.$data.myScores = [50, 50]
+          break
+        default:
+          this.$data.myScores = [0, 0]
       }
-      // return null
+      this.$data.myBoards = [0, 0]
+    },
+    onScoreReset ({ reset }) {
+      this.scoreReset()
+      this.finalize(reset)
+    },
+
+    finalize (reset) {
+      this.timer = setTimeout(() => {
+        reset()
+      }, 1000)
     }
   },
   watch: {
     mix (bT) {
+      this.scoreReset()
       this.onBT(bT)
+    },
+    myTid (n, o) {
+      if (o) {
+        const r = this.jsResultById(o)
+        if (r) {
+          for (let i = 0; i < 2; i++) {
+            let mix = r.mix
+            if (i === 1) {
+              if (r.info.bT === 'MP') mix = 100 - mix
+              else mix = -mix
+            }
+            const scoreSum = this.$data.myScores[i] * this.$data.myBoards[i] + mix
+            this.$data.myBoards[i]++
+            this.$data.myScores[i] = scoreSum / this.$data.myBoards[i]
+          }
+        }
+      }
     }
   },
   mounted () {
     this.mix = this.jsTable.bT
+    if (this.jsTable.t2) {
+      this.myScores = this.jsTable.t2.scores
+      this.myBoards = this.jsTable.t2.boards
+    }
   }
 }
 </script>

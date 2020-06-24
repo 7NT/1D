@@ -199,14 +199,6 @@ import { jbContractBy } from 'src/jbBid'
 export default {
   name: 'myPlayTable',
   props: ['jsPlayer'],
-  data: function () {
-    return {
-      state: 0,
-      cc: { name: { NS: 'SAYC', EW: 'SAYC' }, card: { NS: '', EW: '' } },
-      alert: null,
-      timer: new Date().getTime()
-    }
-  },
   components: {
     myBoard,
     myHand,
@@ -216,6 +208,11 @@ export default {
     myTricks,
     myTimer
   },
+  data: () => ({
+    cc: { name: { NS: 'SAYC', EW: 'SAYC' }, card: { NS: '', EW: '' } },
+    alert: null,
+    timer: new Date().getTime()
+  }),
   computed: {
     ...mapState('jstore', ['jsPlayers', 'jsTables']),
     ...mapGetters('jstore', ['jsTableById']),
@@ -227,13 +224,8 @@ export default {
     mySeat () {
       return this.jsPlayer.seat
     },
-    myState: {
-      get: function () {
-        return this.$data.state
-      },
-      set: function (s) {
-        this.$data.state = s
-      }
+    myState () {
+      return this.jsTable.state
     },
     myTurn () {
       return this.jsTable ? this.jsTable.turn : 0
@@ -268,9 +260,7 @@ export default {
   methods: {
     ...mapActions('jstore', ['addTable']),
 
-    // onState (s) {},
     onTable (action) {
-      // console.log('onTable', action, this.jsTable)
       switch (action.action) {
         case 'sit': {
           this.$emit('onPlayer', action.seat)
@@ -346,13 +336,8 @@ export default {
     }
   },
   watch: {
-    jsTable (t1) {
-      if (t1) this.myState = t1.state
-    },
     myState (s1, s0) {
-      // s0++
-      if (s1 === 3) {
-        // review
+      if (s1 === 3) { // review
         let message = jbContractBy(this.jsTable.bids.info)
         const score = this.jsTable.score
         let caption = score.score
@@ -368,7 +353,6 @@ export default {
           caption: caption,
           color: 'info'
         })
-        // console.log(message, score)
       }
       this.$data.timer = new Date().getTime()
     },

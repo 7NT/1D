@@ -1,0 +1,74 @@
+<template>
+  <div>
+    <q-table
+      dense
+      square
+      hide-bottom
+      separator="cell"
+      :data="myScoreData"
+      :columns="columns"
+      row-key="row"
+    >
+    </q-table>
+  </div>
+</template>
+
+<script>
+import { results$ } from 'src/api'
+
+export default {
+  name: 'myScoreList',
+  props: ['tId', 'bId'],
+
+  data: () => ({
+    seatName: ['N', 'E', 'S', 'W'],
+    // columns: ['NS Score', 'Contract', 'By', 'Result', 'EW Score'],
+    columns: [ // array of Objects
+      // column Object definition
+      {
+        // unique id
+        // identifies column
+        // (used by pagination.sortBy, "body-cell-[name]" slot, ...)
+        name: 'tId',
+
+        // label for header
+        label: 'tId',
+
+        // row Object property to determine value for this column
+        field: 'tId',
+        // OR field: row => row.some.nested.prop,
+
+        // (optional) if we use visible-columns, this col will always be visible
+        required: false
+      },
+      { name: 'ns', label: 'NS Score', field: 'ns' },
+      { name: 'contract', label: 'Contract', field: 'contract', sortable: true },
+      { name: 'by', label: 'By', field: 'by', sortable: true },
+      { name: 'result', label: 'Result', field: 'result' },
+      { name: 'ew', label: 'EW Score', field: 'ew' }
+    ],
+    myScoreData: []
+  }),
+  mounted () {
+    if (this.bId) {
+      results$.find({ query: { bId: this.bId } })
+        .then(response => {
+          console.log('r', response)
+          response.data.forEach(d => {
+            const by = d.info.by ? this.seatName[d.info.by - 1] : ''
+            const result = d.result || '='
+            const ew = d.info.by === 'MP' ? 100 - d.mix : -d.mix
+            const scoreData = {
+              ns: d.mix,
+              contract: d.info.contract,
+              by,
+              result,
+              ew
+            }
+            this.myScoreData.push(scoreData)
+          })
+        })
+    }
+  }
+}
+</script>

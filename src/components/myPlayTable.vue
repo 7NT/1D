@@ -119,7 +119,7 @@
                 <q-card
                   flat
                   class="pbox transparent"
-                  v-if="myState === 2"
+                  v-if="myState >= 2"
                 >
                   <myPlayBox
                     :jsPlayer="jsPlayer"

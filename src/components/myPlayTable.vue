@@ -336,6 +336,9 @@ export default {
     }
   },
   watch: {
+    jsTable (t) {
+      if (!t) this.onTable({ action: 'sit', seat: null })
+    },
     myState (s1, s0) {
       if (s1 === 3) { // review
         let message = jbContractBy(this.jsTable.bids.info)

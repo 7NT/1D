@@ -58,12 +58,11 @@ async function t1Board (context: any) {
   const played$ = context.app.service('played')
 
   let t1 = await context.service.get(context.id)
-  let uIds = t1.seats.filter((u: string) => u != null)
+  let nicks = t1.seats.filter((u: string) => u != null)
   let played_data = await played$.find({
     query: {
       $select: ['bId'],
-      // bT: t1.bT,
-      uId: { $in: uIds }
+      nick: { $in: nicks }
     }
   })
 
@@ -77,7 +76,6 @@ async function t1Board (context: any) {
     }
   })
   const notPlayed_bIds = notPlayed_data.data.map((x: { _id: any }) => x._id)
-  // console.log(played_bIds, notPlayed_bIds)
   let board: any
   if (notPlayed_bIds.length > 0) board = await boards$.get(notPlayed_bIds[0])
   else {
@@ -86,9 +84,7 @@ async function t1Board (context: any) {
         $limit: 1,
         $select: ['bN'],
         bT: t1.bT,
-        $sort: {
-          bN: -1
-        }
+        $sort: { bN: -1 }
       }
     })
     let bNs: any = bN_data.data.map((x: { bN: number }) => x.bN)
@@ -109,20 +105,20 @@ async function t1Board (context: any) {
     board = await boards$.create(bdata)
   }
 
-  t1.seats.forEach((u: any, index: number) => {
-    if (u) {
+  t1.seats.forEach((nick: any, index: number) => {
+    if (nick) {
       const playedb = {
         bId: board._id,
         bT: board.bT,
         bN: board.bN,
-        uId: u + '',
+        nick: nick,
         sId: index + 1
       }
       played$.create(playedb)
     }
   })
 
-  board.players = t1.seats //download uIds
+  board.players = t1.seats //download nicks
   let dealer = (board.bN - 1) % 4
   dealer++
   let bids = {

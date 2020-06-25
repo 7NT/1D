@@ -12,7 +12,7 @@ export default function (app: Application) {
     bId: { type: Schema.Types.ObjectId, ref: "boards" },
     bT: { type: String },
     bN: { type: Number },
-    uId: { type: Schema.Types.ObjectId, ref: "users" },
+    nick: { type: String },
     sId: { type: Number },
     played: { type: Date, default: Date.now }
   });

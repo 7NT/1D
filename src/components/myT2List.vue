@@ -164,7 +164,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['jsT2']),
-    ...mapGetters('jstore', ['jsPlayerById', 'jsPlayerByNick']),
+    ...mapGetters('jstore', ['jsPlayerByNick']),
 
     isTD () {
       return jbIsAdmin(this.jsPlayer)
@@ -174,7 +174,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('jstore', ['setT04']),
+    ...mapActions('jstore', ['setJsMap']),
 
     isOnline (p) {
       try {
@@ -264,8 +264,8 @@ export default {
         })
         .onOk(() => {
           // console.log('OK', pair0)
-          const p1 = this.getPlayerByNick(p0.player.nick)
-          const p2 = this.getPlayerByNick(p0.partner.nick)
+          const p1 = this.jsPlayerByNick(p0.player.nick)
+          const p2 = this.jsPlayerByNick(p0.partner.nick)
           if (p0 && p1) {
             p0.player = p1
             p0.partner = p2
@@ -293,7 +293,7 @@ export default {
         }
         case 0: {
           const pairs = []
-          const myPN = this.jbT2.myPair.pN
+          const myPN = this.jsT2 ? this.jsT2.myPair.pN : 0
           this.t2.pairs.forEach(p => {
             if (p.pN === p2.pN) {
               pairs.push(p2)
@@ -323,14 +323,14 @@ export default {
     if (jbIsMyNick(this.myPair.player, this.jsPlayer)) {
       if (!this.myPair.player.state) { // offline
         p0.player = this.jsPlayer
-        this.setT04({ id: 2, t2: { _id: this.t2._id, myPair: this.myPair } })
+        this.setJsMap({ key: 't2', value: { _id: this.t2._id, myPair: this.myPair } })
         this.onP2Update(p0)
       }
       this.isMyPair = true
     } else if (jbIsMyNick(this.myPair.partner, this.jsPlayer)) {
       if (!this.myPair.partner.state) { // offline
         p0.partner = this.jsPlayer
-        this.setT04({ id: 2, t2: { _id: this.t2._id, myPair: this.myPair } })
+        this.setJsMap({ key: 't2', value: { _id: this.t2._id, myPair: this.myPair } })
         this.onP2Update(p0)
       }
       this.isMyPair = true

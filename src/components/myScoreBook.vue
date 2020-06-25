@@ -38,16 +38,16 @@
       >
         <template v-slot:header>
           <q-item-section>
-            {{ getBoardInfo(r) }}
-          </q-item-section>
-
-          <q-item-section>
-            {{ getContractInfo(r) }}
-            <q-badge
+           <q-item-label overline>{{ getBoardInfo(r) }}</q-item-label>
+            <q-item-label caption>
+              {{ getContractInfo(r) }}
+              <q-badge
               outline
-              :color="getScore(r) >= 0 ? 'positive' : 'negative'"
+              color='secondary'
+              :text-color="getRScore(r) >= 0 ? 'positive' : 'negative'"
               :label="getScore(r)"
-            />
+              />
+            </q-item-label>
           </q-item-section>
 
           <q-item-section side top>
@@ -64,7 +64,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import * as moment from 'moment'
 import myScoreList from 'src/components/myScoreList'
 
@@ -76,8 +76,7 @@ export default {
     seatName: ['North', 'East', 'South', 'West']
   }),
   computed: {
-    ...mapState('jstore', ['jsResults']),
-    ...mapGetters('jstore', ['jsPlayerById'])
+    ...mapState('jstore', ['jsResults'])
   },
   methods: {
     ...mapActions('jstore', ['resetResults']),
@@ -91,7 +90,7 @@ export default {
       else return `${r.result}`
     },
     getBoardInfo (r) {
-      return r.info.bT + '#' + r.info.bN + ': ' + this.getPNick(r)
+      return r.info.bT + '#' + r.info.bN // + ': ' + this.getPNick(r)
     },
     getContractInfo (r) {
       return r.info.contract + ' ' + this.getResult(r) + ': ' + this.getRScore(r)
@@ -109,22 +108,21 @@ export default {
     },
     getScore (r) {
       const bT = r.info.bT
+      const score = bT + ': '
+      const ns = 'NS: ' + r.mix
+      const ew = 'EW: ' + r.mix
       switch (bT) {
         case 'MP':
-          return `${bT}: NS: ${r.mix}% : EW: ${100 - r.mix}%`
+          return score + ns + '% :: ' + ew + '%'
         default:
-          return `${bT}: NS: ${r.mix} : EW: ${-r.mix}`
+          return score + ns + ' :: ' + ew
       }
     },
     getPNick (r) {
       if (r.info.by < 1) return ''
-      const pId = r.players[r.info.by - 1]
-      let pname = this.seatName[r.info.by - 1]
-      if (pId) {
-        const p = this.jsPlayerById(pId)
-        if (p) pname = p.nick
-      }
-      return `by ${pname}`
+      const nick = r.players[r.info.by - 1]
+      if (nick) return 'by ' + nick
+      else return 'by ' + this.seatName[r.info.by - 1]
     },
     playedDate (playedAt) {
       return moment(playedAt).fromNow()

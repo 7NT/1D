@@ -106,7 +106,7 @@ export default {
   },
   components: {},
   computed: {
-    ...mapGetters('jstore', ['jsPlayerById']),
+    ...mapGetters('jstore', ['jsPlayerByNick']),
 
     handState () {
       return this.jsTable.state
@@ -121,9 +121,8 @@ export default {
       return `img:statics/jbicon/seats/seat${this.seatX}.svg`
     },
     handPlayer () {
-      const pId = this.jsTable.seats[this.seatX - 1]
-      if (this.jsTable.id.startsWith('#@')) return this.getPlayerByNick(pId)
-      else return this.jsPlayerById(pId)
+      const nick = this.jsTable.seats[this.seatX - 1]
+      return this.jsPlayerByNick(nick)
     },
     handNick () {
       return this.handPlayer ? this.handPlayer.nick : jbSeatName(this.seatX - 1)
@@ -135,8 +134,23 @@ export default {
       return jbFlag(this.handPlayer)
     },
     handTurn () {
-      if (this.isHandTurn()) return 'warning'
+      if (this.isHandTurn) return 'warning'
       else return this.jsPlayer ? 'indigo' : 'positive'
+    },
+    isHandTurn () {
+      switch (this.handState) {
+        case 1:
+        case 2:
+          return this.jsTable.turn === this.seatX
+        default: return false
+      }
+    },
+    isMyPlay () {
+      if (this.handState === 2) {
+        return this.isDummy
+          ? this.jsPlayer.seat.sId === this.jsTable.bids.info.by
+          : this.isHandTurn
+      } else return false
     },
     handCards () {
       if (this.jsTable.board.data) {
@@ -229,7 +243,7 @@ export default {
       }
     },
     onPlay (card) {
-      if (this.isMyPlay()) {
+      if (this.isMyPlay) {
         if (this.cardCheck(card)) {
           this.$emit('onTable', {
             action: 'play',
@@ -302,21 +316,6 @@ export default {
         }
       }
     },
-    isMyPlay () {
-      if (this.handState === 2) {
-        return this.isDummy
-          ? this.jsPlayer.seat.sId === this.jsTable.bids.info.by
-          : this.isHandTurn()
-      } else return false
-    },
-    isHandTurn () {
-      switch (this.handState) {
-        case 1:
-        case 2:
-          return this.jsTable.turn === this.seatX
-        default: return false
-      }
-    },
     isHandClaim (claim) {
       const notification = {
         message: 'Declarer is claiming:',
@@ -350,9 +349,10 @@ export default {
   },
   watch: {
     handTurn (t) {
-      if (t && this.isMyPlay()) {
-        if (this.handCards.length === 1) {
+      if (this.mySeat.sId === this.jsTable.turn) {
+        if (t && this.handCards.length === 1) {
           const card = this.handCards[0]
+          // console.log(t, this.handCards.length, card)
           this.onPlay(card)
         }
       }

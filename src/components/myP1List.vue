@@ -144,7 +144,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
 import { players$ } from 'src/api'
-import { jbIsPlayer, jbSameId, jbSeatIcon, jbAvatar, jbFlag } from 'src/jbPlayer'
+import { jbIsPlayer, jbSameId, jbPlayerSIcon, jbAvatar, jbFlag } from 'src/jbPlayer'
 
 export default {
   name: 'myP1List',
@@ -163,7 +163,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['jsPlayers', 'jsT1', 'jsPM']),
-    ...mapGetters('jstore', ['jsPlayer', 'jsPlayerById', 'jsTableById']),
+    ...mapGetters('jstore', ['jsPlayer', 'jsTableById']),
 
     myRoom () {
       return this.jsT1
@@ -198,7 +198,7 @@ export default {
       return jbFlag(p)
     },
     seatIcon (p) {
-      return jbSeatIcon(p)
+      return jbPlayerSIcon(p)
     },
     isPlayer (p) {
       return p.seat ? jbIsPlayer(p.seat.sId) : false

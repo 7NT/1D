@@ -157,7 +157,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['jsPF']),
-    ...mapGetters('jstore', ['jsPlayerById', 'jsTableById', 'jsTourneyById']),
+    ...mapGetters('jstore', ['jsTableById', 'jsTourneyById']),
     authenticated () {
       return this.user != null
     }
@@ -316,11 +316,13 @@ export default {
 
       results$.on('created', r1 => {
         console.log('create result', r1)
-        if (r1.players.includes(this.user._id)) this.addResult(r1)
+        // if (r1.players.includes(this.user.nick))
+        this.addResult(r1)
       })
       results$.on('patched', r1 => {
         console.log('patched result', r1)
-        if (r1.players.includes(this.user._id)) this.addResult(r1)
+        // if (r1.players.includes(this.user.nick))
+        this.updateResult(r1)
       })
 
       tourneys$.on('created', t2 => {

@@ -25,8 +25,8 @@ async function playerSit(context: any) {
 
     if (seat.tId0) {
       if (seat.tId0 !== seat.tId) {  //leave table
-        const pId = user._id.toString()
-        playerPart(tables$, pId, seat)
+        const nick = user.nick
+        playerPart(tables$, nick, seat)
         context.app.channel(`#${seat.tId0}`).leave(connection)
       }
     }
@@ -55,12 +55,12 @@ async function getTable(tables$: any, user: any, seat: any) {
     let seats = t1.seats
     let ready = t1.ready
     let players = 0
-    const pId = user._id.toString()
+    const nick = user.nick
     t1.seats.forEach((p: any, i: number) => {
       if (i == seat.sId - 1 && p == null) {
-        seats[i] = pId
+        seats[i] = nick
         // ready[i] = sId
-      } else if (p === pId) {
+      } else if (p === nick) {
         seats[i] = null
         if (t1.state < 1) ready[i] = 0
       }
@@ -86,11 +86,11 @@ async function newTable(tables$: any, user: any, seat: any) {
     ready: [0, 0, 0, 0]
   }
 
-  tdata.seats[seat.sId - 1] = user._id.toString()
+  tdata.seats[seat.sId - 1] = user.nick
   return await tables$.create(tdata)
 }
 
-async function playerPart(tables$: any, pId: any, seat: any) {
+async function playerPart(tables$: any, nick: any, seat: any) {
   if (!seat.tId0) return
 
   const _id = seat.tId0  // mongoose.Types.ObjectId(seat.tId)
@@ -107,12 +107,12 @@ async function playerPart(tables$: any, pId: any, seat: any) {
     }
     if (jbIsPlayer(seat.sId0)) {
       let p = tdata.seats[seat.sId0 - 1]
-      if (p === pId) {
+      if (p === nick) {
         tdata.seats[seat.sId0 - 1] = null
         if (t1.state < 1) tdata.ready[seat.sId0 - 1] = 0
       }
-      let uIds = t1.seats.filter((x: any) => x != null)
-      if (uIds.length < 1) {
+      let nicks = t1.seats.filter((x: any) => x != null)
+      if (nicks.length < 1) {
         t1.state = 0
         t1.ready = [0, 0, 0, 0]
       }
@@ -126,11 +126,9 @@ const playerLogout = (): Hook => {
     const pId = context.id
     if (pId) {
       const users$ = context.app.service('users')
-      const players$ = context.app.service('players')
       const tables$ = context.app.service('tables')
 
-      let player = await players$.get(pId)
-      // console.log('logout', pId, player)
+      let player = await context.service.get(pId)
       if (player) {
         const { seat } = player
         if (seat.tId) {
@@ -141,7 +139,7 @@ const playerLogout = (): Hook => {
           } else {
             seat.tId0 = seat.tId
             seat.sId0 = seat.sId
-            playerPart(tables$, pId, seat)
+            playerPart(tables$, player.nick, seat)
           }
         }
         const userData = { seat, state: 0, logoutAt: new Date().getTime() }

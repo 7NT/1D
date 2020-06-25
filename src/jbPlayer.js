@@ -6,9 +6,12 @@ export function jbGetSeat (p) {
   return p ? p.seat : null
 }
 
-export function jbSeatIcon (p) {
+export function jbPlayerSIcon (p) {
   const s = p.seat ? p.seat.sId : 0
-  return `img:statics/jbicon/seats/seat${s}.svg`
+  return jbSeatIcon(s)
+}
+export function jbSeatIcon (sId) {
+  return `img:statics/jbicon/seats/seat${sId}.svg`
 }
 /*
 export function jbPFlag (p) {

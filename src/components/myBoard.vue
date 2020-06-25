@@ -259,7 +259,7 @@ export default {
       this.$data.myBoards = [0, 0]
     },
     onScoreReset ({ reset }) {
-      this.scoreReset()
+      // this.scoreReset()
       this.finalize(reset)
     },
 

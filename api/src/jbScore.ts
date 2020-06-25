@@ -4,7 +4,7 @@ export const jbGetScore = function (sdata: any, result: number) {
   const xx = contract.XX > 0
   const x = !xx && contract.X > 0
 
-  if (result < 0) return getScoreDown(contract, result, v, x, xx)
+  if (result < 0) return -getScoreDown(contract, result, v, x, xx)
   else return getScorePlus(contract, result, v, x, xx)
 }
 

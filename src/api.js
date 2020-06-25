@@ -27,20 +27,21 @@ const results$ = api.service('/results')
 const tourneys$ = api.service('/tourneys')
 const teams$ = api.service('/teams')
 
-socket.on('connection', (reason) => {
+/*
+io.on('connection', (reason) => {
   // Show offline message
   console.log('connection', reason)
 })
 
-socket.on('disconnect', (reason) => {
+io.on('disconnect', (reason) => {
   // Show offline message
   console.log('disconnect', reason)
 })
 
-socket.on('reconnect_attempt', (reason) => {
+io.on('reconnect_attempt', (reason) => {
   console.log('reconnect', reason)
 })
-
+*/
 socket.on('ping', (reason) => {
   console.log('ping', reason)
 })

@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+// import { mapGetters } from 'vuex'
 import { jbSeatX } from 'src/jbSeat'
 
 export default {
@@ -51,7 +51,7 @@ export default {
     bData: []
   }),
   computed: {
-    ...mapGetters('jstore', ['jsPlayerById']),
+    // ...mapGetters('jstore', ['jsPlayerByNick']),
 
     mySeatX () {
       let x = Math.abs(this.jsPlayer.seat.sId)
@@ -132,13 +132,10 @@ export default {
     seatX (s) {
       return ((this.mySeatX + s) % 4) + 1
     },
-    getPlayer (pId) {
-      return this.jsPlayerById(pId)
-    },
     getNick (s) {
-      const pId = this.jsTable.seats[s - 1]
-      const p = this.getPlayer(pId)
-      if (p) return p.nick
+      const nick = this.jsTable.seats[s - 1]
+      // const p = this.getPlayer(pId)
+      if (nick) return nick
       else return this.seats[s - 1]
     },
     getBid (b) {

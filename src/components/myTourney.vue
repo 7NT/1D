@@ -298,10 +298,10 @@ export default {
   components: { myT2List },
   computed: {
     ...mapState('jstore', ['jsTourneys', 'jsT2']),
-    ...mapGetters('jstore', ['jsPlayerById', 'jsPlayerByNick', 'jsTourneyByTD']),
+    ...mapGetters('jstore', ['jsPlayerByNick', 'jsTourneyByTD']),
 
     myTourneys () {
-      return this.tourneys
+      return this.jsTourneys
     },
     myT2 () {
       const t0 = this.jsTourneyByTD(this.jsPlayer.nick)
@@ -313,7 +313,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('jstore', ['jsSetMap']),
+    ...mapActions('jstore', ['setJsMap']),
 
     isOnline (nick) {
       try {
@@ -323,7 +323,7 @@ export default {
     },
     register (t2) {
       try {
-        if (this.jbT2._id === t2._id) return 'Update'
+        if (this.jsT2._id === t2._id) return 'Update'
       } catch (err) { }
       return 'Join'
     },
@@ -355,9 +355,8 @@ export default {
           // ...more.props...
         })
         .onOk(() => {
-          // console.log('OK', pair0)
-          const p1 = this.getPlayerByNick(p0.player.nick)
-          const p2 = this.getPlayerByNick(p0.partner.nick)
+          const p1 = this.jsPlayerByNick(p0.player.nick)
+          const p2 = this.jsPlayerByNick(p0.partner.nick)
           if (p1 && p2) {
             p0.player = p1
             p0.partner = p2
@@ -390,14 +389,14 @@ export default {
         const players = t2.pairs
           .map(p => p.player || p.partner)
           .map(n => n.nick)
-        if (this.jbT2._id === t2._id) {
-          if (jbIsMyNick(this.jbT2.myPair.partner, this.jsPlayer)) {
+        if (this.jsT2 && this.jsT2._id === t2._id) {
+          if (jbIsMyNick(this.jsT2.myPair.partner, this.jsPlayer)) {
             pN = -1
             message = `You and ${this.myPd} have already JOINED this tourney, your partner can UPDATE cc card`
           } else if (players.includes(this.myPd)) {
             pN = -1
             message = `${this.myPd} has already JOINED this tourney`
-          } else pN = this.jbT2.myPair.pN
+          } else pN = this.jsT2.myPair.pN
         }
       }
 
@@ -405,7 +404,7 @@ export default {
         this.$q.notify({ type: 'info', message })
         return
       } else if (this.isOnline(this.myPd)) {
-        pd = this.getPlayerByNick(this.myPd)
+        pd = this.jsPlayerByNick(this.myPd)
         if (jbIsPlayer(pd)) message = `${this.myPd} is playing`
         else {
           const chatData = {
@@ -444,12 +443,12 @@ export default {
         myPair: pair
       })
     },
-    onT2 (jbT2) {
-      if (this.jbT2 !== jbT2) this.setT04(jbT2)
+    onT2 (jsT2) {
+      if (this.jsT2 !== jsT2) this.setJsMap(jsT2)
     },
     onPairs (p2) {
       console.log(p2)
-      if (p2.myPair) { this.setT04({ id: 2, t2: { _id: p2._id, myPair: p2.myPair } }) }
+      if (p2.myPair) { this.setJsMap({ key: 't2', value: { _id: p2._id, myPair: p2.myPair } }) }
       if (p2.pairs) tourneys$.patch(p2._id, { pairs: p2.pairs })
       else if (p2.pstate) tourneys$.patch(p2._id, { pstate: p2.pstate })
     },
@@ -508,12 +507,13 @@ export default {
     }
   },
   mounted () {
-    if (this.jbT2._id) {
-      this.myCC = this.jbT2.myPair.cc || 'SAYC'
-      if (jbIsMyNick(this.jbT2.myPair.partner, this.jsPlayer)) {
-        this.myPd = this.jbT2.myPair.player.nick
-      } else if (jbIsMyNick(this.jbT2.myPair.player, this.jsPlayer)) {
-        this.myPd = this.jbT2.myPair.partner.nick
+    console.log(this.jsPlayer)
+    if (this.jsT2) {
+      this.myCC = this.jsT2.myPair.cc || 'SAYC'
+      if (jbIsMyNick(this.jsT2.myPair.partner, this.jsPlayer)) {
+        this.myPd = this.jsT2.myPair.player.nick
+      } else if (jbIsMyNick(this.jsT2.myPair.player, this.jsPlayer)) {
+        this.myPd = this.jsT2.myPair.partner.nick
       }
     }
   },

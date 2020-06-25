@@ -52,7 +52,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { jbT2State } from 'src/jbState'
-// import { jbSeatIcon } from 'src/jbPlayer'
+import { jbSeatIcon } from 'src/jbPlayer'
 
 export default {
   name: 'myT1List',
@@ -62,7 +62,7 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters('jstore', ['jsPlayerById']),
+    ...mapGetters('jstore', ['jsPlayerByNick']),
 
     state () {
       if (this.myTable.name === '#Lobby') return 'Welcome'
@@ -73,7 +73,7 @@ export default {
     }
   },
   methods: {
-    getPid (sId) {
+    getSeatNick (sId) {
       switch (sId) {
         case 1:
         case 2:
@@ -85,25 +85,21 @@ export default {
       }
     },
     myNick (sId) {
-      const pId = this.getPid(sId)
-      if (!pId) {
-        return 'SIT...'
-      } else {
-        const p = this.jsPlayerById(pId)
-        return p ? p.nick : 'SIT...'
-      }
+      const nick = this.getSeatNick(sId)
+      if (nick) return nick
+      else return 'SIT...'
     },
     mySeatIcon (sId) {
-      // return jbSeatIcon(sId)
-      return `img:statics/jbicon/seats/seat${sId}.svg`
+      // return `img:statics/jbicon/seats/seat${sId}.svg`
+      return jbSeatIcon(sId)
     },
     mySeatColor (sId) {
-      const pId = this.getPid(sId)
+      const pId = this.getSeatNick(sId)
       return pId ? 'info' : 'positive'
     },
     sit (sId) {
-      const pId = this.getPid(sId)
-      if (!pId) {
+      const nick = this.getSeatNick(sId)
+      if (!nick) {
         const seat = {
           tId: this.myTable.id,
           sId

@@ -9,6 +9,7 @@ export default function (app: Application) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema({
+    bId: { type: String },
     bN: { type: Number, required: true },
     bT: { type: String, required: true },
     data: { type: String, required: true },

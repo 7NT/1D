@@ -26,7 +26,7 @@ export default function (app: Application) {
 
   service.hooks(hooks);
 
-  service.publish('patched', (data, context) => {
+  service.publish((data, context) => {
     const { tId } = data
     if (tId) return app.channel(`#${tId}`)
     else return []

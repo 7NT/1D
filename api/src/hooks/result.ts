@@ -52,20 +52,20 @@ const onCreate = (): Hook => {
         results.push({ _id: null, score: result.score })
         results.sort((a: { score: number }, b: { score: number }) => (a.score > b.score) ? 1 : -1)
         // const boardIds = results.map((s: { _id: any }) => s._id)
-        const rawscores = results.map((s: { score: number }) => s.score)
+        const raw = results.map((s: { score: number }) => s.score)
 
         let scoreMap: any
         switch (result.info.bT) {
           case 'MP': {
-            scoreMap = scoreM(rawscores)
+            scoreMap = scoreM(raw)
             break;
           }
           case 'IMP': {
-            scoreMap = scoreI(rawscores)
+            scoreMap = scoreI(raw)
             break;
           }
           case 'XIMP': {
-            scoreMap = scoreX(rawscores)
+            scoreMap = scoreX(raw)
             break;
           }
           default: return
@@ -82,7 +82,7 @@ const onCreate = (): Hook => {
       }
 
       if (result.info.pairs) {  // tourney
-        const presults = await results$.find({
+        const result2 = await results$.find({
           query: {
             $select: ['info.pairs', 'mix'],
             'tId': result.tId
@@ -90,13 +90,14 @@ const onCreate = (): Hook => {
           paginate: false
         })
 
-        const pscores: any[] = []
+        const p12: any[] = []
         const score2 = result.info.bT === 'MP' ? 100 : 0
-        presults.forEach((p: any) => {
-          pscores.push({ pair: p.info.pairs[0], score: p.mix })
-          pscores.push({ pair: p.info.pairs[1], score: score2 - p.mix })
+        result2.data.forEach((p: any) => {
+          p12.push({ pair: p.info.pairs[0], score: p.mix })
+          p12.push({ pair: p.info.pairs[1], score: score2 - p.mix })
         })
 
+        console.log('r2', result2, p12)
         // const pairs = [...new Set(pscores.map(p => p.pair))]
         const tourneys$ = context.app.service("tourneys")
         const t2 = await tourneys$.get(result.tId)
@@ -108,7 +109,7 @@ const onCreate = (): Hook => {
         const Boards = t2.bN * t2.bR
         const pairUp: any[] = []
         t2.pairs.forEach((p: any) => {
-          const scores = pscores.filter(p0 => p0.pair === p.pN).map(p1 => p1.score)
+          const scores = p12.filter(p0 => p0.pair === p.pN).map(p1 => p1.score)
           p.boards = scores.length
           if (scores.length > 0) {
             p.score = scores.reduce((a, b) => a + b, 0) / scores.length

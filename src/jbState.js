@@ -14,9 +14,9 @@ export function jbT1State (s1) {
 }
 export function jbT2State (s1) {
   switch (s1) {
-    case 1:
+    case 0:
       return 'Waiting'
-    case 2:
+    case 1:
       return 'Playing'
     case -1:
       return 'closed'

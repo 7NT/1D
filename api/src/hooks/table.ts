@@ -95,7 +95,7 @@ async function t1Board (context: any) {
     const dt = new Date()
     const yyww = moment(dt).format('YY-WW')
     const bdata = {
-      yyww,
+      bId: yyww,
       bN,
       bT: t1.bT,
       played: 0,

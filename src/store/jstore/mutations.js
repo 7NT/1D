@@ -54,7 +54,9 @@ export const addTable = (state, table) => {
 }
 
 export const addResult = (state, result) => {
-  state.jsResults.unshift(result)
+  const i = state.jsResults.findIndex(r => r._id === result._id)
+  if (i >= 0) state.jsResults.splice(i, 1, result)
+  else state.jsResults.unshift(result)
 }
 
 export const updateResult = (state, result) => {

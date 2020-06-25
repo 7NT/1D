@@ -10,7 +10,7 @@ export default {
     find: [],
     get: [],
     create: [onCreate()],
-    update: [],
+    update: [onState()],
     patch: [onState()],
     remove: []
   },

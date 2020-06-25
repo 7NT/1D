@@ -100,7 +100,7 @@
           <q-btn
             push
             :disable="myT2.state > 0"
-            @click="onState(myT2, 0)"
+            @click="onCreate(myT2)"
             label="Submit"
           ></q-btn>
         </q-card-actions>
@@ -169,22 +169,22 @@
                   label="Close"
                 />
                 <q-fab-action
-                  v-show="t2.state === 1"
-                  square
-                  padding="5px"
-                  label-position="right"
-                  color="positive"
-                  @click="onState(t2, 2)"
-                  icon="hourglass_full"
-                  label="Start"
-                />
-                <q-fab-action
                   v-show="t2.state === 0"
                   square
                   padding="5px"
                   label-position="right"
-                  color="warning"
+                  color="positive"
                   @click="onState(t2, 1)"
+                  icon="hourglass_full"
+                  label="Start"
+                />
+                <q-fab-action
+                  v-show="t2.state < 1"
+                  square
+                  padding="5px"
+                  label-position="right"
+                  color="warning"
+                  @click="onState(t2, 0)"
                   icon="alarm_on"
                   label="Ready..."
                 />
@@ -431,7 +431,7 @@ export default {
           boards: 0,
           score: null,
           state: 0,
-          time: new Date().getTime()
+          update: new Date().getTime()
         }
         pairs.push(pair)
       }
@@ -466,6 +466,9 @@ export default {
           return 'Status'
       }
     },
+    onCreate (t2) {
+      tourneys$.create(t2)
+    },
     onState (t2, s) {
       console.log(s, t2)
       switch (s) {
@@ -475,21 +478,18 @@ export default {
         case 0:
           if (t2._id) {
             if (t2.td !== this.jsPlayer.nick) {
-              if (!this.isOnline(t2.td)) t2.td = this.jsPlayer.nick
-              else {
+              if (!this.isOnline(t2.td)) {
+                tourneys$.patch(t2._id, { td: this.jsPlayer.nick })
+              } else {
                 this.$q.notify({
                   type: 'positive',
                   message: `TD: ${t2.td} is online`
                 })
-                return
               }
-            }
-            tourneys$.update(t2._id, t2)
-          } else tourneys$.create(t2)
+            } else tourneys$.patch(t2._id, { state: s })
+          }
           break
         case 1:
-        case 2:
-          console.log(s, t2)
           if (t2.state < s) tourneys$.patch(t2._id, { state: s })
           break
         default:

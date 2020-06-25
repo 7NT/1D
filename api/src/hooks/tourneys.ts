@@ -18,13 +18,13 @@ const onCreate = (): Hook => {
 
 const onState = (): Hook => {
   return async (context: HookContext) => {
-    const { action, pairs, state, pstate } = context.data
-    if (state) {
-      context.data = await onT2State(context, state)
-    } else if (pairs) {
+    const { pairs, state, pstate } = context.data
+    if (pairs) {
       context.data.pairs = onT2Pairs(state, pairs)
     } else if (pstate) {
       context.data.pairs = await onP2State(context, pstate)
+    } else if (state >= 0) {
+      context.data = await onT2State(context, state)
     }
     return Promise.resolve(context)
   }
@@ -38,14 +38,12 @@ function onT2Pairs (state: number, pairs: any[]) {
       pairs.forEach(p => {
         if (p.state > -2 && (p.player || p.partner)) {  // state: -2 remove, -1 pause, 0: waiting, 1 playing
           p.pN = n
+          p.boards = 0
           n++
           pairs2.push(p)
         }
       })
       return pairs2
-    }
-    case 1: {
-
     }
     default: return pairs
   }
@@ -53,20 +51,21 @@ function onT2Pairs (state: number, pairs: any[]) {
 
 async function onT2State (context: any, state: number) {
   let t2 = await context.service.get(context.id)
-  console.log(state, t2)
   switch (state) {
-    case 1: {
-      t2.pairs.forEach((p: any) => {
+    case 0: {
+      const pairs = onT2Pairs(0, t2.pairs)
+      pairs.forEach((p: any) => {
         p.state = state
+        p.score = t2.bT === 'MP' ? 50 : 0
         p.update = new Date().getTime()
-        p.boards = 0
         p.played = []
-        console.log(p)
+        console.log(state, p)
       })
+      t2.pairs = pairs
       t2.state = state
       return t2
     }
-    case 2: {
+    case 1: {
       t2Boards(context.app, t2)
       const pairs = shufflePairs(t2.pairs)
       const N = Math.floor(pairs.length / 2)

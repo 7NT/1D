@@ -121,7 +121,7 @@ async function t2Table (app: any, t2: any, p1: any, p2: any) {
     bT: t2.bT,
     players: 4,
     cc: [p1.cc, p2.cc],
-    seats: [p1.player.id, p2.partner.id, p1.partner.id, p2.player.id],
+    seats: [p1.player.nick, p2.partner.nick, p1.partner.nick, p2.player.nick],
     ready: [0, 0, 0, 0],
     t2: {
       t2Id: t2._id,

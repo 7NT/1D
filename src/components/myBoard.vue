@@ -122,44 +122,47 @@
           </q-item-section>
         </q-item>
 
-      <q-slide-item @left="onScoreReset" @right="onScoreReset">
-        <template v-slot:left>
-          <q-icon name="done" />Score Reset?
-        </template>
-        <template v-slot:right>
-          <q-icon name="alarm" />Score Reset
-        </template>
+        <q-slide-item
+          @left="onScoreReset"
+          @right="onScoreReset"
+        >
+          <template v-slot:left>
+            <q-icon name="done" />Score Reset?
+          </template>
+          <template v-slot:right>
+            <q-icon name="alarm" />Score Reset
+          </template>
 
-        <q-item>
-          <q-item-section
-            top
-            class="col-4 gt-sm"
-          >
-            <q-item-label class="q-mt-sm">{{mix}}/Boards:</q-item-label>
-          </q-item-section>
-          <q-item-section
-            side
-            class="col-10 gt-sm"
-          >
-            <div class="row q-pa-xs q-gutter-xs no-wrap text-orange full-width">
-              <div class="col-4">
-                <q-badge
-                  color="info"
-                  text-color="black"
-                  :label="score(0)"
-                />
+          <q-item>
+            <q-item-section
+              top
+              class="col-4 gt-sm"
+            >
+              <q-item-label class="q-mt-sm">{{mix}}/Boards:</q-item-label>
+            </q-item-section>
+            <q-item-section
+              side
+              class="col-10 gt-sm"
+            >
+              <div class="row q-pa-xs q-gutter-xs no-wrap text-orange full-width">
+                <div class="col-4">
+                  <q-badge
+                    color="info"
+                    text-color="black"
+                    :label="score(0)"
+                  />
+                </div>
+                <div class="col-4">
+                  <q-badge
+                    color="info"
+                    text-color="black"
+                    :label="score(1)"
+                  />
+                </div>
               </div>
-              <div class="col-4">
-                <q-badge
-                  color="info"
-                  text-color="black"
-                  :label="score(1)"
-                />
-              </div>
-            </div>
-          </q-item-section>
-        </q-item>
-      </q-slide-item>
+            </q-item-section>
+          </q-item>
+        </q-slide-item>
       </q-list>
     </div>
   </div>
@@ -295,8 +298,14 @@ export default {
   mounted () {
     this.mix = this.jsTable.bT
     if (this.jsTable.t2) {
-      this.myScores = this.jsTable.t2.scores
-      this.myBoards = this.jsTable.t2.boards
+      let s0 = 0
+      if (this.jsTable.bT === 'MP') s0 = 50
+      const s1 = this.jsTable.t2.p1.score || s0
+      const s2 = this.jsTable.t2.p2.score || s0
+      const b1 = this.jsTable.t2.p1.boards || 0
+      const b2 = this.jsTable.t2.p2.boards || 0
+      this.myScores = [s1, s2]
+      this.myBoards = [b1, b2]
     }
   }
 }

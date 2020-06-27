@@ -37,6 +37,7 @@ async function playerSit(context: any) {
     } else {
       let t1 = await getTable(tables$, user, seat)
       context.data.seat.tId = t1.id
+      console.log('c', t1.id)
       context.app.channel(t1.id).join(connection);
     }
   }

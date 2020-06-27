@@ -261,6 +261,7 @@ export default {
     ...mapActions('jstore', ['addTable']),
 
     onTable (action) {
+      console.log(action)
       switch (action.action) {
         case 'sit': {
           this.$emit('onPlayer', action.seat)
@@ -268,7 +269,7 @@ export default {
         }
         case 'ready': {
           tables$.patch(this.jsTable.id, {
-            action: 'ready',
+            action: action.action,
             state: action.state,
             ready: action.ready
           })
@@ -276,21 +277,21 @@ export default {
         }
         case 'bT': {
           tables$.patch(this.jsTable.id, {
-            action: 'play',
+            action: action.action,
             bT: action.bT
           })
           break
         }
         case 'cc': {
           tables$.patch(this.jsTable.id, {
-            action: 'play',
+            action: action.action,
             cc: action.cc
           })
           break
         }
         case 'bid': {
           const bids = {
-            action: 'play',
+            action: action.action,
             bids: action.bid.bids
           }
           tables$.patch(this.jsTable.id, bids)
@@ -303,7 +304,7 @@ export default {
           if (!_played.includes(action.play.card)) {
             _data.push(action.play)
             const plays = {
-              action: 'play',
+              action: action.action,
               plays: { info: _info, data: _data }
             }
             tables$.patch(this.jsTable.id, plays)
@@ -312,7 +313,7 @@ export default {
         }
         case 'claim': {
           tables$.patch(this.jsTable.id, {
-            action: 'play',
+            action: action.action,
             claim: action.claim
           })
           break

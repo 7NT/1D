@@ -16,7 +16,7 @@ export default function (app: Application) {
     bN: { type: Number },
     bR: { type: Number },
     state: { type: Number },
-    action: { type: Number },
+    action: { type: String },
     pairs: { type: Array },
     startAt: { type: Date, default: Date.now }
   })

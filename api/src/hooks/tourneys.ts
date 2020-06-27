@@ -83,6 +83,7 @@ async function onT2State (context: any, state: number) {
 
       t2.pairs = pairs
       t2.state = state
+      console.log(t2)
       return t2
     }
     default: return t2

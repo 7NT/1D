@@ -38,7 +38,10 @@ export function jbIsMyPlayer (p, p0) {
 }
 
 export function jbIsMyNick (p, p0) {
-  return p ? p.nick.toLowerCase() === p0.nick.toLowerCase() : false
+  try {
+    return p.nick.toLowerCase() === p0.nick.toLowerCase()
+  } catch (err) {}
+  return false
 }
 
 export const jbIsPlayer = (seat) => {

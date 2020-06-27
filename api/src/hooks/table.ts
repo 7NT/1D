@@ -431,7 +431,7 @@ async function onResult (context: any) {
 
     const score = onScore(t1)
     const sdata = {
-      tId: t1.t2 ? t1.t2.t2Id : t1.id,
+      tId: t1.id,
       bId: t1.board._id + '',
       info: {
         bN: t1.board.bN,
@@ -440,7 +440,7 @@ async function onResult (context: any) {
         contract: getContract(t1.bids.info),
         by: t1.bids.info.by,
         cc: t1.cc,
-        //t2: t1.t2 || null
+        t2: t1.t2 ? t1.t2.t2Id : null,
         pairs: t1.t2 ? [t1.t2.p1.pN, t1.t2.p2.pN] : null
       },
       players: t1.seats,

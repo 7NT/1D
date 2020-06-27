@@ -1,4 +1,4 @@
-import { onFind, onCreate } from '../../hooks/result'
+import { onFind, onCreate, onUpdate } from '../../hooks/result'
 
 export default {
   before: {
@@ -15,7 +15,7 @@ export default {
     all: [],
     find: [],
     get: [],
-    create: [],
+    create: [onUpdate()],
     update: [],
     patch: [],
     remove: []

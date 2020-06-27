@@ -7,8 +7,8 @@
         square
         outlined
         label-color="orange"
-        v-model="mix"
-        :options="options_mix"
+        v-model="bT"
+        :options="options_bT"
         options-dense
         options-dark
         behavior="menu"
@@ -138,7 +138,7 @@
               top
               class="col-4 gt-sm"
             >
-              <q-item-label class="q-mt-sm">{{mix}}/Boards:</q-item-label>
+              <q-item-label class="q-mt-sm">{{bT}}/Boards:</q-item-label>
             </q-item-section>
             <q-item-section
               side
@@ -179,8 +179,8 @@ export default {
 
   data () {
     return {
-      mix: null,
-      options_mix: ['MP', 'IMP', 'XIMP'],
+      bT: null,
+      options_bT: ['MP', 'IMP', 'XIMP'],
       boardData: [
         { name: 'System:', ns: 'NS: ...', ew: 'EW: ...' },
         { name: 'Trick:', ns: '0', ew: '0' },
@@ -273,9 +273,11 @@ export default {
     }
   },
   watch: {
-    mix (bT) {
-      this.scoreReset()
-      this.onBT(bT)
+    bT (bT) {
+      if (!this.jsTable.t2) {
+        this.scoreReset()
+        this.onBT(bT)
+      }
     },
     myTid (n, o) {
       if (o) {

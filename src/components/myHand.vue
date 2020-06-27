@@ -248,7 +248,7 @@ export default {
           this.$emit('onTable', {
             action: 'play',
             play: {
-              uId: this.jsPlayer.id,
+              uId: this.jsPlayer.nick,
               sId: this.seatX,
               winner: 0,
               z: this.jsTable.plays.data.length || 0,

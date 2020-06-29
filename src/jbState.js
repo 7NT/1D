@@ -17,6 +17,8 @@ export function jbT2State (s1) {
     case 0:
       return 'Waiting'
     case 1:
+      return 'Ready'
+    case 2:
       return 'Playing'
     case -1:
       return 'closed'

@@ -32,15 +32,18 @@ const onState = (): Hook => {
 
 function onT2Pairs (state: number, pairs: any[]) {
   switch (state) {
-    case 0: {
+    case 0:
+    case 1: {
       let n: number = 1
       let pairs2: any[] = []
       pairs.forEach(p => {
-        if (p.state > -2 && (p.player || p.partner)) {  // state: -2 remove, -1 pause, 0: waiting, 1 playing
-          p.pN = n
-          p.boards = 0
-          n++
-          pairs2.push(p)
+        if (p.state > -2) {
+          if (state === 0 || (p.player && p.partner)) {
+            p.pN = n
+            p.boards = 0
+            n++
+            pairs2.push(p)
+          }
         }
       })
       return pairs2
@@ -52,8 +55,9 @@ function onT2Pairs (state: number, pairs: any[]) {
 async function onT2State (context: any, state: number) {
   let t2 = await context.service.get(context.id)
   switch (state) {
-    case 0: {
-      const pairs = onT2Pairs(0, t2.pairs)
+    case 0: // waiting
+    case 1: { // ready
+      const pairs = onT2Pairs(state, t2.pairs)
       pairs.forEach((p: any) => {
         p.state = state
         p.score = t2.bT === 'MP' ? 50 : 0
@@ -65,7 +69,7 @@ async function onT2State (context: any, state: number) {
       t2.state = state
       return t2
     }
-    case 1: {
+    case 2: { // play
       t2Boards(context.app, t2)
       const pairs = shufflePairs(t2.pairs)
       const N = Math.floor(pairs.length / 2)
@@ -86,6 +90,7 @@ async function onT2State (context: any, state: number) {
       console.log(t2)
       return t2
     }
+    case -1:  // close
     default: return t2
   }
 }
@@ -121,7 +126,7 @@ async function t2Table (app: any, t2: any, p1: any, p2: any) {
     bT: t2.bT,
     players: 4,
     cc: [p1.cc, p2.cc],
-    seats: [p1.player.nick, p2.partner.nick, p1.partner.nick, p2.player.nick],
+    seats: [p1.player, p2.partner, p1.partner, p2.player],
     ready: [0, 0, 0, 0],
     t2: {
       t2Id: t2._id,
@@ -132,21 +137,15 @@ async function t2Table (app: any, t2: any, p1: any, p2: any) {
     }
   }
   await tables$.create(tdata)
-  t2Players(players$, t2Id, p1, p2)
-}
-
-function t2Players (players$: any, t2Id: any, p1: any, p2: any) {
-  let seat = { tId: t2Id, sId: 1 }
-  players$.patch(p1.player.id, { seat })
-
-  seat = { tId: t2Id, sId: 2 }
-  players$.patch(p2.partner.id, { seat })
-
-  seat = { tId: t2Id, sId: 3 }
-  players$.patch(p1.partner.id, { seat })
-
-  seat = { tId: t2Id, sId: 4 }
-  players$.patch(p2.player.id, { seat })
+  // t2Players(players$, t2.td, t2Id, p1, p2)
+  let seat = { td: t2.td, tId: t2Id, sId: 1 }
+  await players$.patch(p1.player.id, { seat })
+  seat.sId = 2
+  await players$.patch(p2.partner.id, { seat })
+  seat.sId = 3
+  await players$.patch(p1.partner.id, { seat })
+  seat.sId = 4
+  await players$.patch(p2.player.id, { seat })
 
 }
 

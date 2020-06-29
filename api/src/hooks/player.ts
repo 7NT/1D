@@ -27,7 +27,7 @@ async function playerSit(context: any) {
       if (seat.tId0 !== seat.tId) {  //leave table
         const nick = user.nick
         playerPart(tables$, nick, seat)
-        context.app.channel(`#${seat.tId0}`).leave(connection)
+        context.app.channel(seat.tId0).leave(connection)
       }
     }
 
@@ -35,10 +35,13 @@ async function playerSit(context: any) {
       context.data.seat.tId = null
       context.data.seat.sId = 0
     } else {
-      let t1 = await getTable(tables$, user, seat)
-      context.data.seat.tId = t1.id
-      console.log('c', t1.id)
-      context.app.channel(t1.id).join(connection);
+      console.log(seat)
+      if (!seat.td) {
+        let t1 = await getTable(tables$, user, seat)
+        context.data.seat.tId = t1.id
+      }
+      console.log(context.data)
+      context.app.channel(context.data.seat.tId).join(connection);
     }
   }
   return context.data

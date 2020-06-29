@@ -11,8 +11,8 @@
       </q-card-section>
 
       <q-card-section>
-        <q-input outlined v-model="pair.player.nick" label="Player" />
-        <q-input outlined v-model="pair.partner.nick" label="Partner" />
+        <q-input outlined v-model="pair.player" label="Player" />
+        <q-input outlined v-model="pair.partner" label="Partner" />
       </q-card-section>
       <!-- buttons example -->
       <q-card-actions align="right">

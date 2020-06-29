@@ -344,7 +344,7 @@ export default {
       })
     },
     onRequest (chat) {
-      if (chat.request.q === 2) { // tourney request
+      if (chat.request.q === 't2') { // tourney request
         this.$q.notify({
           type: 'info',
           message: 'You received a request from: ' + chat.from.nick

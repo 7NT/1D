@@ -169,12 +169,12 @@
                   label="Close"
                 />
                 <q-fab-action
-                  v-show="t2.state === 0"
+                  v-show="t2.state > 0"
                   square
                   padding="5px"
                   label-position="right"
                   color="positive"
-                  @click="onState(t2, 1)"
+                  @click="onState(t2, 2)"
                   icon="hourglass_full"
                   label="Start"
                 />
@@ -184,7 +184,7 @@
                   padding="5px"
                   label-position="right"
                   color="warning"
-                  @click="onState(t2, 0)"
+                  @click="onState(t2, 1)"
                   icon="alarm_on"
                   label="Ready..."
                 />
@@ -331,8 +331,8 @@ export default {
       const p0 = {
         pN: t2.pairs.length + 1,
         cc: 'SAYC',
-        player: { nick: '' },
-        partner: { nick: '' },
+        player: null,
+        partner: null,
         state: 0,
         boards: 0,
         score: null
@@ -355,11 +355,11 @@ export default {
           // ...more.props...
         })
         .onOk(() => {
-          const p1 = this.jsPlayerByNick(p0.player.nick)
-          const p2 = this.jsPlayerByNick(p0.partner.nick)
+          const p1 = this.jsPlayerByNick(p0.player)
+          const p2 = this.jsPlayerByNick(p0.partner)
           if (p1 && p2) {
-            p0.player = p1
-            p0.partner = p2
+            p0.player = p1.nick
+            p0.partner = p2.nick
             const pairs = JSON.parse(JSON.stringify(t2.pairs))
             pairs.push(p0)
             tourneys$.patch(t2._id, { pairs })
@@ -386,47 +386,47 @@ export default {
       let message = null
 
       if (this.myPd) {
-        const players = t2.pairs
-          .map(p => p.player || p.partner)
-          .map(n => n.nick)
         if (this.jsT2 && this.jsT2._id === t2._id) {
-          if (jbIsMyNick(this.jsT2.myPair.partner, this.jsPlayer)) {
-            pN = -1
+          pN = this.jsT2.myPair.pN
+          if (this.jsT2.myPair.partner === this.myPd) {
             message = `You and ${this.myPd} have already JOINED this tourney, your partner can UPDATE cc card`
-          } else if (players.includes(this.myPd)) {
-            pN = -1
-            message = `${this.myPd} has already JOINED this tourney`
-          } else pN = this.jsT2.myPair.pN
+          } else {
+            const players = t2.pairs.map(p => p.player || p.partner) // .map(n => n.nick)
+            if (players.includes(this.myPd)) {
+              message = `${this.myPd} has already JOINED this tourney`
+            }
+          }
+        }
+        if (!message) {
+          // this.$q.notify({ type: 'info', message })
+          pd = this.jsPlayerByNick(this.myPd)
+          if (pd) {
+            if (jbIsPlayer(pd)) message = `${this.myPd} is playing`
+            else {
+              const chatData = {
+                to: `@${pd.id}`,
+                request: { q: 't2', id: t2._id, cc: this.myCC },
+                text: 'Join me in Tourney?'
+              }
+              chats$.create(chatData)
+              message = `sending tourney partner request to ${this.myPd}...`
+            }
+          } else if (t2.state > 0) {
+            message = `${this.Pd} is not online`
+          } // else pd = this.myPd
         }
       }
 
-      if (pN < 0) {
-        this.$q.notify({ type: 'info', message })
-        return
-      } else if (this.isOnline(this.myPd)) {
-        pd = this.jsPlayerByNick(this.myPd)
-        if (jbIsPlayer(pd)) message = `${this.myPd} is playing`
-        else {
-          const chatData = {
-            to: `@${pd.id}`,
-            request: { q: 2, id: t2._id, cc: this.myCC },
-            text: 'Join me in Tourney?'
-          }
-          chats$.create(chatData)
-          message = `sending tourney partner request to ${this.myPd}...`
-        }
-      } else if (t2.state > 0) {
-        message = `${this.Pd} is not online`
-      } else pd = { nick: this.myPd }
-
       if (pN > 0 && pN <= pairs.length) {
         pair = pairs[pN - 1]
-        pair.partner = pd
+        pair.partner = this.myPd
         pair.cc = this.myCC
+        pair.update = new Date().getTime()
       } else {
         pair = {
-          player: this.jsPlayer,
-          partner: pd,
+          pN: pairs.length + 1,
+          player: this.jsPlayer.nick,
+          partner: this.myPd,
           cc: this.myCC,
           boards: 0,
           score: null,
@@ -436,7 +436,6 @@ export default {
         pairs.push(pair)
       }
 
-      // this.onT2({ id: 2, t2: { _id: t2._id, myPair: pair } })
       this.onPairs({
         _id: t2._id,
         pairs,
@@ -447,9 +446,8 @@ export default {
       if (this.jsT2 !== jsT2) this.setJsMap(jsT2)
     },
     onPairs (p2) {
-      console.log(p2)
       if (p2.myPair) { this.setJsMap({ key: 't2', value: { _id: p2._id, myPair: p2.myPair } }) }
-      if (p2.pairs) tourneys$.patch(p2._id, { pairs: p2.pairs })
+      if (p2.pairs) tourneys$.patch(p2._id, { pairs: p2.pairs, state: p2.state })
       else if (p2.pstate) tourneys$.patch(p2._id, { pstate: p2.pstate })
     },
     getT2Status (s) {
@@ -467,32 +465,27 @@ export default {
       }
     },
     onCreate (t2) {
-      tourneys$.create(t2)
+      if (t2._id) {
+        if (t2.td !== this.jsPlayer.nick) {
+          if (!this.isOnline(t2.td)) {
+            tourneys$.patch(t2._id, { td: this.jsPlayer.nick })
+          } else {
+            this.$q.notify({
+              type: 'positive',
+              message: `TD: ${t2.td} is online`
+            })
+          }
+        }
+      } else tourneys$.create(t2)
+      this.newT2 = false
     },
     onState (t2, s) {
-      console.log(s, t2)
       switch (s) {
         case -1:
           tourneys$.remove(t2._id)
           break
-        case 0:
-          if (t2._id) {
-            if (t2.td !== this.jsPlayer.nick) {
-              if (!this.isOnline(t2.td)) {
-                tourneys$.patch(t2._id, { td: this.jsPlayer.nick })
-              } else {
-                this.$q.notify({
-                  type: 'positive',
-                  message: `TD: ${t2.td} is online`
-                })
-              }
-            } else tourneys$.patch(t2._id, { state: s })
-          }
-          break
-        case 1:
-          if (t2.state < s) tourneys$.patch(t2._id, { state: s })
-          break
         default:
+          if (t2.state < s) tourneys$.patch(t2._id, { state: s })
       }
       this.newT2 = false
     },
@@ -510,9 +503,9 @@ export default {
     console.log(this.jsPlayer)
     if (this.jsT2) {
       this.myCC = this.jsT2.myPair.cc || 'SAYC'
-      if (jbIsMyNick(this.jsT2.myPair.partner, this.jsPlayer)) {
+      if (jbIsMyNick(this.jsT2.myPair.partner, this.jsPlayer.nick)) {
         this.myPd = this.jsT2.myPair.player.nick
-      } else if (jbIsMyNick(this.jsT2.myPair.player, this.jsPlayer)) {
+      } else if (jbIsMyNick(this.jsT2.myPair.player, this.jsPlayer.nick)) {
         this.myPd = this.jsT2.myPair.partner.nick
       }
     }

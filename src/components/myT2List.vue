@@ -16,44 +16,44 @@
     <q-item-section class="col-6">
       <div class="row">
         <div class="col-6">
-          <template v-if="isOnline(myPair.player)">
+          <template v-if="isOnline(myPlayer)">
             <q-icon
-              :name="myFlag(myPair.player)"
+              :name="myFlag(myPlayer)"
               size="sm"
             />
             <q-btn
-              :icon="myAvatar(myPair.player)"
-              :label="myNick(myPair.player)"
+              :icon="myAvatar(myPlayer)"
+              :label="myNick(myPlayer)"
               class="player bg-secondary"
               align="around"
             />
           </template>
           <template v-else-if="myPair.player">
             <q-btn
-              :label="myPair.player.nick"
+              :label="myPair.player"
               icon="person"
               class="player bg-info"
               align="around"
             />
-            <q-tooltip>player is offline</q-tooltip>
+            <q-tooltip>{{myPair.player}} is offline</q-tooltip>
           </template>
         </div>
         <div class="col-6">
-          <template v-if="isOnline(myPair.partner)">
+          <template v-if="isOnline(myPartner)">
             <q-icon
-              :name="myFlag(myPair.partner)"
+              :name="myFlag(myPartner)"
               size="sm"
             />
             <q-btn
-              :icon="myAvatar(myPair.partner)"
-              :label="myNick(myPair.partner)"
+              :icon="myAvatar(myPartner)"
+              :label="myNick(myPartner)"
               class="player bg-secondary"
               align="around"
             />
           </template>
-          <template v-else-if="myPair.partner">
+          <template v-else-if="myPartner">
             <q-btn
-              :label="myPair.partner.nick"
+              :label="myPartner.nick"
               icon="person"
               class="player bg-info"
               align="around"
@@ -149,7 +149,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { jbT2State } from 'src/jbState'
 import { jbIsAdmin, jbIsMyNick } from 'src/jbPlayer'
 import myT2Pair from 'src/components/myT2Pair'
@@ -158,16 +158,23 @@ export default {
   name: 'myT2List',
   props: ['t2', 'jsPlayer', 'myPair'],
   data () {
-    return {
-      isMyPair: false
-    }
+    return {}
   },
   computed: {
-    ...mapState('jstore', ['jsT2']),
     ...mapGetters('jstore', ['jsPlayerByNick']),
 
     isTD () {
       return jbIsAdmin(this.jsPlayer)
+    },
+    myPlayer () {
+      return this.jsPlayerByNick(this.myPair.player)
+    },
+    myPartner () {
+      return this.jsPlayerByNick(this.myPair.partner)
+    },
+    isMyPair () {
+      const players = new Set([this.myPair.player, this.myPair.partner])
+      return players.has(this.jsPlayer.nick)
     },
     t2Stat () {
       return this.t2.state
@@ -177,11 +184,7 @@ export default {
     ...mapActions('jstore', ['setJsMap']),
 
     isOnline (p) {
-      try {
-        const player = this.jsPlayerByNick(p.nick)
-        return player.state >= 0
-      } catch (err) { }
-      return false
+      return p ? p.state >= 0 : false
     },
     getBorder (pair) {
       if (this.isMyPair) return 'row rborder'
@@ -219,25 +222,25 @@ export default {
     getBoards () {
       return this.t2.bN * this.t2.bR
     },
-    onP2State (p2) {
+    onP2State (s) {
       const pair2 = JSON.parse(JSON.stringify(this.myPair))
-      switch (p2) {
+      switch (s) {
         case 0:
         case 1:
         case -2:
-          pair2.state = p2
+          pair2.state = s
           break
         default:
       }
-      // this.onP2Update(pair2, 0)
+      this.onP2Update(pair2)
     },
-    onP2Join (p2) {
-      const p0 = JSON.parse(JSON.stringify(p2))
+    onP2Join (myPartner) {
+      const p0 = JSON.parse(JSON.stringify(myPartner))
       p0.partner = this.jsPlayer
       this.onP2Update(p0)
     },
-    onP2Part (p2) {
-      const p0 = JSON.parse(JSON.stringify(p2))
+    onP2Part (myPartner) {
+      const p0 = JSON.parse(JSON.stringify(myPartner))
       if (jbIsMyNick(p0.player, this.jsPlayer)) p0.player = null
       else if (jbIsMyNick(p0.partner, this.jsPlayer)) p0.partner = null
       this.onP2Update(p0)
@@ -264,11 +267,11 @@ export default {
         })
         .onOk(() => {
           // console.log('OK', pair0)
-          const p1 = this.jsPlayerByNick(p0.player.nick)
-          const p2 = this.jsPlayerByNick(p0.partner.nick)
-          if (p0 && p1) {
-            p0.player = p1
-            p0.partner = p2
+          const myPlayer = this.jsPlayerByNick(p0.player.nick)
+          const myPartner = this.jsPlayerByNick(p0.partner.nick)
+          if (p0 && myPlayer) {
+            p0.player = myPlayer
+            p0.partner = myPartner
             this.onP2Update(p0)
           } else {
             this.$q.notify({
@@ -285,7 +288,6 @@ export default {
         })
     },
     onP2Update (p2) {
-      console.log(p2)
       switch (this.t2.state) {
         case 1: {
           this.$emit('onPairs', { _id: this.t2._id, pstate: p2 })
@@ -300,17 +302,18 @@ export default {
             } else if (p.pN === myPN) {
               // remove
               const p0 = JSON.parse(JSON.stringify(p))
-              if (jbIsMyNick(p.player, this.jsPlayer)) {
+              if (jbIsMyNick(p.player, this.jsPlayer.nick)) {
                 p0.player = null
-                if (!this.isOnline(p.partner)) p0.partner = null
-              } else if (jbIsMyNick(p.partner, this.jsPlayer)) {
+                if (!this.myPartner) p0.partner = null
+              } else if (jbIsMyNick(p.partner, this.jsPlayer.nick)) {
                 p0.partner = null
-                if (!this.isOnline(p.player)) p0.player = null
+                if (!this.myPlayer) p0.player = null
               }
               pairs.push(p0)
             } else pairs.push(p)
           })
-          this.$emit('onPairs', { _id: this.t2._id, pairs })
+          console.log(p2, pairs)
+          this.$emit('onPairs', { _id: this.t2._id, pairs, state: this.t2.state })
           break
         }
         default:
@@ -318,26 +321,14 @@ export default {
     }
   },
   mounted () {
-    this.isMyPair = false
-    const p0 = JSON.parse(JSON.stringify(this.myPair))
-    if (jbIsMyNick(this.myPair.player, this.jsPlayer)) {
-      if (!this.myPair.player.state) { // offline
-        p0.player = this.jsPlayer
-        this.setJsMap({ key: 't2', value: { _id: this.t2._id, myPair: this.myPair } })
-        this.onP2Update(p0)
-      }
-      this.isMyPair = true
-    } else if (jbIsMyNick(this.myPair.partner, this.jsPlayer)) {
-      if (!this.myPair.partner.state) { // offline
-        p0.partner = this.jsPlayer
-        this.setJsMap({ key: 't2', value: { _id: this.t2._id, myPair: this.myPair } })
-        this.onP2Update(p0)
-      }
-      this.isMyPair = true
-    }
+    // console.log('p2', this.myPair)
   },
   watch: {
+    isMyPair (p) {
+      if (p) this.setJsMap({ key: 't2', value: { _id: this.t2._id, myPair: this.myPair } })
+    },
     t2State (s) {
+      if (!this.isMyPair) return
       switch (s) {
         case 1:
           this.$q.notify({

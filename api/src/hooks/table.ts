@@ -231,7 +231,7 @@ function onBid (tdata: any) {
 
 function updateBid (tdata: any) {
   let suits = [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0]] // NS-EW suits
-  let bidN = 0, bidS = 0, contract
+  let bidN = 0, bidS = 0, contract ='passed'
   let by = 0, P = 0, X = 0, XX = 0, turn = 0
 
   let bids = tdata.bids

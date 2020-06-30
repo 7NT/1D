@@ -8,7 +8,6 @@ import { jbMIX } from '../jbBoard'
 const onPlayer = (): Hook => {
   return async (context: HookContext) => {
     const { seat } = context.data
-
     if (seat) {
       context.data = await playerSit(context)
     }
@@ -16,7 +15,7 @@ const onPlayer = (): Hook => {
   }
 }
 
-async function playerSit(context: any) {
+async function playerSit (context: any) {
   const { connection } = context.params
   if (connection) {
     const tables$ = context.app.service('tables')
@@ -35,19 +34,17 @@ async function playerSit(context: any) {
       context.data.seat.tId = null
       context.data.seat.sId = 0
     } else {
-      console.log(seat)
       if (!seat.td) {
         let t1 = await getTable(tables$, user, seat)
         context.data.seat.tId = t1.id
       }
-      console.log(context.data)
       context.app.channel(context.data.seat.tId).join(connection);
     }
   }
   return context.data
 }
 
-async function getTable(tables$: any, user: any, seat: any) {
+async function getTable (tables$: any, user: any, seat: any) {
   let t1: { _id: any, seats: any[]; ready: any[]; state: number; id: any }
 
   if (!seat.tId) {  //new table
@@ -76,7 +73,7 @@ async function getTable(tables$: any, user: any, seat: any) {
   return t1
 }
 
-async function newTable(tables$: any, user: any, seat: any) {
+async function newTable (tables$: any, user: any, seat: any) {
   const tdata = {
     id: '#' + user._id,
     name: '#' + user.nick,
@@ -94,7 +91,7 @@ async function newTable(tables$: any, user: any, seat: any) {
   return await tables$.create(tdata)
 }
 
-async function playerPart(tables$: any, nick: any, seat: any) {
+async function playerPart (tables$: any, nick: any, seat: any) {
   if (!seat.tId0) return
 
   const _id = seat.tId0  // mongoose.Types.ObjectId(seat.tId)

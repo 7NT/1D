@@ -138,14 +138,10 @@ async function t2Table (app: any, t2: any, p1: any, p2: any) {
   }
   await tables$.create(tdata)
   // t2Players(players$, t2.td, t2Id, p1, p2)
-  let seat = { td: t2.td, tId: t2Id, sId: 1 }
-  await players$.patch(p1.player.id, { seat })
-  seat.sId = 2
-  await players$.patch(p2.partner.id, { seat })
-  seat.sId = 3
-  await players$.patch(p1.partner.id, { seat })
-  seat.sId = 4
-  await players$.patch(p2.player.id, { seat })
+  await players$.patch(null, { seat: { td: t2.td, tId: t2Id, sId: 1 } }, { query: { nick: p1.player } })
+  await players$.patch(null, { seat: { td: t2.td, tId: t2Id, sId: 2 } }, { query: { nick: p2.partner } })
+  await players$.patch(null, { seat: { td: t2.td, tId: t2Id, sId: 3 } }, { query: { nick: p1.partner } })
+  await players$.patch(null, { seat: { td: t2.td, tId: t2Id, sId: 4 } }, { query: { nick: p2.player } })
 
 }
 

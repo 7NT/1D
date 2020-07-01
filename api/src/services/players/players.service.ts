@@ -13,6 +13,7 @@ declare module '../../declarations' {
 
 export default function (app: Application) {
   const options = {
+    multi: ['patch'],
     paginate: app.get('paginate')
   };
 

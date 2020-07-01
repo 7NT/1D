@@ -95,8 +95,8 @@ const onUpdate = (): Hook => {
         const t2Id = result.info.t2
         const score2 = result.info.bT === 'MP' ? 100 : 0
         const p12: any[] = []
-        p12.push({ pair: result.info.pairs[0], score: result.mix })
-        p12.push({ pair: result.info.pairs[1], score: score2 - result.mix })
+        // p12.push({ pair: result.info.pairs[0], score: result.mix })
+        // p12.push({ pair: result.info.pairs[1], score: score2 - result.mix })
 
         const r2 = await results$.find({
           query: {
@@ -105,12 +105,12 @@ const onUpdate = (): Hook => {
           },
           paginate: false
         })
-
+        console.log(result, p12, r2)
         r2.forEach((p: any) => {
           p12.push({ pair: p.info.pairs[0], score: p.mix })
           p12.push({ pair: p.info.pairs[1], score: score2 - p.mix })
         })
-
+        console.log(p12, r2)
         const tourneys$ = context.app.service("tourneys")
         const t2 = await tourneys$.get(t2Id)
         /*
@@ -128,6 +128,7 @@ const onUpdate = (): Hook => {
           if (scores.length > 0) {
             p.score = scores.reduce((a, b) => a + b, 0) / scores.length
             if (p.boards >= Boards) p.state = -1 // closed
+            // else if (p.boards % = Boards) p.state = -1 // closed
             /*
             else if (p.boards % t2.bN === 0) {
               if (p.pN === t2pair1.pN || p.pN === t2pair2.pN) {

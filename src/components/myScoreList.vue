@@ -55,7 +55,7 @@ export default {
     if (this.bId) {
       results$.find({ query: { bId: this.bId } })
         .then(response => {
-          console.log('r', response)
+          // console.log('r', response)
           response.data.forEach(d => {
             let result
             if (d.result === 0) result = '='
@@ -76,7 +76,7 @@ export default {
               result,
               ew
             }
-            console.log('d', scoreData)
+            // console.log('d', scoreData)
             this.myScoreData.push(scoreData)
           })
         })

@@ -18,7 +18,8 @@ export default function (app: Application) {
       contract: { type: String },
       by: { type: Number },
       cc: { type: Array },
-      pairs: { type: Array }
+      pairs: { type: Array },
+      t2: {type: String }
     },
     players: { type: Array },  //JSON string
     bids: { type: String },

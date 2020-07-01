@@ -63,7 +63,7 @@ async function onT2State (context: any, state: number) {
         p.score = t2.bT === 'MP' ? 50 : 0
         p.update = new Date().getTime()
         p.played = []
-        console.log(state, p)
+        // console.log(state, p)
       })
       t2.pairs = pairs
       t2.state = state
@@ -87,7 +87,7 @@ async function onT2State (context: any, state: number) {
 
       t2.pairs = pairs
       t2.state = state
-      console.log(t2)
+      // console.log(t2)
       return t2
     }
     case -1:  // close
@@ -114,6 +114,7 @@ async function t2Boards (app: any, t2: any) {
 async function t2Table (app: any, t2: any, p1: any, p2: any) {
   const tables$ = app.service('tables')
   const players$ = app.service('players')
+  // players$({ multi: ['patch'] })
 
   const t2Id = `#@${t2._id}:${p1.pN}-${p2.pN}`
   const name = `#@${t2.td} ${t2.bT}:${t2.bR}x${t2.bN}:${p1.pN}-${p2.pN}`
@@ -137,13 +138,20 @@ async function t2Table (app: any, t2: any, p1: any, p2: any) {
     }
   }
   await tables$.create(tdata)
-  // t2Players(players$, t2.td, t2Id, p1, p2)
-  players$({ multi: ['patch'] })
-  await players$.patch(null, { seat: { td: t2.td, tId: t2Id, sId: 1 } }, { query: { nick: p1.player } })
-  await players$.patch(null, { seat: { td: t2.td, tId: t2Id, sId: 2 } }, { query: { nick: p2.partner } })
-  await players$.patch(null, { seat: { td: t2.td, tId: t2Id, sId: 3 } }, { query: { nick: p1.partner } })
-  await players$.patch(null, { seat: { td: t2.td, tId: t2Id, sId: 4 } }, { query: { nick: p2.player } })
+  t2Players(players$, t2Id, p1, p2)
+}
 
+async function t2Players (players$ : any, tId : any, p1 : any, p2 : any) {
+  // (null, {completed: true}, { query: { id: {$in:[1, 2]}}});
+  /*
+  const nicks = [p1.player,p1.partner,p2.player,p2.partner]
+  const params = { nick: {$in: [nicks]} }
+  const players = await players$.find(params)
+  */
+  players$.patch(null, { seat: { tId, sId: 1 } }, { query: { nick: p1.player } })
+  players$.patch(null, { seat: { tId, sId: 2 } }, { query: { nick: p2.partner } })
+  players$.patch(null, { seat: { tId, sId: 3 } }, { query: { nick: p1.partner } })
+  players$.patch(null, { seat: { tId, sId: 4 } }, { query: { nick: p2.player } })
 }
 
 function shufflePairs (array: any[]) {

@@ -17,28 +17,32 @@ const onPlayer = (): Hook => {
 
 async function playerSit (context: any) {
   const { connection } = context.params
+  const { seat, channel } = context.data
+
   if (connection) {
-    const tables$ = context.app.service('tables')
-    const { user } = connection
-    const { seat } = context.data
+    if (channel) {
+      context.app.channel(channel.leave).leave(connection)
+      context.app.channel(channel.join).join(connection)
+    } else if (seat) {
+      const tables$ = context.app.service('tables')
+      const { user } = connection
 
-    if (seat.tId0) {
-      if (seat.tId0 !== seat.tId) {  //leave table
-        const nick = user.nick
-        playerPart(tables$, nick, seat)
-        context.app.channel(seat.tId0).leave(connection)
+      if (seat.tId0) {
+        if (seat.tId0 !== seat.tId) {  //leave table
+          const nick = user.nick
+          playerPart(tables$, nick, seat)
+          context.app.channel(seat.tId0).leave(connection)
+        }
       }
-    }
 
-    if (seat.tId0 && !seat.tId) {  //go to lobby
-      context.data.seat.tId = null
-      context.data.seat.sId = 0
-    } else {
-      if (!seat.td) {
+      if (seat.tId0 && !seat.tId) {  //go to lobby
+        context.data.seat.tId = null
+        context.data.seat.sId = 0
+      } else {
         let t1 = await getTable(tables$, user, seat)
         context.data.seat.tId = t1.id
+        context.app.channel(t1.id).join(connection)
       }
-      context.app.channel(context.data.seat.tId).join(connection);
     }
   }
   return context.data

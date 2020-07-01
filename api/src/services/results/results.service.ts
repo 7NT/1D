@@ -28,7 +28,7 @@ export default function (app: Application) {
 
   service.publish((data, context) => {
     const { tId } = data
-    console.log('publish', data, app.channels)
+    // console.log('publish', data, app.channels)
     if (tId) return app.channel(tId)
     else return []
   })

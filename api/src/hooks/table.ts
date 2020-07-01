@@ -2,7 +2,7 @@
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
 import moment from 'moment'
-import mongoose from 'mongoose';
+// import mongoose from 'mongoose';
 import { jbShuffleCards, jbVulN } from '../jbBoard'
 import { jbGetScore } from '../jbScore'
 
@@ -12,6 +12,9 @@ const onTable = (): Hook => {
 
     if (ready) {
       context.data = await onReady(context)
+      // const { connection } = context.params
+      // const tId: any = context.id
+      // if (tId && connection) context.app.channel(tId).join(connection)
     } else if (claim) {
       if (!claim) {
         context.data.alert = 'Claim is declined'
@@ -29,6 +32,7 @@ const onTable = (): Hook => {
 
 async function onReady (context: any) {
   const { state, ready } = context.data
+  console.log(state, ready, context.data)
   switch (state) {
     case 0:
     case 3:
@@ -49,6 +53,11 @@ async function getBoard (context: any) {
   if (id.startsWith('#@')) {
     let t1 = await context.service.get(context.id)
     if (t1.t2.bn < t1.t2.bN) return t2Board(context, t1.t2)
+    else {
+      t1.alert = 'Waiting...'
+      t1.state = 0
+      return t1
+    }
   } else if (id.startsWith('##')) return t4Board(context)
   else if (id.startsWith('#')) return t1Board(context)
 }

@@ -261,7 +261,7 @@ export default {
     ...mapActions('jstore', ['addTable']),
 
     onTable (action) {
-      console.log(action)
+      // console.log(action)
       switch (action.action) {
         case 'sit': {
           this.$emit('onPlayer', action.seat)

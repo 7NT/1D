@@ -149,11 +149,13 @@ export default {
     },
     */
     onPlayer (seat) {
-      if (this.mySeat) {
-        seat.tId0 = this.mySeat.tId
-        seat.sId0 = this.mySeat.sId
+      if (seat) {
+        if (this.mySeat) {
+          seat.tId0 = this.mySeat.tId
+          seat.sId0 = this.mySeat.sId
+        }
+        players$.patch(this.jsPlayer.id, { seat })
       }
-      players$.patch(this.jsPlayer.id, { seat })
     },
     isOpen (r) {
       switch (r.id) {
@@ -175,11 +177,18 @@ export default {
     user (u) {
       if (!u) this.$router.push({ name: 'home' }).catch(e => { })
     },
-    mySeat (n) {
-      if (n && n.tId) {
-        this.rooms[1].room = n.tId
-        this.rId = 1
-      } else this.rId = 0
+    mySeat (n, o) {
+      try {
+        if (n && n.tId) {
+          this.rooms[1].room = n.tId
+          this.rId = 1
+        } else this.rId = 0
+        const join = n.tId || null
+        const leave = o.tId || null
+        if (join !== leave) {
+          players$.patch(this.jsPlayer.id, { channel: { join, leave } })
+        }
+      } catch (err) {}
     },
     rId (r) {
       this.setJsMap({

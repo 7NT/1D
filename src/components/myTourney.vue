@@ -120,6 +120,7 @@
         expand-icon-class="text-white"
         v-for="t2 in myTourneys"
         :key="t2.id"
+        :v-model="!newT2"
       >
         <template v-slot:header>
           <q-item-section>

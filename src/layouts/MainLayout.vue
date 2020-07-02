@@ -183,10 +183,10 @@ export default {
         this.$router.push({ name: route }).catch(e => { })
       }
     },
-    signin (user) {
+    async signin (user) {
       // console.log('signin', user)
       this.setUser(user)
-      this.onServices()
+      await this.onServices()
     },
     signout () {
       auth
@@ -437,7 +437,6 @@ export default {
   watch: {
     user (user) {
       if (user) {
-        // this.onServices()
         this.goTo('lobby')
       } else {
         this.signout()

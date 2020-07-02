@@ -18,11 +18,11 @@ const onCreate = (): Hook => {
 
 const onState = (): Hook => {
   return async (context: HookContext) => {
-    const { pairs, state, pstate } = context.data
+    const { pairs, state, pair } = context.data
     if (pairs) {
       context.data.pairs = onT2Pairs(state, pairs)
-    } else if (pstate) {
-      context.data.pairs = await onP2State(context, pstate)
+    } else if (pair) {
+      context.data.pairs = await onP2State(context, pair)
     } else if (state >= 0) {
       context.data = await onT2State(context, state)
     }
@@ -76,13 +76,7 @@ async function onT2State (context: any, state: number) {
       for (let i = 0; i < N; i++) {
         const p1 = pairs[i]
         const p2 = pairs[N + i]
-        p1.state = state
-        p2.state = state
-        p1.played.push(p2.pN)
-        p2.played.push(p1.pN)
-        p1.update = new Date().getTime()
-        p2.update = new Date().getTime()
-        t2Table(context.app, t2, p1, p2)
+        t2Match(context.app, t2, p1, p2)
       }
 
       t2.pairs = pairs
@@ -111,10 +105,20 @@ async function t2Boards (app: any, t2: any) {
   }
 }
 
+async function t2Match (app: any, t2: any, p1: any, p2: any) {
+  p1.state = 1
+  p2.state = 1
+  p1.played.push(p2.pN)
+  p2.played.push(p1.pN)
+  p1.update = new Date().getTime()
+  p2.update = new Date().getTime()
+  t2Table(app, t2, p1, p2)
+  return { p1, p2 }
+}
+
 async function t2Table (app: any, t2: any, p1: any, p2: any) {
   const tables$ = app.service('tables')
   const players$ = app.service('players')
-  // players$({ multi: ['patch'] })
 
   const t2Id = `#@${t2._id}:${p1.pN}-${p2.pN}`
   const name = `#@${t2.td} ${t2.bT}:${t2.bR}x${t2.bN}:${p1.pN}-${p2.pN}`
@@ -142,12 +146,6 @@ async function t2Table (app: any, t2: any, p1: any, p2: any) {
 }
 
 async function t2Players (players$ : any, tId : any, p1 : any, p2 : any) {
-  // (null, {completed: true}, { query: { id: {$in:[1, 2]}}});
-  /*
-  const nicks = [p1.player,p1.partner,p2.player,p2.partner]
-  const params = { nick: {$in: [nicks]} }
-  const players = await players$.find(params)
-  */
   players$.patch(null, { seat: { tId, sId: 1 } }, { query: { nick: p1.player } })
   players$.patch(null, { seat: { tId, sId: 2 } }, { query: { nick: p2.partner } })
   players$.patch(null, { seat: { tId, sId: 3 } }, { query: { nick: p1.partner } })
@@ -198,5 +196,8 @@ async function onP2PairUp (context: any, p2: any) {
 
 export {
   onCreate,
-  onState
+  onState,
+  t2Match,
+  t2Table,
+  t2Players
 }

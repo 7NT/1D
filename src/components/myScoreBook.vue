@@ -11,7 +11,7 @@
           class="text-grey-8"
         >My ScoreBook:</q-item-label>
       </q-item-section>
-
+      <!--
       <q-item-section
           side
           top
@@ -19,16 +19,17 @@
           <q-btn
           flat
           round
-          @click="scoreReset()"
+          @click="scoreBookClose()"
         >
           <q-icon name="clear" />
           <q-tooltip
             anchor="bottom middle"
             self="top middle"
             :offset="[0, 20]"
-          >Clear</q-tooltip>
+          >Close</q-tooltip>
         </q-btn>
         </q-item-section>
+      -->
     </q-item>
     <q-separator />
 
@@ -81,8 +82,9 @@ export default {
   methods: {
     ...mapActions('jstore', ['resetResults']),
 
-    scoreReset () {
-      this.resetResults()
+    scoreBookClose () {
+      // this.resetResults()
+      // this.$emit('onDrawer', 'scoreBook')
     },
     getResult (r) {
       if (r.result === 0) return '='

@@ -30,12 +30,7 @@ const auth = {
   },
 
   signout () {
-    // api.service('players').remove(this.user._id)
     return api.logout()
-  },
-
-  removeAccessToken () {
-    return api.auth.removeAccessToken()
   },
 
   onLogout (callback) {
@@ -47,6 +42,7 @@ const auth = {
 
   onAuthenticated (callback) {
     api.on('authenticated', response => {
+      // console.log('authenticated', response)
       this.user = response.user
       callback(this.user)
     })

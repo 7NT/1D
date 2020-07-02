@@ -32,7 +32,6 @@ const onTable = (): Hook => {
 
 async function onReady (context: any) {
   const { state, ready } = context.data
-  console.log(state, ready, context.data)
   switch (state) {
     case 0:
     case 3:

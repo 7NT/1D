@@ -10,6 +10,7 @@ export function jbPlayerSIcon (p) {
   const s = p.seat ? p.seat.sId : 0
   return jbSeatIcon(s)
 }
+
 export function jbSeatIcon (sId) {
   return `img:statics/jbicon/seats/seat${sId}.svg`
 }

@@ -122,23 +122,18 @@
           </q-item-section>
         </q-item>
 
-        <q-slide-item
-          @left="onScoreReset"
-          @right="onScoreReset"
-        >
-          <template v-slot:left>
-            <q-icon name="done" />Score Reset?
-          </template>
+        <q-slide-item @right="onScore">
+          <!--
           <template v-slot:right>
-            <q-icon name="alarm" />Score Reset
+            <q-icon name="alarm" />Score Reset?
           </template>
-
+          -->
           <q-item>
             <q-item-section
               top
               class="col-4 gt-sm"
             >
-              <q-item-label class="q-mt-sm">{{bT}}/Boards:</q-item-label>
+              <q-item-label class="q-mt-sm">{{bT}}/#:</q-item-label>
             </q-item-section>
             <q-item-section
               side
@@ -251,8 +246,18 @@ export default {
     score (n) {
       return this.myScores[n] + '/' + this.myBoards[n]
     },
+    onScore () {
+      this.$q.notify({
+        message: 'Score reset?',
+        color: 'primary',
+        actions: [
+          { label: 'Reset', color: 'yellow', handler: () => { this.scoreReset() } },
+          { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
+        ]
+      })
+    },
     scoreReset () {
-      switch (this.mix) {
+      switch (this.bT) {
         case 'MP':
           this.$data.myScores = [50, 50]
           break
@@ -260,23 +265,13 @@ export default {
           this.$data.myScores = [0, 0]
       }
       this.$data.myBoards = [0, 0]
-    },
-    onScoreReset ({ reset }) {
-      // this.scoreReset()
-      this.finalize(reset)
-    },
-
-    finalize (reset) {
-      this.timer = setTimeout(() => {
-        reset()
-      }, 1000)
     }
   },
   watch: {
-    bT (bT) {
+    bT (bt) {
       if (!this.jsTable.t2) {
         this.scoreReset()
-        this.onBT(bT)
+        this.onBT(bt)
       }
     },
     myTid (n, o) {
@@ -298,7 +293,7 @@ export default {
     }
   },
   mounted () {
-    this.mix = this.jsTable.bT
+    this.bT = this.jsTable.bT
     if (this.jsTable.t2) {
       let s0 = 0
       if (this.jsTable.bT === 'MP') s0 = 50

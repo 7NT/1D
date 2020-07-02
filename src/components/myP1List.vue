@@ -222,11 +222,11 @@ export default {
       }
     },
     newMessage (p) {
-      if (!this.isMyPlayer(p)) return this.jsPM.indexOf(p.id) >= 0
+      if (!this.isMyPlayer(p)) return this.jsPM.indexOf(p.nick) >= 0
       else return false
     },
     readMessage (p) {
-      if (!this.isMyPlayer(p)) this.setJsMap({ key: 'pm', value: p.id }) // reset PM
+      if (!this.isMyPlayer(p)) this.setJsMap({ key: '-pm', value: p.nick }) // reset PM
     },
     onJoin (p, sId) {
       const seat = {

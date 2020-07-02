@@ -28,11 +28,10 @@ import { chats$ } from 'src/api'
 export default {
   name: 'myChat',
   props: ['sendTo'],
-  data () {
-    return {
-      chat: null
-    }
-  },
+
+  data: () => ({
+    chat: null
+  }),
   computed: {},
   methods: {
     onChat (event) {
@@ -45,6 +44,7 @@ export default {
           text: this.chat
         }
         chats$.create(chatData)
+        console.log(chatData)
         this.chat = null
       }
     }

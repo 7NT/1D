@@ -1,13 +1,13 @@
 import * as authentication from '@feathersjs/authentication'
 import processMessage from '../../hooks/process-message'
-import populateUser from '../../hooks/populate-user'
+// import populateUser from '../../hooks/populate-user'
 // Don't remove this comment. It's needed to format import lines nicely.
 
-const { authenticate } = authentication.hooks
+// const { authenticate } = authentication.hooks
 
 export default {
   before: {
-    all: [ authenticate('jwt') ],
+    all: [],  // [ authenticate('jwt') ],
     find: [],
     get: [],
     create: [processMessage()],
@@ -17,7 +17,7 @@ export default {
   },
 
   after: {
-    all: [populateUser()],
+    all: [], // [populateUser()],
     find: [],
     get: [],
     create: [],

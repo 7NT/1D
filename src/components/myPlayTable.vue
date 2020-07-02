@@ -225,7 +225,7 @@ export default {
       return this.jsPlayer.seat
     },
     myState () {
-      return this.jsTable.state
+      return this.jsTable ? this.jsTable.state : null
     },
     myTurn () {
       return this.jsTable ? this.jsTable.turn : 0

@@ -1,7 +1,6 @@
 export const jsPlayer = state => {
-  const p = state.jsPlayers.find(p => p.id === state.jsUser._id)
-  if (p) return p
-  else return state.jsUser
+  if (state.jsUser) return state.jsPlayers.find(p => p.id === state.jsUser._id)
+  else return null
 }
 
 export const jsPlayerById = state => id => {

@@ -79,9 +79,12 @@ export const addTourney = (state, tourney) => {
 }
 
 export const setChat = (state, chat) => {
-  if (chat.to === state.jsUser._id) {
+  const i = state.jsChats.findIndex(c => c.id === chat.id)
+  if (i >= 0) return
+
+  if (chat.to === `@${state.jsUser._id}`) {
     // if (!state.jsSet.has(chat.userId)) state.jsMap.add(chat.userId)
-    if (state.jsPM.findIndex(chat.userId) < 0) state.jsPM.push(chat.userId)
+    if (state.jsPM.indexOf(chat.from.nick) < 0) state.jsPM.push(chat.from.nick)
   }
   state.jsChats.push(chat)
 }
@@ -108,10 +111,15 @@ export const setJsMap = (state, map) => {
     case 'pm': { // private message
       const i = state.jsPM.findIndex(p => p.id === map.value)
       if (i >= 0) {
-        state.jsPM.splice(i, 1)
+        // state.jsPM.splice(i, 1)
       } else {
         state.jsPM.push(map.value)
       }
+      break
+    }
+    case '-pm': { // private message
+      const i = state.jsPM.findIndex(p => p.id === map.value)
+      if (i >= 0) state.jsPM.splice(i, 1)
       break
     }
     case 'pf': { // player following

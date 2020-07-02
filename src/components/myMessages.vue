@@ -15,12 +15,12 @@
       <div class='messages'>
         <q-chat-message
           v-for="chat in myChats"
-          :key='chat._id'
+          :key='chat.id'
           :name='chat.from.nick'
-          :avatar='chat.from.profile.avatar'
+          :avatar='getAvatar(chat.from.id)'
           :text='[chat.text]'
           :stamp='chatDate(chat.created)'
-          :sent='isSent(chat.from) ? true : false'
+          :sent='isSent(chat.from.id) ? true : false'
         />
       </div>
     </q-card>
@@ -29,23 +29,24 @@
 
 <script>
 import * as moment from 'moment'
-import { mapState } from 'vuex'
-import { jbSameId } from 'src/jbPlayer'
+import { mapState, mapGetters } from 'vuex'
+import { jbGetNick, jbAvatar } from 'src/jbPlayer'
 
 export default {
   name: 'myMessages',
   props: ['sendTo'],
-  data () {
-    return {}
-  },
+
+  data: () => ({}),
   computed: {
     ...mapState('jstore', ['jsUser', 'jsChats']),
+    ...mapGetters('jstore', ['jsPlayerById']),
 
     myChats () {
       if (this.sendTo.startsWith('@')) {
-        return this.jsChats.filter(m => {
-          return m.to === `@${this.jsUser._id}` || jbSameId(m.userId, this.jsUser._id)
-        }).slice(-10).reverse()
+        return this.jsChats
+          .filter(m0 => m0.to.startsWith('@'))
+          .filter(m1 => m1.to === `@${this.jsUser._id}` || this.isSent(m1.from.id))
+          .slice(-10).reverse()
       } else return this.jsChats.filter(m => m.to === this.sendTo).slice(-10).reverse()
     },
     msgFrom () {
@@ -56,7 +57,14 @@ export default {
   },
   methods: {
     isSent (from) {
-      return jbSameId(from._id, this.jsUser._id)
+      // return jbSameId(from, this.jsUser._id)
+      return from === this.jsUser._id
+    },
+    getNick (pId) {
+      return jbGetNick(this.jsPlayerById(pId))
+    },
+    getAvatar (pId) {
+      return jbAvatar(this.jsPlayerById(pId))
     },
     chatDate (created) {
       // return moment(created).format('MMM Do, hh:mm:ss')

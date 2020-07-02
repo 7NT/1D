@@ -24,7 +24,8 @@ export default (): Hook => {
       text: text.substring(0, 400),
       to,
       // Set the user id
-      userId: user._id,
+      //userId: user._id,
+      from: { nick: user.nick, id: user._id },
       // Add the current date
       created: new Date().getTime()
     };

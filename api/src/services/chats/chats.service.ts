@@ -28,7 +28,7 @@ export default function (app: Application) {
     if (data.to.startsWith('@')) {
       return [
              app.channel(data.to),
-             app.channel(`@${data.userId}`)
+             app.channel(`@${data.from.id}`)
         ];
     } else return app.channel(data.to)
   });

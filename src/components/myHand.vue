@@ -92,7 +92,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { jbCards, jbCardImg } from 'src/jbBoard'
-import { jbIsPlayer, jbIsMyPlayer, jbAvatar, jbFlag } from 'src/jbPlayer'
+import { jbIsPlayer, jbIsMyPlayer, jbFlag } from 'src/jbPlayer'
 import { jbSeatName, jbSeatX, jbSeat1234 } from 'src/jbSeat'
 
 export default {
@@ -128,7 +128,8 @@ export default {
       return this.handPlayer ? this.handPlayer.nick : jbSeatName(this.seatX - 1)
     },
     handAvatar () {
-      return jbAvatar(this.handPlayer)
+      if (this.handPlayer) return `img:${this.handPlayer.profile.avatar}`
+      else return null
     },
     handFlag () {
       return jbFlag(this.handPlayer)
@@ -269,7 +270,6 @@ export default {
       }
     },
     onClaim (c) {
-      // console.log(this.jsTable)
       this.$emit('onTable', {
         action: 'claim',
         claim: {
@@ -352,7 +352,6 @@ export default {
       if (this.mySeat.sId === this.jsTable.turn) {
         if (t && this.handCards.length === 1) {
           const card = this.handCards[0]
-          // console.log(t, this.handCards.length, card)
           this.onPlay(card)
         }
       }

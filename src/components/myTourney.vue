@@ -501,7 +501,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.jsPlayer)
     if (this.jsT2) {
       this.myCC = this.jsT2.myPair.cc || 'SAYC'
       if (jbIsMyNick(this.jsT2.myPair.partner, this.jsPlayer.nick)) {

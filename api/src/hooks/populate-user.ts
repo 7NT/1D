@@ -15,7 +15,7 @@ export default (): Hook => {
       // Merge the message content to include the `user` object
       return {
         ...message,
-        from: user
+        from: user._id
       }
     }
 

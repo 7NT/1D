@@ -111,7 +111,7 @@ export default {
           name: 'My Table',
           id: 1,
           icon: 'local_play',
-          room: 't1'
+          room: null
         },
         {
           name: 'Tourney',
@@ -138,16 +138,12 @@ export default {
       return this.jsTables
     },
     mySeat () {
-      return this.jsPlayer.seat
+      return this.jsPlayer ? this.jsPlayer.seat : { sId: 0 }
     }
   },
   methods: {
     ...mapActions('jstore', ['setJsMap']),
-    /*
-    onUser (user) {
-      this.updateuser(user)
-    },
-    */
+
     onPlayer (seat) {
       if (seat) {
         if (this.mySeat) {
@@ -183,17 +179,14 @@ export default {
           this.rooms[1].room = n.tId
           this.rId = 1
         } else this.rId = 0
-        const join = n.tId || null
-        const leave = o.tId || null
-        if (join !== leave) {
-          players$.patch(this.jsPlayer.id, { channel: { join, leave } })
-        }
-      } catch (err) {}
+      } catch (err) {
+        console.err(err)
+      }
     },
     rId (r) {
       this.setJsMap({
         key: 't1',
-        value: this.rooms[r].room
+        value: this.rooms[r].room || this.mySeat.tId
       })
     }
   },

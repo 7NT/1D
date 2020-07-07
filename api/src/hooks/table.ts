@@ -54,8 +54,8 @@ async function getBoard(context: any) {
     let t1 = await context.service.get(context.id)
     if (t1.t2.bn < t1.t2.bN) return t2Board(context, t1.t2)
     else {
-      await t2Pairs(context.ass, t1.t2)
-
+      console.log(id, t1)
+      await t2Pairs(context.app, t1.t2)
       t1.alert = 'Waiting...'
       t1.state = 0
       return t1
@@ -213,22 +213,23 @@ async function t2Pairs(app:any, t1: any) {
 
   const Boards = t2.bN * t2.bR
   const pair12 = [t1.p1, t1.p2]
-  const pairs1 = []
+  const pairs1: Promise<{ p1: any; p2: any }>[] = []
   pair12.forEach ((p12: any) => {
     if (p12.boards >= Boards) {
       p12.state = -1  //closed
       pairs1.push(p12)
     } else {
-      const pairs0 = pairs.map((p: any) => p.state ===0 && !p12.played.includes(p.pN)).sort((a: { update: number }, b: { update: number }) => b.update - a.update)
+      const pairs0 = pairs.map((p: any) => p.state === 1 && !p12.played.includes(p.pN)).sort((a: { update: number }, b: { update: number }) => b.update - a.update)
       if (pairs0.length > 0) {
         const match12 = t2Match(app, t2, pairs0[0], p12)
         pairs1.push(match12)
       } else {
-        p12.state = 0
+        p12.state = 1
         p12.update = new Date().getTime()
         pairs1.push(p12)
       }
     }
+    console.log(p12, pairs1)
   })
   tourneys$.patch(t1.t2Id, { pairs })
 }

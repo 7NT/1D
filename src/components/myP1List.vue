@@ -144,7 +144,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
 import { players$ } from 'src/api'
-import { jbIsPlayer, jbSameId, jbPlayerSIcon, jbAvatar, jbFlag } from 'src/jbPlayer'
+import { jbIsPlayer, jbPlayerSIcon, jbAvatar, jbFlag } from 'src/jbPlayer'
 
 export default {
   name: 'myP1List',
@@ -204,10 +204,10 @@ export default {
       return p.seat ? jbIsPlayer(p.seat.sId) : false
     },
     isMyPlayer (p) {
-      return jbSameId(p.id, this.jsPlayer.id)
+      return p ? p.id === this.jsPlayer.id : false
     },
     isMyTable (p) {
-      return jbSameId(p.seat.tId, this.jsPlayer.seat.tId)
+      return p ? p.seat.tId === this.jsPlayer.seat.tId : false
     },
     isFriend (p) {
       return this.friends.indexOf(p) >= 0

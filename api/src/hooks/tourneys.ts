@@ -33,7 +33,7 @@ const onState = (): Hook => {
 function onT2Pairs (state: number, pairs: any[]) {
   switch (state) {
     case 0:
-    case 1: {
+    case 1:
       let n: number = 1
       let pairs2: any[] = []
       pairs.forEach(p => {
@@ -46,9 +46,10 @@ function onT2Pairs (state: number, pairs: any[]) {
           }
         }
       })
-      return pairs2
-    }
-    default: return pairs
+      // return pairs2
+    default:
+      console.log('s', state, pairs)
+      return pairs
   }
 }
 
@@ -125,7 +126,7 @@ async function t2Table (app: any, t2: any, p1: any, p2: any) {
   const tdata = {
     id: t2Id,
     name,
-    action: 'bid',
+    action: 'sit',
     state: 0,
     turn: 0,
     bT: t2.bT,
@@ -142,16 +143,16 @@ async function t2Table (app: any, t2: any, p1: any, p2: any) {
     }
   }
   await tables$.create(tdata)
-  t2Players(players$, t2Id, p1, p2)
+  // t2Players(players$, t2Id, p1, p2)
 }
-
+/*
 async function t2Players (players$ : any, tId : any, p1 : any, p2 : any) {
   players$.patch(null, { seat: { tId, sId: 1 } }, { query: { nick: p1.player } })
   players$.patch(null, { seat: { tId, sId: 2 } }, { query: { nick: p2.partner } })
   players$.patch(null, { seat: { tId, sId: 3 } }, { query: { nick: p1.partner } })
   players$.patch(null, { seat: { tId, sId: 4 } }, { query: { nick: p2.player } })
 }
-
+*/
 function shufflePairs (array: any[]) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 

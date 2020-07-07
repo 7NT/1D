@@ -344,6 +344,13 @@ export default {
         console.log('t2 removed', t2)
       })
     },
+    onTableSit (t) {
+      if (t.state >= 0) {
+        if (t.seats.includs(this.user.nick)) {
+
+        }
+      }
+    },
     onRequest (chat) {
       if (chat.request.q === 't2') { // tourney request
         this.$q.notify({

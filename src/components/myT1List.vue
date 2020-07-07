@@ -62,7 +62,7 @@ export default {
     return {}
   },
   computed: {
-    ...mapGetters('jstore', ['jsPlayerByNick']),
+    ...mapGetters('jstore', ['jsPlayer', 'jsPlayerByNick']),
 
     state () {
       if (this.myTable.name === '#Lobby') return 'Welcome'
@@ -73,7 +73,7 @@ export default {
     }
   },
   methods: {
-    getSeatNick (sId) {
+    seatNick (sId) {
       switch (sId) {
         case 1:
         case 2:
@@ -85,29 +85,37 @@ export default {
       }
     },
     myNick (sId) {
-      const nick = this.getSeatNick(sId)
-      if (nick) return nick
-      else return 'SIT...'
+      const nick = this.seatNick(sId)
+      if (nick) {
+        if (nick === this.jsPlayer.nick) {
+          if (this.myTable.id !== this.jsPlayer.seat.tId || sId !== this.jsPlayer.seat.sId) this.onSit(sId)
+        }
+        return nick
+      } else return 'SIT...'
     },
     mySeatIcon (sId) {
       // return `img:statics/jbicon/seats/seat${sId}.svg`
       return jbSeatIcon(sId)
     },
     mySeatColor (sId) {
-      const pId = this.getSeatNick(sId)
+      const pId = this.seatNick(sId)
       return pId ? 'info' : 'positive'
     },
     sit (sId) {
-      const nick = this.getSeatNick(sId)
+      const nick = this.seatNick(sId)
       if (!nick) {
-        const seat = {
-          tId: this.myTable.id,
-          sId
-        }
-        this.$emit('onPlayer', seat)
+        this.onSit(sId)
       } else {
         this.$q.notify({ type: 'negative', message: 'This seat is taken' })
       }
+    },
+    onSit (sId) {
+      const seat = {
+        tId: this.myTable.id,
+        sId
+      }
+      console.log('onSit', seat)
+      this.$emit('onPlayer', seat)
     }
   },
   watch: {},

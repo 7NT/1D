@@ -1,7 +1,7 @@
 import * as authentication from '@feathersjs/authentication';
 // Don't remove this comment. It's needed to format import lines nicely.
 
-import { onPlayer, playerLogout } from '../../hooks/player'
+import { onSit, onLogout } from '../../hooks/player'
 
 const { authenticate } = authentication.hooks
 
@@ -12,8 +12,8 @@ export default {
     get: [],
     create: [],
     update: [],
-    patch: [onPlayer()],
-    remove: [playerLogout()]
+    patch: [onSit()],
+    remove: [onLogout()]
   },
 
   after: {

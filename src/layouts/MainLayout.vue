@@ -20,28 +20,11 @@
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
         -->
-        <q-btn
-          flat
-          @click="goTo('signin')"
-          v-show="!authenticated"
-        >Sign In</q-btn>
-        <q-btn
-          flat
-          @click="goTo('register')"
-          v-show="!authenticated"
-        >Register</q-btn>
-        <q-btn
-          flat
-          round
-          @click="goTo('lobby')"
-          v-if="authenticated"
-        >
+        <q-btn flat @click="goTo('signin')" v-show="!authenticated">Sign In</q-btn>
+        <q-btn flat @click="goTo('register')" v-show="!authenticated">Register</q-btn>
+        <q-btn flat round @click="goTo('lobby')" v-if="authenticated">
           <q-icon name="home" />
-          <q-tooltip
-            anchor="bottom middle"
-            self="top middle"
-            :offset="[0, 20]"
-          >Lobby</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
@@ -52,33 +35,15 @@
           aria-label="ScoreBook"
           v-show="authenticated"
         />
-        <q-btn
-          flat
-          round
-          @click="goTo('profile')"
-          v-if="authenticated"
-        >
+        <q-btn flat round @click="goTo('profile')" v-if="authenticated">
           <q-avatar class="gt-xs">
             <img :src="user.profile.avatar" />
           </q-avatar>
-          <q-tooltip
-            anchor="bottom middle"
-            self="top middle"
-            :offset="[0, 20]"
-          >Profile</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Profile</q-tooltip>
         </q-btn>
-        <q-btn
-          flat
-          round
-          @click="signout"
-          v-show="authenticated"
-        >
+        <q-btn flat round @click="signout" v-show="authenticated">
           <q-icon name="exit_to_app" />
-          <q-tooltip
-            anchor="bottom middle"
-            self="top middle"
-            :offset="[0, 20]"
-          >Signout</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Signout</q-tooltip>
         </q-btn>
         <q-btn
           color="secondary"
@@ -90,13 +55,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="playerList"
-      v-if="authenticated"
-      bordered
-      elevated
-      content-class="bg-grey-1"
-    >
+    <q-drawer v-model="playerList" v-if="authenticated" bordered elevated content-class="bg-grey-1">
       <myP1List />
     </q-drawer>
 
@@ -180,7 +139,7 @@ export default {
     ]),
     goTo (route) {
       if (this.$route.name !== route) {
-        this.$router.push({ name: route }).catch(e => { })
+        this.$router.push({ name: route }).catch(e => {})
       }
     },
     async signin (user) {
@@ -217,6 +176,7 @@ export default {
       await tables$.find().then(response => {
         console.log('tabales', response)
         this.setTables(response.data)
+        response.data.forEach(t => this.onTable(t))
       })
       /*
       results$
@@ -257,6 +217,7 @@ export default {
       tables$.on('created', t1 => {
         console.log('table created', t1)
         this.addTable(t1)
+        this.onTable(t1)
       })
       tables$.on('patched', t1 => {
         console.log('table patched', t1)
@@ -273,7 +234,8 @@ export default {
         this.addPlayer(p1)
         if (p1.id === this.user._id) {
           const { seat0 } = this.user
-          if (seat0 && seat0.tId) { // rejoin
+          if (seat0 && seat0.tId) {
+            // rejoin
             const t1 = this.jsTableById(seat0.tId) // if table still exists
             if (t1) {
               const seat = {
@@ -281,7 +243,7 @@ export default {
                 sId: seat0.sId,
                 tId0: null
               }
-              players$.patch(p1.id, { seat })
+              this.onTableSit(p1.id, { seat })
             }
           }
         } else {
@@ -302,7 +264,7 @@ export default {
             tId: p1.seat.tId,
             sId: sId
           }
-          players$.patch(this.user._id, { seat })
+          this.onTableSit(this.user._id, { seat })
         }
       })
       players$.on('removed', p1 => {
@@ -344,15 +306,28 @@ export default {
         console.log('t2 removed', t2)
       })
     },
-    onTableSit (t) {
-      if (t.state >= 0) {
-        if (t.seats.includs(this.user.nick)) {
+    onTable (t1) {
+      if (!t1.id) return
+      if (t1.id.startsWith('#@') && t1.seats.includes(this.user.nick)) {
+        // tourney table
+        const sId = t1.seats.indexOf(this.user.nick)
+        const p = this.jsPlayerById(this.user.nick)
 
+        const seat = {
+          tId: t1.id,
+          sId: sId + 1,
+          tId0: p.tId,
+          sId0: p.sId
         }
+        this.onTableSit(this.user._id, { seat })
       }
     },
+    onTableSit (pId, seat) {
+      players$.patch(pId, seat)
+    },
     onRequest (chat) {
-      if (chat.request.q === 't2') { // tourney request
+      if (chat.request.q === 't2') {
+        // tourney request
         this.$q.notify({
           type: 'info',
           message: 'You received a request from: ' + chat.from.nick

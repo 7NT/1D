@@ -87,9 +87,11 @@ export default {
     myNick (sId) {
       const nick = this.seatNick(sId)
       if (nick) {
+        /*
         if (nick === this.jsPlayer.nick) {
           if (this.myTable.id !== this.jsPlayer.seat.tId || sId !== this.jsPlayer.seat.sId) this.onSit(sId)
         }
+        */
         return nick
       } else return 'SIT...'
     },

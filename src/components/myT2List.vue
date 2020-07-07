@@ -212,11 +212,11 @@ export default {
     myT2Color (s2) {
       switch (s2) {
         case 1:
-          return 'secondary'
+          return 'positive'
         case -1:
           return 'negative'
         default:
-          return 'positive'
+          return 'secondary'
       }
     },
     getBoards () {

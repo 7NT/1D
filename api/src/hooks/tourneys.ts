@@ -48,7 +48,6 @@ function onT2Pairs (state: number, pairs: any[]) {
       })
       // return pairs2
     default:
-      console.log('s', state, pairs)
       return pairs
   }
 }
@@ -64,7 +63,6 @@ async function onT2State (context: any, state: number) {
         p.score = t2.bT === 'MP' ? 50 : 0
         p.update = new Date().getTime()
         p.played = []
-        // console.log(state, p)
       })
       t2.pairs = pairs
       t2.state = state
@@ -82,7 +80,6 @@ async function onT2State (context: any, state: number) {
 
       t2.pairs = pairs
       t2.state = state
-      // console.log(t2)
       return t2
     }
     case -1:  // close
@@ -107,8 +104,8 @@ async function t2Boards (app: any, t2: any) {
 }
 
 async function t2Match (app: any, t2: any, p1: any, p2: any) {
-  p1.state = 1
-  p2.state = 1
+  p1.state = 2
+  p2.state = 2
   p1.played.push(p2.pN)
   p2.played.push(p1.pN)
   p1.update = new Date().getTime()
@@ -173,32 +170,16 @@ function shufflePairs (array: any[]) {
 }
 
 async function onP2State (context: any, p2: any) {
-  const results$ = context.app.service("results")
-
-  console.log(p2)
-  /*
-  let results = await results$.find({
-    query: {
-      $select: ['mix'],
-      bT: table.bT,
-      uId: { $in: uIds }
-    }
-  })
-  */
-  // return
-}
-
-async function onP2PairUp (context: any, p2: any) {
-  // t2: { t2Id: t2._id, p1, p2, bN: t2.bN, bn: 0 }
   let t2 = await context.service.get(context.id)
-  const pairs = t2.pairs.map((p: any) => p.state === 0)
-  return null
+  t2.pairs.forEach((p: any) => {
+    if (p.pN === p2.pN) p.state=p2.state
+  })
+  return t2.pairs
 }
 
 export {
   onCreate,
   onState,
   t2Match,
-  t2Table,
-  t2Players
+  t2Table
 }

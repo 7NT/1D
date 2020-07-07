@@ -57,7 +57,7 @@ async function tableJoin (app: any, user: any, seat: any) {
         seats[i] = nick
         // ready[i] = sId
       } else if (p === nick) {
-        if (!tId.startsWith('@#')) seats[i] = null
+        if (!tId.startsWith('#@')) seats[i] = null
         if (t1.state < 1) ready[i] = 0
       }
       if (seats[i] != null) players++

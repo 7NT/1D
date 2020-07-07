@@ -105,12 +105,12 @@ const onUpdate = (): Hook => {
           },
           paginate: false
         })
-        console.log(result, p12, r2)
+        // console.log(result, p12, r2)
         r2.forEach((p: any) => {
           p12.push({ pair: p.info.pairs[0], score: p.mix })
           p12.push({ pair: p.info.pairs[1], score: score2 - p.mix })
         })
-        console.log(p12, r2)
+        // console.log(p12, r2)
         const tourneys$ = context.app.service("tourneys")
         const t2 = await tourneys$.get(t2Id)
         /*
@@ -124,7 +124,7 @@ const onUpdate = (): Hook => {
         t2.pairs.forEach((p: any) => {
           const scores = p12.filter(p0 => p0.pair === p.pN).map(p1 => p1.score)
           p.boards = scores.length
-          console.log(Boards, p, scores)
+          // console.log(Boards, p, scores)
           if (scores.length > 0) {
             p.score = scores.reduce((a, b) => a + b, 0) / scores.length
             if (p.boards >= Boards) p.state = -1 // closed
@@ -147,7 +147,7 @@ const onUpdate = (): Hook => {
             */
           }
         })
-        console.log('t2', t2)
+        // console.log('t2', t2)
         tourneys$.patch(t2Id, { action: 'update', pairs: t2.pairs })
       }
     }

@@ -55,10 +55,10 @@
                     glossy
                     toggle-color="primary"
                     :options="[
-                {label: 'MP', value: 'MP'},
-                {label: 'IMP', value: 'IMP'},
-                {label: 'XIMP', value: 'XIMP'},
-              ]"
+                      {label: 'MP', value: 'MP'},
+                      {label: 'IMP', value: 'IMP'},
+                      {label: 'XIMP', value: 'XIMP'},
+                    ]"
                   />
                 </div>
                 <div class="col-3">

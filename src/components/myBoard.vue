@@ -1,6 +1,50 @@
 <template padding>
   <div class="boardBox">
     <div class="full-width">
+      <q-slide-item @right="onScore">
+        <template v-slot:right>
+          <q-btn-toggle
+            v-model="t0.bT"
+            push
+            glossy
+            toggle-color="primary"
+            :options="[
+              {label: 'MP', value: 'MP'},
+              {label: 'IMP', value: 'IMP'},
+              {label: 'XIMP', value: 'XIMP'},
+            ]"
+          />
+        </template>
+        <q-item>
+          <q-item-section
+            top
+            class="col-4 gt-sm"
+          >
+            <q-item-label class="q-mt-sm">{{bT}}/#:</q-item-label>
+          </q-item-section>
+          <q-item-section
+            side
+            class="col-10 gt-sm"
+          >
+            <div class="row q-pa-xs q-gutter-xs no-wrap text-orange full-width">
+              <div class="col-4">
+                <q-badge
+                  color="info"
+                  text-color="black"
+                  :label="score(0)"
+                />
+              </div>
+              <div class="col-4">
+                <q-badge
+                  color="info"
+                  text-color="black"
+                  :label="score(1)"
+                />
+              </div>
+            </div>
+          </q-item-section>
+        </q-item>
+      </q-slide-item>
       <q-select
         color="grey-3"
         dense

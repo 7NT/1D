@@ -36,9 +36,12 @@
 
         <q-item>
           <q-item-section avatar>
-            <q-icon name="img:statics/jbicon/svg/mix.svg" />
+            <q-icon name="drag_indicator" />
           </q-item-section>
           <q-item-section>{{bdata}}</q-item-section>
+          <q-item-section avatar>
+            <q-icon name="img:statics/jbicon/svg/mix.svg" />
+          </q-item-section>
         </q-item>
 
       </q-slide-item>

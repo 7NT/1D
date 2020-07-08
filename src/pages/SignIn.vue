@@ -63,7 +63,8 @@
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
-          <q-btn push :label="title" v-close-popup @click="onOk()" />
+          <q-btn push label='Cancel' v-close-popup @click="onOk(true)" />
+          <q-btn push :label="title" v-close-popup @click="onOk(false)" />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -101,50 +102,54 @@ export default {
     isRegistration () {
       return this.$route.name === 'register'
     },
-    onOk () {
-      const credential = this.getCredentials()
-      if (this.isRegistration()) {
-        credential.email = this.$data.email
-        credential.profile = { flag: this.$data.flag, avatar: null }
-
-        auth
-          .register(credential)
-          .then(user => {
-            delete credential.email
-            delete credential.profile
-            return this.login(credential)
-          })
-          .then(user => {
-            this.$q.notify({
-              color: 'positive',
-              message: 'You are now logged in'
-            })
-            this.goTo('lobby')
-          })
-          .catch(err => {
-            console.error(err)
-            this.$q.notify({
-              color: 'positive',
-              message: 'Cannot register, please check your nickname or password'
-            })
-            this.goTo('home')
-          })
+    onOk (cancel) {
+      if (cancel) {
+        this.$router.go(-1)
       } else {
-        this.login(credential)
-          .then(() => {
-            this.$q.notify({
-              color: 'positive',
-              message: 'You are now logged in'
+        const credential = this.getCredentials()
+        if (this.isRegistration()) {
+          credential.email = this.$data.email
+          credential.profile = { flag: this.$data.flag, avatar: null }
+
+          auth
+            .register(credential)
+            .then(user => {
+              delete credential.email
+              delete credential.profile
+              return this.login(credential)
             })
-          })
-          .catch(err => {
-            console.error(err)
-            this.$q.notify({
-              color: 'positive',
-              message: 'Cannot sign in, please check your nickname or password'
+            .then(user => {
+              this.$q.notify({
+                color: 'positive',
+                message: 'You are now logged in'
+              })
+              this.goTo('lobby')
             })
-            this.goTo('home')
-          })
+            .catch(err => {
+              console.error(err)
+              this.$q.notify({
+                color: 'positive',
+                message: 'Cannot register, please check your nickname or password'
+              })
+              this.goTo('home')
+            })
+        } else {
+          this.login(credential)
+            .then(() => {
+              this.$q.notify({
+                color: 'positive',
+                message: 'You are now logged in'
+              })
+            })
+            .catch(err => {
+              console.error(err)
+              this.$q.notify({
+                color: 'positive',
+                message: 'Cannot sign in, please check your nickname or password'
+              })
+              this.goTo('home')
+            })
+        }
       }
     },
     login (credential) {

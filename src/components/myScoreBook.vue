@@ -6,61 +6,51 @@
   >
     <q-item>
       <q-item-section>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >My ScoreBook:</q-item-label>
+        <q-btn-toggle
+          v-model="model"
+          push
+          glossy
+          toggle-color="primary"
+          :options="[
+            {label: 'ScoreBook', value: 0},
+            {label: 'Top Players', value: 1}
+          ]"
+        />
       </q-item-section>
-      <!--
-      <q-item-section
-          side
-          top
-        >
-          <q-btn
-          flat
-          round
-          @click="scoreBookClose()"
-        >
-          <q-icon name="clear" />
-          <q-tooltip
-            anchor="bottom middle"
-            self="top middle"
-            :offset="[0, 20]"
-          >Close</q-tooltip>
-        </q-btn>
-        </q-item-section>
-      -->
     </q-item>
     <q-separator />
+    <template v-if="model===0">
+      <q-expansion-item
+        v-for="r in jsResults"
+        :key="r._id"
+        >
+          <template v-slot:header>
+            <q-item-section>
+            <q-item-label overline>{{ getBoardInfo(r) }}</q-item-label>
+              <q-item-label caption>
+                {{ getContractInfo(r) }}
+                <q-badge
+                outline
+                color='secondary'
+                :text-color="getRScore(r) >= 0 ? 'positive' : 'negative'"
+                :label="getScore(r)"
+                />
+              </q-item-label>
+            </q-item-section>
 
-    <q-expansion-item
-      v-for="r in jsResults"
-      :key="r._id"
-      >
-        <template v-slot:header>
-          <q-item-section>
-           <q-item-label overline>{{ getBoardInfo(r) }}</q-item-label>
-            <q-item-label caption>
-              {{ getContractInfo(r) }}
-              <q-badge
-              outline
-              color='secondary'
-              :text-color="getRScore(r) >= 0 ? 'positive' : 'negative'"
-              :label="getScore(r)"
-              />
-            </q-item-label>
-          </q-item-section>
-
-          <q-item-section side top>
-            <q-item-label caption>{{playedDate(r.played)}}</q-item-label>
-          </q-item-section>
-        </template>
-        <q-card>
-          <q-card-section>
-            <myScoreList :tId='r.tId' :bId='r.bId' />
-          </q-card-section>
-        </q-card>
-    </q-expansion-item>
+            <q-item-section side top>
+              <q-item-label caption>{{playedDate(r.played)}}</q-item-label>
+            </q-item-section>
+          </template>
+          <q-card>
+            <q-card-section>
+              <myScoreList :tId='r.tId' :bId='r.bId' />
+            </q-card-section>
+          </q-card>
+      </q-expansion-item>
+    </template>
+    <template v-else-if="model===1">
+    </template>
   </q-list>
 </template>
 
@@ -74,6 +64,7 @@ export default {
   components: { myScoreList },
 
   data: () => ({
+    model: 0,
     seatName: ['North', 'East', 'South', 'West']
   }),
   computed: {

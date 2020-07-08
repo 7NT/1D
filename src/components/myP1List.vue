@@ -35,7 +35,22 @@
     </q-toolbar>
 
     <q-list bordered>
-      <q-item-label header>{{getRoomName()}} Players:</q-item-label>
+      <q-item>
+        <q-item-section>
+          <q-btn-toggle
+            v-model="model"
+            push
+            dense
+            glossy
+            toggle-color="primary"
+            :options="[
+              {label: 'All Players', value: 0},
+              {label: 'Table Players', value: 1},
+              {label: 'my Friends', value: 2}
+            ]"
+          />
+        </q-item-section>
+      </q-item>
       <q-separator />
       <q-expansion-item
         dense
@@ -158,7 +173,8 @@ export default {
     return {
       searchPlayer: null,
       friends: [],
-      room: '#Lobby'
+      room: '#Lobby',
+      model: 0
     }
   },
   computed: {
@@ -169,21 +185,24 @@ export default {
       return this.jsT1
     },
     myPlayers () {
-      switch (this.jsT1) {
-        case null:
-        case '#Lobby':
-          return this.jsPlayers
-        default:
+      switch (this.model) {
+        case 1:
           return this.jsPlayers.filter(p => p.seat.tId === this.jsT1)
+        case 2:
+          return this.jsPlayers.filter(p => this.isFriend(p.nick))
+        default:
+          return this.jsPlayers
       }
     }
   },
   methods: {
     ...mapActions('jstore', ['setJsMap']),
 
+    /*
     getRoomName () {
       return this.getT1Name(this.jsT1)
     },
+    */
     getT1Name (t) {
       if (t) {
         const t1 = this.jsTableById(t)
@@ -239,6 +258,19 @@ export default {
       if (p.seat && jbIsPlayer(p.seat.sId)) this.onJoin(p, -p.seat.sId)
       else this.onJoin(p, 9)
       this.setJsMap({ key: 'pf', value: p.id })
+    }
+  },
+  watch: {
+    jsT1 (t) {
+      switch (t) {
+        case null:
+        case '':
+        case '#Lobby':
+          this.model = 0
+          break
+        default:
+          this.model = 1
+      }
     }
   },
   created () {

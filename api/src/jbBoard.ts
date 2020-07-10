@@ -23,7 +23,7 @@ export const jbShuffleCards = () => {
   }
 
   let data = n.join()
-  let buff = new Buffer(data)
+  let buff = Buffer.from(data) // new Buffer(data)
   let buff64 = buff.toString('base64')
   // let decodedData = Buffer.from(buff64, 'base64').toString('ascii')
   // console.log(data, buff, buff64, decodedData)

@@ -32,7 +32,7 @@
           @click="sit(9)"
           round
           dense
-          icon="remove_red_eye"
+          :icon="mySeatIcon(9)"
         />
       </q-item-label>
     </q-item-section>
@@ -86,17 +86,11 @@ export default {
     },
     myNick (sId) {
       const nick = this.seatNick(sId)
-      if (nick) {
-        /*
-        if (nick === this.jsPlayer.nick) {
-          if (this.myTable.id !== this.jsPlayer.seat.tId || sId !== this.jsPlayer.seat.sId) this.onSit(sId)
-        }
-        */
-        return nick
-      } else return 'SIT...'
+      if (nick) return nick
+      else return 'SIT...'
     },
     mySeatIcon (sId) {
-      // return `img:statics/jbicon/seats/seat${sId}.svg`
+      // return `img:jbicon/seats/seat${sId}.svg`
       return jbSeatIcon(sId)
     },
     mySeatColor (sId) {
@@ -113,10 +107,10 @@ export default {
     },
     onSit (sId) {
       const seat = {
+        action: 'join',
         tId: this.myTable.id,
         sId
       }
-      console.log('onSit', seat)
       this.$emit('onPlayer', seat)
     }
   },

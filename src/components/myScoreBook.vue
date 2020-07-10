@@ -9,11 +9,12 @@
         <q-btn-toggle
           v-model="model"
           push
+          no-caps
           glossy
           toggle-color="primary"
           :options="[
             {label: 'ScoreBook', value: 0},
-            {label: 'Top Players', value: 1}
+            {label: 'Tourney Points', value: 1}
           ]"
         />
       </q-item-section>
@@ -50,6 +51,7 @@
       </q-expansion-item>
     </template>
     <template v-else-if="model===1">
+
     </template>
   </q-list>
 </template>

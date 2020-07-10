@@ -44,11 +44,12 @@ export default {
       },
       { name: 'ns', label: 'NS', field: 'ns' },
       { name: 'contract', label: 'Contract', field: 'contract', sortable: true },
-      { name: 'by', label: 'By', field: 'by', sortable: true },
+      { name: 'by', label: 'By', field: 'by', sortable: false },
+      { name: 'lead', label: 'lead', field: 'lead', sortable: false },
       { name: 'result', label: 'Result', field: 'result' },
       { name: 'ew', label: 'EW', field: 'ew' }
     ],
-    myColumns: ['ns', 'contract', 'by', ' result', 'ew'],
+    myColumns: ['ns', 'contract', 'by', 'lead', 'ew'],
     myScoreData: []
   }),
   mounted () {
@@ -68,12 +69,13 @@ export default {
             else by = this.seatName[d.info.by - 1] + ': ' + (-d.score)
 
             const contract = d.info.contract + ' ' + result
+            const lead = d.lead
             const ew = d.info.bT === 'MP' ? 100 - d.mix : -d.mix
             const scoreData = {
               ns: d.mix,
               contract,
               by,
-              result,
+              lead,
               ew
             }
             // console.log('d', scoreData)

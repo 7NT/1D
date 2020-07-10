@@ -17,6 +17,7 @@ export default function (app: Application) {
       bV: { type: Number },
       contract: { type: String },
       by: { type: Number },
+      lead: { type: String },
       cc: { type: Array },
       pairs: { type: Array },
       t2: {type: String }

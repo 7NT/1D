@@ -50,7 +50,7 @@
                         dense
                         round
                         icon="live_help"
-                        @click="onCommand"
+                        @click="onCommand(0)"
                       >
                         <q-tooltip>Call Admin...</q-tooltip>
                       </q-btn>
@@ -61,7 +61,7 @@
                         dense
                         round
                         icon="close"
-                        @click="onCommand"
+                        @click="onCommand(-1)"
                       >
                         <q-tooltip>Exit Table</q-tooltip>
                       </q-btn>
@@ -261,7 +261,6 @@ export default {
     ...mapActions('jstore', ['addTable']),
 
     onTable (action) {
-      // console.log(action)
       switch (action.action) {
         case 'sit': {
           this.$emit('onPlayer', action.seat)
@@ -323,13 +322,13 @@ export default {
       }
     },
     onCommand (action) {
-      const cmd = action.target.innerText
-      switch (cmd) {
-        case 'close': {
+      // const cmd = action.target.innerText
+      switch (action) {
+        case -1: {
           this.onTable({ action: 'sit', seat: null })
           break
         }
-        case 'live_help': {
+        case 0: {
           break
         }
         default:
@@ -380,7 +379,7 @@ export default {
 <style scoped>
 .jbtable {
   margin: 2px;
-  background-image: url("/statics/imgs/jbbg.jpeg");
+  background-image: url("/imgs/jbbg.jpeg");
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */

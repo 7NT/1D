@@ -42,6 +42,7 @@
             push
             dense
             glossy
+            no-caps
             toggle-color="primary"
             :options="[
               {label: 'All Players', value: 0},

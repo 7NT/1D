@@ -3,23 +3,8 @@
     <div class="full-width">
       <q-slide-item
         @left="setBT"
-        @right="setBT"
       >
         <template v-slot:left>
-          <q-btn-toggle
-            v-model="bT"
-            dense
-            push
-            glossy
-            toggle-color="primary"
-            :options="[
-              {label: 'MP', value: 'MP'},
-              {label: 'IMP', value: 'IMP'},
-              {label: 'XIMP', value: 'XIMP'},
-            ]"
-          />
-        </template>
-        <template v-slot:right>
           <q-btn-toggle
             v-model="bT"
             dense
@@ -40,34 +25,11 @@
           </q-item-section>
           <q-item-section>{{bdata}}</q-item-section>
           <q-item-section avatar>
-            <q-icon name="img:statics/jbicon/svg/mix.svg" />
+            <q-icon name="img:jbicon/svg/mix.svg" />
           </q-item-section>
         </q-item>
 
       </q-slide-item>
-      <!--
-      <q-select
-        color="grey-3"
-        dense
-        square
-        outlined
-        label-color="orange"
-        v-model="bT"
-        :options="options_bT"
-        options-dense
-        options-dark
-        behavior="menu"
-        menu-shrink
-        :label="bdata"
-      >
-        <template v-slot:append>
-          <q-icon
-            name="img:statics/jbicon/svg/mix.svg"
-            color="orange"
-          />
-        </template>
-      </q-select>
-      -->
       <q-list
         dense
         bordered
@@ -90,7 +52,7 @@
                 <q-btn
                   dense
                   size="xs"
-                  icon="img:statics/jbicon/seats/seat13.svg"
+                  icon="img:jbicon/seats/seat13.svg"
                 >
                   <q-badge
                     class="cc"
@@ -129,7 +91,7 @@
                 <q-btn
                   dense
                   size="xs"
-                  icon="img:statics/jbicon/seats/seat24.svg"
+                  icon="img:jbicon/seats/seat24.svg"
                 >
                   <q-badge
                     class="cc"
@@ -169,11 +131,6 @@
         </q-item>
 
         <q-slide-item @right="onScore">
-          <!--
-          <template v-slot:right>
-            <q-icon name="alarm" />Score Reset?
-          </template>
-          -->
           <q-item>
             <q-item-section
               top
@@ -242,7 +199,7 @@ export default {
     bdata: function () {
       try {
         if (this.jsTable.board) {
-          return this.jsTable.board.bT + ': ' + this.jsTable.board.bN
+          return this.jsTable.board.bT + ': ' + this.jsTable.board.bId + '#' + this.jsTable.board.bN
         }
       } catch (err) { }
       return 'Board'
@@ -290,7 +247,7 @@ export default {
     },
     onCCView (n) {
       const cc = this.cc[n]
-      openURL(`http://localhost:8080/statics/cc/${cc}.pdf`)
+      openURL(`http://localhost:8080/cc/${cc}.pdf`)
     },
     score (n) {
       return this.myScores[n] + '/' + this.myBoards[n]

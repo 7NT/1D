@@ -54,7 +54,7 @@
                 top
                 avatar
               >
-                <q-icon :name='`img:statics/flags/4x3/${flag}.svg`' />
+                <q-icon :name='`img:flags/4x3/${flag}.svg`' />
                 <q-tooltip>
                   2 letter ISO 3166 country flag codes
                 </q-tooltip>

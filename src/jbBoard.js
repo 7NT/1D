@@ -97,7 +97,7 @@ const jbCard52 = (c52) => {
 
 export const jbCardImg = (card) => {
   // const card = jbCard52(c52)
-  if (card) return `../statics/cards/${card.rank + card.suit}.svg`
+  if (card) return `../cards/${card.rank + card.suit}.svg`
   else return null
 }
 

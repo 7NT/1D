@@ -22,10 +22,10 @@
         <q-list>
           <q-item-section>
             <div class="row items-end justify-around">
-              <q-icon size='sm' name='img:statics/jbicon/seats/seat13.svg' left />
+              <q-icon size='sm' name='img:jbicon/seats/seat13.svg' left />
               <q-badge outline color="black" :label="tricks(0)" align="middle" />
               <q-separator vertical />
-              <q-icon size='sm' name='img:statics/jbicon/seats/seat24.svg' right />
+              <q-icon size='sm' name='img:jbicon/seats/seat24.svg' right />
               <q-badge outline color="black" :label="tricks(1)" align="middle" />
             </div>
           </q-item-section>
@@ -84,7 +84,7 @@ export default {
     cardback (c) {
       let card = ''
       card = this.isWinner(c) ? 'Blue' : 'Red'
-      return `statics/cards/${card}_Back.svg`
+      return `cards/${card}_Back.svg`
     },
     trickClass (c, i) {
       const w = this.isWinner(c)

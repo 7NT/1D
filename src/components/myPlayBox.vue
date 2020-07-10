@@ -63,7 +63,7 @@ export default {
     cardImg (n) {
       const x = jbSeatX(n, this.mySeat.sId)
       const c = this.card4.filter(c => c.sId === x)[0] || null
-      if (c) return `statics/cards/${c.card.rank + c.card.suit}.svg`
+      if (c) return `cards/${c.card.rank + c.card.suit}.svg`
       else return null
     },
     zIndex (n) {

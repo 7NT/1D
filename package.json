@@ -3,8 +3,6 @@
   "version": "0.0.1",
   "description": "1D app",
   "productName": "1D",
-  "cordovaId": "org.cordova.quasar.app",
-  "capacitorId": "",
   "author": "7NT <jun@jbridge.net>",
   "private": true,
   "scripts": {
@@ -17,6 +15,7 @@
     "@feathersjs/socketio-client": "^4.5.4",
     "@quasar/extras": "^1.8.2",
     "axios": "^0.19.2",
+    "core-js": "^3.0.0",
     "moment": "^2.26.0",
     "quasar": "^1.12.8",
     "say": "^0.16.0",
@@ -24,7 +23,7 @@
     "vuex-persistedstate": "^3.0.1"
   },
   "devDependencies": {
-    "@quasar/app": "^1.9.6",
+    "@quasar/app": "^2.0.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.1.0",
     "eslint-config-standard": "^14.1.1",
@@ -41,9 +40,15 @@
     "yarn": ">= 1.21.1"
   },
   "browserslist": [
-    "last 1 version, not dead, ie >= 11"
+    "last 10 Chrome versions",
+    "last 10 Firefox versions",
+    "last 4 Edge versions",
+    "last 7 Safari versions",
+    "last 8 Android versions",
+    "last 8 ChromeAndroid versions",
+    "last 8 FirefoxAndroid versions",
+    "last 10 iOS versions",
+    "last 5 Opera versions"
   ],
-  "resolutions": {
-    "@babel/parser": "7.7.5"
-  }
+  "resolutions": {}
 }

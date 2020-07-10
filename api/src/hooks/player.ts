@@ -8,7 +8,6 @@ import { jbMIX } from '../jbBoard'
 const onSit = (): Hook => {
   return async (context: HookContext) => {
     const { seat } = context.data
-    console.log('sit', seat)
     if (seat) context.data = await playerSit(context, seat)
     return Promise.resolve(context)
   }
@@ -26,7 +25,7 @@ async function playerSit (context: any, seat: any) {
       }
     }
 
-    if (seat.tId0 && !seat.tId) {  //go to lobby
+    if (seat.action === 'part') {  //go to lobby
       context.data.seat.tId = null
       context.data.seat.sId = 0
     } else {
@@ -121,6 +120,7 @@ const onLogout = (): Hook => {
     const pId = context.id
     if (pId) {
       let player = await context.service.get(pId)
+      // console.log(context, player)
       if (player) {
         const users$ = context.app.service('users')
         const { seat }  = player

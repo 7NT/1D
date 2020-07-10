@@ -145,13 +145,15 @@ export default {
     ...mapActions('jstore', ['setJsMap']),
 
     onPlayer (seat) {
-      if (seat) {
-        if (this.mySeat) {
-          seat.tId0 = this.mySeat.tId
-          seat.sId0 = this.mySeat.sId
-        }
-        players$.patch(this.jsPlayer.id, { seat })
+      if (!seat) {
+        this.rId = 0
+        seat = { action: 'part', tId: null, sId: 0 }
       }
+      if (this.mySeat) {
+        seat.tId0 = this.mySeat.tId
+        seat.sId0 = this.mySeat.sId
+      }
+      players$.patch(this.jsPlayer.id, { seat })
     },
     isOpen (r) {
       switch (r.id) {

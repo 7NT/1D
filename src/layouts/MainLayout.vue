@@ -13,17 +13,21 @@
         />
 
         <q-toolbar-title>
-          <q-icon name="img:statics/jbicon/seats/seat0.svg" />1♦ App
+          <q-icon name="img:jbicon/seats/seat0.svg" />1♦ App
         </q-toolbar-title>
 
-        <div>1D v{{ $q.version }}</div>
+        <div>v{{ $q.version }}</div>
+        <q-btn flat round @click="goTo('home')">
+          <q-icon name="home" />
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Lobby</q-tooltip>
+        </q-btn>
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
         -->
         <q-btn flat @click="goTo('signin')" v-show="!authenticated">Sign In</q-btn>
         <q-btn flat @click="goTo('register')" v-show="!authenticated">Register</q-btn>
         <q-btn flat round @click="goTo('lobby')" v-if="authenticated">
-          <q-icon name="home" />
+          <q-icon name="local_play" />
           <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Lobby</q-tooltip>
         </q-btn>
         <q-btn

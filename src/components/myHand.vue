@@ -118,7 +118,7 @@ export default {
       return jbSeatX(this.handId, this.mySeat.sId)
     },
     seatIcon () {
-      return `img:statics/jbicon/seats/seat${this.seatX}.svg`
+      return `img:jbicon/seats/seat${this.seatX}.svg`
     },
     handPlayer () {
       const nick = this.jsTable.seats[this.seatX - 1]
@@ -301,7 +301,7 @@ export default {
       })
     },
     cardImg (c52) {
-      // return `statics/cards/${n52.rank + n52.suit}.svg`
+      // return `cards/${n52.rank + n52.suit}.svg`
       return jbCardImg(c52)
     },
     cardCheck (play) {
@@ -375,7 +375,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   text-transform: none;
-  background-image: url("/statics/imgs/jbpbar.png");
+  background-image: url("/imgs/jbpbar.png");
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 1;

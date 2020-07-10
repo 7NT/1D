@@ -480,6 +480,7 @@ async function onResult(context: any) {
         bV: jbVulN(t1.board.bN),
         contract: getContract(t1.bids.info),
         by: t1.bids.info.by,
+        lead: getLead(t1.plays),
         cc: t1.cc,
         t2: t1.t2 ? t1.t2.t2Id : null,
         pairs: t1.t2 ? [t1.t2.p1.pN, t1.t2.p2.pN] : null
@@ -505,6 +506,14 @@ function getContract(info: any) {
     else if (info.X) c += 'X'
     return c
   }
+}
+
+function getLead(plays: any) {
+  try {
+    const card = plays.data[0].card
+    return card.suit + card.rank
+  } catch (err) {}
+  return null
 }
 
 function onScore(tdata: any) {

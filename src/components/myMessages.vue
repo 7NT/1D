@@ -2,28 +2,30 @@
   <div
     class='fit'
     v-if='!!sendTo'
+    v-show='!$q.fullscreen.isActive'
   >
-    <q-card
-      flat
-      bordered
-    >
-      <div class="text-overline text-orange-9">{{msgFrom}} Messages:</div>
-      <q-separator
-        color="orange"
-        inset
-      />
-      <div class='messages'>
-        <q-chat-message
-          v-for="chat in myChats"
-          :key='chat.id'
-          :name='chat.from.nick'
-          :avatar='getAvatar(chat.from.id)'
-          :text='[chat.text]'
-          :stamp='chatDate(chat.created)'
-          :sent='isSent(chat.from.id) ? true : false'
-        />
-      </div>
-    </q-card>
+    <q-expansion-item
+        expand-separator
+        icon="message"
+        :label='msgHeader'
+      >
+      <q-card
+        flat
+        bordered
+      >
+        <div class='messages'>
+          <q-chat-message
+            v-for="chat in myChats"
+            :key='chat.id'
+            :name='chat.from.nick'
+            :avatar='getAvatar(chat.from.id)'
+            :text='[chat.text]'
+            :stamp='chatDate(chat.created)'
+            :sent='isSent(chat.from.id) ? true : false'
+          />
+        </div>
+      </q-card>
+    </q-expansion-item>
   </div>
 </template>
 
@@ -49,10 +51,10 @@ export default {
           .slice(-10).reverse()
       } else return this.jsChats.filter(m => m.to === this.sendTo).slice(-10).reverse()
     },
-    msgFrom () {
-      if (this.sendTo.startsWith('@')) return '@Private'
-      else if (this.sendTo === '#Lobby') return '#Lobby'
-      else return '#Table'
+    msgHeader () {
+      if (this.sendTo.startsWith('@')) return '@Private Messages:'
+      else if (this.sendTo === '#Lobby') return '#Lobby Messages:'
+      else return '#Table Messages:'
     }
   },
   methods: {
@@ -75,7 +77,7 @@ export default {
 </script>
 <style scoped>
 .box {
-  max-height: 50vh;
+  max-height: 25vh;
 }
 .messages {
   width: 100%;

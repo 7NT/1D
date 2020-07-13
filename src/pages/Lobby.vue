@@ -5,8 +5,8 @@
   >
     <!-- content -->
     <div class="column">
-      <div class="col-8">
-        <q-card>
+      <div class="col">
+        <q-card class='fit'>
           <q-tabs
             v-model="rId"
             align="left"
@@ -16,6 +16,7 @@
             inline-label
             indicator-color="yellow"
             class="bg-secondary text-white shadow-2"
+            v-show='!$q.fullscreen.isActive'
           >
             <q-tab
               v-for="r in rooms"
@@ -30,7 +31,7 @@
             keep-alive
             v-model="rId"
             animated
-            class="bg-teal"
+            class="bg-teal box"
           >
             <q-tab-panel :name="0">
               <div class="fit">
@@ -49,25 +50,23 @@
               </div>
             </q-tab-panel>
 
-            <q-tab-panel :name="1">
-              <div class="fit">
-                <myPlayTable
-                  :jsPlayer="jsPlayer"
-                  v-on:onPlayer="onPlayer"
-                />
-              </div>
+            <q-tab-panel :name="1" class='no-margin no-padding no-scroll'>
+              <myPlayTable
+                :jsPlayer="jsPlayer"
+                v-on:onPlayer="onPlayer"
+              />
             </q-tab-panel>
 
             <q-tab-panel :name="2">
-              <div class="t2">
+              <div class='fit'>
                 <myTourney :jsPlayer="jsPlayer" />
               </div>
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
       </div>
-      <q-space />
-      <div class="col-3 messages">
+      <div class="col-auto">
+        <q-space />
         <myMessages :sendTo="rooms[rId].room" />
       </div>
     </div>
@@ -200,14 +199,10 @@ export default {
 
 <style scoped>
 .q-panel {
-  max-height: 400px;
+  /* height: 450px; */
   overflow-y: auto;
 }
-.messages {
-  overflow-x: hidden;
-}
-.t2 {
-  height: 60vh;
-  width: 100%;
+.box {
+  border: 1px solid silver
 }
 </style>

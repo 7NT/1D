@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar class="bg-primary text-white rounded-borders">
+  <q-toolbar class="bg-primary text-white rounded-borders" v-show='!$q.fullscreen.isActive'>
     <q-btn round dense flat icon="chat" class="q-mr-xs" />
     <q-space />
     <div class="full-width">

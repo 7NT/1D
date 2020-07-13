@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <q-header elevated v-show='!$q.fullscreen.isActive'>
       <q-toolbar>
         <q-btn
           flat
@@ -24,8 +24,8 @@
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
         -->
-        <q-btn flat @click="goTo('signin')" v-show="!authenticated">Sign In</q-btn>
-        <q-btn flat @click="goTo('register')" v-show="!authenticated">Register</q-btn>
+        <q-btn flat icon="login" @click="goTo('signin')" v-show="!authenticated">Sign In</q-btn>
+        <q-btn flat icon="account_box" @click="goTo('register')" v-show="!authenticated">Register</q-btn>
         <q-btn flat round @click="goTo('lobby')" v-if="authenticated">
           <q-icon name="local_play" />
           <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Lobby</q-tooltip>
@@ -48,13 +48,6 @@
         <q-btn flat round @click="signout" v-show="authenticated">
           <q-icon name="exit_to_app" />
           <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Signout</q-tooltip>
-        </q-btn>
-        <q-btn
-          color="secondary"
-          @click="$q.fullscreen.toggle()"
-          :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-        >
-          <q-tooltip>Full Screen</q-tooltip>
         </q-btn>
       </q-toolbar>
     </q-header>

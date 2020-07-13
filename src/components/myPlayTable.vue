@@ -1,6 +1,6 @@
 <template padding>
   <div v-if="jsTable">
-    <div class="column jbtable">
+    <div class="column jbtable fit">
       <div class="col">
         <div class="row no-wrap">
           <div class="col-4 items-start">
@@ -48,7 +48,6 @@
                         size="12px"
                         flat
                         dense
-                        round
                         icon="live_help"
                         @click="onCommand(0)"
                       >
@@ -59,11 +58,21 @@
                         size="12px"
                         flat
                         dense
-                        round
                         icon="close"
                         @click="onCommand(-1)"
                       >
                         <q-tooltip>Exit Table</q-tooltip>
+                      </q-btn>
+                      <q-btn
+                        class="gt-xs"
+                        size="12px"
+                        flat
+                        dense
+                        color="secondary"
+                        @click="$q.fullscreen.toggle()"
+                        :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+                      >
+                        <q-tooltip>Full Screen</q-tooltip>
                       </q-btn>
                       <q-btn
                         size="12px"
@@ -379,6 +388,7 @@ export default {
 <style scoped>
 .jbtable {
   margin: 2px;
+  min-height: 393px;
   background-image: url("/imgs/jbbg.jpeg");
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */

@@ -177,8 +177,6 @@ export default {
 
   data () {
     return {
-      bT: null,
-      options_bT: ['MP', 'IMP', 'XIMP'],
       boardData: [
         { name: 'System:', ns: 'NS: ...', ew: 'EW: ...' },
         { name: 'Trick:', ns: '0', ew: '0' },
@@ -196,6 +194,15 @@ export default {
   },
   computed: {
     ...mapGetters('jstore', ['jsResultById']),
+
+    bT: {
+      get: function () {
+        return this.jsTable.bT
+      },
+      set: function (value) {
+        this.onBT(value)
+      }
+    },
     bdata: function () {
       try {
         if (this.jsTable.board) {
@@ -247,7 +254,7 @@ export default {
     },
     onCCView (n) {
       const cc = this.cc[n]
-      openURL(`http://localhost:8080/cc/${cc}.pdf`)
+      openURL(`http://www.jbridge.net/cc/${cc}.pdf`)
     },
     score (n) {
       return this.myScores[n] + '/' + this.myBoards[n]

@@ -148,9 +148,10 @@ export default {
     },
     isMyPlay () {
       if (this.handState === 2) {
+        if (!this.isHandTurn) return false
         return this.isDummy
           ? this.jsPlayer.seat.sId === this.jsTable.bids.info.by
-          : this.isHandTurn
+          : true
       } else return false
     },
     handCards () {
@@ -171,6 +172,7 @@ export default {
       else if (this.handState > 2) return true
       else if (this.mySeat.sId === 9) return true
       else if (this.isDummy) return true
+      else if (this.isDeclarer) return (this.jsTable.bids.info.by) % 2 === this.mySeat.sId % 2
       else return this.seatX === Math.abs(this.mySeat.sId)
     },
     isReady () {

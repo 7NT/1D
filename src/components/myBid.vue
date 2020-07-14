@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bbox column"
+    class="fit column no-margin no-padding"
     v-if="isMyTurn()"
   >
     <div class="col row">
@@ -9,17 +9,17 @@
           square
           glossy
           unelevated
+          hide-icon
           v-for="n of 7"
           :key="n"
           v-show="bidN(n)"
           :label="n"
           label-position="left"
-          icon="null"
-          active-icon="null"
           type="button"
           direction="up"
           class="bg-teal"
-          style="width:28px"
+          padding="sm"
+          style="width:30px"
         >
           <q-fab-action
             v-for="s in suits"
@@ -33,6 +33,7 @@
             <q-tooltip>{{n}} {{ getSuitName(s.suit) }}</q-tooltip>
           </q-fab-action>
         </q-fab>
+        <q-separator spaced inset vertical />
       </q-btn-group>
     </div>
     <q-separator
@@ -236,7 +237,7 @@ export default {
 }
 .bbox {
   height: 120px;
-  width: 210px;
+  min-width: 210px;
   margin: auto;
   border: 1px solid tomato;
   align-self: flex-start;

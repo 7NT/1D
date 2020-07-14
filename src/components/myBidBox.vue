@@ -1,41 +1,39 @@
 <template>
-  <div>
-    <div class='q-ma-sm'>
-      <q-table
-        dense
-        square
-        hide-bottom
-        separator="cell"
-        :data="myBidData"
-        :columns="columns"
-        row-key="row"
+  <div class='no-margin no-padding'>
+    <q-table
+      dense
+      square
+      hide-bottom
+      separator="cell"
+      :data="myBidData"
+      :columns="columns"
+      row-key="row"
+    >
+      <q-tr
+        slot="header"
+        slot-scope="props"
+        :props="props"
       >
-        <q-tr
-          slot="header"
-          slot-scope="props"
-          :props="props"
+        <q-th
+          :class="getVColor(col.seat)"
+          v-for="col in props.cols"
+          :key="col.seat"
         >
-          <q-th
-            :class="getVColor(col.seat)"
-            v-for="col in props.cols"
-            :key="col.seat"
-          >
-            <!--{{ props.cols[col.seat - 1].field }}-->
-            {{ col.field }}
-            <q-tooltip>{{ col.label }}</q-tooltip>
-          </q-th>
-        </q-tr>
-        <template v-slot:body-cell="props">
-          <q-td
-            :props="props"
-            :class="getBColor(props.value)"
-          >
-            {{ getBid(props.value) }}
-            <q-tooltip>{{ getAlert(props.value) }}</q-tooltip>
-          </q-td>
-        </template>
-      </q-table>
-    </div>
+          <!--{{ props.cols[col.seat - 1].field }}-->
+          {{ col.field }}
+          <q-tooltip>{{ col.label }}</q-tooltip>
+        </q-th>
+      </q-tr>
+      <template v-slot:body-cell="props">
+        <q-td
+          :props="props"
+          :class="getBColor(props.value)"
+        >
+          {{ getBid(props.value) }}
+          <q-tooltip>{{ getAlert(props.value) }}</q-tooltip>
+        </q-td>
+      </template>
+    </q-table>
   </div>
 </template>
 
@@ -174,6 +172,7 @@ export default {
     getBColor (bdata) {
       if (!bdata) return 'bg-grey'
       else if (bdata.bid === '?') return 'bg-warning'
+      else if (bdata.bid.endsWith('♦') || bdata.bid.endsWith('♥')) return 'col-3 red'
       else {
         if (bdata.alert) return 'col-3 vul3'
         else return 'col-3'
@@ -189,6 +188,7 @@ export default {
 .bidbox {
   min-width: 160px;
   min-height: 160px;
+  overflow-x: hidden;
 }
 .vul0 {
   border: 2px solid silver;
@@ -217,5 +217,9 @@ table tbody {
 }
 table td {
   text-align: center;
+  font-size: 18px;
+}
+.red {
+  color: red;
 }
 </style>

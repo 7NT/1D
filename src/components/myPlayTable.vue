@@ -11,14 +11,13 @@
             ></myBoard>
           </div>
           <div class="col-5">
-            <div class="column">
+            <div class="column justify-start">
               <myHand
                 :handId="1"
                 :jsPlayer="jsPlayer"
                 :jsTable="jsTable"
                 v-on:onTable="onTable"
-                class="myHand justify-start"
-                offset="[10, 10]"
+                class="myHand"
               />
             </div>
           </div>
@@ -164,7 +163,7 @@
               />
             </div>
           </div>
-          <div class="col-6">
+          <div class="col-5">
             <div class="column">
               <myHand
                 :handId="3"
@@ -175,7 +174,7 @@
               />
             </div>
           </div>
-          <div class="col-3 column">
+          <div class="col-4 column">
             <div class="justify-start">
               <myBid
                 :jsPlayer="jsPlayer"

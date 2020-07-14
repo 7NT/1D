@@ -19,7 +19,7 @@
         <div>v{{ $q.version }}</div>
         <q-btn flat round @click="goTo('home')">
           <q-icon name="home" />
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Lobby</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 10]">Home</q-tooltip>
         </q-btn>
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
@@ -28,7 +28,7 @@
         <q-btn flat icon="account_box" @click="goTo('register')" v-show="!authenticated">Register</q-btn>
         <q-btn flat round @click="goTo('lobby')" v-if="authenticated">
           <q-icon name="local_play" />
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Lobby</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 10]">Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
@@ -43,11 +43,11 @@
           <q-avatar class="gt-xs">
             <img :src="user.profile.avatar" />
           </q-avatar>
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Profile</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 10]">Profile</q-tooltip>
         </q-btn>
         <q-btn flat round @click="signout" v-show="authenticated">
           <q-icon name="exit_to_app" />
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 20]">Signout</q-tooltip>
+          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 10]">Signout</q-tooltip>
         </q-btn>
       </q-toolbar>
     </q-header>

@@ -1,21 +1,28 @@
 <template>
-  <div class="row items-end" v-if="isVisible">
+  <div class="row items-end">
     <div class="column">
       <div class="row self-start no-wrap">
         <q-card
           flat
           class="transparent"
         >
-          <q-card-section>
-            <div class="hand hhand-compact active-hand full-width">
-              <span v-for="(c, i) of playedCards" :key="`${i}`" class="card">
-                <img :src="cardback(c)" :class="trickClass(c, i)" :style="`z-index:${i}`" />
-                <q-tooltip content-class="bg-info" anchor="top right" self="bottom left">
-                  <myPlayBox :jsPlayer="jsPlayer" :jsTable="jsTable" :review="true" />
-                </q-tooltip>
-              </span>
-            </div>
-          </q-card-section>
+          <template v-if="myState===2">>
+            <q-card-section>
+              <div class="hand hhand-compact active-hand full-width">
+                <span v-for="(c, i) of playedCards" :key="`${i}`" class="card">
+                  <img :src="cardback(c)" :class="trickClass(c, i)" :style="`z-index:${i}`" />
+                  <q-tooltip content-class="bg-info" anchor="top right" self="bottom left">
+                    <myPlayBox :jsPlayer="jsPlayer" :jsTable="jsTable" :review="true" />
+                  </q-tooltip>
+                </span>
+              </div>
+            </q-card-section>
+          </template>
+          <template v-else>
+            <q-card-section v-show='result'>
+              <myScoreList :tId='result.tId' :bId='result.bId' />
+            </q-card-section>
+          </template>
         </q-card>
       </div>
       <div class="pbar">
@@ -39,21 +46,22 @@
 import { jbIsPlayer } from 'src/jbPlayer'
 
 import myPlayBox from 'src/components/myPlayBox'
+import myScoreList from 'src/components/myScoreList'
 
 export default {
   name: 'myTricks',
   props: ['jsPlayer', 'jsTable'],
   data () {
     return {
-      offset: 0
-      // myPlayedCards: []
+      offset: 0,
+      result: null
     }
   },
-  components: { myPlayBox },
+  components: { myPlayBox, myScoreList },
   computed: {
     // ...mapGetters('jstore', ['jsPlayer', 'jsTable']),
-    isVisible () {
-      return this.jsTable.state > 1 || this.jsTable.state < 0
+    myState () {
+      return this.jsTable.state
     },
     playedCards () {
       return this.jsTable.plays.data
@@ -92,7 +100,16 @@ export default {
       return t
     }
   },
-  watch: {},
+  watch: {
+    myState (s) {
+      if (s === 3) { // review
+        this.result = {
+          tId: this.jsTable.id,
+          bId: this.jsTable.board._id
+        }
+      }
+    }
+  },
   mounted () {}
 }
 </script>
@@ -101,7 +118,7 @@ export default {
   max-height: 60px;
 }
 .pbar {
-  min-width: 275px;
+  min-width: 200px;
   height: 32px;
   margin-top: -50px;
   align-items: flex-start;

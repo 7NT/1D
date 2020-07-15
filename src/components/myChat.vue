@@ -1,6 +1,6 @@
 <template>
   <q-toolbar class="bg-primary text-white rounded-borders" v-show='!$q.fullscreen.isActive'>
-    <q-btn round dense flat icon="chat" class="q-mr-xs" />
+    <q-btn round dense flat :icon='micIcon' @click='onMic' class="q-mr-xs" />
     <q-space />
     <div class="full-width">
       <q-input
@@ -8,31 +8,37 @@
         dense
         standout
         autofocus
+        clearable
         color="silver"
         label="Chat"
         v-model="chat"
+        icon="mic"
+        clear-icon="clear"
         @keypress="onChat"
-      >
-        <template v-slot:append>
-          <q-icon v-if="!chat" name="chat" />
-          <q-icon v-else name="clear" class="cursor-pointer" @click="!chat" />
-        </template>
-      </q-input>
+      />
     </div>
   </q-toolbar>
 </template>
 
 <script>
 import { chats$ } from 'src/api'
+import SpeechToText from '../services/speech-to-text'
 
 export default {
   name: 'myChat',
   props: ['sendTo'],
 
   data: () => ({
-    chat: null
+    chat: null,
+    isSpeaking: false,
+    speech: '',
+    speechService: {}
   }),
-  computed: {},
+  computed: {
+    micIcon () {
+      return this.isSpeaking ? 'mic' : 'mic_off'
+    }
+  },
   methods: {
     onChat (event) {
       if (event.key === 'Enter') this.send()
@@ -47,7 +53,32 @@ export default {
         console.log(chatData)
         this.chat = null
       }
+    },
+    onMic () {
+      this.isSpeaking = true
+      this.speechService.speak().subscribe(
+        (result) => {
+          this.speech = result
+          this.$emit('speech', this.speech)
+          this.isSpeaking = false
+          console.log('Result', result)
+        },
+        (error) => {
+          console.log('Error', error)
+          this.isSpeaking = false
+        },
+        () => {
+          this.isSpeaking = false
+        }
+      )
+      console.log('speechService started')
+    },
+    offMic () {
+      this.isSpeaking = false
     }
+  },
+  created () {
+    this.speechService = new SpeechToText()
   }
 }
 </script>

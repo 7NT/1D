@@ -253,9 +253,11 @@ export default {
           return 'pass'
         case 'x':
         case 'double':
-          return 'X'
+          if (this.X) return 'X'
+          else return null
         case 're-double':
-          return 'XX'
+          if (this.XX) return 'XX'
+          else return null
         case '1':
         case 'one':
         case '2':
@@ -275,21 +277,26 @@ export default {
             case 'c':
             case 'club':
             case 'clubs':
-              return bid12[0] + '♣'
+              if (this.isBid(bid12[0], 1)) return bid12[0] + '♣'
+              else return null
             case 'd':
             case 'diamond':
             case 'diamonds':
-              return bid12[0] + '♦'
+              if (this.isBid(bid12[0], 2)) return bid12[0] + '♦'
+              else return null
             case 'h':
             case 'heart':
             case 'hearts':
-              return bid12[0] + '♥'
+              if (this.isBid(bid12[0], 3)) return bid12[0] + '♥'
+              else return null
             case 's':
             case 'spade':
             case 'spades':
-              return bid12[0] + '♠'
+              if (this.isBid(bid12[0], 4)) return bid12[0] + '♠'
+              else return null
             case 'no-trump':
-              return bid12[0] + 'NT'
+              if (this.isBid(bid12[0], 5)) return bid12[0] + 'NT'
+              else return null
             default: return null
           }
         }

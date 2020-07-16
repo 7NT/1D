@@ -369,7 +369,7 @@ export default {
 
 <style scoped>
 .pbar {
-  min-width: 275px;
+  min-width: 280px;
   height: 34px;
   margin-bottom: 0px;
   align-items: flex-start;

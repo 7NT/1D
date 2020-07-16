@@ -7,7 +7,7 @@ var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
 var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
 var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
 
-var bids = ['pass', 'double', 're-double', '1', '2', '3', '4', '5', '6', '7', 'club', 'diamond', 'heart', 'spade', 'no trump']
+var bids = ['pass', 'double', 're-double', '1', '2', '3', '4', '5', '6', '7', 'club', 'diamond', 'heart', 'spade', 'no-trump']
 var plays = ['2 of', '3 of', '4 of', '5 of', '6 of', '7 of', '8 of', '9 of', '10 of', 'jack of', 'queen of', 'king of', 'ace of', 'clubs', 'diamonds', 'hearts', 'spades']
 
 var grammar = '#JSGF V1.0; grammar bids; public <bid> = ' + bids.join(' | ') + ' ;'

@@ -226,7 +226,6 @@ export default {
           this.speech = result
           // this.$emit('speech', this.speech)
           this.isSpeaking = false
-          console.log('bid', result)
           if (result) {
             this.$q.notify({ type: 'info', caption: 'Bid:', message: result })
             const bid = this.checkBidding(result)
@@ -247,7 +246,7 @@ export default {
       console.log('speechService started')
     },
     checkBidding (bid) {
-      const bid12 = bid.split()
+      const bid12 = bid.split(' ')
       switch (bid12[0]) {
         case 'p':
         case 'pass':
@@ -257,38 +256,38 @@ export default {
           return 'X'
         case 're-double':
           return 'XX'
-        case 1:
+        case '1':
         case 'one':
-        case 2:
+        case '2':
         case 'two':
-        case 3:
+        case '3':
         case 'three':
-        case 4:
+        case '4':
         case 'four':
-        case 5:
+        case '5':
         case 'five':
-        case 6:
+        case '6':
         case 'six':
-        case 7:
+        case '7':
         case 'even':
         {
           switch (bid12[1]) {
             case 'c':
             case 'club':
             case 'clubs':
-              return bid12[0] + 'C'
+              return bid12[0] + '♣'
             case 'd':
             case 'diamond':
             case 'diamonds':
-              return bid12[0] + 'D'
+              return bid12[0] + '♦'
             case 'h':
             case 'heart':
             case 'hearts':
-              return bid12[0] + 'H'
+              return bid12[0] + '♥'
             case 's':
             case 'spade':
             case 'spades':
-              return bid12[0] + 'S'
+              return bid12[0] + '♠'
             case 'no-trump':
               return bid12[0] + 'NT'
             default: return null

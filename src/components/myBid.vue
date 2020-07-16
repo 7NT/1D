@@ -193,8 +193,6 @@ export default {
         })
         this.bidding = ''
         this.alert = null
-        // const tts = jb.jbVoiceName(bid)
-        // say.speak(tts)
       }
     },
     onAlert2 () {
@@ -229,10 +227,13 @@ export default {
           // this.$emit('speech', this.speech)
           this.isSpeaking = false
           console.log('bid', result)
-          const bid = this.checkBidding(result)
-          if (bid) {
-            this.bidding = bid
-            this.onBid2()
+          if (result) {
+            this.$q.notify({ type: 'info', caption: 'Bid:', message: result })
+            const bid = this.checkBidding(result)
+            if (bid) {
+              this.bidding = bid
+              this.onBid2()
+            }
           }
         },
         error => {
@@ -257,12 +258,20 @@ export default {
         case 're-double':
           return 'XX'
         case 1:
+        case 'one':
         case 2:
+        case 'two':
         case 3:
+        case 'three':
         case 4:
+        case 'four':
         case 5:
+        case 'five':
         case 6:
-        case 7: {
+        case 'six':
+        case 7:
+        case 'even':
+        {
           switch (bid12[1]) {
             case 'c':
             case 'club':

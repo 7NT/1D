@@ -7,7 +7,7 @@
           v-if="isVisible"
           class="transparent"
         >
-          <div class="hand hhand-compact active-hand full-width">
+          <div class="hand hhand-compact active-hand full-width no-wrap">
             <img
               v-for="(c, i) of handCards"
               :key="i"

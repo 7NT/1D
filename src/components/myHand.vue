@@ -385,7 +385,7 @@ export default {
 }
 /* CARD_WIDTH = 71, CARD_HEIGHT = 96 */
 img.card {
-  max-width: 75px;
+  max-width: 72px;
   margin: 0;
   padding: 0;
   border: 0;

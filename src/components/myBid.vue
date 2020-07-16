@@ -73,7 +73,7 @@
           color="negative"
           @click="onAlert2()"
         />
-        <q-btn glossy color="red" icon="mic" @click="onMic" />
+        <q-btn glossy color="red" :icon="isSpeaking ? 'mic' : 'mic_off'" @click="onMic" />
       </q-btn-group>
     </div>
   </div>

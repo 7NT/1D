@@ -1,6 +1,6 @@
 <template>
   <q-toolbar class="bg-primary text-white rounded-borders" v-show='!$q.fullscreen.isActive'>
-    <q-btn round dense flat :icon='micIcon' @click='onMic' class="q-mr-xs" />
+    <q-btn round dense flat disable :icon='micIcon' @click='onMic' class="q-mr-xs" />
     <q-space />
     <div class="full-width">
       <q-input
@@ -22,7 +22,7 @@
 
 <script>
 import { chats$ } from 'src/api'
-import SpeechToText from '../services/speech-to-text'
+// import SpeechToText from '../services/speech-to-text'
 
 export default {
   name: 'myChat',
@@ -78,7 +78,7 @@ export default {
     }
   },
   created () {
-    this.speechService = new SpeechToText()
+    // this.speechService = new SpeechToText()
   }
 }
 </script>

@@ -19,7 +19,7 @@
             </q-card-section>
           </template>
           <template v-else>
-            <q-card-section v-show='result'>
+            <q-card-section v-if='result'>
               <myScoreList :tId='result.tId' :bId='result.bId' />
             </q-card-section>
           </template>

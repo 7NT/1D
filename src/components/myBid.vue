@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="fit column no-margin no-padding"
-    v-if="isMyTurn()"
-  >
+  <div class="fit column no-margin no-padding" v-if="isMyTurn()">
     <div class="col row">
       <q-btn-group push>
         <q-fab
@@ -29,25 +26,17 @@
             icon="null"
             :color="s.color"
             @click="onBid(`${n}${s.suit}`)"
-          >{{ bidNS(n, s.suit) }}
+          >
+            {{ bidNS(n, s.suit) }}
             <q-tooltip>{{n}} {{ getSuitName(s.suit) }}</q-tooltip>
           </q-fab-action>
         </q-fab>
         <q-separator spaced inset vertical />
       </q-btn-group>
     </div>
-    <q-separator
-      spaced
-      inset
-    />
-    <div
-      class="col row"
-      style="height:30px"
-    >
-      <q-btn-group
-        dense
-        class="full-width"
-      >
+    <q-separator spaced inset />
+    <div class="col row" style="height:30px">
+      <q-btn-group dense class="full-width">
         <q-btn
           glossy
           label="X"
@@ -64,25 +53,12 @@
           @click="onBid('XX')"
           style="width:25%"
         />
-        <q-btn
-          glaosy
-          label="Pass"
-          color="primary"
-          @click="onBid('pass')"
-          style="width:45%"
-        />
+        <q-btn glaosy label="Pass" color="primary" @click="onBid('pass')" style="width:45%" />
       </q-btn-group>
     </div>
-    <q-separator
-      spaced
-      inset
-    />
+    <q-separator spaced inset />
     <div class="col row items-center">
-      <q-btn-group
-        dense
-        class="full-width"
-        style="height:30px"
-      >
+      <q-btn-group dense class="full-width" style="height:30px">
         <q-btn
           glossy
           :label="`Bid: ${bidding}`"
@@ -97,12 +73,15 @@
           color="negative"
           @click="onAlert2()"
         />
+        <q-btn glossy color="red" icon="mic" @click="onMic" />
       </q-btn-group>
     </div>
   </div>
 </template>
 
 <script>
+import SpeechToText from '../services/speech-to-text'
+
 import { jbBidX, jbSuitName } from 'src/jbBid'
 
 export default {
@@ -117,8 +96,29 @@ export default {
         { id: 4, suit: '♠', color: 'black' },
         { id: 5, suit: 'NT', color: 'purple' }
       ],
+      biddings: [
+        'pass',
+        'double',
+        'redouble',
+        're double',
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+        '6',
+        '7',
+        'club',
+        'diamond',
+        'heart',
+        'spade',
+        'no trump'
+      ],
       bidding: '',
-      alert: null
+      alert: null,
+      isSpeaking: false,
+      speech: '',
+      speechService: {}
     }
   },
   computed: {
@@ -136,15 +136,19 @@ export default {
     }
   },
   methods: {
+    getSuitName (s) {
+      return jbSuitName(s)
+    },
     isMyTurn () {
-      if (this.jsTable.state === 1) return this.myTurn === this.jsPlayer.seat.sId
-      else return false
+      if (this.jsTable.state === 1) {
+        return this.myTurn === this.jsPlayer.seat.sId
+      } else return false
     },
     bidN (n) {
       try {
         if (n === this.myBids.info.bidN) return this.myBids.info.bidS < 5
         else return n > this.myBids.info.bidN
-      } catch (_) { }
+      } catch (_) {}
       return true
     },
     isBid (n, s) {
@@ -152,7 +156,7 @@ export default {
         const n1 = n * 10 + s
         const n0 = this.myBids.info.bidN * 10 + this.myBids.info.bidS
         return n1 > n0
-      } catch (_) { }
+      } catch (_) {}
       return true
     },
     bidNS (n, s) {
@@ -217,9 +221,77 @@ export default {
           this.onBid2()
         })
     },
-    getSuitName (s) {
-      return jbSuitName(s)
+    onMic () {
+      this.isSpeaking = true
+      this.speechService.speak().subscribe(
+        result => {
+          this.speech = result
+          // this.$emit('speech', this.speech)
+          this.isSpeaking = false
+          console.log('bid', result)
+          const bid = this.checkBidding(result)
+          if (bid) {
+            this.bidding = bid
+            this.onBid2()
+          }
+        },
+        error => {
+          console.log('Error', error)
+          this.isSpeaking = false
+        },
+        () => {
+          this.isSpeaking = false
+        }
+      )
+      console.log('speechService started')
+    },
+    checkBidding (bid) {
+      const bid12 = bid.split()
+      switch (bid12[0]) {
+        case 'p':
+        case 'pass':
+          return 'pass'
+        case 'x':
+        case 'double':
+          return 'X'
+        case 're-double':
+          return 'XX'
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+        case 6:
+        case 7: {
+          switch (bid12[1]) {
+            case 'c':
+            case 'club':
+            case 'clubs':
+              return bid12[0] + 'C'
+            case 'd':
+            case 'diamond':
+            case 'diamonds':
+              return bid12[0] + 'D'
+            case 'h':
+            case 'heart':
+            case 'hearts':
+              return bid12[0] + 'H'
+            case 's':
+            case 'spade':
+            case 'spades':
+              return bid12[0] + 'S'
+            case 'no-trump':
+              return bid12[0] + 'NT'
+            default: return null
+          }
+        }
+        default:
+          return null
+      }
     }
+  },
+  created () {
+    this.speechService = new SpeechToText()
   }
 }
 </script>

@@ -4,25 +4,28 @@
 import { Subject } from 'rxjs'
 
 var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
-// var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
-// var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
+var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
+var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
 
-// var biddings = ['pass', 'double', 'redouble', '1', '2', '3', '4', '5', '6', '7', 'club', 'diamond', 'heart', 'spade', 'no trump']
-// var grammar = '#JSGF V1.0; grammar colors; public <color> = ' + colors.join(' | ') + ' ;'
+var bids = ['pass', 'double', 're-double', '1', '2', '3', '4', '5', '6', '7', 'club', 'diamond', 'heart', 'spade', 'no trump']
+var plays = ['2 of', '3 of', '4 of', '5 of', '6 of', '7 of', '8 of', '9 of', '10 of', 'jack of', 'queen of', 'king of', 'ace of', 'clubs', 'diamonds', 'hearts', 'spades']
+
+var grammar = '#JSGF V1.0; grammar bids; public <bid> = ' + bids.join(' | ') + ' ;'
+grammar += 'public <play> = ' + plays.join(' | ') + ' ;'
 
 export default class SpeechToText {
   constructor () {
     this.recognition = new SpeechRecognition()
-    // var speechRecognitionList = new SpeechGrammarList();
-    // speechRecognitionList.addFromString(grammar, 1);
-    // recognition.grammars = speechRecognitionList;
-    // recognition.continuous = false;
-    this.result = 'created'
-    this.resultSubject = new Subject()
-
+    this.speechRecognitionList = new SpeechGrammarList()
+    this.speechRecognitionList.addFromString(grammar, 1)
+    this.recognition.grammars = this.speechRecognitionList
+    this.recognition.continuous = false
     this.recognition.lang = 'en-EN'
     this.recognition.interimResults = false
     this.recognition.maxAlternatives = 1
+
+    this.result = 'created'
+    this.resultSubject = new Subject()
 
     this.recognition.onresult = (event) => {
       console.log('Event', event)

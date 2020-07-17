@@ -83,6 +83,7 @@
 import SpeechToText from '../services/speech-to-text'
 
 import { jbBidX, jbSuitName } from 'src/jbBid'
+import { jbV2N } from 'src/jbVoice'
 
 export default {
   name: 'myBid',
@@ -246,7 +247,7 @@ export default {
       console.log('speechService started')
     },
     checkBidding (bid) {
-      const bid12 = bid.split(' ')
+      const bid12 = bid.toLowerCase().split(' ')
       switch (bid12[0]) {
         case 'p':
         case 'pass':
@@ -273,29 +274,30 @@ export default {
         case '7':
         case 'even':
         {
+          const n = jbV2N(bid12[0])
           switch (bid12[1]) {
             case 'c':
             case 'club':
             case 'clubs':
-              if (this.isBid(bid12[0], 1)) return bid12[0] + '♣'
+              if (this.isBid(n, 1)) return bid12[0] + '♣'
               else return null
             case 'd':
             case 'diamond':
             case 'diamonds':
-              if (this.isBid(bid12[0], 2)) return bid12[0] + '♦'
+              if (this.isBid(n, 2)) return bid12[0] + '♦'
               else return null
             case 'h':
             case 'heart':
             case 'hearts':
-              if (this.isBid(bid12[0], 3)) return bid12[0] + '♥'
+              if (this.isBid(n, 3)) return bid12[0] + '♥'
               else return null
             case 's':
             case 'spade':
             case 'spades':
-              if (this.isBid(bid12[0], 4)) return bid12[0] + '♠'
+              if (this.isBid(n, 4)) return bid12[0] + '♠'
               else return null
             case 'no-trump':
-              if (this.isBid(bid12[0], 5)) return bid12[0] + 'NT'
+              if (this.isBid(n, 5)) return bid12[0] + 'NT'
               else return null
             default: return null
           }

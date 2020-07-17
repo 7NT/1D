@@ -40,8 +40,8 @@
             no-wrap
             ellipsis
             :label="handNick"
-            :color="handTurn"
             :icon="handAvatar"
+            :color='handTurn'
             align="left"
             class="player"
           />
@@ -57,6 +57,7 @@
             class="ready"
             @click="onReady"
           />
+          <q-btn dense v-if='isMyTurn' padding="none" color="red" :icon="isSpeaking ? 'mic' : 'mic_off'" @click="onMic" />
           <q-btn-dropdown
             push
             split
@@ -91,9 +92,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import SpeechToText from '../services/speech-to-text'
+
 import { jbCards, jbCardImg } from 'src/jbBoard'
 import { jbIsPlayer, jbIsMyPlayer, jbFlag } from 'src/jbPlayer'
 import { jbSeatName, jbSeatX, jbSeat1234 } from 'src/jbSeat'
+import { jbV2N } from 'src/jbVoice'
 
 export default {
   name: 'myHand',
@@ -101,7 +105,10 @@ export default {
   data () {
     return {
       claims: ['Concede All', 'Claim Just Make', 'Claim All'],
-      isClaim: false
+      isClaim: false,
+      isSpeaking: false,
+      speech: '',
+      speechService: {}
     }
   },
   components: {},
@@ -135,7 +142,7 @@ export default {
       return jbFlag(this.handPlayer)
     },
     handTurn () {
-      if (this.isHandTurn) return 'warning'
+      if (this.isHandTurn) return 'amber'
       else return this.jsPlayer ? 'indigo' : 'positive'
     },
     isHandTurn () {
@@ -145,6 +152,12 @@ export default {
           return this.jsTable.turn === this.seatX
         default: return false
       }
+    },
+    isMyTurn () {
+      if (this.handState === 2 && this.isHandTurn) {
+        if (this.isDummy) return this.jsPlayer.seat.sId === this.jsTable.bids.info.by
+        else return this.jsPlayer.seat.sId === this.seatX
+      } else return false
     },
     isMyPlay () {
       if (this.handState === 2) {
@@ -331,7 +344,7 @@ export default {
           notification.actions = [
             {
               label: 'Accept',
-              color: 'yellow',
+              color: 'amber',
               handler: () => {
                 this.onClaimR(true)
               }
@@ -347,6 +360,91 @@ export default {
         }
       }
       this.$q.notify(notification)
+    },
+    onMic () {
+      this.isSpeaking = true
+      this.speechService.speak().subscribe(
+        result => {
+          this.speech = result
+          // this.$emit('speech', this.speech)
+          this.isSpeaking = false
+          if (result) {
+            this.$q.notify({ type: 'info', caption: 'Play:', message: result })
+            const play = this.checkPlaying(result)
+            if (play) {
+              // this.bidding = bid
+              // this.onBid2()
+            }
+          }
+        },
+        error => {
+          console.log('Error', error)
+          this.isSpeaking = false
+        },
+        () => {
+          this.isSpeaking = false
+        }
+      )
+      console.log('speechService started')
+    },
+    checkPlaying (play) {
+      const play12 = play.toLowerCase().split(' of ')
+      switch (play12[0]) {
+        case '2':
+        case 'two':
+        case '3':
+        case 'three':
+        case '4':
+        case 'four':
+        case '5':
+        case 'five':
+        case '6':
+        case 'six':
+        case '7':
+        case 'even':
+        case '8':
+        case 'eight':
+        case '9':
+        case 'nine':
+        case '10':
+        case 'ten':
+        case 'j':
+        case 'jack':
+        case 'q':
+        case 'qureen':
+        case 'k':
+        case 'king':
+        case 'a':
+        case 'ace':
+        {
+          const n = jbV2N(play12[0])
+          switch (play12[1]) {
+            case 'c':
+            case 'club':
+            case 'clubs':
+              if (this.isPlay('C', n)) return 'C' + n
+              else return null
+            case 'd':
+            case 'diamond':
+            case 'diamonds':
+              if (this.isPlay('D', n)) return 'D' + n
+              else return null
+            case 'h':
+            case 'heart':
+            case 'hearts':
+              if (this.isPlay('H', n)) return 'H' + n
+              else return null
+            case 's':
+            case 'spade':
+            case 'spades':
+              if (this.isPlay('S', n)) return 'S' + n
+              else return null
+            default: return null
+          }
+        }
+        default:
+          return null
+      }
     }
   },
   watch: {
@@ -363,7 +461,9 @@ export default {
     }
   },
   mounted () { },
-  created () { }
+  created () {
+    this.speechService = new SpeechToText()
+  }
 }
 </script>
 
@@ -412,6 +512,14 @@ img.card {
   width: 50px;
   margin-top: auto;
 }
+/*
+.turn {
+  color: #FFC200;
+}
+.player {
+  color : indigo;
+}
+*/
 .declarer {
   height: 24px;
   margin: auto;

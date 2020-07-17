@@ -264,7 +264,7 @@ export default {
         message: 'Score reset?',
         color: 'primary',
         actions: [
-          { label: 'Reset', color: 'yellow', handler: () => { this.scoreReset() } },
+          { label: 'Reset', color: 'amber', handler: () => { this.scoreReset() } },
           { label: 'Dismiss', color: 'white', handler: () => { /* ... */ } }
         ]
       })

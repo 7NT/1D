@@ -339,7 +339,7 @@ export default {
         notification.actions = [
           {
             label: 'Accept',
-            color: 'yellow',
+            color: 'amber',
             handler: () => {
               this.onRequestR(chat)
             }

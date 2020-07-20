@@ -228,7 +228,7 @@ export default {
         this.setPlayers(response.data)
       })
       await tables$.find().then(response => {
-        console.log('tabales', response)
+        // console.log('tabales', response)
         this.setTables(response.data)
         response.data.forEach(t => this.onTable(t))
       })

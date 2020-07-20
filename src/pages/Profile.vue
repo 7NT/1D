@@ -54,21 +54,13 @@
                 top
                 avatar
               >
-                <q-icon :name='`img:flags/4x3/${flag}.svg`' />
+                <q-icon :name='getFlag()' />
                 <q-tooltip>
                   2 letter ISO 3166 country flag codes
                 </q-tooltip>
               </q-item-section>
               <q-item-section>
-                <q-input
-                  v-model='flag'
-                  square
-                  filled
-                  label="Country:"
-                  mask="AA"
-                  type='text'
-                >
-                </q-input>
+                <q-select filled v-model="country" :options="countries" label="Country:" />
               </q-item-section>
             </q-item>
           </q-list>
@@ -100,6 +92,7 @@
 import moment from 'moment'
 import { openURL } from 'quasar'
 import { users$, players$ } from 'src/api'
+import data from 'src/data/iso3166_2.json'
 
 const gravatarUrl = 'http://www.gravatar.com'
 
@@ -107,15 +100,21 @@ export default {
   name: 'Profile',
   data () {
     return {
+      countries: null,
       show: true,
       user: null,
       nick: null,
-      flag: null
+      flag: null,
+      country: null
     }
   },
+  computed: {},
   methods: {
     gavatar () {
       openURL(gravatarUrl)
+    },
+    getFlag () {
+      return 'img:flags/4x3/' + this.flag.toLowerCase() + '.svg'
     },
     joinedDate (created) {
       return moment(created).format('MMMM Do YYYY')
@@ -131,12 +130,21 @@ export default {
       this.$router.go(-1)
     }
   },
+  watch: {
+    country (c) {
+      if (c) {
+        const countryData = data.filter(d => d.name === c)
+        if (countryData) this.flag = countryData[0].code
+      }
+    }
+  },
   created () {
     this.user = this.$attrs.user
     this.nick = this.user.nick
-    this.flag = (this.user.profile.flag || 'us').toLowerCase()
-
-    // console.log('profile', this.user)
+    this.flag = (this.user.profile.flag || 'US').toUpperCase()
+    this.countries = data.map(d => d.name)
+    const countryData = data.filter(d => d.code === this.flag)
+    if (countryData) this.country = countryData[0].name
   }
 }
 </script>

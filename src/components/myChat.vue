@@ -50,7 +50,7 @@ export default {
           text: this.chat
         }
         chats$.create(chatData)
-        console.log(chatData)
+        // console.log(chatData)
         this.chat = null
       }
     },

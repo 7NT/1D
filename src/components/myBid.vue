@@ -25,6 +25,7 @@
             v-show="isBid(n, s.id)"
             icon="null"
             :color="s.color"
+            v-close-popup
             @click="onBid(`${n}${s.suit}`)"
           >
             {{ bidNS(n, s.suit) }}

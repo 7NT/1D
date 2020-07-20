@@ -45,9 +45,10 @@
             no-caps
             toggle-color="primary"
             :options="[
-              {label: 'All Players', value: 0},
-              {label: 'Table Players', value: 1},
-              {label: 'my Friends', value: 2}
+              {label: '♣All', value: 0},
+              {label: '♢Players', value: 1},
+              {label: '♡Friends', value: 2},
+              {label: '♠Admin', value: 3}
             ]"
           />
         </q-item-section>
@@ -188,9 +189,11 @@ export default {
     myPlayers () {
       switch (this.model) {
         case 1:
-          return this.jsPlayers.filter(p => p.seat.tId === this.jsT1)
+          return this.jsPlayers.filter(p => p.seat.tId === this.jsT1).sort()
         case 2:
           return this.jsPlayers.filter(p => this.isFriend(p.nick))
+        case 3:
+          return this.jsPlayers.filter(p => p.status === 2)
         default:
           return this.jsPlayers
       }
@@ -246,7 +249,8 @@ export default {
       else return false
     },
     readMessage (p) {
-      if (!this.isMyPlayer(p)) this.setJsMap({ key: '-pm', value: p.nick }) // reset PM
+      if (this.isMyPlayer(p)) this.$router.push({ name: 'profile' }).catch(e => { })
+      else this.setJsMap({ key: '-pm', value: p.nick }) // reset PM
     },
     onJoin (p, sId) {
       const seat = {

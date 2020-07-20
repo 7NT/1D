@@ -4,7 +4,11 @@
       <div class="col">
         <div class="row no-wrap">
           <div class="col-4 items-start">
-            <myBoard :jsTable="jsTable" :mySeat="mySeat" v-on:onTable="onTable"></myBoard>
+            <myBoard
+              :jsTable="jsTable"
+              :mySeat="mySeat"
+              v-on:onTable="onTable"
+            ></myBoard>
           </div>
           <div class="col-5">
             <div class="column justify-start">
@@ -19,7 +23,10 @@
           </div>
           <div class="col-3 items-end column">
             <q-list bordered>
-              <q-item-label overline class="bg-primary text-white shadow-2">
+              <q-item-label
+                overline
+                class="bg-primary text-white shadow-2"
+              >
                 <div class="full-width">
                   <div class="row statusbar">
                     <q-space />
@@ -66,7 +73,13 @@
                       >
                         <q-tooltip>Full Screen</q-tooltip>
                       </q-btn>
-                      <q-btn size="12px" flat dense round icon="more_vert">
+                      <q-btn
+                        size="12px"
+                        flat
+                        dense
+                        round
+                        icon="more_vert"
+                      >
                         <q-tooltip>Table Settings</q-tooltip>
                       </q-btn>
                     </q-btn-group>
@@ -74,7 +87,11 @@
                 </div>
               </q-item-label>
               <q-item-section v-if="myState >1">
-                <myBidBox :jsPlayer="jsPlayer" :jsTable="jsTable" class="fit bbox" />
+                <myBidBox
+                  :jsPlayer="jsPlayer"
+                  :jsTable="jsTable"
+                  class="fit bbox"
+                />
               </q-item-section>
             </q-list>
           </div>
@@ -96,13 +113,27 @@
           <div class="col-4">
             <div class="column justify-start">
               <div class="centerbox">
-                <q-card class="bbox pbox" v-if="myState === 1">
+                <q-card
+                  class="bbox pbox"
+                  v-if="myState === 1"
+                >
                   <q-card>
-                    <myBidBox :jsPlayer="jsPlayer" :jsTable="jsTable" />
+                    <myBidBox
+                      :jsPlayer="jsPlayer"
+                      :jsTable="jsTable"
+                    />
                   </q-card>
                 </q-card>
-                <q-card flat class="pbox transparent" v-if="myState >= 2">
-                  <myPlayBox :jsPlayer="jsPlayer" :jsTable="jsTable" :review="false" />
+                <q-card
+                  flat
+                  class="pbox transparent"
+                  v-if="myState >= 2"
+                >
+                  <myPlayBox
+                    :jsPlayer="jsPlayer"
+                    :jsTable="jsTable"
+                    :review="false"
+                  />
                 </q-card>
                 <q-space />
               </div>
@@ -125,7 +156,11 @@
         <div class="row no-wrap">
           <div class="col-3">
             <div class="column">
-              <myTricks :jsPlayer="jsPlayer" :jsTable="jsTable" class="myHand justify-start" />
+              <myTricks
+                :jsPlayer="jsPlayer"
+                :jsTable="jsTable"
+                class="myHand justify-start"
+              />
             </div>
           </div>
           <div class="col-5">
@@ -141,7 +176,11 @@
           </div>
           <div class="col-4 column">
             <div class="justify-start">
-              <myBid :jsPlayer="jsPlayer" :jsTable="jsTable" v-on:onTable="onTable" />
+              <myBid
+                :jsPlayer="jsPlayer"
+                :jsTable="jsTable"
+                v-on:onTable="onTable"
+              />
             </div>
           </div>
         </div>
@@ -216,7 +255,7 @@ export default {
     myAlert () {
       try {
         return this.jsTable.alert
-      } catch (err) {}
+      } catch (err) { }
       return null
     },
     myBids () {
@@ -377,7 +416,7 @@ export default {
 .jbtable {
   margin: 2px;
   min-height: 393px;
-  background-image: url("/imgs/jbbg.jpeg");
+  background-image: url("~assets/imgs/jbbg.jpeg");
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */

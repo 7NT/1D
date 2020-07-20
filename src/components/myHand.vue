@@ -41,7 +41,7 @@
             ellipsis
             :label="handNick"
             :icon="handAvatar"
-            :color='handTurn'
+            :color="handTurn"
             align="left"
             class="player"
           />
@@ -57,7 +57,14 @@
             class="ready"
             @click="onReady"
           />
-          <q-btn dense v-if='isMyTurn' padding="none" color="red" :icon="isSpeaking ? 'mic' : 'mic_off'" @click="onMic" />
+          <q-btn
+            dense
+            v-if="isMyTurn"
+            padding="none"
+            color="red"
+            :icon="isSpeaking ? 'mic' : 'mic_off'"
+            @click="onMic"
+          />
           <q-btn-dropdown
             push
             split
@@ -79,7 +86,7 @@
                     v-for="c in claims"
                     :key="c"
                     @click="onClaim(c)"
-                  >{{c}}</q-item-label>
+                  >{{ c }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -132,7 +139,9 @@ export default {
       return this.jsPlayerByNick(nick)
     },
     handNick () {
-      return this.handPlayer ? this.handPlayer.nick : jbSeatName(this.seatX - 1)
+      return this.handPlayer
+        ? this.handPlayer.nick
+        : jbSeatName(this.seatX - 1)
     },
     handAvatar () {
       if (this.handPlayer) return `img:${this.handPlayer.profile.avatar}`
@@ -150,13 +159,13 @@ export default {
         case 1:
         case 2:
           return this.jsTable.turn === this.seatX
-        default: return false
+        default:
+          return false
       }
     },
     isMyTurn () {
       if (this.handState === 2 && this.isHandTurn) {
-        if (this.isDummy) return this.jsPlayer.seat.sId === this.jsTable.bids.info.by
-        else return this.jsPlayer.seat.sId === this.seatX
+        if (this.isDummy) { return this.jsPlayer.seat.sId === this.jsTable.bids.info.by } else return this.jsPlayer.seat.sId === this.seatX
       } else return false
     },
     isMyPlay () {
@@ -185,8 +194,7 @@ export default {
       else if (this.handState > 2) return true
       else if (this.mySeat.sId === 9) return true
       else if (this.isDummy) return true
-      else if (this.isDeclarer) return (this.jsTable.bids.info.by) % 2 === this.mySeat.sId % 2
-      else return this.seatX === Math.abs(this.mySeat.sId)
+      else if (this.isDeclarer) { return this.jsTable.bids.info.by % 2 === this.mySeat.sId % 2 } else return this.seatX === Math.abs(this.mySeat.sId)
     },
     isReady () {
       return this.jsTable.ready[this.seatX - 1]
@@ -415,8 +423,7 @@ export default {
         case 'k':
         case 'king':
         case 'a':
-        case 'ace':
-        {
+        case 'ace': {
           const n = jbV2N(play12[0])
           switch (play12[1]) {
             case 'c':
@@ -439,7 +446,8 @@ export default {
             case 'spades':
               if (this.isPlay('S', n)) return 'S' + n
               else return null
-            default: return null
+            default:
+              return null
           }
         }
         default:
@@ -477,7 +485,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   text-transform: none;
-  background-image: url("/imgs/jbpbar.png");
+  background-image: url("~assets/imgs/jbpbar.png");
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 1;

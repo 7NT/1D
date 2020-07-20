@@ -1,6 +1,9 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated v-show='!$q.fullscreen.isActive'>
+    <q-header
+      elevated
+      v-show='!$q.fullscreen.isActive'
+    >
       <q-toolbar>
         <q-btn
           flat
@@ -13,22 +16,49 @@
         />
 
         <q-toolbar-title>
-          <q-icon name="img:jbicon/seats/seat0.svg" />1♦ App
+          <q-icon :name='`img:${seatIcon}`' />1♦ App
         </q-toolbar-title>
 
         <div>v{{ $q.version }}</div>
-        <q-btn flat round @click="goTo('home')">
+        <q-btn
+          flat
+          round
+          @click="goTo('home')"
+        >
           <q-icon name="home" />
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 10]">Home</q-tooltip>
+          <q-tooltip
+            anchor="bottom middle"
+            self="top middle"
+            :offset="[0, 10]"
+          >Home</q-tooltip>
         </q-btn>
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
         -->
-        <q-btn flat icon="login" @click="goTo('signin')" v-show="!authenticated">Sign In</q-btn>
-        <q-btn flat icon="account_box" @click="goTo('register')" v-show="!authenticated">Register</q-btn>
-        <q-btn flat round @click="goTo('lobby')" v-if="authenticated">
+        <q-btn
+          flat
+          icon="login"
+          @click="goTo('signin')"
+          v-show="!authenticated"
+        >Sign In</q-btn>
+        <q-btn
+          flat
+          icon="account_box"
+          @click="goTo('register')"
+          v-show="!authenticated"
+        >Register</q-btn>
+        <q-btn
+          flat
+          round
+          @click="goTo('lobby')"
+          v-if="authenticated"
+        >
           <q-icon name="local_play" />
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 10]">Lobby</q-tooltip>
+          <q-tooltip
+            anchor="bottom middle"
+            self="top middle"
+            :offset="[0, 10]"
+          >Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
@@ -39,20 +69,44 @@
           aria-label="ScoreBook"
           v-show="authenticated"
         />
-        <q-btn flat round @click="goTo('profile')" v-if="authenticated">
+        <q-btn
+          flat
+          round
+          @click="goTo('profile')"
+          v-if="authenticated"
+        >
           <q-avatar class="gt-xs">
             <img :src="user.profile.avatar" />
           </q-avatar>
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 10]">Profile</q-tooltip>
+          <q-tooltip
+            anchor="bottom middle"
+            self="top middle"
+            :offset="[0, 10]"
+          >Profile</q-tooltip>
         </q-btn>
-        <q-btn flat round @click="signout" v-show="authenticated">
+        <q-btn
+          flat
+          round
+          @click="signout"
+          v-show="authenticated"
+        >
           <q-icon name="exit_to_app" />
-          <q-tooltip anchor="bottom middle" self="top middle" :offset="[0, 10]">Signout</q-tooltip>
+          <q-tooltip
+            anchor="bottom middle"
+            self="top middle"
+            :offset="[0, 10]"
+          >Signout</q-tooltip>
         </q-btn>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="playerList" v-if="authenticated" bordered elevated content-class="bg-grey-1">
+    <q-drawer
+      v-model="playerList"
+      v-if="authenticated"
+      bordered
+      elevated
+      content-class="bg-grey-1"
+    >
       <myP1List />
     </q-drawer>
 
@@ -116,6 +170,9 @@ export default {
     ...mapGetters('jstore', ['jsTableById', 'jsPlayerbyId', 'jsTourneyById']),
     authenticated () {
       return this.user != null
+    },
+    seatIcon () {
+      return '~assets/jbIcon/seats/seat0.svg'
     }
   },
   methods: {
@@ -136,7 +193,7 @@ export default {
     ]),
     goTo (route) {
       if (this.$route.name !== route) {
-        this.$router.push({ name: route }).catch(e => {})
+        this.$router.push({ name: route }).catch(e => { })
       }
     },
     async signin (user) {

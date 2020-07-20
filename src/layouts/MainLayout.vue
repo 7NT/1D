@@ -16,7 +16,7 @@
         />
 
         <q-toolbar-title>
-          <q-icon :name='`img:${seatIcon}`' />1♦ App
+          <q-icon name='img:/jbicon/seats/seat0.svg' />1♦ App
         </q-toolbar-title>
 
         <div>v{{ $q.version }}</div>
@@ -172,7 +172,7 @@ export default {
       return this.user != null
     },
     seatIcon () {
-      return 'img:jbIcon/seats/seat0.svg'
+      return 'img:jbicon/seats/seat0.svg'
     }
   },
   methods: {

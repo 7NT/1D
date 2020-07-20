@@ -7,6 +7,7 @@
     <q-expansion-item
         expand-separator
         icon="message"
+        v-model="newMsg"
         :label='msgHeader'
       >
       <q-card
@@ -38,7 +39,9 @@ export default {
   name: 'myMessages',
   props: ['sendTo'],
 
-  data: () => ({}),
+  data: () => ({
+    newMsg: false
+  }),
   computed: {
     ...mapState('jstore', ['jsUser', 'jsChats']),
     ...mapGetters('jstore', ['jsPlayerById']),
@@ -71,6 +74,11 @@ export default {
     chatDate (created) {
       // return moment(created).format('MMM Do, hh:mm:ss')
       return moment(created).fromNow()
+    }
+  },
+  watch: {
+    myChats (n) {
+      this.newMsg = true
     }
   }
 }

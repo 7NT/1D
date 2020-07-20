@@ -1,0 +1,9 @@
+<svg version="1.1" class="ionic ionic-table" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px" height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+  <rect x="10" y="10" width="80" height="80" class="ionic-table-base" fill="#4169E1" fill-opacity="0.5"/>
+  <g class="ionic-table-tables">
+    <rect x="40" y="0" width="20" height="20" class="ionic-table-tables-1" fill="red" fill-opacity="0.25"/>
+    <rect x="80" y="40" width="20" height="20" class="ionic-table-tables-2" fill="blue" fill-opacity="0.25"/>
+    <rect x="40" y="80" width="20" height="20" class="ionic-table-tables-3" fill="red" fill-opacity="0.25"/>
+    <rect x="0" y="40" width="20" height="20" class="ionic-table-tables-4" fill="blue" fill-opacity="0.25"/>
+  </g>
+</svg>

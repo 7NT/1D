@@ -172,7 +172,7 @@ export default {
       return this.user != null
     },
     seatIcon () {
-      return '~assets/jbIcon/seats/seat0.svg'
+      return 'img:jbIcon/seats/seat0.svg'
     }
   },
   methods: {

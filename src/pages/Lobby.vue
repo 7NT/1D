@@ -50,7 +50,7 @@
               </div>
             </q-tab-panel>
 
-            <q-tab-panel :name="1" class='no-margin no-padding no-scroll'>
+            <q-tab-panel :name="1" class='no-margin no-padding'>
               <myPlayTable
                 :jsPlayer="jsPlayer"
                 v-on:onPlayer="onPlayer"

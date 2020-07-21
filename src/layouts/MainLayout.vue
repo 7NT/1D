@@ -16,7 +16,7 @@
         />
 
         <q-toolbar-title>
-          <q-icon name='img:/jbicon/seats/seat0.svg' />1♦ App
+          <q-icon name='img:/jbicon/seats/seat0.svg' />One Diamond App
         </q-toolbar-title>
 
         <div>v{{ $q.version }}</div>

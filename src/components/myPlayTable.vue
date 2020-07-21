@@ -1,6 +1,6 @@
-<template padding>
-  <div v-if="jsTable">
-    <div class="column jbtable fit">
+<template>
+  <div v-if="jsTable" class='fit'>
+    <div class="column jbtable">
       <div class="col">
         <div class="row no-wrap">
           <div class="col-4 items-start">

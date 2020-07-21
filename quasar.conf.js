@@ -162,7 +162,7 @@ module.exports = function (ctx) {
     // Full list of options: https://quasar.dev/quasar-cli/developing-cordova-apps/configuring-cordova
     cordova: {
       // noIosLegacyBuildFlag: true, // uncomment only if you know what you are doing
-      id: 'net.jbridge.1d.app'
+      id: 'org.cordova.quasar.app'
     },
 
     // Full list of options: https://quasar.dev/quasar-cli/developing-capacitor-apps/configuring-capacitor

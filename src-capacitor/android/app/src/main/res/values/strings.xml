@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">One Diamond</string>
-    <string name="title_activity_main">One Diamond</string>
-    <string name="package_name">net.jbridge.1d.app</string>
-    <string name="custom_url_scheme">net.jbridge.1d.app</string>
-</resources>

@@ -1,7 +1,0 @@
-{
-  "appId": "net.jbridge.1d.app",
-  "appName": "One Diamond",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "www"
-}

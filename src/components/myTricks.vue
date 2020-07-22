@@ -1,7 +1,7 @@
 <template>
-  <div class="row items-end">
-    <div class="column">
-      <div class="row self-start no-wrap">
+  <div class="full-width">
+    <div class="column justify-end">
+      <div class="col row no-wrap">
         <q-card
           flat
           class="transparent"

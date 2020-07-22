@@ -30,7 +30,7 @@ export default class SpeechToText {
     this.recognition.continuous = false
     this.recognition.lang = 'en-EN'
     this.recognition.interimResults = false
-    this.recognition.maxAlternatives = 2
+    this.recognition.maxAlternatives = 1
 
     this.result = 'created'
     this.resultSubject = new Subject()

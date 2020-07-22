@@ -90,7 +90,7 @@ export default {
   width: 150px;
   height: 150px;
   margin: auto;
-  border:indigo solid 1px;
+  border: green solid 1px;
   overflow: hidden;
 }
 #playCard1 {

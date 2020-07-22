@@ -24,7 +24,7 @@
               />
             </div>
           </div>
-          <div class="col-3 items-end column">
+          <div class="col-3 items-start column">
             <q-list bordered>
               <q-item-label
                 overline
@@ -46,12 +46,22 @@
                     <q-space />
                     <q-btn-group push>
                       <q-btn
+                        size="12px"
+                        flat
+                        dense
+                        round
+                        icon="more_vert"
+                      >
+                        <q-tooltip>Table Settings</q-tooltip>
+                      </q-btn>
+                      <q-btn
                         class="gt-xs"
                         size="12px"
                         flat
                         dense
                         icon="live_help"
                         @click="onCommand(0)"
+                        disable
                       >
                         <q-tooltip>Call Admin...</q-tooltip>
                       </q-btn>
@@ -72,18 +82,10 @@
                         flat
                         dense
                         icon="close"
+                        color="negative"
                         @click="onCommand(-1)"
                       >
                         <q-tooltip>Exit Table</q-tooltip>
-                      </q-btn>
-                      <q-btn
-                        size="12px"
-                        flat
-                        dense
-                        round
-                        icon="more_vert"
-                      >
-                        <q-tooltip>Table Settings</q-tooltip>
                       </q-btn>
                     </q-btn-group>
                   </div>
@@ -155,14 +157,13 @@
           </div>
         </div>
       </div>
-      <div class="col">
-        <div class="row no-wrap">
-          <div class="col-3">
-            <div class="column">
+      <div class="col-auto">
+        <div class="row items-end no-wrap">
+          <div class="col-3 column">
+            <div class="justify-end q-pa-sm">
               <myTricks
                 :jsPlayer="jsPlayer"
                 :jsTable="jsTable"
-                class="myHand justify-start"
               />
             </div>
           </div>
@@ -178,7 +179,7 @@
             </div>
           </div>
           <div class="col-4 column">
-            <div class="justify-start">
+            <div class="justify-end">
               <myBid
                 :jsPlayer="jsPlayer"
                 :jsTable="jsTable"
@@ -207,6 +208,7 @@ import myTimer from 'src/components/myTimer'
 
 import { jbContractBy } from 'src/jbBid'
 import { jbIsPlayer } from '../jbPlayer'
+import { jbV2C } from 'src/jbVoice'
 
 export default {
   name: 'myPlayTable',
@@ -384,9 +386,9 @@ export default {
       this.$data.timer = new Date().getTime()
     },
     jsSpeech (s) {
-      console.log(s, this.myState, this.mySeat)
       if (!jbIsPlayer(this.mySeat.sId)) return
-      switch (s) {
+      const c = jbV2C(s)
+      switch (c) {
         case 'ready':
           if (this.myState < 1 || this.myState > 2) {
             const ready = [...this.jsTable.ready] || [0, 0, 0, 0]

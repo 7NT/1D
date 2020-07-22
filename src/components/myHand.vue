@@ -520,14 +520,6 @@ img.card {
   width: 50px;
   margin-top: auto;
 }
-/*
-.turn {
-  color: #FFC200;
-}
-.player {
-  color : indigo;
-}
-*/
 .declarer {
   height: 24px;
   margin: auto;

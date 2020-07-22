@@ -1,80 +1,80 @@
 <template>
-  <div class="fit column no-margin no-padding" v-if="isMyTurn()">
-    <div class="col row">
-      <q-btn-group push>
-        <q-fab
-          square
-          glossy
-          unelevated
-          hide-icon
-          v-for="n of 7"
-          :key="n"
-          v-show="bidN(n)"
-          :label="n"
-          label-position="left"
-          type="button"
-          direction="up"
-          class="bg-teal"
-          padding="sm"
-          style="width:30px"
-        >
-          <q-fab-action
-            v-for="s in suits"
-            :key="s.id"
+  <div class="fit" v-if="isMyTurn()">
+    <div class="column justify-end">
+      <div class="col row">
+        <q-btn-group push>
+          <q-fab
             square
-            v-show="isBid(n, s.id)"
-            icon="null"
-            :color="s.color"
-            v-close-popup
-            @click="onBid(`${n}${s.suit}`)"
+            glossy
+            unelevated
+            hide-icon
+            v-for="n of 7"
+            :key="n"
+            v-show="bidN(n)"
+            :label="n"
+            label-position="left"
+            type="button"
+            direction="up"
+            class="bg-teal"
+            padding="sm"
+            style="width:32px"
           >
-            {{ bidNS(n, s.suit) }}
-            <q-tooltip>{{n}} {{ getSuitName(s.suit) }}</q-tooltip>
-          </q-fab-action>
-        </q-fab>
-        <q-separator spaced inset vertical />
-      </q-btn-group>
-    </div>
-    <q-separator spaced inset />
-    <div class="col row" style="height:30px">
-      <q-btn-group dense class="full-width">
-        <q-btn
-          glossy
-          label="X"
-          color="negative"
-          :disable="X"
-          @click="onBid('X')"
-          style="width:20%"
-        />
-        <q-btn
-          glossy
-          label="XX"
-          color="warning"
-          :disable="XX"
-          @click="onBid('XX')"
-          style="width:25%"
-        />
-        <q-btn glaosy label="Pass" color="primary" @click="onBid('pass')" style="width:45%" />
-      </q-btn-group>
-    </div>
-    <q-separator spaced inset />
-    <div class="col row items-center">
-      <q-btn-group dense class="full-width" style="height:30px">
-        <q-btn
-          glossy
-          :label="`Bid: ${bidding}`"
-          :disable="!bidding"
-          color="positive"
-          @click="onBid2()"
-        />
-        <q-btn
-          glossy
-          :label="`Alert: ${bidding}`"
-          :disable="!bidding"
-          color="negative"
-          @click="onAlert2()"
-        />
-      </q-btn-group>
+            <q-fab-action
+              v-for="s in suits"
+              :key="s.id"
+              square
+              v-show="isBid(n, s.id)"
+              icon="null"
+              :color="s.color"
+              v-close-popup
+              @click="onBid(`${n}${s.suit}`)"
+            >
+              {{ bidNS(n, s.suit) }}
+              <q-tooltip>{{n}} {{ getSuitName(s.suit) }}</q-tooltip>
+            </q-fab-action>
+          </q-fab>
+          <q-separator spaced inset vertical />
+        </q-btn-group>
+      </div>
+      <div class="col row" style="height:30px">
+        <q-btn-group dense class="full-width">
+          <q-btn
+            glossy
+            label="X"
+            color="negative"
+            :disable="X"
+            @click="onBid('X')"
+            style="width:20%"
+          />
+          <q-btn
+            glossy
+            label="XX"
+            color="warning"
+            :disable="XX"
+            @click="onBid('XX')"
+            style="width:25%"
+          />
+          <q-btn glaosy label="Pass" color="primary" @click="onBid('pass')" style="width:45%" />
+        </q-btn-group>
+      </div>
+      <div class="col row items-center">
+        <q-btn-group dense class="full-width" style="height:30px">
+          <q-btn
+            glossy
+            :label="`Bid: ${bidding}`"
+            :disable="!bidding"
+            color="positive"
+            @click="onBid2()"
+          />
+          <q-btn
+            glossy
+            :label="`Alert: ${bidding}`"
+            :disable="!bidding"
+            color="negative"
+            @click="onAlert2()"
+          />
+        </q-btn-group>
+      </div>
     </div>
   </div>
 </template>
@@ -82,7 +82,7 @@
 <script>
 import { mapState } from 'vuex'
 import { jbBidX, jbSuitName } from 'src/jbBid'
-import { jbV2N } from 'src/jbVoice'
+import { jbV2W, jbV2S, jbV2N } from 'src/jbVoice'
 
 export default {
   name: 'myBid',
@@ -220,15 +220,13 @@ export default {
     },
     checkBidding (bid) {
       const bid12 = bid.toLowerCase().split(' ')
-      switch (bid12[0]) {
-        case 'p':
-        case 'pass':
-          return 'pass'
+      const w = jbV2W(bid12[0])
+      switch (w) {
+        case 'p': return 'pass'
         case 'x':
-        case 'double':
           if (this.X) return 'X'
           else return null
-        case 're-double':
+        case 'xx':
           if (this.XX) return 'XX'
           else return null
         case '1':
@@ -246,30 +244,24 @@ export default {
         case '7':
         case 'seven':
         {
-          const n = jbV2N(bid12[0])
-          switch (bid12[1]) {
+          const n = jbV2N(w)
+          const s = jbV2S(bid12[1])
+          console.log(w, n, s)
+          switch (s) {
             case 'c':
-            case 'club':
-            case 'clubs':
-              if (this.isBid(n, 1)) return bid12[0] + '♣'
+              if (this.isBid(n, 1)) return n + '♣'
               else return null
             case 'd':
-            case 'diamond':
-            case 'diamonds':
-              if (this.isBid(n, 2)) return bid12[0] + '♦'
+              if (this.isBid(n, 2)) return n + '♦'
               else return null
             case 'h':
-            case 'heart':
-            case 'hearts':
-              if (this.isBid(n, 3)) return bid12[0] + '♥'
+              if (this.isBid(n, 3)) return n + '♥'
               else return null
             case 's':
-            case 'spade':
-            case 'spades':
-              if (this.isBid(n, 4)) return bid12[0] + '♠'
+              if (this.isBid(n, 4)) return n + '♠'
               else return null
             case 'no-trump':
-              if (this.isBid(n, 5)) return bid12[0] + 'NT'
+              if (this.isBid(n, 5)) return n + 'NT'
               else return null
             default: return null
           }
@@ -296,7 +288,7 @@ export default {
 
 <style scoped>
 .q-fab >>> .q-btn {
-  height: 28px;
+  height: 32px;
 }
 .q-btn {
   text-transform: none;

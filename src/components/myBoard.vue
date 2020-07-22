@@ -25,7 +25,7 @@
           </q-item-section>
           <q-item-section>{{bdata}}</q-item-section>
           <q-item-section avatar>
-            <q-icon name="img:jbicon/svg/mix.svg" />
+            <q-icon name="img:/jbicon/svg/mix.svg" />
           </q-item-section>
         </q-item>
 
@@ -52,7 +52,7 @@
                 <q-btn
                   dense
                   size="xs"
-                  icon="img:jbicon/seats/seat13.svg"
+                  icon="img:/jbicon/seats/seat13.svg"
                 >
                   <q-badge
                     class="cc"
@@ -91,7 +91,7 @@
                 <q-btn
                   dense
                   size="xs"
-                  icon="img:jbicon/seats/seat24.svg"
+                  icon="img:/jbicon/seats/seat24.svg"
                 >
                   <q-badge
                     class="cc"

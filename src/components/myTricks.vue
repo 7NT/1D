@@ -1,14 +1,14 @@
 <template>
-  <div class="full-width">
-    <div class="column justify-end">
-      <div class="col row no-wrap">
+  <div class="row full-width">
+    <div class="column justify-start">
+      <div class="row self-end no-wrap">
         <q-card
           flat
           class="transparent"
         >
           <template v-if="myState===2">>
             <q-card-section>
-              <div class="hand hhand-compact active-hand full-width">
+              <div class="hand hhand-compact active-hand full-width no-wrap">
                 <span v-for="(c, i) of playedCards" :key="`${i}`" class="card">
                   <img :src="cardback(c)" :class="trickClass(c, i)" :style="`z-index:${i}`" />
                   <q-tooltip content-class="bg-info" anchor="top right" self="bottom left">
@@ -25,17 +25,23 @@
           </template>
         </q-card>
       </div>
-      <div class="pbar">
-        <q-list>
-          <q-item-section>
-            <div class="row items-end justify-around">
-              <q-icon size='sm' name='img:jbicon/seats/seat13.svg' left />
-              <q-badge outline color="black" :label="tricks(0)" align="middle" />
-              <q-separator vertical />
-              <q-icon size='sm' name='img:jbicon/seats/seat24.svg' right />
-              <q-badge outline color="black" :label="tricks(1)" align="middle" />
-            </div>
-          </q-item-section>
+      <div class='row'>
+        <q-list dense class='column scorebar'>
+          <q-item dense>
+            <q-item-section class='col-10'>
+              <div class="row">
+                <q-icon size='sm' name='img:/jbicon/seats/seat13.svg' left />
+                <q-badge outline color="black" :label="tricks(0)" align="middle" />
+                <q-icon size='sm' name='img:/jbicon/seats/seat24.svg' right />
+                <q-badge outline color="black" :label="tricks(1)" align="middle" />
+              </div>
+            </q-item-section>
+            <q-item-section side avatar class='col-2'>
+              <q-avatar square>
+                <q-btn icon='menu_book' />
+              </q-avatar>
+            </q-item-section>
+          </q-item>
         </q-list>
       </div>
     </div>
@@ -117,13 +123,9 @@ export default {
 .trickbox {
   max-height: 60px;
 }
-.pbar {
-  min-width: 200px;
-  height: 32px;
-  margin-top: -50px;
-  align-items: flex-start;
-  text-overflow: ellipsis;
-  background:bisque;
+.scorebar {
+  height: 30px;
+  background: teal;
   opacity: 1;
   z-index: 100;
 }
@@ -185,7 +187,7 @@ img.offset2 {
 }
 .hhand-compact img.card {
   margin-right: -40px;
-  margin-bottom: 0px;
+  margin-bottom: -40px;
   padding-top: 10px;
 }
 .hhand-compact.active-hand img.card:hover {

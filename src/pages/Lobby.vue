@@ -76,6 +76,14 @@
     <q-footer elevated>
       <myChat :sendTo="rooms[rId].room" />
     </q-footer>
+    <!--
+    <q-page-sticky
+      position="bottom-left"
+      :offset="[18, 18]"
+    >
+      <myBottomSheet />
+    </q-page-sticky>
+    -->
     <q-page-sticky
       position="bottom-right"
       :offset="[18, 18]"
@@ -95,6 +103,8 @@ import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
 import SpeechToText from 'src/components/SpeechToText'
 import myTourney from 'src/components/myTourney'
+import { jbV2C } from 'src/jbVoice'
+// import myBottomSheet from 'src/components/myBottomSheet'
 
 export default {
   name: 'Lobby',
@@ -105,6 +115,7 @@ export default {
     myChat,
     SpeechToText,
     myTourney
+    // myBottomSheet
   },
   data () {
     return {
@@ -215,7 +226,13 @@ export default {
     },
     jsSpeech (s) {
       if (this.mySeat.tId) return
-      switch (s) {
+      const c = jbV2C(s)
+      console.log(s, c)
+      switch (c) {
+        case 'table':
+        case 'my table':
+          this.rId = 1
+          break
         case 'tourney':
           this.rId = 2
           break

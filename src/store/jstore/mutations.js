@@ -126,6 +126,11 @@ export const setJsMap = (state, map) => {
       state.jsPF = map.value
       break
     }
+    case 'speech': {
+      state.jsSpeech = map.value
+      console.log(map, state.jsSpeech)
+      break
+    }
     default:
   }
 }

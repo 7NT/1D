@@ -31,7 +31,7 @@
             keep-alive
             v-model="rId"
             animated
-            class="bg-teal box"
+            class="bg-teal"
           >
             <q-tab-panel :name="0">
               <div class="fit">
@@ -73,16 +73,21 @@
     <q-footer elevated>
       <myChat :sendTo="rooms[rId].room" />
     </q-footer>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <SpeechToText />
+    </q-page-sticky>
   </q-page>
 </template>
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
+
 import { players$ } from 'src/api'
 import myT1List from 'src/components/myT1List'
 import myPlayTable from 'src/components/myPlayTable'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
+import SpeechToText from 'src/components/SpeechToText'
 import myTourney from 'src/components/myTourney'
 
 export default {
@@ -92,6 +97,7 @@ export default {
     myPlayTable,
     myMessages,
     myChat,
+    SpeechToText,
     myTourney
   },
   data () {
@@ -130,7 +136,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['jsPlayers', 'jsTables']),
+    ...mapState('jstore', ['jsPlayers', 'jsTables', 'jsSpeech']),
     ...mapGetters('jstore', ['jsPlayer', 'jsTableById']),
 
     myTables () {
@@ -166,10 +172,6 @@ export default {
       }
     }
   },
-  mounted () {
-    this.$parent.page = 'Lobby'
-    if (!this.jsPlayer.profile.flag) this.$router.push({ name: 'profile' })
-  },
   watch: {
     user (u) {
       if (!u) this.$router.push({ name: 'home' }).catch(e => { })
@@ -189,7 +191,40 @@ export default {
         key: 't1',
         value: this.rooms[r].room || this.mySeat.tId
       })
+    },
+    jsSpeech (s) {
+      if (this.mySeat.tId) return
+      switch (s) {
+        case 'tourney':
+          this.rId = 2
+          break
+        case 'join':
+        case 'sit':
+          this.onPlayer({ sId: 0 })
+          break
+        case 'sit north':
+        case 'north':
+          this.onPlayer({ sId: 1 })
+          break
+        case 'sit east':
+        case 'east':
+          this.onPlayer({ sId: 2 })
+          break
+        case 'sit south':
+        case 'south':
+          this.onPlayer({ sId: 3 })
+          break
+        case 'sit west':
+        case 'west':
+          this.onPlayer({ sId: 4 })
+          break
+        default:
+      }
     }
+  },
+  mounted () {
+    this.$parent.page = 'Lobby'
+    if (!this.jsPlayer.profile.flag) this.$router.push({ name: 'profile' })
   },
   created () {
     this.user = this.$attrs.user
@@ -199,10 +234,6 @@ export default {
 
 <style scoped>
 .q-panel {
-  /* height: 450px; */
   overflow-y: auto;
-}
-.box {
-  border: 1px solid silver
 }
 </style>

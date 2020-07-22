@@ -203,6 +203,7 @@ import myTricks from 'src/components/myTricks'
 import myTimer from 'src/components/myTimer'
 
 import { jbContractBy } from 'src/jbBid'
+import { jbIsPlayer } from '../jbPlayer'
 
 export default {
   name: 'myPlayTable',
@@ -222,7 +223,7 @@ export default {
     timer: new Date().getTime()
   }),
   computed: {
-    ...mapState('jstore', ['jsPlayers', 'jsTables']),
+    ...mapState('jstore', ['jsPlayers', 'jsTables', 'jsSpeech']),
     ...mapGetters('jstore', ['jsTableById']),
 
     jsTable () {
@@ -378,6 +379,24 @@ export default {
     },
     myTurn () {
       this.$data.timer = new Date().getTime()
+    },
+    jsSpeech (s) {
+      console.log(s, this.myState, this.mySeat)
+      if (!jbIsPlayer(this.mySeat.sId)) return
+      switch (s) {
+        case 'ready':
+          if (this.myState < 1 || this.myState > 2) {
+            const ready = [...this.jsTable.ready] || [0, 0, 0, 0]
+            ready[this.mySeat.sId - 1] = this.mySeat.sId
+            const readyData = {
+              action: 'ready',
+              state: this.myState,
+              ready: ready
+            }
+            this.onTable(readyData)
+          }
+          break
+      }
     }
   },
   mounted () {

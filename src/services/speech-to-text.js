@@ -7,11 +7,19 @@ var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
 var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
 var SpeechRecognitionEvent = SpeechRecognitionEvent || webkitSpeechRecognitionEvent
 
-var bids = ['pass', 'double', 're-double', '1', '2', '3', '4', '5', '6', '7', 'club', 'diamond', 'heart', 'spade', 'no-trump']
-var plays = ['2 of', '3 of', '4 of', '5 of', '6 of', '7 of', '8 of', '9 of', '10 of', 'jack of', 'queen of', 'king of', 'ace of', 'clubs', 'diamonds', 'hearts', 'spades']
+var commands = ['join', 'sit', 'tourney', 'ready', 'tables', 'players', 'scorebook']
+var value = ['one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'jack', 'queen', 'king', 'ace']
+var suit5 = ['club', 'diamond', 'heart', 'spade', 'no-trump']
+var suit4 = ['clubs', 'diamonds', 'hearts', 'spades']
+// var bids = '[bid] ( pass | double | re-double | <values> <suit> )'
+// var plays = '<values> of <suits>'
 
-var grammar = '#JSGF V1.0; grammar bids; public <bid> = ' + bids.join(' | ') + ' ;'
-grammar += 'public <play> = ' + plays.join(' | ') + ' ;'
+var grammar = '#JSGF V1.0; grammar net.jbridge; public <Command> = ' + commands.join(' | ') + ' ; '
+grammar += 'public <Value> = ' + value.join(' | ') + ' ;'
+grammar += 'public <Suit5> = ' + suit5.join(' | ') + ' ;'
+grammar += 'public <Suit4> = ' + suit4.join(' | ') + ' ;'
+grammar += 'public <Bid> = ( pass | double | re-double | <Value> <Suit5> ) ; '
+grammar += 'public <Play> = <Value> of <Suit4> ;'
 
 export default class SpeechToText {
   constructor () {
@@ -22,7 +30,7 @@ export default class SpeechToText {
     this.recognition.continuous = false
     this.recognition.lang = 'en-EN'
     this.recognition.interimResults = false
-    this.recognition.maxAlternatives = 1
+    this.recognition.maxAlternatives = 2
 
     this.result = 'created'
     this.resultSubject = new Subject()

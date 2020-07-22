@@ -12,5 +12,6 @@ export default {
   jsT2: null, // tourney
   jsT4: null, // team
   jsPM: [], // private messages
-  jsPF: null // player following
+  jsPF: null, // player following
+  jsSpeech: null
 }

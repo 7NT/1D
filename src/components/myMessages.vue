@@ -47,7 +47,7 @@ export default {
     ...mapGetters('jstore', ['jsPlayerById']),
 
     myChats () {
-      if (this.sendTo.startsWith('@')) {
+      if (this.sendTo && this.sendTo.startsWith('@')) {
         return this.jsChats
           .filter(m0 => m0.to.startsWith('@'))
           .filter(m1 => m1.to === `@${this.jsUser._id}` || this.isSent(m1.from.id))

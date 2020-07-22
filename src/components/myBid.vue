@@ -74,15 +74,13 @@
           color="negative"
           @click="onAlert2()"
         />
-        <q-btn glossy color="red" :icon="isSpeaking ? 'mic' : 'mic_off'" @click="onMic" />
       </q-btn-group>
     </div>
   </div>
 </template>
 
 <script>
-import SpeechToText from '../services/speech-to-text'
-
+import { mapState } from 'vuex'
 import { jbBidX, jbSuitName } from 'src/jbBid'
 import { jbV2N } from 'src/jbVoice'
 
@@ -117,13 +115,12 @@ export default {
         'no trump'
       ],
       bidding: '',
-      alert: null,
-      isSpeaking: false,
-      speech: '',
-      speechService: {}
+      alert: null
     }
   },
   computed: {
+    ...mapState('jstore', ['jsSpeech']),
+
     myBids () {
       return this.jsTable.bids
     },
@@ -221,32 +218,6 @@ export default {
           this.onBid2()
         })
     },
-    onMic () {
-      this.isSpeaking = true
-      this.speechService.speak().subscribe(
-        result => {
-          this.speech = result
-          // this.$emit('speech', this.speech)
-          this.isSpeaking = false
-          if (result) {
-            this.$q.notify({ type: 'info', caption: 'Bid:', message: result })
-            const bid = this.checkBidding(result)
-            if (bid) {
-              this.bidding = bid
-              this.onBid2()
-            }
-          }
-        },
-        error => {
-          console.log('Error', error)
-          this.isSpeaking = false
-        },
-        () => {
-          this.isSpeaking = false
-        }
-      )
-      console.log('speechService started')
-    },
     checkBidding (bid) {
       const bid12 = bid.toLowerCase().split(' ')
       switch (bid12[0]) {
@@ -273,7 +244,7 @@ export default {
         case '6':
         case 'six':
         case '7':
-        case 'even':
+        case 'seven':
         {
           const n = jbV2N(bid12[0])
           switch (bid12[1]) {
@@ -308,9 +279,18 @@ export default {
       }
     }
   },
-  created () {
-    this.speechService = new SpeechToText()
-  }
+  watch: {
+    jsSpeech (s) {
+      if (this.isMyTurn()) {
+        const bid = this.checkBidding(s)
+        if (bid) {
+          this.bidding = bid
+          this.onBid2()
+        }
+      }
+    }
+  },
+  created () {}
 }
 </script>
 

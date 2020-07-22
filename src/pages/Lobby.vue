@@ -50,7 +50,10 @@
               </div>
             </q-tab-panel>
 
-            <q-tab-panel :name="1" class='no-margin no-padding'>
+            <q-tab-panel
+              :name="1"
+              class='no-margin no-padding'
+            >
               <myPlayTable
                 :jsPlayer="jsPlayer"
                 v-on:onPlayer="onPlayer"
@@ -73,7 +76,10 @@
     <q-footer elevated>
       <myChat :sendTo="rooms[rId].room" />
     </q-footer>
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+    <q-page-sticky
+      position="bottom-right"
+      :offset="[18, 18]"
+    >
       <SpeechToText />
     </q-page-sticky>
   </q-page>
@@ -178,12 +184,12 @@ export default {
     },
     mySeat (n, o) {
       try {
-        if (n && n.tId) {
+        if (n.tId) {
           this.rooms[1].room = n.tId
           this.rId = 1
         } else this.rId = 0
       } catch (err) {
-        console.err(err)
+        // console.err(err)
       }
     },
     rId (r) {
@@ -191,6 +197,21 @@ export default {
         key: 't1',
         value: this.rooms[r].room || this.mySeat.tId
       })
+      if (r !== 1) {
+        // Exiting fullscreen mode:
+        if (this.$q.fullscreen.isActive) {
+          this.$q.fullscreen
+            .exit()
+            .then(() => {
+              // v1.5.0+
+              // success!
+            })
+            .catch(err => {
+              // v1.5.0+
+              console.error(err)
+            })
+        }
+      }
     },
     jsSpeech (s) {
       if (this.mySeat.tId) return

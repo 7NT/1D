@@ -1,5 +1,8 @@
 <template>
-  <div v-if="jsTable" class='fit'>
+  <div
+    v-if="jsTable"
+    class='fit'
+  >
     <div class="column jbtable">
       <div class="col">
         <div class="row no-wrap">
@@ -57,21 +60,21 @@
                         size="12px"
                         flat
                         dense
-                        icon="close"
-                        @click="onCommand(-1)"
+                        color="secondary"
+                        @click="$q.fullscreen.toggle()"
+                        :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
                       >
-                        <q-tooltip>Exit Table</q-tooltip>
+                        <q-tooltip>Full Screen</q-tooltip>
                       </q-btn>
                       <q-btn
                         class="gt-xs"
                         size="12px"
                         flat
                         dense
-                        color="secondary"
-                        @click="$q.fullscreen.toggle()"
-                        :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+                        icon="close"
+                        @click="onCommand(-1)"
                       >
-                        <q-tooltip>Full Screen</q-tooltip>
+                        <q-tooltip>Exit Table</q-tooltip>
                       </q-btn>
                       <q-btn
                         size="12px"
@@ -400,7 +403,7 @@ export default {
     }
   },
   mounted () {
-    if (this.$q.platform.is.mobile) {
+    if (this.$q.platform.is.mobile || this.$q.screen.lt.md) {
       this.$q.fullscreen
         .request()
         .then(() => {

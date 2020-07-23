@@ -139,14 +139,14 @@
           </q-card-actions>
           <q-separator dark />
           <q-card-section>
-            <myMessages :sendTo='`@${p.id}`' />
+            <myMessages :roomId='`@${p.id}`' />
           </q-card-section>
           <q-card-section>
             <div
               class="full-width"
               style="height:24px"
             >
-              <myChat :sendTo='`@${p.id}`' />
+              <myChat :roomId='`@${p.id}`' />
             </div>
           </q-card-section>
         </q-card>
@@ -202,11 +202,6 @@ export default {
   methods: {
     ...mapActions('jstore', ['setJsMap']),
 
-    /*
-    getRoomName () {
-      return this.getT1Name(this.jsT1)
-    },
-    */
     getT1Name (t) {
       if (t) {
         const t1 = this.jsTableById(t)

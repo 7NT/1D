@@ -24,7 +24,7 @@ import { chats$ } from 'src/api'
 
 export default {
   name: 'myChat',
-  props: ['sendTo'],
+  props: ['roomId'],
 
   data: () => ({
     chat: null
@@ -37,17 +37,20 @@ export default {
     send () {
       if (this.chat) {
         const chatData = {
-          to: this.sendTo,
+          to: this.getSendTo(),
           text: this.chat
         }
         chats$.create(chatData)
-        // console.log(chatData)
         this.chat = null
       }
+    },
+    getSendTo () {
+      if (!this.roomId) return '#Lobby'
+      else if (this.roomId === 1) return this.jsPlayer.seat.tId
+      else if (this.roomId.startsWith('@') || this.roomId.startsWith('#')) return this.roomId
+      else return '#Lobby'
     }
   },
-  created () {
-    // this.speechService = new SpeechToText()
-  }
+  created () {}
 }
 </script>

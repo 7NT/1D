@@ -5,7 +5,7 @@
   >
     <!-- content -->
     <div class="column">
-      <div class="col">
+      <div class='col'>
         <q-card class='fit'>
           <q-tabs
             v-model="rId"
@@ -50,8 +50,7 @@
               </div>
             </q-tab-panel>
 
-            <q-tab-panel
-              :name="1"
+            <q-tab-panel :name="1"
               class='no-margin no-padding'
             >
               <myPlayTable
@@ -68,22 +67,13 @@
           </q-tab-panels>
         </q-card>
       </div>
-      <div class="col-auto">
-        <q-space />
-        <myMessages :sendTo="rooms[rId].room" />
+      <div col='col'>
+        <myMessages :roomId="rId" />
       </div>
     </div>
     <q-footer elevated>
-      <myChat :sendTo="rooms[rId].room" />
+      <myChat :roomId="rId" />
     </q-footer>
-    <!--
-    <q-page-sticky
-      position="bottom-left"
-      :offset="[18, 18]"
-    >
-      <myBottomSheet />
-    </q-page-sticky>
-    -->
     <q-page-sticky
       position="bottom-right"
       :offset="[18, 18]"

@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar class="bg-primary text-white rounded-borders" :v-show='isShow'>
+  <q-toolbar class="bg-primary text-white rounded-borders">
     <q-space />
     <div class="full-width">
       <q-input
@@ -28,16 +28,11 @@ export default {
   props: ['roomId'],
 
   data: () => ({
-    chat: null
+    chat: null,
+    chatTo: null
   }),
   computed: {
-    ...mapGetters('jstore', ['jsPlayer']),
-
-    isShow () {
-      if (this.roomId === 1 && this.$q.fullscreen.isActive) {
-        return this.$q.screen.height > this.$q.screen.width
-      } else return true
-    }
+    ...mapGetters('jstore', ['jsPlayer'])
   },
   methods: {
     onChat (event) {
@@ -46,18 +41,26 @@ export default {
     send () {
       if (this.chat) {
         const chatData = {
-          to: this.getSendTo(),
+          to: this.chatTo || '#Lobby',
           text: this.chat
         }
         chats$.create(chatData)
         this.chat = null
       }
-    },
-    getSendTo () {
-      if (!this.roomId) return '#Lobby'
-      else if (this.roomId === 1) return this.jsPlayer.seat.tId
-      else if (this.roomId.startsWith('@') || this.roomId.startsWith('#')) return this.roomId
-      else return '#Lobby'
+    }
+  },
+  watch: {
+    roomId (r) {
+      try {
+        this.chatTo = '#Lobby'
+        if (r === 1) {
+          this.chatTo = this.jsPlayer.seat.tId || '#Lobby'
+        } else if (r.startsWith('@') || r.startsWith('#')) {
+          this.chatTo = r
+        }
+      } catch (err) {
+        this.chatTo = '#Lobby'
+      }
     }
   },
   created () {}

@@ -350,10 +350,6 @@ export default {
     }
   },
   watch: {
-    '$q.fullscreen.isActive' (val) {
-      // console.log(val ? 'In fullscreen now' : 'Exited fullscreen')
-      console.log(this.$q.screen)
-    },
     jsTable (t) {
       if (!t) this.onTable({ action: 'sit', seat: null })
     },
@@ -409,15 +405,13 @@ export default {
     }
   },
   mounted () {
-    if (this.$q.platform.is.mobile || this.$q.screen.lt.md) {
+    if (this.$q.platform.is.mobile && this.$q.screen.lt.md) {
       this.$q.fullscreen
         .request()
         .then(() => {
-          // v1.5.0+
-          // success!
+          console.log('fullscreen')
         })
         .catch(err => {
-          // v1.5.0+
           console.error(err)
         })
     }

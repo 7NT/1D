@@ -5,7 +5,7 @@
   >
     <!-- content -->
     <div class="column">
-      <div class='col'>
+      <div class='col' v-show="isVisible(true)">
         <q-card class='fit'>
           <q-tabs
             v-model="rId"
@@ -67,11 +67,11 @@
           </q-tab-panels>
         </q-card>
       </div>
-      <div col='col'>
+      <div col='col' v-show="isVisible(false)">
         <myMessages :roomId="rId" />
       </div>
     </div>
-    <q-footer elevated>
+    <q-footer elevated v-show="isVisible(false)">
       <myChat :roomId="rId" />
     </q-footer>
     <q-page-sticky
@@ -138,8 +138,6 @@ export default {
           room: '#Lobby'
         }
       ]
-      // MIX: ['MP', 'IMP', 'XIMP'],
-      // myBT: null
     }
   },
   computed: {
@@ -177,6 +175,15 @@ export default {
         default:
           return false
       }
+    },
+    isVisible (v) {
+      let b = true
+      // if (this.$q.platform.is.mobile || this.$q.screen.lt.md) {
+      if (this.$q.fullscreen.isActive) {
+        if (v) b = this.$q.screen.height < this.$q.screen.width
+        else b = this.$q.screen.height > this.$q.screen.width
+      }
+      return b
     }
   },
   watch: {

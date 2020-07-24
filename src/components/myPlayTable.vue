@@ -350,6 +350,10 @@ export default {
     }
   },
   watch: {
+    '$q.fullscreen.isActive' (val) {
+      // console.log(val ? 'In fullscreen now' : 'Exited fullscreen')
+      console.log(this.$q.screen)
+    },
     jsTable (t) {
       if (!t) this.onTable({ action: 'sit', seat: null })
     },

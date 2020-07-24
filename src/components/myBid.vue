@@ -218,30 +218,36 @@ export default {
           this.onBid2()
         })
     },
-    checkBidding (bid) {
-      const bid12 = bid.toLowerCase().split(' ')
-      const w = jbV2W(bid12[0])
+    checkBidding (voice) {
+      const word = voice.toLowerCase()
+      let w = parseInt(word)
+      const bid12 = word.split(' ')
+      if (w > 0 && w < 8) {
+        bid12[0] = w
+        bid12[1] = word.substring(1).trim()
+      } else w = jbV2W(bid12[0])
+
       switch (w) {
         case 'p': return 'pass'
         case 'x':
-          if (this.X) return 'X'
+          if (!this.X) return 'X'
           else return null
         case 'xx':
-          if (this.XX) return 'XX'
+          if (!this.XX) return 'XX'
           else return null
-        case '1':
+        case 1:
         case 'one':
-        case '2':
+        case 2:
         case 'two':
-        case '3':
+        case 3:
         case 'three':
-        case '4':
+        case 4:
         case 'four':
-        case '5':
+        case 5:
         case 'five':
-        case '6':
+        case 6:
         case 'six':
-        case '7':
+        case 7:
         case 'seven':
         {
           const n = jbV2N(w)

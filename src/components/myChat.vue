@@ -1,5 +1,5 @@
 <template>
-  <q-toolbar class="bg-primary text-white rounded-borders" v-show='!$q.fullscreen.isActive'>
+  <q-toolbar class="bg-primary text-white rounded-borders" :v-show='isShow'>
     <q-space />
     <div class="full-width">
       <q-input
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { chats$ } from 'src/api'
 
 export default {
@@ -29,7 +30,15 @@ export default {
   data: () => ({
     chat: null
   }),
-  computed: {},
+  computed: {
+    ...mapGetters('jstore', ['jsPlayer']),
+
+    isShow () {
+      if (this.roomId === 1 && this.$q.fullscreen.isActive) {
+        return this.$q.screen.height > this.$q.screen.width
+      } else return true
+    }
+  },
   methods: {
     onChat (event) {
       if (event.key === 'Enter') this.send()

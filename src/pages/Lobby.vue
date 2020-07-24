@@ -194,10 +194,6 @@ export default {
       }
     },
     rId (r) {
-      this.setJsMap({
-        key: 't1',
-        value: this.rooms[r].room || this.mySeat.tId
-      })
       if (r !== 1) {
         // Exiting fullscreen mode:
         if (this.$q.fullscreen.isActive) {

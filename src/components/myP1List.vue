@@ -180,16 +180,16 @@ export default {
     }
   },
   computed: {
-    ...mapState('jstore', ['jsPlayers', 'jsT1', 'jsPM']),
+    ...mapState('jstore', ['jsPlayers', 'jsPM']),
     ...mapGetters('jstore', ['jsPlayer', 'jsTableById']),
 
-    myRoom () {
-      return this.jsT1
+    myTid () {
+      return this.jsPlayer ? this.jsPlayer.seat.tId : null
     },
     myPlayers () {
       switch (this.model) {
         case 1:
-          return this.jsPlayers.filter(p => p.seat.tId === this.jsT1).sort()
+          return this.jsPlayers.filter(p => p.seat.tId === this.myTid).sort()
         case 2:
           return this.jsPlayers.filter(p => this.isFriend(p.nick))
         case 3:
@@ -261,7 +261,7 @@ export default {
     }
   },
   watch: {
-    jsT1 (t) {
+    myTid (t) {
       switch (t) {
         case null:
         case '':

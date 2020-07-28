@@ -46,8 +46,8 @@ export const addTourney = (context, payload) => {
   context.commit('addTourney', payload)
 }
 
-export const setChat = (context, payload) => {
-  context.commit('setChat', payload)
+export const addChat = (context, payload) => {
+  context.commit('addChat', payload)
 }
 /*
 export const setJsSet = (context, payload) => {

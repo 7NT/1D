@@ -40,14 +40,14 @@
           dense
           class="row boardItem"
         >
-          <q-item-section class="col-2 gt-sm">
-            <q-item-label class="q-mt-sm">System:</q-item-label>
+          <q-item-section class="col-2">
+            <q-item-label>System:</q-item-label>
           </q-item-section>
           <q-item-section
             side
-            class="col-10 gt-sm"
+            class="col-10"
           >
-            <div class="row q-pa-xs q-gutter-xs no-wrap full-width">
+            <div class="row no-wrap full-width">
               <div class="col-6">
                 <q-btn
                   dense
@@ -67,14 +67,11 @@
                   >
                     <q-list dense>
                       <template v-if="isMyCC===0">
-                        <q-item
-                          clickable
-                          v-for="c in CCs"
-                          :key="c"
-                          @click="onCC(0,c)"
-                        >
-                          <q-item-section>{{c}}</q-item-section>
-                        </q-item>
+                        <EssentialLink
+                          v-for="link in essentialLinks"
+                          :key="link.title"
+                          v-bind="link"
+                        />
                         <q-separator />
                       </template>
                       <q-item
@@ -106,14 +103,11 @@
                   >
                     <q-list dense>
                       <template v-if="isMyCC===1">
-                        <q-item
-                          clickable
-                          v-for="c in CCs"
-                          :key="c"
-                          @click="onCC(1,c)"
-                        >
-                          <q-item-section>{{c}}</q-item-section>
-                        </q-item>
+                        <EssentialLink
+                          v-for="link in essentialLinks"
+                          :key="link.title"
+                          v-bind="link"
+                        />
                         <q-separator />
                       </template>
                       <q-item
@@ -134,13 +128,13 @@
           <q-item>
             <q-item-section
               top
-              class="col-4 gt-sm"
+              class="col-4"
             >
               <q-item-label class="q-mt-sm">{{bT}}/#:</q-item-label>
             </q-item-section>
             <q-item-section
               side
-              class="col-10 gt-sm"
+              class="col-10"
             >
               <div class="row q-pa-xs q-gutter-xs no-wrap text-orange full-width">
                 <div class="col-4">
@@ -168,13 +162,48 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import { openURL } from 'quasar'
+import EssentialLink from 'components/EssentialLink.vue'
+// import { openURL } from 'quasar'
+
 import { jbIsPlayer } from 'src/jbPlayer'
 
+const ccLinks = [
+  {
+    title: 'SAYC',
+    caption: 'Modern Standard American',
+    icon: 'bookmark_border',
+    link: 'https://bridgewinners.com/convention-card/print/modern-standard-american-2/4563'
+  },
+  {
+    title: 'Prec',
+    caption: 'Basic Precision',
+    icon: 'code',
+    link: 'https://bridgewinners.com/convention-card/print/basic-precision-template/3'
+  },
+  {
+    title: '2 over 1',
+    caption: 'Basic',
+    icon: 'bookmark_border',
+    link: 'https://bridgewinners.com/convention-card/print/basic-21-card-276/4565'
+  },
+  {
+    title: '2 over 1',
+    caption: 'Bridge Winners Standard',
+    icon: 'bookmark_border',
+    link: 'https://bridgewinners.com/convention-card/print/bridge-winners-standard/4568'
+  },
+  {
+    title: 'LC Standard',
+    caption: 'Larry Cohen & Simon Simple',
+    icon: 'bookmark_border',
+    link: 'https://bridgewinners.com/convention-card/print/lc-standard-3/5454'
+  }
+]
 export default {
   name: 'myBoard',
   props: ['jsTable', 'mySeat'],
 
+  components: { EssentialLink },
   data () {
     return {
       boardData: [
@@ -187,9 +216,10 @@ export default {
         { name: 'ns', label: '', field: 'ns' },
         { name: 'ew', label: '', field: 'ew' }
       ],
-      CCs: ['SAYC', '2over1', 'Prec', 'my CC...'],
+      // CCs: ['SAYC', '2over1', 'Prec', 'my CC...'],
       myScores: [0, 0],
-      myBoards: [0, 0]
+      myBoards: [0, 0],
+      essentialLinks: ccLinks
     }
   },
   computed: {
@@ -251,10 +281,6 @@ export default {
       }
       const message = 'You do not have permission to change this CC card'
       this.$q.notify({ type: 'positive', message })
-    },
-    onCCView (n) {
-      const cc = this.cc[n]
-      openURL(`http://www.jbridge.net/cc/${cc}.pdf`)
     },
     score (n) {
       return this.myScores[n] + '/' + this.myBoards[n]

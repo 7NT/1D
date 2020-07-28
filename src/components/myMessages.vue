@@ -56,7 +56,8 @@ export default {
       return jbGetNick(this.jsPlayerById(pId))
     },
     getAvatar (pId) {
-      return jbAvatar(this.jsPlayerById(pId))
+      if (pId === '@info') return '/jbicon/seats/seat0.svg'
+      else return jbAvatar(this.jsPlayerById(pId))
     },
     chatDate (created) {
       return moment(created).fromNow()

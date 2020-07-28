@@ -33,7 +33,7 @@
             animated
             class="bg-teal"
           >
-            <q-tab-panel :name="0">
+            <q-tab-panel :name="0" class='no-margin no-padding'>
               <div class="fit">
                 <q-list
                   dense
@@ -50,9 +50,7 @@
               </div>
             </q-tab-panel>
 
-            <q-tab-panel :name="1"
-              class='no-margin no-padding'
-            >
+            <q-tab-panel :name="1" class='no-margin no-padding'>
               <myPlayTable
                 :jsPlayer="jsPlayer"
                 v-on:onPlayer="onPlayer"
@@ -154,6 +152,9 @@ export default {
   methods: {
     ...mapActions('jstore', ['setJsMap']),
 
+    onJoin (b) {
+      if (b) this.onPlayer({ sId: 0 })
+    },
     onPlayer (seat) {
       if (!seat) {
         this.rId = 0
@@ -231,7 +232,16 @@ export default {
           break
         case 'join':
         case 'sit':
-          this.onPlayer({ sId: 0 })
+          if (s !== c) {
+            this.$q.notify({
+              message: 'Do you want to JOIN a table?',
+              color: 'primary',
+              icon: 'login',
+              actions: [
+                { label: 'Dismiss', color: 'white', handler: () => { this.onJoin(false) } }
+              ]
+            })
+          } else this.onJoin(true)
           break
         case 'sit north':
         case 'north':

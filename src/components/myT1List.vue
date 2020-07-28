@@ -15,6 +15,7 @@
           :key="n"
         >
           <q-btn
+            dense
             push
             glassy
             ripple
@@ -24,14 +25,14 @@
             :label="myNick(n)"
             :icon="mySeatIcon(n)"
             :color="mySeatColor(n)"
-            style="width:100px"
+            class='player'
           />
         </q-btn-group>
         <q-btn
+          dense
           flat
           @click="sit(9)"
           round
-          dense
           :icon="mySeatIcon(9)"
         />
       </q-item-label>
@@ -120,8 +121,8 @@ export default {
 </script>
 
 <style scoped>
-.q-btn {
-  min-width: 75px;
+.player {
+  min-width: 85px;
   height: 32px;
   text-overflow: ellipsis;
   text-transform: none;

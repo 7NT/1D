@@ -272,7 +272,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('jstore', ['addTable']),
+    ...mapActions('jstore', ['addTable', 'addChat']),
 
     onTable (action) {
       switch (action.action) {
@@ -354,23 +354,43 @@ export default {
       if (!t) this.onTable({ action: 'sit', seat: null })
     },
     myState (s1, s0) {
-      if (s1 === 3) {
-        // review
-        let message = jbContractBy(this.jsTable.bids.info)
-        const score = this.jsTable.score
-        let caption = score.score
+      switch (s1) {
+        case 1: {
+          const message = {
+            to: this.jsTable.id,
+            text: 'Played: ' + this.jsTable.board.played,
+            from: { id: '@info' }
+          }
+          this.addChat(message)
+          break
+        }
+        case 3: {
+          // review
+          let message = jbContractBy(this.jsTable.bids.info)
+          const score = this.jsTable.score
+          let caption = score.score
 
-        if (score.result === 0) message += ' = MADE'
-        else if (score.result > 0) message += '+' + score.result
-        else message += score.result
+          if (score.result === 0) message += ' = MADE'
+          else if (score.result > 0) message += '+' + score.result
+          else message += score.result
 
-        if (this.jsTable.bids.info.by % 2 === 0) caption = -score.score
+          if (this.jsTable.bids.info.by % 2 === 0) caption = -score.score
 
-        this.$q.notify({
-          message: message,
-          caption: caption,
-          color: 'info'
-        })
+          this.$q.notify({
+            message: message,
+            caption: caption,
+            color: 'info'
+          })
+
+          const result = {
+            to: this.jsTable.id,
+            text: 'Result: ' + message,
+            from: { id: '@info' }
+          }
+          this.addChat(result)
+          break
+        }
+        default:
       }
       this.$data.timer = new Date().getTime()
     },
@@ -409,7 +429,13 @@ export default {
       this.$q.fullscreen
         .request()
         .then(() => {
-          console.log('fullscreen')
+          // console.log('fullscreen')
+          const message = {
+            to: this.jsTable.id,
+            text: 'Rotate to Landscape for play, and portrait for Chat',
+            from: { id: '@info' }
+          }
+          this.addChat(message)
         })
         .catch(err => {
           console.error(err)

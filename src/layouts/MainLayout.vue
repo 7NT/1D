@@ -178,7 +178,7 @@ export default {
   methods: {
     ...mapActions('jstore', [
       'setJsUser',
-      'setChat',
+      'addChat',
       'setPlayers',
       'setTables',
       'setResults',
@@ -260,7 +260,7 @@ export default {
             })
           }
         }
-        this.setChat(chat)
+        this.addChat(chat)
       })
 
       users$.on('patched', u0 => {

@@ -78,7 +78,7 @@ export const addTourney = (state, tourney) => {
   }
 }
 
-export const setChat = (state, chat) => {
+export const addChat = (state, chat) => {
   const i = state.jsChats.findIndex(c => c.id === chat.id)
   if (i >= 0) return
 

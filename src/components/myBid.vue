@@ -80,7 +80,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { jbBidX, jbSuitName } from 'src/jbBid'
 import { jbV2W, jbV2S, jbV2N } from 'src/jbVoice'
 
@@ -135,6 +135,8 @@ export default {
     }
   },
   methods: {
+    ...mapActions('jstore', ['setJsMap']),
+
     getSuitName (s) {
       return jbSuitName(s)
     },
@@ -285,6 +287,7 @@ export default {
           this.bidding = bid
           this.onBid2()
         }
+        this.setJsMap({ key: 'speech', value: null })
       }
     }
   },

@@ -31,14 +31,14 @@
             <q-item-section class='col-10'>
               <div class="row">
                 <q-icon size='sm' name='img:/jbicon/seats/seat13.svg' left />
-                <q-badge outline color="black" :label="tricks(0)" align="middle" />
+                <q-badge outline color="silver" :label="tricks(0)" align="middle" />
                 <q-icon size='sm' name='img:/jbicon/seats/seat24.svg' right />
-                <q-badge outline color="black" :label="tricks(1)" align="middle" />
+                <q-badge outline color="silver" :label="tricks(1)" align="middle" />
               </div>
             </q-item-section>
             <q-item-section side avatar class='col-2'>
               <q-avatar square>
-                <q-btn icon='menu_book' />
+                <q-btn color="silver" icon='menu_book' />
               </q-avatar>
             </q-item-section>
           </q-item>

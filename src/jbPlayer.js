@@ -59,6 +59,12 @@ export const jbIsPlayer = (seat) => {
   }
 }
 
+export const jbIsMyPd = (s1, s2) => {
+  if (s1 === s2) return false
+  else if (!jbIsPlayer(s1) || !jbIsPlayer(s2)) return false
+  else return (s1 % 2) === (s2 % 2)
+}
+
 export function jbIsAdmin (p) {
   return p.status > 1
 }

@@ -40,8 +40,8 @@
         />
       </div>
     </div>
-    <q-footer color='secondary' reveal elevated bordered class='fixed-bottom'>
-      Contact: <a href="mailto:help@jbridge.net">Email Us</a>
+    <q-footer reveal elevated bordered class='bg-grey-1 text-primary fixed-bottom'>
+      ✉ Contact: <a href="mailto:help@jbridge.net">Email Us</a>
     </q-footer>
   </q-page>
 </template>

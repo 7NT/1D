@@ -2,8 +2,7 @@
   <div class="fit">
     <q-card flat bordered>
       <q-card-section class="bg-primary text-white">
-        <div class="text-h6">{{ room.header }}</div>
-        <div class="text-subtitle2">{{ room.type }}</div>
+        <div class="overline">{{ room.header }}</div>
       </q-card-section>
       <q-chat-message
         v-for="chat in myChats"
@@ -28,7 +27,7 @@ export default {
   props: ['roomId'],
 
   data: () => ({
-    room: { name: '#Lobby', header: 'Lobby Messages', type: 'Public' }
+    room: { name: '#Lobby', header: 'Public Lobby Messages' }
   }),
   computed: {
     ...mapState('jstore', ['jsUser', 'jsChats']),
@@ -67,14 +66,14 @@ export default {
     roomId (r) {
       try {
         if (r === 1) {
-          this.room = { name: this.jsPlayer.seat.tId || '#Lobby', header: 'Table Messages', type: 'Public' }
+          this.room = { name: this.jsPlayer.seat.tId || '#Lobby', header: 'Public Table Messages' }
         } else if (r.startsWith('@')) {
-          this.room = { name: r, header: 'Player Messages', type: 'Private' }
+          this.room = { name: r, header: 'Private Player Messages' }
         } else if (r.startsWith('#')) {
-          this.room = { name: r, header: 'Table Messages', type: 'Public' }
+          this.room = { name: r, header: 'Public Table Messages' }
         }
       } catch (err) {
-        this.room = { name: '#Lobby', header: 'Lobby Messages', type: 'Public' }
+        this.room = { name: '#Lobby', header: 'Public Lobby Messages' }
       }
     }
   }

@@ -40,6 +40,7 @@
 <script>
 // import { mapGetters } from 'vuex'
 import { jbSeatX } from 'src/jbSeat'
+import { jbIsMyPd } from 'src/jbPlayer'
 
 export default {
   name: 'myBidBox',
@@ -91,7 +92,7 @@ export default {
         let row = 1
         let rBid = { N: null, E: null, S: null, W: null }
         this.myBids.data.forEach(bid => {
-          const bdata = { bid: bid.bid, alert: bid.alert || null }
+          const bdata = { sId: bid.sId, bid: bid.bid, alert: bid.alert || null }
           switch (bid.sId) {
             case 1: {
               rBid.N = bdata
@@ -144,9 +145,10 @@ export default {
     },
     getAlert (a) {
       try {
+        if (jbIsMyPd(a.sId, this.jsPlayer.seat.sId)) return null
         if (a.alert) return a.alert
       } catch (err) { }
-      return this.getBid(a)
+      return null
     },
     getVColor (s) {
       if (this.myBids) {
@@ -174,7 +176,7 @@ export default {
       else if (bdata.bid === '?') return 'bg-warning'
       else if (bdata.bid.endsWith('♦') || bdata.bid.endsWith('♥')) return 'col-3 red'
       else {
-        if (bdata.alert) return 'col-3 vul3'
+        if (this.getAlert(bdata)) return 'col-3 vul3'
         else return 'col-3'
       }
     }

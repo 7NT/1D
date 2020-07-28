@@ -356,12 +356,16 @@ export default {
     myState (s1, s0) {
       switch (s1) {
         case 1: {
-          const message = {
+          const from = {
+            nick: this.jsTable.board.bT + ': ' + this.jsTable.board.bId + '#' + this.jsTable.board.bN,
+            id: '@info'
+          }
+          const board = {
             to: this.jsTable.id,
             text: 'Played: ' + this.jsTable.board.played,
-            from: { id: '@info' }
+            from
           }
-          this.addChat(message)
+          this.addChat(board)
           break
         }
         case 3: {
@@ -376,18 +380,22 @@ export default {
 
           if (this.jsTable.bids.info.by % 2 === 0) caption = -score.score
 
+          const from = {
+            nick: this.jsTable.board.bT + ': ' + this.jsTable.board.bId + '#' + this.jsTable.board.bN,
+            id: '@info'
+          }
+          const result = {
+            to: this.jsTable.id,
+            text: 'Result: ' + message,
+            from
+          }
+          this.addChat(result)
+
           this.$q.notify({
             message: message,
             caption: caption,
             color: 'info'
           })
-
-          const result = {
-            to: this.jsTable.id,
-            text: 'Result: ' + message,
-            from: { id: '@info' }
-          }
-          this.addChat(result)
           break
         }
         default:
@@ -421,6 +429,23 @@ export default {
             this.onTable(readyData)
           }
           break
+        case 'sit north':
+        case 'north':
+          this.$emit('onPlayer', { tId: this.mySeat.tId, sId: 1 })
+          break
+        case 'sit east':
+        case 'east':
+          this.$emit('onPlayer', { tId: this.mySeat.tId, sId: 2 })
+          break
+        case 'sit south':
+        case 'south':
+          this.$emit('onPlayer', { tId: this.mySeat.tId, sId: 3 })
+          break
+        case 'sit west':
+        case 'west':
+          this.$emit('onPlayer', { tId: this.mySeat.tId, sId: 4 })
+          break
+        default:
       }
     }
   },

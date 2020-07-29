@@ -79,12 +79,13 @@ export const addTourney = (state, tourney) => {
 }
 
 export const addChat = (state, chat) => {
-  const i = state.jsChats.findIndex(c => c.id === chat.id)
-  if (i >= 0) return
+  if (chat.id) {
+    const i = state.jsChats.findIndex(c => c.id === chat.id)
+    if (i >= 0) return
 
-  if (chat.to === `@${state.jsUser._id}`) {
-    // if (!state.jsSet.has(chat.userId)) state.jsMap.add(chat.userId)
-    if (state.jsPM.indexOf(chat.from.nick) < 0) state.jsPM.push(chat.from.nick)
+    if (chat.to === `@${state.jsUser._id}`) {
+      if (state.jsPM.indexOf(chat.from.nick) < 0) state.jsPM.push(chat.from.nick)
+    }
   }
   state.jsChats.push(chat)
 }

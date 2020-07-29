@@ -54,7 +54,6 @@ async function getBoard(context: any) {
     let t1 = await context.service.get(context.id)
     if (t1.t2.bn < t1.t2.bN) return t2Board(context, t1.t2)
     else {
-      // console.log(id, t1)
       await t2Pairs(context.app, t1.t2)
       t1.alert = 'Waiting...'
       t1.state = 0
@@ -73,20 +72,26 @@ async function t1Board(context: any) {
   let played_data = await played$.find({
     query: {
       $select: ['bId'],
+      $sort: { played: -1 },
       nick: { $in: nicks }
     }
   })
 
-  const played_bIds = played_data.data.map((x: { bId: any }) => x.bId) // mongoose.Types.ObjectId(x.bId))
+  const played_bIds = played_data.data.map((x: { bId: any }) => x.bId) //mongoose.Types.ObjectId(x.bId))
+  // console.log(nicks, played_bIds)
+
   let notPlayed_data = await boards$.find({
     query: {
       $limit: 1,
       $select: ['_id'],
       bT: t1.bT,
+      $sort: { played: -1 },
       _id: { $nin: played_bIds }
     }
   })
   const notPlayed_bIds = notPlayed_data.data.map((x: { _id: any }) => x._id)
+  // console.log(nicks, notPlayed_bIds)
+
   let board: any
   if (notPlayed_bIds.length > 0) board = await boards$.get(notPlayed_bIds[0])
   else {

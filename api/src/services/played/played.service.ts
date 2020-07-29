@@ -15,7 +15,10 @@ declare module '../../declarations' {
 export default function (app: Application) {
   const options = {
     Model: createModel(app),
-    paginate: app.get('paginate')
+    paginate: {
+      default: 500,
+      max: 1000
+    }
   };
 
   // Initialize our service with any options it requires

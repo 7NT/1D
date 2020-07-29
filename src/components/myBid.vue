@@ -190,7 +190,7 @@ export default {
         data.push({ sId, bid: '?' })
         this.$emit('onTable', {
           action: 'bid',
-          bid: { bids: { info, data } }
+          bid: { bids: { info, data }, alert: { sId, bid, alert } }
         })
         this.bidding = ''
         this.alert = null

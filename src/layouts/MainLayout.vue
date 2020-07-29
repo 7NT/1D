@@ -167,7 +167,7 @@ export default {
   },
   computed: {
     ...mapState('jstore', ['jsPF']),
-    ...mapGetters('jstore', ['jsTableById', 'jsPlayerbyId', 'jsTourneyById']),
+    ...mapGetters('jstore', ['jsTableById', 'jsPlayerById', 'jsTourneyById']),
     authenticated () {
       return this.user != null
     },

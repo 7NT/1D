@@ -13,7 +13,10 @@ declare module '../../declarations' {
 
 export default function (app: Application) {
   const options = {
-    paginate: app.get('paginate')
+    paginate: {
+      default: 100,
+      max: 200
+    }
   };
 
   // Initialize our service with any options it requires

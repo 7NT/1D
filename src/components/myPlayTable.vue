@@ -207,7 +207,7 @@ import myTricks from 'src/components/myTricks'
 import myTimer from 'src/components/myTimer'
 
 import { jbContractBy } from 'src/jbBid'
-import { jbIsPlayer } from '../jbPlayer'
+import { jbIsPlayer, jbIsMyPd } from '../jbPlayer'
 import { jbV2C } from 'src/jbVoice'
 
 export default {
@@ -259,10 +259,7 @@ export default {
       }
     },
     myAlert () {
-      try {
-        return this.jsTable.alert
-      } catch (err) { }
-      return null
+      return this.jsTable.alert || null
     },
     myBids () {
       return this.jsTable.bids
@@ -303,11 +300,12 @@ export default {
           break
         }
         case 'bid': {
-          const bids = {
+          const bidData = {
             action: action.action,
-            bids: action.bid.bids
+            bids: action.bid.bids,
+            alert: action.bid.alert
           }
-          tables$.patch(this.jsTable.id, bids)
+          tables$.patch(this.jsTable.id, bidData)
           break
         }
         case 'play': {
@@ -404,9 +402,22 @@ export default {
     },
     myAlert (a) {
       if (a) {
+        if (jbIsMyPd(a.sId, this.mySeat.sId)) return
+        if (this.myState < 1 || this.myState > 3) return
+        const message = (a.bid || a.play) + ' = ' + a.alert
+        const from = { nick: 'ALERT', id: '@info' }
+
+        const alert = {
+          to: this.jsTable.id,
+          text: message,
+          from
+        }
+        this.addChat(alert)
+
         this.$q.notify({
-          type: a.type,
-          message: a.message
+          type: 'warning',
+          message,
+          caption: 'ALERT'
         })
       }
     },
@@ -454,11 +465,11 @@ export default {
       this.$q.fullscreen
         .request()
         .then(() => {
-          // console.log('fullscreen')
+          const from = { nick: 'Full Screen ', id: '@info' }
           const message = {
             to: this.jsTable.id,
             text: 'Rotate to Landscape for play, and portrait for Chat',
-            from: { id: '@info' }
+            from
           }
           this.addChat(message)
         })

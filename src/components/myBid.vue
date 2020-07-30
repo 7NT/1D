@@ -178,20 +178,19 @@ export default {
       this.bidding = bid
     },
     onBid2 () {
-      const bid = this.bidding
-      if (bid) {
+      if (this.bidding) {
         const info = this.myBids.info
         const data = [...this.myBids.data] // this.myBids.data.slice(0)
-        let sId = this.myTurn
-        const alert = this.alert
+        const sId = this.myTurn
         data.pop()
-        data.push({ sId, bid, alert })
-        sId = (sId % 4) + 1
-        data.push({ sId, bid: '?' })
-        this.$emit('onTable', {
-          action: 'bid',
-          bid: { bids: { info, data }, alert: { sId, bid, alert } }
-        })
+        data.push({ sId, bid: this.bidding, alert: this.alert })
+        data.push({ sId: (sId % 4) + 1, bid: '?' })
+
+        const bid = { bids: { info, data } }
+        if (this.alert) bid.alert = { sId, bid: this.bidding, alert: this.alert }
+        else bid.alert = null
+
+        this.$emit('onTable', { action: 'bid', bid })
         this.bidding = ''
         this.alert = null
       }

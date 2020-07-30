@@ -401,7 +401,7 @@ export default {
       this.$data.timer = new Date().getTime()
     },
     myAlert (a) {
-      if (a && a.alert) {
+      if (a) {
         if (jbIsMyPd(a.sId, this.mySeat.sId)) return
         if (this.myState < 1 || this.myState > 3) return
         const message = (a.bid || a.play) + ' = ' + a.alert

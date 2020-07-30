@@ -105,7 +105,7 @@
                       <template v-if="isMyCC===1">
                         <EssentialLink
                           v-for="link in essentialLinks"
-                          :key="link.title"
+                          :key="link.link"
                           v-bind="link"
                         />
                         <q-separator />

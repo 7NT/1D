@@ -7,7 +7,7 @@
         </q-card-section>
 
         <q-card-section>
-          <q-list bordered padding>
+          <q-list dense bordered padding>
             <q-item>
               <q-item-section top avatar>
                 <q-icon name="face" />

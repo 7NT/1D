@@ -39,6 +39,7 @@
         <q-item-section>
           <q-btn-toggle
             v-model="model"
+            spread
             push
             dense
             glossy

@@ -71,7 +71,7 @@
     "@types/serve-favicon": "^2.5.0",
     "axios": "^0.19.2",
     "mocha": "^7.1.2",
-    "nodemon": "^2.0.2",
+    "nodemon": "^2.0.4",
     "shx": "^0.3.2",
     "ts-mocha": "^6.0.0",
     "ts-node-dev": "^1.0.0-pre.44",

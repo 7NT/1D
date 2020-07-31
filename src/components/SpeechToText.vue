@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if='!$q.platform.is.mac'>
     <q-btn fab color="red" @click="onMic" :icon="isSpeaking ? 'mic' : 'mic_off'" />
     <!--
     <div class="speech-to-text__button-container">
@@ -70,7 +70,7 @@ export default {
     msg: String
   },
   created () {
-    this.speechService = new SpeechToText()
+    if (!this.$q.platform.is.mac) this.speechService = new SpeechToText()
   }
 }
 </script>

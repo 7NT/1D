@@ -75,7 +75,6 @@
     <q-page-sticky
       position="bottom-right"
       :offset="[18, 18]"
-      v-if='!$q.platform.is.mac'
     >
       <SpeechToText />
     </q-page-sticky>

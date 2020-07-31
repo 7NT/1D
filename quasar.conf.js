@@ -105,7 +105,7 @@ module.exports = function (ctx) {
     devServer: {
       https: false,
       public: 'www.jbridge.net',
-      /* host: '192.168.1.160', */
+      host: '0.0.0.0',
       port: 8080,
       open: true // opens browser window automatically
     },

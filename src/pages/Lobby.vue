@@ -266,7 +266,6 @@ export default {
   mounted () {
     this.$parent.page = 'Lobby'
     if (!this.jsPlayer.profile.flag) this.$router.push({ name: 'profile' })
-    console.log('platform', this.$q.platform.is.mac)
   },
   created () {
     this.user = this.$attrs.user

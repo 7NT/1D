@@ -4,7 +4,11 @@
       <div class="col">
         <div class="row no-wrap">
           <div class="col-4 items-start">
-            <myBoard :jsTable="jsTable" :mySeat="mySeat" v-on:onTable="onTable"></myBoard>
+            <myBoard
+              :jsTable="jsTable"
+              :mySeat="mySeat"
+              v-on:onTable="onTable"
+            ></myBoard>
           </div>
           <div class="col-5">
             <div class="column justify-start">
@@ -56,7 +60,11 @@
                         dense
                         color="secondary"
                         @click="$q.fullscreen.toggle()"
-                        :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+                        :icon="
+                          $q.fullscreen.isActive
+                            ? 'fullscreen_exit'
+                            : 'fullscreen'
+                        "
                       >
                         <q-tooltip>Full Screen</q-tooltip>
                       </q-btn>
@@ -75,8 +83,12 @@
                   </div>
                 </div>
               </q-item-label>
-              <q-item-section v-if="myState >1">
-                <myBidBox :jsPlayer="jsPlayer" :jsTable="jsTable" class="fit bbox" />
+              <q-item-section v-if="myState > 1">
+                <myBidBox
+                  :jsPlayer="jsPlayer"
+                  :jsTable="jsTable"
+                  class="fit bbox"
+                />
               </q-item-section>
             </q-list>
           </div>
@@ -104,7 +116,11 @@
                   </q-card>
                 </q-card>
                 <q-card flat class="pbox transparent" v-if="myState >= 2">
-                  <myPlayBox :jsPlayer="jsPlayer" :jsTable="jsTable" :review="false" />
+                  <myPlayBox
+                    :jsPlayer="jsPlayer"
+                    :jsTable="jsTable"
+                    :review="false"
+                  />
                 </q-card>
                 <q-space />
               </div>
@@ -143,7 +159,11 @@
           </div>
           <div class="col-4 column">
             <div class="justify-end">
-              <myBid :jsPlayer="jsPlayer" :jsTable="jsTable" v-on:onTable="onTable" />
+              <myBid
+                :jsPlayer="jsPlayer"
+                :jsTable="jsTable"
+                v-on:onTable="onTable"
+              />
             </div>
           </div>
         </div>
@@ -179,12 +199,12 @@ export default {
     myBidBox,
     myPlayBox,
     myTricks,
-    myTimer,
+    myTimer
   },
   data: () => ({
     cc: { name: { NS: "SAYC", EW: "SAYC" }, card: { NS: "", EW: "" } },
     alert: null,
-    timer: new Date().getTime(),
+    timer: new Date().getTime()
   }),
   computed: {
     ...mapState("jstore", ["jsPlayers", "jsTables", "jsSpeech"]),
@@ -225,7 +245,7 @@ export default {
     },
     myPlays() {
       return this.jsTable.plays;
-    },
+    }
   },
   methods: {
     ...mapActions("jstore", ["addTable", "addChat"]),
@@ -240,21 +260,21 @@ export default {
           tables$.patch(this.jsTable.id, {
             action: action.action,
             state: action.state,
-            ready: action.ready,
+            ready: action.ready
           });
           break;
         }
         case "bT": {
           tables$.patch(this.jsTable.id, {
             action: action.action,
-            bT: action.bT,
+            bT: action.bT
           });
           break;
         }
         case "cc": {
           tables$.patch(this.jsTable.id, {
             action: action.action,
-            cc: action.cc,
+            cc: action.cc
           });
           break;
         }
@@ -262,7 +282,7 @@ export default {
           const bidData = {
             action: action.action,
             bids: action.bid.bids,
-            alert: action.bid.alert,
+            alert: action.bid.alert
           };
           tables$.patch(this.jsTable.id, bidData);
           break;
@@ -270,12 +290,12 @@ export default {
         case "play": {
           const _info = this.myPlays.info;
           const _data = [...this.myPlays.data]; // .slice(0)
-          const _played = _data.map((x) => x.card) || [];
+          const _played = _data.map(x => x.card) || [];
           if (!_played.includes(action.play.card)) {
             _data.push(action.play);
             const plays = {
               action: action.action,
-              plays: { info: _info, data: _data },
+              plays: { info: _info, data: _data }
             };
             tables$.patch(this.jsTable.id, plays);
           }
@@ -284,7 +304,7 @@ export default {
         case "claim": {
           tables$.patch(this.jsTable.id, {
             action: action.action,
-            claim: action.claim,
+            claim: action.claim
           });
           break;
         }
@@ -304,7 +324,7 @@ export default {
         }
         default:
       }
-    },
+    }
   },
   watch: {
     jsTable(t) {
@@ -320,12 +340,12 @@ export default {
               this.jsTable.board.bId +
               "#" +
               this.jsTable.board.bN,
-            id: "@info",
+            id: "@info"
           };
           const board = {
             to: this.jsTable.id,
             text: "Played: " + this.jsTable.board.played,
-            from,
+            from
           };
           this.addChat(board);
           break;
@@ -349,19 +369,19 @@ export default {
               this.jsTable.board.bId +
               "#" +
               this.jsTable.board.bN,
-            id: "@info",
+            id: "@info"
           };
           const result = {
             to: this.jsTable.id,
             text: "Result: " + message,
-            from,
+            from
           };
           this.addChat(result);
 
           this.$q.notify({
             message: message,
             caption: caption,
-            color: "info",
+            color: "info"
           });
           break;
         }
@@ -379,14 +399,14 @@ export default {
         const alert = {
           to: this.jsTable.id,
           text: message,
-          from,
+          from
         };
         this.addChat(alert);
 
         this.$q.notify({
           type: "warning",
           message,
-          caption: "ALERT",
+          caption: "ALERT"
         });
       }
     },
@@ -404,7 +424,7 @@ export default {
             const readyData = {
               action: "ready",
               state: this.myState,
-              ready: ready,
+              ready: ready
             };
             this.onTable(readyData);
           }
@@ -440,7 +460,7 @@ export default {
               // v1.5.0+
               // success!
             })
-            .catch((err) => {
+            .catch(err => {
               // v1.5.0+
               console.error(err);
             });
@@ -455,16 +475,16 @@ export default {
               const message = {
                 to: this.jsTable.id,
                 text: "Rotate to Landscape for play, and portrait for Chat",
-                from,
+                from
               };
               this.addChat(message);
             })
-            .catch((err) => {
+            .catch(err => {
               console.error(err);
             });
         }
       }
-    },
+    }
   },
   mounted() {
     window.addEventListener("orientationchange", this.handleOrientationChange);
@@ -478,12 +498,12 @@ export default {
           // v1.5.0+
           // success!
         })
-        .catch((err) => {
+        .catch(err => {
           // v1.5.0+
           console.error(err);
         });
     }
-  },
+  }
 };
 </script>
 <!-- Notice lang='scss' -->

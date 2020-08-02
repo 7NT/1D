@@ -1,5 +1,8 @@
 <template>
-  <div v-if="jsTable" class="fit">
+  <div
+    v-if="jsTable"
+    class="fit"
+  >
     <div class="column jbtable">
       <div class="col">
         <div class="row no-wrap">
@@ -23,7 +26,10 @@
           </div>
           <div class="col-3 items-start column">
             <q-list bordered>
-              <q-item-label overline class="bg-primary text-white shadow-2">
+              <q-item-label
+                overline
+                class="bg-primary text-white shadow-2"
+              >
                 <div class="full-width">
                   <div class="row statusbar">
                     <q-space />
@@ -39,7 +45,13 @@
                     </q-chip>
                     <q-space />
                     <q-btn-group push>
-                      <q-btn size="12px" flat dense round icon="more_vert">
+                      <q-btn
+                        size="12px"
+                        flat
+                        dense
+                        round
+                        icon="more_vert"
+                      >
                         <q-tooltip>Table Settings</q-tooltip>
                       </q-btn>
                       <q-btn
@@ -110,12 +122,22 @@
           <div class="col-4">
             <div class="column justify-start">
               <div class="centerbox">
-                <q-card class="bbox pbox" v-if="myState === 1">
+                <q-card
+                  class="bbox pbox"
+                  v-if="myState === 1"
+                >
                   <q-card>
-                    <myBidBox :jsPlayer="jsPlayer" :jsTable="jsTable" />
+                    <myBidBox
+                      :jsPlayer="jsPlayer"
+                      :jsTable="jsTable"
+                    />
                   </q-card>
                 </q-card>
-                <q-card flat class="pbox transparent" v-if="myState >= 2">
+                <q-card
+                  flat
+                  class="pbox transparent"
+                  v-if="myState >= 2"
+                >
                   <myPlayBox
                     :jsPlayer="jsPlayer"
                     :jsTable="jsTable"
@@ -143,7 +165,10 @@
         <div class="row items-end no-wrap">
           <div class="col-3 column">
             <div class="justify-end q-pa-sm">
-              <myTricks :jsPlayer="jsPlayer" :jsTable="jsTable" />
+              <myTricks
+                :jsPlayer="jsPlayer"
+                :jsTable="jsTable"
+              />
             </div>
           </div>
           <div class="col-5">
@@ -174,24 +199,24 @@
 
 <script>
 // import * as moment from 'moment'
-import { mapState, mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters, mapActions } from 'vuex'
 // import say from 'say'
-import { tables$ } from "src/api";
-import myBoard from "src/components/myBoard";
-import myHand from "src/components/myHand";
-import myBid from "src/components/myBid";
-import myBidBox from "src/components/myBidBox";
-import myPlayBox from "src/components/myPlayBox";
-import myTricks from "src/components/myTricks";
-import myTimer from "src/components/myTimer";
+import { tables$ } from 'src/api'
+import myBoard from 'src/components/myBoard'
+import myHand from 'src/components/myHand'
+import myBid from 'src/components/myBid'
+import myBidBox from 'src/components/myBidBox'
+import myPlayBox from 'src/components/myPlayBox'
+import myTricks from 'src/components/myTricks'
+import myTimer from 'src/components/myTimer'
 
-import { jbContractBy } from "src/jbBid";
-import { jbIsPlayer, jbIsMyPd } from "../jbPlayer";
-import { jbV2C } from "src/jbVoice";
+import { jbContractBy } from 'src/jbBid'
+import { jbIsPlayer, jbIsMyPd } from '../jbPlayer'
+import { jbV2C } from 'src/jbVoice'
 
 export default {
-  name: "myPlayTable",
-  props: ["jsPlayer"],
+  name: 'myPlayTable',
+  props: ['jsPlayer'],
   components: {
     myBoard,
     myHand,
@@ -202,255 +227,255 @@ export default {
     myTimer
   },
   data: () => ({
-    cc: { name: { NS: "SAYC", EW: "SAYC" }, card: { NS: "", EW: "" } },
+    cc: { name: { NS: 'SAYC', EW: 'SAYC' }, card: { NS: '', EW: '' } },
     alert: null,
     timer: new Date().getTime()
   }),
   computed: {
-    ...mapState("jstore", ["jsPlayers", "jsTables", "jsSpeech"]),
-    ...mapGetters("jstore", ["jsTableById"]),
+    ...mapState('jstore', ['jsPlayers', 'jsTables', 'jsSpeech']),
+    ...mapGetters('jstore', ['jsTableById']),
 
-    jsTable() {
-      const tId = this.jsPlayer.seat.tId;
-      return this.jsTableById(tId);
+    jsTable () {
+      const tId = this.jsPlayer.seat.tId
+      return this.jsTableById(tId)
     },
-    mySeat() {
-      return this.jsPlayer.seat;
+    mySeat () {
+      return this.jsPlayer.seat
     },
-    myState() {
-      return this.jsTable ? this.jsTable.state : null;
+    myState () {
+      return this.jsTable ? this.jsTable.state : null
     },
-    myTurn() {
-      return this.jsTable ? this.jsTable.turn : 0;
+    myTurn () {
+      return this.jsTable ? this.jsTable.turn : 0
     },
-    myStatus() {
+    myStatus () {
       switch (this.myState) {
         case 0:
-          return "Ready...";
+          return 'Ready...'
         case 1:
-          return "Bidding...";
+          return 'Bidding...'
         case 2:
-          return "Playing...";
+          return 'Playing...'
         case 3:
-          return "Reviewing...";
+          return 'Reviewing...'
         default:
-          return null;
+          return null
       }
     },
-    myAlert() {
-      return this.jsTable.alert || null;
+    myAlert () {
+      return this.jsTable.alert || null
     },
-    myBids() {
-      return this.jsTable.bids;
+    myBids () {
+      return this.jsTable.bids
     },
-    myPlays() {
-      return this.jsTable.plays;
+    myPlays () {
+      return this.jsTable.plays
     }
   },
   methods: {
-    ...mapActions("jstore", ["addTable", "addChat"]),
+    ...mapActions('jstore', ['addTable', 'addChat']),
 
-    onTable(action) {
+    onTable (action) {
       switch (action.action) {
-        case "sit": {
-          this.$emit("onPlayer", action.seat);
-          break;
+        case 'sit': {
+          this.$emit('onPlayer', action.seat)
+          break
         }
-        case "ready": {
+        case 'ready': {
           tables$.patch(this.jsTable.id, {
             action: action.action,
             state: action.state,
             ready: action.ready
-          });
-          break;
+          })
+          break
         }
-        case "bT": {
+        case 'bT': {
           tables$.patch(this.jsTable.id, {
             action: action.action,
             bT: action.bT
-          });
-          break;
+          })
+          break
         }
-        case "cc": {
+        case 'cc': {
           tables$.patch(this.jsTable.id, {
             action: action.action,
             cc: action.cc
-          });
-          break;
+          })
+          break
         }
-        case "bid": {
+        case 'bid': {
           const bidData = {
             action: action.action,
             bids: action.bid.bids,
             alert: action.bid.alert
-          };
-          tables$.patch(this.jsTable.id, bidData);
-          break;
+          }
+          tables$.patch(this.jsTable.id, bidData)
+          break
         }
-        case "play": {
-          const _info = this.myPlays.info;
-          const _data = [...this.myPlays.data]; // .slice(0)
-          const _played = _data.map(x => x.card) || [];
+        case 'play': {
+          const _info = this.myPlays.info
+          const _data = [...this.myPlays.data] // .slice(0)
+          const _played = _data.map((x) => x.card) || []
           if (!_played.includes(action.play.card)) {
-            _data.push(action.play);
+            _data.push(action.play)
             const plays = {
               action: action.action,
               plays: { info: _info, data: _data }
-            };
-            tables$.patch(this.jsTable.id, plays);
+            }
+            tables$.patch(this.jsTable.id, plays)
           }
-          break;
+          break
         }
-        case "claim": {
+        case 'claim': {
           tables$.patch(this.jsTable.id, {
             action: action.action,
             claim: action.claim
-          });
-          break;
+          })
+          break
         }
         default: {
         }
       }
     },
-    onCommand(action) {
+    onCommand (action) {
       // const cmd = action.target.innerText
       switch (action) {
         case -1: {
-          this.onTable({ action: "sit", seat: null });
-          break;
+          this.onTable({ action: 'sit', seat: null })
+          break
         }
         case 0: {
-          break;
+          break
         }
         default:
       }
     }
   },
   watch: {
-    jsTable(t) {
-      if (!t) this.onTable({ action: "sit", seat: null });
+    jsTable (t) {
+      if (!t) this.onTable({ action: 'sit', seat: null })
     },
-    myState(s1, s0) {
+    myState (s1, s0) {
       switch (s1) {
         case 1: {
           const from = {
             nick:
               this.jsTable.board.bT +
-              ": " +
+              ': ' +
               this.jsTable.board.bId +
-              "#" +
+              '#' +
               this.jsTable.board.bN,
-            id: "@info"
-          };
+            id: '@info'
+          }
           const board = {
             to: this.jsTable.id,
-            text: "Played: " + this.jsTable.board.played,
+            text: 'Played: ' + this.jsTable.board.played,
             from
-          };
-          this.addChat(board);
-          break;
+          }
+          this.addChat(board)
+          break
         }
         case 3: {
           // review
-          let message = jbContractBy(this.jsTable.bids.info);
-          const score = this.jsTable.score;
-          let caption = score.score;
+          let message = jbContractBy(this.jsTable.bids.info)
+          const score = this.jsTable.score
+          let caption = score.score
 
-          if (score.result === 0) message += " = MADE";
-          else if (score.result > 0) message += "+" + score.result;
-          else message += score.result;
+          if (score.result === 0) message += ' = MADE'
+          else if (score.result > 0) message += '+' + score.result
+          else message += score.result
 
-          if (this.jsTable.bids.info.by % 2 === 0) caption = -score.score;
+          if (this.jsTable.bids.info.by % 2 === 0) caption = -score.score
 
           const from = {
             nick:
               this.jsTable.board.bT +
-              ": " +
+              ': ' +
               this.jsTable.board.bId +
-              "#" +
+              '#' +
               this.jsTable.board.bN,
-            id: "@info"
-          };
+            id: '@info'
+          }
           const result = {
             to: this.jsTable.id,
-            text: "Result: " + message,
+            text: 'Result: ' + message,
             from
-          };
-          this.addChat(result);
+          }
+          this.addChat(result)
 
           this.$q.notify({
             message: message,
             caption: caption,
-            color: "info"
-          });
-          break;
+            color: 'info'
+          })
+          break
         }
         default:
       }
-      this.$data.timer = new Date().getTime();
+      this.$data.timer = new Date().getTime()
     },
-    myAlert(a) {
+    myAlert (a) {
       if (a) {
-        if (jbIsMyPd(a.sId, this.mySeat.sId)) return;
-        if (this.myState < 1 || this.myState > 3) return;
-        const message = (a.bid || a.play) + " = " + a.alert;
-        const from = { nick: "ALERT", id: "@info" };
+        if (jbIsMyPd(a.sId, this.mySeat.sId)) return
+        if (this.myState < 1 || this.myState > 3) return
+        const message = (a.bid || a.play) + ' = ' + a.alert
+        const from = { nick: 'ALERT', id: '@info' }
 
         const alert = {
           to: this.jsTable.id,
           text: message,
           from
-        };
-        this.addChat(alert);
+        }
+        this.addChat(alert)
 
         this.$q.notify({
-          type: "warning",
+          type: 'warning',
           message,
-          caption: "ALERT"
-        });
+          caption: 'ALERT'
+        })
       }
     },
-    myTurn() {
-      this.$data.timer = new Date().getTime();
+    myTurn () {
+      this.$data.timer = new Date().getTime()
     },
-    jsSpeech(s) {
-      if (!jbIsPlayer(this.mySeat.sId)) return;
-      const c = jbV2C(s);
+    jsSpeech (s) {
+      if (!jbIsPlayer(this.mySeat.sId)) return
+      const c = jbV2C(s)
       switch (c) {
-        case "ready":
+        case 'ready':
           if (this.myState < 1 || this.myState > 2) {
-            const ready = [...this.jsTable.ready] || [0, 0, 0, 0];
-            ready[this.mySeat.sId - 1] = this.mySeat.sId;
+            const ready = [...this.jsTable.ready] || [0, 0, 0, 0]
+            ready[this.mySeat.sId - 1] = this.mySeat.sId
             const readyData = {
-              action: "ready",
+              action: 'ready',
               state: this.myState,
               ready: ready
-            };
-            this.onTable(readyData);
+            }
+            this.onTable(readyData)
           }
-          break;
-        case "sit north":
-        case "north":
-          this.$emit("onPlayer", { tId: this.mySeat.tId, sId: 1 });
-          break;
-        case "sit east":
-        case "east":
-          this.$emit("onPlayer", { tId: this.mySeat.tId, sId: 2 });
-          break;
-        case "sit south":
-        case "south":
-          this.$emit("onPlayer", { tId: this.mySeat.tId, sId: 3 });
-          break;
-        case "sit west":
-        case "west":
-          this.$emit("onPlayer", { tId: this.mySeat.tId, sId: 4 });
-          break;
+          break
+        case 'sit north':
+        case 'north':
+          this.$emit('onPlayer', { tId: this.mySeat.tId, sId: 1 })
+          break
+        case 'sit east':
+        case 'east':
+          this.$emit('onPlayer', { tId: this.mySeat.tId, sId: 2 })
+          break
+        case 'sit south':
+        case 'south':
+          this.$emit('onPlayer', { tId: this.mySeat.tId, sId: 3 })
+          break
+        case 'sit west':
+        case 'west':
+          this.$emit('onPlayer', { tId: this.mySeat.tId, sId: 4 })
+          break
         default:
       }
     },
-    handleOrientationChange() {
-      const orientation = window.screen.orientation.type;
-      if (orientation === "portrait-primary") {
+    handleOrientationChange () {
+      const orientation = window.screen.orientation.type
+      if (orientation === 'portrait-primary') {
         // portrait mode
         // Exiting fullscreen mode:
         if (this.$q.fullscreen.isActive) {
@@ -460,36 +485,36 @@ export default {
               // v1.5.0+
               // success!
             })
-            .catch(err => {
+            .catch((err) => {
               // v1.5.0+
-              console.error(err);
-            });
+              console.error(err)
+            })
         }
-      } else if (orientation === "landscape-primary") {
+      } else if (orientation === 'landscape-primary') {
         // landscape mode
         if (this.$q.platform.is.mobile && this.$q.screen.lt.md) {
           this.$q.fullscreen
             .request()
             .then(() => {
-              const from = { nick: "Full Screen ", id: "@info" };
+              const from = { nick: 'Full Screen ', id: '@info' }
               const message = {
                 to: this.jsTable.id,
-                text: "Rotate to Landscape for play, and portrait for Chat",
+                text: 'Rotate to Landscape for play, and portrait for Chat',
                 from
-              };
-              this.addChat(message);
+              }
+              this.addChat(message)
             })
-            .catch(err => {
-              console.error(err);
-            });
+            .catch((err) => {
+              console.error(err)
+            })
         }
       }
     }
   },
-  mounted() {
-    window.addEventListener("orientationchange", this.handleOrientationChange);
+  mounted () {
+    window.addEventListener('orientationchange', this.handleOrientationChange)
   },
-  beforeDestroy() {
+  beforeDestroy () {
     // Exiting fullscreen mode:
     if (this.$q.fullscreen.isActive) {
       this.$q.fullscreen
@@ -498,13 +523,13 @@ export default {
           // v1.5.0+
           // success!
         })
-        .catch(err => {
+        .catch((err) => {
           // v1.5.0+
-          console.error(err);
-        });
+          console.error(err)
+        })
     }
   }
-};
+}
 </script>
 <!-- Notice lang='scss' -->
 <style scoped>

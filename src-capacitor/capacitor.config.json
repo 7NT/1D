@@ -1,5 +1,5 @@
 {
-  "appId": "org.capacitor.quasar.app",
+  "appId": "net.jbridge.app",
   "appName": "One Diamond",
   "bundledWebRuntime": false,
   "npmClient": "npm",

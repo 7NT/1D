@@ -349,6 +349,43 @@ export default {
         }
         default:
       }
+    },
+    handleOrientationChange () {
+      const orientation = window.screen.orientation.type
+      if (orientation === 'portrait-primary') {
+        // portrait mode
+        // Exiting fullscreen mode:
+        if (this.$q.fullscreen.isActive) {
+          this.$q.fullscreen
+            .exit()
+            .then(() => {
+              // v1.5.0+
+              // success!
+            })
+            .catch((err) => {
+              // v1.5.0+
+              console.error(err)
+            })
+        }
+      } else if (orientation === 'landscape-primary') {
+        // landscape mode
+        if (this.$q.platform.is.mobile && this.$q.screen.lt.md) {
+          this.$q.fullscreen
+            .request()
+            .then(() => {
+              const from = { nick: 'Full Screen ', id: '@info' }
+              const message = {
+                to: this.jsTable.id,
+                text: 'Rotate to Landscape for play, and portrait for Chat',
+                from
+              }
+              this.addChat(message)
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+        }
+      }
     }
   },
   watch: {
@@ -471,43 +508,6 @@ export default {
           this.$emit('onPlayer', { tId: this.mySeat.tId, sId: 4 })
           break
         default:
-      }
-    },
-    handleOrientationChange () {
-      const orientation = window.screen.orientation.type
-      if (orientation === 'portrait-primary') {
-        // portrait mode
-        // Exiting fullscreen mode:
-        if (this.$q.fullscreen.isActive) {
-          this.$q.fullscreen
-            .exit()
-            .then(() => {
-              // v1.5.0+
-              // success!
-            })
-            .catch((err) => {
-              // v1.5.0+
-              console.error(err)
-            })
-        }
-      } else if (orientation === 'landscape-primary') {
-        // landscape mode
-        if (this.$q.platform.is.mobile && this.$q.screen.lt.md) {
-          this.$q.fullscreen
-            .request()
-            .then(() => {
-              const from = { nick: 'Full Screen ', id: '@info' }
-              const message = {
-                to: this.jsTable.id,
-                text: 'Rotate to Landscape for play, and portrait for Chat',
-                from
-              }
-              this.addChat(message)
-            })
-            .catch((err) => {
-              console.error(err)
-            })
-        }
       }
     }
   },

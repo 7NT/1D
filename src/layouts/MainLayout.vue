@@ -16,7 +16,8 @@
         />
 
         <q-toolbar-title>
-          1<q-icon name='img:/jbicon/seats/seat0.svg' /> App
+          1
+          <q-icon name='img:jbicon/seats/seat0.svg' /> App
         </q-toolbar-title>
 
         <div>v{{ $q.version }}</div>

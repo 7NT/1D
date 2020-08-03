@@ -1,9 +1,7 @@
 <template padding>
   <div class="boardBox">
     <div class="full-width">
-      <q-slide-item
-        @left="setBT"
-      >
+      <q-slide-item @left="setBT">
         <template v-slot:left>
           <q-btn-toggle
             v-model="bT"
@@ -25,7 +23,7 @@
           </q-item-section>
           <q-item-section>{{bdata}}</q-item-section>
           <q-item-section avatar>
-            <q-icon name="img:/jbicon/svg/mix.svg" />
+            <q-icon name="img:jbicon/svg/mix.svg" />
           </q-item-section>
         </q-item>
 
@@ -52,7 +50,7 @@
                 <q-btn
                   dense
                   size="xs"
-                  icon="img:/jbicon/seats/seat13.svg"
+                  icon="img:jbicon/seats/seat13.svg"
                 >
                   <q-badge
                     class="cc"
@@ -88,7 +86,7 @@
                 <q-btn
                   dense
                   size="xs"
-                  icon="img:/jbicon/seats/seat24.svg"
+                  icon="img:jbicon/seats/seat24.svg"
                 >
                   <q-badge
                     class="cc"

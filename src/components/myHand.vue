@@ -57,6 +57,7 @@
             class="ready"
             @click="onReady"
           />
+          <!--
           <q-btn
             dense
             v-if="isMyTurn"
@@ -65,6 +66,7 @@
             :icon="isSpeaking ? 'mic' : 'mic_off'"
             @click="onMic"
           />
+          -->
           <q-btn-dropdown
             push
             split
@@ -99,7 +101,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import SpeechToText from '../services/speech-to-text'
+// import SpeechToText from '../services/speech-to-text'
 
 import { jbCards, jbCardImg } from 'src/jbBoard'
 import { jbIsPlayer, jbIsMyPlayer, jbFlag } from 'src/jbPlayer'
@@ -470,7 +472,7 @@ export default {
   },
   mounted () { },
   created () {
-    this.speechService = new SpeechToText()
+    // this.speechService = new SpeechToText()
   }
 }
 </script>

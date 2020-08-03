@@ -24,7 +24,6 @@ const tables$ = api.service('/tables')
 const results$ = api.service('/results')
 const tourneys$ = api.service('/tourneys')
 const teams$ = api.service('/teams')
-
 /*
 io.on('connection', (reason) => {
   // Show offline message

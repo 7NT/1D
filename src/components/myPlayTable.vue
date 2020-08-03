@@ -460,22 +460,34 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('orientationchange', this.handleOrientationChange)
+    if (this.$q.screen.lt.md) {
+      this.$q.fullscreen.request()
+        .then(() => { // v1.5.0+
+          // success!
+          const message = 'Rotate to Landscape to PLAY, Portrait to CHAT...'
+          const from = { nick: 'FYI', id: '@info' }
+
+          const alert = {
+            to: this.jsTable.id,
+            text: message,
+            from
+          }
+          this.addChat(alert)
+
+          this.$q.notify({
+            type: 'info',
+            message,
+            caption: 'FYI'
+          })
+        })
+        .catch(() => { // v1.5.0+
+          // oh, no!!!
+        })
+    }
   },
   beforeDestroy () {
     // Exiting fullscreen mode:
-    if (this.$q.fullscreen.isActive) {
-      this.$q.fullscreen
-        .exit()
-        .then(() => {
-          // v1.5.0+
-          // success!
-        })
-        .catch((err) => {
-          // v1.5.0+
-          console.error(err)
-        })
-    }
+    if (this.$q.fullscreen.isActive) this.$q.fullscreen.exit()
   }
 }
 </script>

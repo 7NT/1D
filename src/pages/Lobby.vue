@@ -5,10 +5,7 @@
   >
     <!-- content -->
     <div class="column">
-      <div
-        class='col'
-        v-show="isVisible(true)"
-      >
+      <div class='col'>
         <q-card class='fit'>
           <q-tabs
             v-model="rId"
@@ -19,7 +16,7 @@
             inline-label
             indicator-color="yellow"
             class="bg-secondary text-white shadow-2"
-            v-show='!$q.fullscreen.isActive'
+            v-show="isVisible(false)"
           >
             <q-tab
               v-for="r in rooms"
@@ -63,6 +60,7 @@
               <myPlayTable
                 :jsPlayer="jsPlayer"
                 v-on:onPlayer="onPlayer"
+                v-show="isVisible(true)"
               />
             </q-tab-panel>
 
@@ -88,7 +86,10 @@
       <myChat :roomId="rId" />
     </q-footer>
 
-    <q-page-sticky position="top-right" :offset="[18, 18]">
+    <q-page-sticky
+      position="top-right"
+      :offset="[18, 18]"
+    >
       <q-btn
         round
         color="accent"
@@ -134,7 +135,7 @@ export default {
     myMessages,
     myChat,
     myTourney
-    // SpeechToText,
+    // SpeechToText
     // myBottomSheet
   },
   data () {
@@ -209,17 +210,18 @@ export default {
           return false
       }
     },
-    /*
     handleOrientationChange () {
-      const orientation = window.screen.orientation.type
-      if (orientation === 'portrait-primary') {
-        // portrait mode
-        // Exiting fullscreen mode:
-      } else if (orientation === 'landscape-primary') {
-        // landscape mode
+      if (this.$q.platform.is.mobile || this.$q.screen.lt.md) {
+        const orientation = window.screen.orientation.type
+        if (orientation === 'portrait-primary') {
+          // portrait mode
+          if (this.rId === 1) this.rId = 0
+        } else if (orientation === 'landscape-primary') {
+          // landscape mode
+          if (this.mySeat.sId !== 0) this.rId = 1
+        }
       }
     },
-    */
     isVisible (v) {
       let b = true
       if (this.$q.platform.is.mobile || this.$q.screen.lt.md) {
@@ -292,6 +294,7 @@ export default {
   mounted () {
     this.$parent.page = 'Lobby'
     if (!this.jsPlayer.profile.flag) this.$router.push({ name: 'profile' })
+    window.addEventListener('orientationchange', this.handleOrientationChange)
   },
   created () {
     this.user = this.$attrs.user

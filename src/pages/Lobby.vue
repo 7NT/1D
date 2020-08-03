@@ -87,16 +87,11 @@
     >
       <myChat :roomId="rId" />
     </q-footer>
-    <q-page-sticky
-      position="top-right"
-      :offset="[18, 18]"
-    >
+
+    <q-page-sticky position="top-right" :offset="[18, 18]">
       <q-btn
-        class="gt-xs"
-        size="12px"
-        flat
-        dense
-        color="secondary"
+        round
+        color="accent"
         @click="$q.fullscreen.toggle()"
         :icon="
           $q.fullscreen.isActive

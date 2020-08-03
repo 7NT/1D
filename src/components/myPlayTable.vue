@@ -70,21 +70,6 @@
                         size="12px"
                         flat
                         dense
-                        color="secondary"
-                        @click="$q.fullscreen.toggle()"
-                        :icon="
-                          $q.fullscreen.isActive
-                            ? 'fullscreen_exit'
-                            : 'fullscreen'
-                        "
-                      >
-                        <q-tooltip>Full Screen</q-tooltip>
-                      </q-btn>
-                      <q-btn
-                        class="gt-xs"
-                        size="12px"
-                        flat
-                        dense
                         icon="close"
                         color="negative"
                         @click="onCommand(-1)"
@@ -348,43 +333,6 @@ export default {
           break
         }
         default:
-      }
-    },
-    handleOrientationChange () {
-      const orientation = window.screen.orientation.type
-      if (orientation === 'portrait-primary') {
-        // portrait mode
-        // Exiting fullscreen mode:
-        if (this.$q.fullscreen.isActive) {
-          this.$q.fullscreen
-            .exit()
-            .then(() => {
-              // v1.5.0+
-              // success!
-            })
-            .catch((err) => {
-              // v1.5.0+
-              console.error(err)
-            })
-        }
-      } else if (orientation === 'landscape-primary') {
-        // landscape mode
-        if (this.$q.platform.is.mobile && this.$q.screen.lt.md) {
-          this.$q.fullscreen
-            .request()
-            .then(() => {
-              const from = { nick: 'Full Screen ', id: '@info' }
-              const message = {
-                to: this.jsTable.id,
-                text: 'Rotate to Landscape for play, and portrait for Chat',
-                from
-              }
-              this.addChat(message)
-            })
-            .catch((err) => {
-              console.error(err)
-            })
-        }
       }
     }
   },

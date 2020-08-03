@@ -5,7 +5,10 @@
   >
     <!-- content -->
     <div class="column">
-      <div class='col' v-show="isVisible(true)">
+      <div
+        class='col'
+        v-show="isVisible(true)"
+      >
         <q-card class='fit'>
           <q-tabs
             v-model="rId"
@@ -33,7 +36,10 @@
             animated
             class="bg-teal"
           >
-            <q-tab-panel :name="0" class='no-margin no-padding'>
+            <q-tab-panel
+              :name="0"
+              class='no-margin no-padding'
+            >
               <div class="fit">
                 <q-list
                   dense
@@ -50,7 +56,10 @@
               </div>
             </q-tab-panel>
 
-            <q-tab-panel :name="1" class='no-margin no-padding'>
+            <q-tab-panel
+              :name="1"
+              class='no-margin no-padding'
+            >
               <myPlayTable
                 :jsPlayer="jsPlayer"
                 v-on:onPlayer="onPlayer"
@@ -65,19 +74,47 @@
           </q-tab-panels>
         </q-card>
       </div>
-      <div col='col' v-show="isVisible(false)">
+      <div
+        col='col'
+        v-show="isVisible(false)"
+      >
         <myMessages :roomId="rId" />
       </div>
     </div>
-    <q-footer elevated v-show="isVisible(false)">
+    <q-footer
+      elevated
+      v-show="isVisible(false)"
+    >
       <myChat :roomId="rId" />
     </q-footer>
+    <q-page-sticky
+      position="top-right"
+      :offset="[18, 18]"
+    >
+      <q-btn
+        class="gt-xs"
+        size="12px"
+        flat
+        dense
+        color="secondary"
+        @click="$q.fullscreen.toggle()"
+        :icon="
+          $q.fullscreen.isActive
+            ? 'fullscreen_exit'
+            : 'fullscreen'
+        "
+      >
+        <q-tooltip>Full Screen</q-tooltip>
+      </q-btn>
+    </q-page-sticky>
+    <!--
     <q-page-sticky
       position="bottom-right"
       :offset="[18, 18]"
     >
       <SpeechToText />
     </q-page-sticky>
+    -->
   </q-page>
 </template>
 
@@ -89,9 +126,9 @@ import myT1List from 'src/components/myT1List'
 import myPlayTable from 'src/components/myPlayTable'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
-import SpeechToText from 'src/components/SpeechToText'
 import myTourney from 'src/components/myTourney'
 import { jbV2C } from 'src/jbVoice'
+// import SpeechToText from 'src/components/SpeechToText'
 // import myBottomSheet from 'src/components/myBottomSheet'
 
 export default {
@@ -101,8 +138,8 @@ export default {
     myPlayTable,
     myMessages,
     myChat,
-    SpeechToText,
     myTourney
+    // SpeechToText,
     // myBottomSheet
   },
   data () {
@@ -177,10 +214,21 @@ export default {
           return false
       }
     },
+    /*
+    handleOrientationChange () {
+      const orientation = window.screen.orientation.type
+      if (orientation === 'portrait-primary') {
+        // portrait mode
+        // Exiting fullscreen mode:
+      } else if (orientation === 'landscape-primary') {
+        // landscape mode
+      }
+    },
+    */
     isVisible (v) {
       let b = true
-      // if (this.$q.platform.is.mobile || this.$q.screen.lt.md) {
-      if (this.$q.fullscreen.isActive) {
+      if (this.$q.platform.is.mobile || this.$q.screen.lt.md) {
+        // if (this.$q.fullscreen.isActive) {
         if (v) b = this.$q.screen.height < this.$q.screen.width
         else b = this.$q.screen.height > this.$q.screen.width
       }
@@ -199,23 +247,6 @@ export default {
         } else this.rId = 0
       } catch (err) {
         // console.err(err)
-      }
-    },
-    rId (r) {
-      if (r !== 1) {
-        // Exiting fullscreen mode:
-        if (this.$q.fullscreen.isActive) {
-          this.$q.fullscreen
-            .exit()
-            .then(() => {
-              // v1.5.0+
-              // success!
-            })
-            .catch(err => {
-              // v1.5.0+
-              console.error(err)
-            })
-        }
       }
     },
     jsSpeech (s) {

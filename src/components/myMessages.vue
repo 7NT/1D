@@ -1,8 +1,11 @@
 <template>
   <div class="fit">
-    <q-card flat bordered>
+    <q-card
+      flat
+      bordered
+    >
       <q-card-section class="bg-primary text-white">
-        <div class="overline">{{ room.header }}</div>
+        <div class="overline">{{ myRoom.header }}</div>
       </q-card-section>
       <q-chat-message
         v-for="chat in myChats"
@@ -27,7 +30,7 @@ export default {
   props: ['roomId'],
 
   data: () => ({
-    room: { name: '#Lobby', header: 'Public Lobby Messages' }
+    // room: { name: '#Lobby', header: 'Public Lobby Messages' }
   }),
   computed: {
     ...mapState('jstore', ['jsUser', 'jsChats']),
@@ -36,15 +39,27 @@ export default {
     myChats () {
       let chats = this.jsChats
 
-      if (this.room.name.startsWith('@')) {
+      if (this.myRoom.name.startsWith('@')) {
         chats = this.jsChats
           .filter((m0) => m0.to.startsWith('@'))
           .filter(
             (m1) => m1.to === `@${this.jsUser._id}` || this.isSent(m1.from.id)
           )
-      } else chats = this.jsChats.filter((m) => m.to === this.room.name)
+      } else chats = this.jsChats.filter((m) => m.to === this.myRoom.name)
 
       return chats.slice(-10).reverse()
+    },
+    myRoom () {
+      try {
+        if (this.roomId === 1) {
+          return { name: this.jsPlayer.seat.tId || '#Lobby', header: 'Public Table Messages' }
+        } else if (this.roomId.startsWith('@')) {
+          return { name: this.roomId, header: 'Private Player Messages' }
+        } else if (this.roomId.startsWith('#')) {
+          return { name: this.roomId, header: 'Public Table Messages' }
+        }
+      } catch (err) { }
+      return { name: '#Lobby', header: 'Public Lobby Messages' }
     }
   },
   methods: {
@@ -63,19 +78,7 @@ export default {
     }
   },
   watch: {
-    roomId (r) {
-      try {
-        if (r === 1) {
-          this.room = { name: this.jsPlayer.seat.tId || '#Lobby', header: 'Public Table Messages' }
-        } else if (r.startsWith('@')) {
-          this.room = { name: r, header: 'Private Player Messages' }
-        } else if (r.startsWith('#')) {
-          this.room = { name: r, header: 'Public Table Messages' }
-        }
-      } catch (err) {
-        this.room = { name: '#Lobby', header: 'Public Lobby Messages' }
-      }
-    }
+    roomId (r) { }
   }
 }
 </script>

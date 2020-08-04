@@ -143,12 +143,7 @@
             <myMessages :roomId='`@${p.id}`' />
           </q-card-section>
           <q-card-section>
-            <div
-              class="full-width"
-              style="height:24px"
-            >
-              <myChat :roomId='`@${p.id}`' />
-            </div>
+            <myChat :roomId='`@${p.id}`' />
           </q-card-section>
         </q-card>
       </q-expansion-item>

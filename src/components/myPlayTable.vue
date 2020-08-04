@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="jsTable"
-    class="fit"
+    class="fit centerbox"
   >
     <div class="column jbtable">
       <div class="col">

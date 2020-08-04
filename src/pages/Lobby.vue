@@ -103,14 +103,12 @@
         <q-tooltip>Full Screen</q-tooltip>
       </q-btn>
     </q-page-sticky>
-    <!--
     <q-page-sticky
       position="bottom-right"
       :offset="[18, 18]"
     >
       <SpeechToText />
     </q-page-sticky>
-    -->
   </q-page>
 </template>
 
@@ -124,7 +122,7 @@ import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
 import myTourney from 'src/components/myTourney'
 import { jbV2C } from 'src/jbVoice'
-// import SpeechToText from 'src/components/SpeechToText'
+import SpeechToText from 'src/components/SpeechToText'
 // import myBottomSheet from 'src/components/myBottomSheet'
 
 export default {
@@ -134,8 +132,8 @@ export default {
     myPlayTable,
     myMessages,
     myChat,
-    myTourney
-    // SpeechToText
+    myTourney,
+    SpeechToText
     // myBottomSheet
   },
   data () {
@@ -215,7 +213,7 @@ export default {
         const orientation = window.screen.orientation.type
         if (orientation === 'portrait-primary') {
           // portrait mode
-          if (this.rId === 1) this.rId = 0
+          // if (this.rId === 1) this.rId = 0
         } else if (orientation === 'landscape-primary') {
           // landscape mode
           if (this.mySeat.sId !== 0) this.rId = 1

@@ -196,7 +196,7 @@ export default {
     myFlag (player) {
       try {
         const flag = player.profile.flag.toLowerCase()
-        return `img:flags/4x3/${flag}.svg`
+        return `img:~assets/flags/4x3/${flag}.svg`
       } catch (err) { }
       return null
     },

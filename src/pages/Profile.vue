@@ -114,7 +114,7 @@ export default {
       openURL(gravatarUrl)
     },
     getFlag () {
-      return 'img:flags/4x3/' + this.flag.toLowerCase() + '.svg'
+      return 'img:~assets/flags/4x3/' + this.flag.toLowerCase() + '.svg'
     },
     joinedDate (created) {
       return moment(created).format('MMMM Do YYYY')

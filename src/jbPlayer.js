@@ -12,7 +12,7 @@ export function jbPlayerSIcon (p) {
 }
 
 export function jbSeatIcon (sId) {
-  return `img:jbIcon/seats/seat${sId}.svg`
+  return `img:~assets/jbIcon/seats/seat${sId}.svg`
 }
 /*
 export function jbPFlag (p) {
@@ -22,7 +22,7 @@ export function jbPFlag (p) {
 export function jbFlag (p) {
   if (p) {
     const flag2 = p.profile.flag.toLowerCase()
-    return `img:flags/4x3/${flag2}.svg`
+    return `img:~assets/flags/4x3/${flag2}.svg`
   } else return null
 }
 

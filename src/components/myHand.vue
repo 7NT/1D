@@ -115,7 +115,7 @@ export default {
       return jbSeatX(this.handId, this.mySeat.sId)
     },
     seatIcon () {
-      return `img:jbicon/seats/seat${this.seatX}.svg`
+      return `img:~assets/jbicon/seats/seat${this.seatX}.svg`
     },
     handPlayer () {
       const nick = this.jsTable.seats[this.seatX - 1]

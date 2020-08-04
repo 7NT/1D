@@ -53,7 +53,7 @@
             </q-item>
             <q-item v-if="isRegistration()">
               <q-item-section top avatar>
-                <q-icon :name="`img:flags/4x3/${flag.toLowerCase()}.svg`" />
+                <q-icon :name="`img:~assets/flags/4x3/${flag.toLowerCase()}.svg`" />
               </q-item-section>
               <q-item-section>
                 <q-input v-model="flag" square filled label="Country:" mask="AA" type="text"></q-input>

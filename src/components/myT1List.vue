@@ -91,7 +91,6 @@ export default {
       else return 'SIT...'
     },
     mySeatIcon (sId) {
-      // return `img:jbicon/seats/seat${sId}.svg`
       return jbSeatIcon(sId)
     },
     mySeatColor (sId) {

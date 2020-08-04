@@ -2,11 +2,7 @@
   <div class="row items-end">
     <div class="column">
       <div class="row self-end no-wrap">
-        <q-card
-          flat
-          v-if="isVisible"
-          class="transparent"
-        >
+        <q-card flat v-if="isVisible" class="transparent">
           <div class="hand hhand-compact active-hand full-width no-wrap">
             <img
               v-for="(c, i) of handCards"
@@ -19,19 +15,9 @@
         </q-card>
       </div>
       <div class="pbar">
-        <q-btn-group
-          flat
-          dense
-          spread
-        >
-          <q-icon
-            :name="seatIcon"
-            class="seat"
-          />
-          <q-icon
-            :name="handFlag"
-            class="flag"
-          />
+        <q-btn-group flat dense spread>
+          <q-icon :name="seatIcon" class="seat" />
+          <q-icon :name="handFlag" class="flag" />
           <q-btn
             flat
             outline
@@ -44,7 +30,10 @@
             :color="handTurn"
             align="left"
             class="player"
-          />
+            @click="onPlayer()"
+          >
+            <q-badge color="orange" align="top" transparent v-if="handMessage">∞</q-badge>
+          </q-btn>
           <q-space />
           <q-btn
             dense
@@ -57,16 +46,6 @@
             class="ready"
             @click="onReady"
           />
-          <!--
-          <q-btn
-            dense
-            v-if="isMyTurn"
-            padding="none"
-            color="red"
-            :icon="isSpeaking ? 'mic' : 'mic_off'"
-            @click="onMic"
-          />
-          -->
           <q-btn-dropdown
             push
             split
@@ -78,17 +57,9 @@
             :disable="myDeclarer"
           >
             <q-list dense>
-              <q-item
-                clickable
-                v-close-popup
-              >
+              <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label
-                    label
-                    v-for="c in claims"
-                    :key="c"
-                    @click="onClaim(c)"
-                  >{{ c }}</q-item-label>
+                  <q-item-label label v-for="c in claims" :key="c" @click="onClaim(c)">{{ c }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -96,13 +67,24 @@
         </q-btn-group>
       </div>
     </div>
+    <q-dialog auto-close v-model="pchat">
+      <q-card class="q-dialog-plugin" v-if="handPlayer">
+        <q-card-section>
+          <myMessages :chatTo="handPlayer" />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <myChat :chatTo="handPlayer" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
-// import SpeechToText from '../services/speech-to-text'
-
+import { mapState, mapGetters, mapActions } from 'vuex'
+import myMessages from 'src/components/myMessages'
+import myChat from 'src/components/myChat'
 import { jbCards, jbCardImg } from 'src/jbBoard'
 import { jbIsPlayer, jbIsMyPlayer, jbFlag } from 'src/jbPlayer'
 import { jbSeatName, jbSeatX, jbSeat1234 } from 'src/jbSeat'
@@ -115,13 +97,12 @@ export default {
     return {
       claims: ['Concede All', 'Claim Just Make', 'Claim All'],
       isClaim: false,
-      isSpeaking: false,
-      speech: '',
-      speechService: {}
+      pchat: false
     }
   },
-  components: {},
+  components: { myMessages, myChat },
   computed: {
+    ...mapState('jstore', ['jsPM']),
     ...mapGetters('jstore', ['jsPlayerByNick']),
 
     handState () {
@@ -152,6 +133,10 @@ export default {
     handFlag () {
       return jbFlag(this.handPlayer)
     },
+    handMessage () {
+      if (this.handPlayer) return this.jsPM.indexOf(this.handPlayer.nick) >= 0
+      else return false
+    },
     handTurn () {
       if (this.isHandTurn) return 'amber'
       else return this.jsPlayer ? 'indigo' : 'positive'
@@ -167,7 +152,9 @@ export default {
     },
     isMyTurn () {
       if (this.handState === 2 && this.isHandTurn) {
-        if (this.isDummy) { return this.jsPlayer.seat.sId === this.jsTable.bids.info.by } else return this.jsPlayer.seat.sId === this.seatX
+        if (this.isDummy) {
+          return this.jsPlayer.seat.sId === this.jsTable.bids.info.by
+        } else return this.jsPlayer.seat.sId === this.seatX
       } else return false
     },
     isMyPlay () {
@@ -183,12 +170,12 @@ export default {
         let t = 'S' // sort SHCD
         if (this.handState === 2) t = this.jsTable.plays.info.trump
         const cards = jbCards(this.jsTable.board.data, this.seatX, t)
-        return cards.filter(c => !this.playedCards.includes(c.value))
+        return cards.filter((c) => !this.playedCards.includes(c.value))
       } else return []
     },
     playedCards () {
       if (this.handState === 2) {
-        return this.jsTable.plays.data.map(x => x.card.value)
+        return this.jsTable.plays.data.map((x) => x.card.value)
       } else return []
     },
     isVisible () {
@@ -196,7 +183,9 @@ export default {
       else if (this.handState > 2) return true
       else if (this.mySeat.sId === 9) return true
       else if (this.isDummy) return true
-      else if (this.isDeclarer) { return this.jsTable.bids.info.by % 2 === this.mySeat.sId % 2 } else return this.seatX === Math.abs(this.mySeat.sId)
+      else if (this.isDeclarer) {
+        return this.jsTable.bids.info.by % 2 === this.mySeat.sId % 2
+      } else return this.seatX === Math.abs(this.mySeat.sId)
     },
     isReady () {
       return this.jsTable.ready[this.seatX - 1]
@@ -239,7 +228,8 @@ export default {
     }
   },
   methods: {
-    // ...mapActions('jstore', ['addUser']),
+    ...mapActions('jstore', ['setJsMap']),
+
     onReady () {
       if (!this.handPlayer) {
         const seat = {
@@ -266,6 +256,12 @@ export default {
         this.$q.notify({ type: 'info', message: 'I am Ready' })
       } else {
         this.$q.notify({ type: 'negative', message: 'This seat is taken' })
+      }
+    },
+    onPlayer () {
+      if (this.handPlayer && jbIsPlayer(this.mySeat.sId)) {
+        this.pchat = this.mySeat.sId % 2 !== this.seatX % 2
+        this.setJsMap({ key: '-pm', value: this.handPlayer.nick })
       }
     },
     onPlay (card) {
@@ -336,7 +332,7 @@ export default {
         if (lead.card.suit === play.suit) {
           return true
         } else {
-          const suit = this.handCards.filter(c => c.suit === lead.card.suit)
+          const suit = this.handCards.filter((c) => c.suit === lead.card.suit)
           return suit.length === 0
         }
       }
@@ -370,32 +366,6 @@ export default {
         }
       }
       this.$q.notify(notification)
-    },
-    onMic () {
-      this.isSpeaking = true
-      this.speechService.speak().subscribe(
-        result => {
-          this.speech = result
-          // this.$emit('speech', this.speech)
-          this.isSpeaking = false
-          if (result) {
-            this.$q.notify({ type: 'info', caption: 'Play:', message: result })
-            const play = this.checkPlaying(result)
-            if (play) {
-              // this.bidding = bid
-              // this.onBid2()
-            }
-          }
-        },
-        error => {
-          console.log('Error', error)
-          this.isSpeaking = false
-        },
-        () => {
-          this.isSpeaking = false
-        }
-      )
-      console.log('speechService started')
     },
     checkPlaying (play) {
       const play12 = play.toLowerCase().split(' of ')
@@ -470,10 +440,8 @@ export default {
       if (claim && this.handState === 2) this.isHandClaim(claim)
     }
   },
-  mounted () { },
-  created () {
-    // this.speechService = new SpeechToText()
-  }
+  mounted () {},
+  created () {}
 }
 </script>
 

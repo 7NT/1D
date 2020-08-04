@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if='!!jsPlayer'>
     <q-toolbar class="bg-primary text-white rounded-borders">
       <q-btn
         round
@@ -61,7 +61,6 @@
         expand-separator
         v-for="p in myPlayers"
         :key="p.id"
-        group='players'
         @input='readMessage(p)'
       >
         <template v-slot:header>
@@ -140,10 +139,10 @@
           </q-card-actions>
           <q-separator dark />
           <q-card-section>
-            <myMessages :roomId='`@${p.id}`' />
+            <myMessages :chatTo='p' />
           </q-card-section>
           <q-card-section>
-            <myChat :roomId='`@${p.id}`' />
+            <myChat :chatTo='p' />
           </q-card-section>
         </q-card>
       </q-expansion-item>

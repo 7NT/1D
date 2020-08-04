@@ -133,6 +133,7 @@
 // import EssentialLink from 'components/EssentialLink'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import myP1List from 'src/components/myP1List'
+// import myP1Chat from 'src/components/myP1Chat'
 import myScoreBook from 'src/components/myScoreBook'
 
 import {
@@ -153,6 +154,7 @@ export default {
   components: {
     // EssentialLink,
     myP1List,
+    // myP1Chat,
     myScoreBook
   },
 
@@ -255,6 +257,7 @@ export default {
           if (chat.request) {
             this.onRequest(chat)
           } else {
+            // this.pchat = chat.from
             this.$q.notify({
               type: 'info',
               message: 'You received a message from: ' + chat.from.nick

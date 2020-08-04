@@ -1,11 +1,11 @@
 <template>
-  <div class="fit">
+  <div class="fit" v-if='!!chatTo'>
     <q-card
       flat
       bordered
     >
       <q-card-section class="bg-primary text-white">
-        <div class="overline">{{ myRoom.header }}</div>
+        <div class="overline">{{ myRoom }}</div>
       </q-card-section>
       <q-chat-message
         v-for="chat in myChats"
@@ -27,39 +27,36 @@ import { jbGetNick, jbAvatar } from 'src/jbPlayer'
 
 export default {
   name: 'myMessages',
-  props: ['roomId'],
+  props: ['chatTo'],
 
-  data: () => ({
-    // room: { name: '#Lobby', header: 'Public Lobby Messages' }
-  }),
+  data: () => ({}),
   computed: {
     ...mapState('jstore', ['jsUser', 'jsChats']),
     ...mapGetters('jstore', ['jsPlayer', 'jsPlayerById']),
 
     myChats () {
       let chats = this.jsChats
-
-      if (this.myRoom.name.startsWith('@')) {
+      if (this.chatTo.id.startsWith('#')) {
+        chats = this.jsChats.filter((m) => m.to === this.chatTo.id)
+      } else { // private
         chats = this.jsChats
           .filter((m0) => m0.to.startsWith('@'))
-          .filter(
-            (m1) => m1.to === `@${this.jsUser._id}` || this.isSent(m1.from.id)
-          )
-      } else chats = this.jsChats.filter((m) => m.to === this.myRoom.name)
+          .filter((m1) => m1.to === `@${this.jsUser._id}` || this.isSent(m1.from.id))
+      }
 
       return chats.slice(-10).reverse()
     },
     myRoom () {
       try {
-        if (this.roomId === 1) {
-          return { name: this.jsPlayer.seat.tId || '#Lobby', header: 'Public Table Messages' }
-        } else if (this.roomId.startsWith('@')) {
-          return { name: this.roomId, header: 'Private Player Messages' }
-        } else if (this.roomId.startsWith('#')) {
-          return { name: this.roomId, header: 'Public Table Messages' }
+        if (this.chatTo.id === '#Lobby') {
+          return 'Public Lobby Messages'
+        } else if (this.chatTo.id.startsWith('#')) {
+          return 'Public Table Messages'
+        } else {
+          return `${this.chatTo.nick}: Private Messages`
         }
       } catch (err) { }
-      return { name: '#Lobby', header: 'Public Lobby Messages' }
+      return this.chatTo.id
     }
   },
   methods: {
@@ -76,9 +73,6 @@ export default {
     chatDate (created) {
       return moment(created).fromNow()
     }
-  },
-  watch: {
-    roomId (r) { }
   }
 }
 </script>

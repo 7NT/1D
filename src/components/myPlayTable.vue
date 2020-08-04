@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="jsTable"
+    v-if="!!jsTable"
     class="fit centerbox"
   >
     <div class="column jbtable">
@@ -464,7 +464,7 @@ export default {
       this.$q.fullscreen.request()
         .then(() => { // v1.5.0+
           // success!
-          const message = 'Rotate to Landscape to PLAY, Portrait to CHAT...'
+          const message = 'Rotate to Landscape/Portrait to PLAY/CHAT...'
           const from = { nick: 'FYI', id: '@info' }
 
           const alert = {

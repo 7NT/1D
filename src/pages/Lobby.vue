@@ -1,7 +1,7 @@
 <template>
   <q-page
     class="no-padding no-margin"
-    v-if="jsPlayer"
+    v-if="!!jsPlayer"
   >
     <!-- content -->
     <div class="column">
@@ -16,7 +16,7 @@
             inline-label
             indicator-color="yellow"
             class="bg-secondary text-white shadow-2"
-            v-show="isVisible(false)"
+            v-show="isFullScreen(false)"
           >
             <q-tab
               v-for="r in rooms"
@@ -60,7 +60,7 @@
               <myPlayTable
                 :jsPlayer="jsPlayer"
                 v-on:onPlayer="onPlayer"
-                v-show="isVisible(true)"
+                v-show="isFullScreen(true)"
               />
             </q-tab-panel>
 
@@ -74,16 +74,16 @@
       </div>
       <div
         col='col'
-        v-show="isVisible(false)"
+        v-show="isFullScreen(false)"
       >
-        <myMessages :roomId="rId" />
+        <myMessages :chatTo="myRoom" />
       </div>
     </div>
     <q-footer
       elevated
-      v-show="isVisible(false)"
+      v-show="isFullScreen(false)"
     >
-      <myChat :roomId="rId" />
+      <myChat :chatTo="myRoom" />
     </q-footer>
 
     <q-page-sticky
@@ -138,33 +138,28 @@ export default {
   },
   data () {
     return {
-      // splitterModel: 50, // start at 50%
       user: null,
       rId: 0,
       rooms: [
         {
           name: 'Lobby',
           id: 0,
-          icon: 'people',
-          room: '#Lobby'
+          icon: 'people'
         },
         {
           name: 'My Table',
           id: 1,
-          icon: 'local_play',
-          room: null
+          icon: 'local_play'
         },
         {
           name: 'Tourney',
           id: 2,
-          icon: 'emoji_events',
-          room: '#Lobby'
+          icon: 'emoji_events'
         },
         {
           name: 'Team Game',
           id: 4,
-          icon: 'group_add',
-          room: '#Lobby'
+          icon: 'group_add'
         }
       ]
     }
@@ -178,6 +173,17 @@ export default {
     },
     mySeat () {
       return this.jsPlayer ? this.jsPlayer.seat : { sId: 0 }
+    },
+    myRoom () {
+      switch (this.rId) {
+        case 1: return { id: this.mySeat.tId }
+        default: return { id: '#Lobby' }
+      }
+    },
+    fullScreen () {
+      if (this.$q.fullscreen.isActive && this.$q.screen.lt.md) {
+        return this.$q.screen.height < this.$q.screen.width
+      } else return false
     }
   },
   methods: {
@@ -208,6 +214,7 @@ export default {
           return false
       }
     },
+    /*
     handleOrientationChange () {
       if (this.$q.platform.is.mobile || this.$q.screen.lt.md) {
         const orientation = window.screen.orientation.type
@@ -220,14 +227,13 @@ export default {
         }
       }
     },
-    isVisible (v) {
-      let b = true
-      if (this.$q.platform.is.mobile || this.$q.screen.lt.md) {
-        // if (this.$q.fullscreen.isActive) {
-        if (v) b = this.$q.screen.height < this.$q.screen.width
-        else b = this.$q.screen.height > this.$q.screen.width
+    */
+    isFullScreen (v) {
+      if (this.$q.screen.lt.md) { // this.$q.fullscreen.isActive
+        if (v) return this.$q.screen.height < this.$q.screen.width // landscape
+        else return this.$q.screen.height > this.$q.screen.width // portrait
       }
-      return b
+      return true
     }
   },
   watch: {
@@ -291,11 +297,11 @@ export default {
   },
   mounted () {
     this.$parent.page = 'Lobby'
-    if (!this.jsPlayer.profile.flag) this.$router.push({ name: 'profile' })
-    window.addEventListener('orientationchange', this.handleOrientationChange)
+    // window.addEventListener('orientationchange', this.handleOrientationChange)
   },
   created () {
     this.user = this.$attrs.user
+    if (!this.user.profile.flag) this.$router.push({ name: 'profile' })
   }
 }
 </script>

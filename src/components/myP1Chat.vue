@@ -1,39 +1,44 @@
 <template>
-  <div v-if='!!player'>
-    <q-dialog
-      auto-close
-      no-focus
-      no-refocus
-      seamless
-      v-model="dialog"
-      :position="position"
-    >
-      <q-card style="width: 350px">
-        <q-card-section class="row items-center no-wrap">
-          <myMessages :roomId='`@${player.id}`' />
-          <q-space />
-          <myChat :roomId='`@${player.id}`' />
+  <div v-if='!!chatTo'>
+    <q-btn
+      fab
+      color="red"
+      @click="onPChat"
+      :icon="mail"
+    />
+    <q-dialog auto-close v-model='show'>
+      <q-card class="q-dialog-plugin">
+        <q-card-section>
+          <myMessages :chatTo='chatTo' />
         </q-card-section>
+
+        <q-card-actions align="right">
+          <myChat :chatTo='chatTo' />
+        </q-card-actions>
       </q-card>
     </q-dialog>
   </div>
 </template>
 
 <script>
+import myMessages from 'src/components/myMessages'
+import myChat from 'src/components/myChat'
+
 export default {
   name: 'myPChat',
-  props: ['player'],
+  props: ['chatTo'],
+  components: {
+    myMessages,
+    myChat
+  },
   data () {
     return {
-      dialog: false,
-      position: 'standard'
+      show: false
     }
   },
-
-  methods: {
-    open (position) {
-      this.position = position
-      this.dialog = true
+  method: {
+    onPChat () {
+      // if (this.chatTo)
     }
   }
 }

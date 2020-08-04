@@ -13,6 +13,7 @@
         v-model="chat"
         icon="chat"
         clear-icon="clear"
+        :disable="!canChat"
         @keypress="onChat"
       />
     </div>
@@ -23,16 +24,33 @@
 import { mapGetters } from 'vuex'
 import { chats$ } from 'src/api'
 
+import { jbIsPlayer } from 'src/jbPlayer'
+
 export default {
   name: 'myChat',
-  props: ['roomId'],
+  props: ['chatTo'],
 
   data: () => ({
-    chat: null,
-    chatTo: null
+    chat: null
   }),
   computed: {
-    ...mapGetters('jstore', ['jsPlayer'])
+    ...mapGetters('jstore', ['jsPlayer']),
+
+    canChat () {
+      if (this.chatTo.id.startsWith('#')) return true
+      else if (this.chatTo.seat.tId === this.jsPlayer.seat.tId) {
+        const s0 = this.chatTo.seat.sId || 0
+        const s1 = this.jsPlayer.seat.sId || 0
+        if (jbIsPlayer(s0) || jbIsPlayer(s1)) {
+          return (this.chatTo.seat.sId % 2) !== (this.jsPlayer.seat.sId % 2)
+        }
+      }
+      return true
+    },
+    chatWho () {
+      if (this.chatTo.id.startsWith('#')) return this.chatTo.id
+      return `@${this.chatTo.id}`
+    }
   },
   methods: {
     onChat (event) {
@@ -41,25 +59,11 @@ export default {
     send () {
       if (this.chat) {
         const chatData = {
-          to: this.chatTo || '#Lobby',
+          to: this.chatWho,
           text: this.chat
         }
         chats$.create(chatData)
         this.chat = null
-      }
-    }
-  },
-  watch: {
-    roomId (r) {
-      try {
-        this.chatTo = '#Lobby'
-        if (r === 1) {
-          this.chatTo = this.jsPlayer.seat.tId || '#Lobby'
-        } else if (r.startsWith('@') || r.startsWith('#')) {
-          this.chatTo = r
-        }
-      } catch (err) {
-        this.chatTo = '#Lobby'
       }
     }
   },

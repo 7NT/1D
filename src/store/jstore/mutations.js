@@ -79,7 +79,7 @@ export const addTourney = (state, tourney) => {
 }
 
 export const addChat = (state, chat) => {
-  if (chat.id) {
+  if (chat.id !== null) {
     const i = state.jsChats.findIndex(c => c.id === chat.id)
     if (i >= 0) return
 
@@ -110,7 +110,7 @@ export const setJsMap = (state, map) => {
       break
     }
     case 'pm': { // private message
-      const i = state.jsPM.findIndex(p => p.id === map.value)
+      const i = state.jsPM.findIndex(p => p === map.value)
       if (i >= 0) {
         // state.jsPM.splice(i, 1)
       } else {
@@ -119,7 +119,7 @@ export const setJsMap = (state, map) => {
       break
     }
     case '-pm': { // private message
-      const i = state.jsPM.findIndex(p => p.id === map.value)
+      const i = state.jsPM.findIndex(p => p === map.value)
       if (i >= 0) state.jsPM.splice(i, 1)
       break
     }

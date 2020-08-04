@@ -66,6 +66,9 @@ module.exports = function (ctx) {
       config: {
         screen: {
           bodyClasses: true // <<< add this
+        },
+        capacitor: {
+          backButtonExit: true // false
         }
       }
     },

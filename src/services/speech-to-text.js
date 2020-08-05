@@ -1,12 +1,11 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-undef */
-
+import { Platform } from 'quasar'
 import { Subject } from 'rxjs'
 
-var SpeechRecognition = SpeechRecognition || webkitSpeechRecognition
-var SpeechGrammarList = SpeechGrammarList || webkitSpeechGrammarList
-var SpeechRecognitionEvent =
-  SpeechRecognitionEvent || webkitSpeechRecognitionEvent
+var SpeechRecognition = Platform.is.mac ? null : (SpeechRecognition || webkitSpeechRecognition)
+var SpeechGrammarList = Platform.is.mac ? null : (SpeechGrammarList || webkitSpeechGrammarList)
+var SpeechRecognitionEvent = Platform.is.mac ? null : (SpeechRecognitionEvent || webkitSpeechRecognitionEvent)
 
 var commands = [
   'join',

@@ -460,7 +460,7 @@ export default {
     }
   },
   mounted () {
-    if (this.$q.screen.lt.md) {
+    if (this.$q.screen.lt.sm) {
       this.$q.fullscreen.request()
         .then(() => { // v1.5.0+
           // success!

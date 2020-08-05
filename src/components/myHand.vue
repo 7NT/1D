@@ -44,6 +44,7 @@
             :color="handTurn"
             align="left"
             class="player"
+            :disable="!handPlayer"
             @click="onPlayer()"
           >
             <q-badge

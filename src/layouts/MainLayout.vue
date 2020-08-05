@@ -442,6 +442,7 @@ export default {
   },
   beforeMount () {
     // this.user = null
+    // console.log(this.$q.platform.is.ios, this.$q.platform.is.mac)
   },
   mounted () {
     // Check if there is already a session running

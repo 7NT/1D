@@ -16,7 +16,7 @@
             inline-label
             indicator-color="yellow"
             class="bg-secondary text-white shadow-2"
-            v-show="isFullScreen(false)"
+            v-show="isVisible(false)"
           >
             <q-tab
               v-for="r in rooms"
@@ -60,7 +60,7 @@
               <myPlayTable
                 :jsPlayer="jsPlayer"
                 v-on:onPlayer="onPlayer"
-                v-show="isFullScreen(true)"
+                v-show="isVisible(true)"
               />
             </q-tab-panel>
 
@@ -74,14 +74,14 @@
       </div>
       <div
         col='col'
-        v-show="isFullScreen(false)"
+        v-show="isVisible(false)"
       >
         <myMessages :chatTo="myRoom" />
       </div>
     </div>
     <q-footer
       elevated
-      v-show="isFullScreen(false)"
+      v-show="isVisible(false)"
     >
       <myChat :chatTo="myRoom" />
     </q-footer>
@@ -228,8 +228,8 @@ export default {
       }
     },
     */
-    isFullScreen (v) {
-      if (this.$q.screen.lt.md) { // this.$q.fullscreen.isActive
+    isVisible (v) {
+      if (this.$q.screen.lt.sm) { // this.$q.fullscreen.isActive
         if (v) return this.$q.screen.height < this.$q.screen.width // landscape
         else return this.$q.screen.height > this.$q.screen.width // portrait
       }

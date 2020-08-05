@@ -23,7 +23,7 @@
           </q-item-section>
           <q-item-section>{{bdata}}</q-item-section>
           <q-item-section avatar>
-            <q-icon name="img:jbicon/svg/mix.svg" />
+            <q-icon name="img:jbIcon/svg/mix.svg" />
           </q-item-section>
         </q-item>
 
@@ -50,7 +50,7 @@
                 <q-btn
                   dense
                   size="xs"
-                  icon="img:jbicon/seats/seat13.svg"
+                  :icon="mySeatIcon(13)"
                 >
                   <q-badge
                     class="cc"
@@ -86,7 +86,7 @@
                 <q-btn
                   dense
                   size="xs"
-                  icon="img:jbicon/seats/seat24.svg"
+                  :icon="mySeatIcon(24)"
                 >
                   <q-badge
                     class="cc"
@@ -162,8 +162,7 @@
 import { mapGetters } from 'vuex'
 import EssentialLink from 'components/EssentialLink.vue'
 // import { openURL } from 'quasar'
-
-import { jbIsPlayer } from 'src/jbPlayer'
+import { jbSeatIcon, jbIsPlayer } from 'src/jbPlayer'
 
 const ccLinks = [
   {
@@ -256,6 +255,9 @@ export default {
     }
   },
   methods: {
+    mySeatIcon (sId) {
+      return jbSeatIcon(sId)
+    },
     setBT ({ reset }) {
       this.finalize(reset)
     },

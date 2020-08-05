@@ -14,7 +14,7 @@
         <q-btn
           dense
           size="xs"
-          icon="img:jbicon/seats/seat13.svg"
+          :icon="mySeatIcon(13)"
         >
           <q-badge
             color="orange"
@@ -40,7 +40,7 @@
         <q-btn
           dense
           size="xs"
-          icon="img:jbicon/seats/seat24.svg"
+          :icon="mySeatIcon(24)"
         >
           <q-badge
             color="orange"
@@ -69,6 +69,8 @@
 </template>
 
 <script>
+import { jbSeatIcon } from 'src/jbPlayer'
+
 export default {
   name: 'myCC',
   data () {
@@ -78,6 +80,9 @@ export default {
     }
   },
   methods: {
+    mySeatIcon (sId) {
+      return jbSeatIcon(sId)
+    },
     onCC (n, c) {
       this.cc.splice(n, 1, c)
     }

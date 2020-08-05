@@ -54,7 +54,7 @@
               <div class="row">
                 <q-icon
                   size='sm'
-                  name='img:jbicon/seats/seat13.svg'
+                  :name="mySeatIcon(13)"
                   left
                 />
                 <q-badge
@@ -65,7 +65,7 @@
                 />
                 <q-icon
                   size='sm'
-                  name='img:jbicon/seats/seat24.svg'
+                  :name="mySeatIcon(24)"
                   right
                 />
                 <q-badge
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { jbIsPlayer } from 'src/jbPlayer'
+import { jbIsPlayer, jbSeatIcon } from 'src/jbPlayer'
 
 import myPlayBox from 'src/components/myPlayBox'
 import myScoreList from 'src/components/myScoreList'
@@ -124,6 +124,9 @@ export default {
     }
   },
   methods: {
+    mySeatIcon (sId) {
+      return jbSeatIcon(sId)
+    },
     tricks (n) {
       try {
         return this.jsTable.plays.info.tricks[n]

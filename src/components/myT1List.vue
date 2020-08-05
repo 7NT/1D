@@ -40,7 +40,7 @@
           dense
           round
           color='warning'
-          icon="close"
+          icon="remove_circle_outline"
           @click="onTable()"
         />
       </q-item-label>

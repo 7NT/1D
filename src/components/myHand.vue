@@ -120,7 +120,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
 import { jbCards, jbCardImg } from 'src/jbBoard'
-import { jbIsPlayer, jbIsMyPlayer, jbFlag } from 'src/jbPlayer'
+import { jbIsPlayer, jbIsMyPlayer, jbFlag, jbSeatIcon } from 'src/jbPlayer'
 import { jbSeatName, jbSeatX, jbSeat1234 } from 'src/jbSeat'
 import { jbV2N } from 'src/jbVoice'
 
@@ -149,7 +149,8 @@ export default {
       return jbSeatX(this.handId, this.mySeat.sId)
     },
     seatIcon () {
-      return `img:jbicon/seats/seat${this.seatX}.svg`
+      // return `img:jbIcon/seats/seat${this.seatX}.svg`
+      return jbSeatIcon(this.seatX)
     },
     handPlayer () {
       const nick = this.jsTable.seats[this.seatX - 1]

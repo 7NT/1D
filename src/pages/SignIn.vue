@@ -1,15 +1,25 @@
 <template>
   <q-page class="flex flex-center">
-    <q-dialog v-model="show" persistent>
+    <q-dialog
+      v-model="show"
+      persistent
+    >
       <q-card style="min-width: 400px">
         <q-card-section>
           <div class="text-h6">{{ title }}:</div>
         </q-card-section>
 
         <q-card-section>
-          <q-list dense bordered padding>
+          <q-list
+            dense
+            bordered
+            padding
+          >
             <q-item>
-              <q-item-section top avatar>
+              <q-item-section
+                top
+                avatar
+              >
                 <q-icon name="face" />
               </q-item-section>
               <q-item-section>
@@ -23,15 +33,26 @@
               </q-item-section>
             </q-item>
             <q-item v-if="isRegistration()">
-              <q-item-section top avatar>
+              <q-item-section
+                top
+                avatar
+              >
                 <q-icon name="email" />
               </q-item-section>
               <q-item-section>
-                <q-input v-model="email" filled type="email" label="Email" />
+                <q-input
+                  v-model="email"
+                  filled
+                  type="email"
+                  label="Email"
+                />
               </q-item-section>
             </q-item>
             <q-item>
-              <q-item-section top avatar>
+              <q-item-section
+                top
+                avatar
+              >
                 <q-icon name="fingerprint" />
               </q-item-section>
               <q-item-section>
@@ -52,19 +73,42 @@
               </q-item-section>
             </q-item>
             <q-item v-if="isRegistration()">
-              <q-item-section top avatar>
-                <q-icon :name="`img:~assets/flags/4x3/${flag.toLowerCase()}.svg`" />
+              <q-item-section
+                top
+                avatar
+              >
+                <q-icon :name="`img:flags/4x3/${flag.toLowerCase()}.svg`" />
               </q-item-section>
               <q-item-section>
-                <q-input v-model="flag" square filled label="Country:" mask="AA" type="text"></q-input>
+                <q-input
+                  v-model="flag"
+                  square
+                  filled
+                  label="Country:"
+                  mask="AA"
+                  type="text"
+                ></q-input>
               </q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
 
-        <q-card-actions align="right" class="text-primary">
-          <q-btn push label='Cancel' v-close-popup @click="onOk(true)" />
-          <q-btn push :label="title" v-close-popup @click="onOk(false)" />
+        <q-card-actions
+          align="right"
+          class="text-primary"
+        >
+          <q-btn
+            push
+            label='Cancel'
+            v-close-popup
+            @click="onOk(true)"
+          />
+          <q-btn
+            push
+            :label="title"
+            v-close-popup
+            @click="onOk(false)"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -159,7 +203,7 @@ export default {
   mounted () {
     this.title = this.isRegistration() ? 'Register' : 'Sign In'
   },
-  beforeDestroy () {}
+  beforeDestroy () { }
 }
 </script>
 

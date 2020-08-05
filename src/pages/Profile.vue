@@ -60,7 +60,12 @@
                 </q-tooltip>
               </q-item-section>
               <q-item-section>
-                <q-select filled v-model="country" :options="countries" label="Country:" />
+                <q-select
+                  filled
+                  v-model="country"
+                  :options="countries"
+                  label="Country:"
+                />
               </q-item-section>
             </q-item>
           </q-list>
@@ -114,7 +119,7 @@ export default {
       openURL(gravatarUrl)
     },
     getFlag () {
-      return 'img:~assets/flags/4x3/' + this.flag.toLowerCase() + '.svg'
+      return 'img:flags/4x3/' + this.flag.toLowerCase() + '.svg'
     },
     joinedDate (created) {
       return moment(created).format('MMMM Do YYYY')

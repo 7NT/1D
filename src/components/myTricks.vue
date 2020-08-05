@@ -54,7 +54,7 @@
               <div class="row">
                 <q-icon
                   size='sm'
-                  name='img:~assets/jbicon/seats/seat13.svg'
+                  name='img:jbicon/seats/seat13.svg'
                   left
                 />
                 <q-badge
@@ -65,7 +65,7 @@
                 />
                 <q-icon
                   size='sm'
-                  name='img:~assets/jbicon/seats/seat24.svg'
+                  name='img:jbicon/seats/seat24.svg'
                   right
                 />
                 <q-badge

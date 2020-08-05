@@ -2,7 +2,11 @@
   <div class="row items-end">
     <div class="column">
       <div class="row self-end no-wrap">
-        <q-card flat v-if="isVisible" class="transparent">
+        <q-card
+          flat
+          v-if="isVisible"
+          class="transparent"
+        >
           <div class="hand hhand-compact active-hand full-width no-wrap">
             <img
               v-for="(c, i) of handCards"
@@ -15,9 +19,19 @@
         </q-card>
       </div>
       <div class="pbar">
-        <q-btn-group flat dense spread>
-          <q-icon :name="seatIcon" class="seat" />
-          <q-icon :name="handFlag" class="flag" />
+        <q-btn-group
+          flat
+          dense
+          spread
+        >
+          <q-icon
+            :name="seatIcon"
+            class="seat"
+          />
+          <q-icon
+            :name="handFlag"
+            class="flag"
+          />
           <q-btn
             flat
             outline
@@ -32,7 +46,12 @@
             class="player"
             @click="onPlayer()"
           >
-            <q-badge color="orange" align="top" transparent v-if="handMessage">∞</q-badge>
+            <q-badge
+              color="orange"
+              align="top"
+              transparent
+              v-if="handMessage"
+            >∞</q-badge>
           </q-btn>
           <q-space />
           <q-btn
@@ -57,9 +76,17 @@
             :disable="myDeclarer"
           >
             <q-list dense>
-              <q-item clickable v-close-popup>
+              <q-item
+                clickable
+                v-close-popup
+              >
                 <q-item-section>
-                  <q-item-label label v-for="c in claims" :key="c" @click="onClaim(c)">{{ c }}</q-item-label>
+                  <q-item-label
+                    label
+                    v-for="c in claims"
+                    :key="c"
+                    @click="onClaim(c)"
+                  >{{ c }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -67,8 +94,14 @@
         </q-btn-group>
       </div>
     </div>
-    <q-dialog auto-close v-model="pchat">
-      <q-card class="q-dialog-plugin" v-if="handPlayer">
+    <q-dialog
+      auto-close
+      v-model="pchat"
+    >
+      <q-card
+        class="q-dialog-plugin"
+        v-if="handPlayer"
+      >
         <q-card-section>
           <myMessages :chatTo="handPlayer" />
         </q-card-section>
@@ -115,7 +148,7 @@ export default {
       return jbSeatX(this.handId, this.mySeat.sId)
     },
     seatIcon () {
-      return `img:~assets/jbicon/seats/seat${this.seatX}.svg`
+      return `img:jbicon/seats/seat${this.seatX}.svg`
     },
     handPlayer () {
       const nick = this.jsTable.seats[this.seatX - 1]
@@ -440,8 +473,8 @@ export default {
       if (claim && this.handState === 2) this.isHandClaim(claim)
     }
   },
-  mounted () {},
-  created () {}
+  mounted () { },
+  created () { }
 }
 </script>
 

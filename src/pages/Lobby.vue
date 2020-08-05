@@ -115,7 +115,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 
-import { players$ } from 'src/api'
+import { players$, tables$ } from 'src/api'
 import myT1List from 'src/components/myT1List'
 import myPlayTable from 'src/components/myPlayTable'
 import myMessages from 'src/components/myMessages'
@@ -201,7 +201,8 @@ export default {
         seat.tId0 = this.mySeat.tId
         seat.sId0 = this.mySeat.sId
       }
-      players$.patch(this.jsPlayer.id, { seat })
+      if (seat.sId === -9) tables$.remove(seat.tId)
+      else players$.patch(this.jsPlayer.id, { seat })
     },
     isOpen (r) {
       switch (r.id) {

@@ -35,6 +35,14 @@
           round
           :icon="mySeatIcon(9)"
         />
+        <q-btn
+          v-if='isAdmin && myTable.id'
+          dense
+          round
+          color='warning'
+          icon="close"
+          @click="onTable()"
+        />
       </q-item-label>
     </q-item-section>
 
@@ -53,7 +61,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { jbT2State } from 'src/jbState'
-import { jbSeatIcon } from 'src/jbPlayer'
+import { jbSeatIcon, jbIsAdmin } from 'src/jbPlayer'
 
 export default {
   name: 'myT1List',
@@ -65,6 +73,9 @@ export default {
   computed: {
     ...mapGetters('jstore', ['jsPlayer', 'jsPlayerByNick']),
 
+    isAdmin () {
+      return jbIsAdmin(this.jsPlayer)
+    },
     state () {
       if (this.myTable.name === '#Lobby') return 'Welcome'
       else return jbT2State(this.myTable.state)
@@ -112,6 +123,23 @@ export default {
         sId
       }
       this.$emit('onPlayer', seat)
+    },
+    onTable () {
+      this.$q.dialog({
+        title: 'Confirm',
+        message: 'Would you like to CLOSE this Table?',
+        cancel: true,
+        persistent: true
+      }).onOk(() => {
+        // console.log('>>>> OK')
+        this.onSit(-9)
+      }).onOk(() => {
+        // console.log('>>>> second OK catcher')
+      }).onCancel(() => {
+        // console.log('>>>> Cancel')
+      }).onDismiss(() => {
+        // console.log('I am triggered on both OK and Cancel')
+      })
     }
   },
   watch: {},

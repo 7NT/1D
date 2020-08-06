@@ -20,7 +20,7 @@
           <q-icon name='img:jbIcon/seats/seat0.svg' /> App
         </q-toolbar-title>
 
-        <div>v{{ $q.version }}</div>
+        <div>v{{ version }}</div>
         <q-btn
           flat
           round
@@ -130,6 +130,7 @@
 </template>
 
 <script>
+import { version } from '../../package.json'
 // import EssentialLink from 'components/EssentialLink'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import myP1List from 'src/components/myP1List'
@@ -160,6 +161,7 @@ export default {
 
   data () {
     return {
+      version: version,
       // essentialLinks: [],
       playerList: true,
       scoreBook: false,

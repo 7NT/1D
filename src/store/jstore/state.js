@@ -13,5 +13,6 @@ export default {
   jsT4: null, // team
   jsPM: [], // private messages
   jsPF: null, // player following
+  // jsSB: false, // scorebook
   jsSpeech: null
 }

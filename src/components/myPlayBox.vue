@@ -90,7 +90,7 @@ export default {
   width: 150px;
   height: 150px;
   margin: auto;
-  border: green solid 1px;
+  /* border: green solid 1px; */
   overflow: hidden;
 }
 #playCard1 {
@@ -117,4 +117,7 @@ img.card {
   max-height: 96px;
   /*max-width: 76px;*/
 }
+</style>
+
+<style scoped>
 </style>

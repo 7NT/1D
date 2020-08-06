@@ -24,7 +24,7 @@
             <q-btn
               :icon="myAvatar(myPlayer)"
               :label="myNick(myPlayer)"
-              class="player bg-secondary"
+              class="pbar bg-secondary"
               align="around"
             />
           </template>
@@ -32,7 +32,7 @@
             <q-btn
               :label="myPair.player"
               icon="person"
-              class="player bg-info"
+              class="pbar bg-info"
               align="around"
             />
             <q-tooltip>{{myPair.player}} is offline</q-tooltip>
@@ -47,7 +47,7 @@
             <q-btn
               :icon="myAvatar(myPartner)"
               :label="myNick(myPartner)"
-              class="player bg-secondary"
+              class="pbar bg-secondary"
               align="around"
             />
           </template>
@@ -55,7 +55,7 @@
             <q-btn
               :label="myPartner.nick"
               icon="person"
-              class="player bg-info"
+              class="pbar bg-info"
               align="around"
             />
             <q-tooltip>partner is offline</q-tooltip>
@@ -64,7 +64,7 @@
             <q-btn
               label="Join..."
               icon="person_add"
-              class="player bg-info"
+              class="pbar bg-info"
               align="around"
               @click="onP2Join(myPair)"
             />
@@ -344,7 +344,7 @@ export default {
 </script>
 
 <style scoped>
-.player {
+.pbar {
   width: 125px;
   height: 34px;
   margin: auto;
@@ -370,4 +370,7 @@ export default {
 .gborder {
   border: 1px solid green;
 }
+</style>
+
+<style scoped>
 </style>

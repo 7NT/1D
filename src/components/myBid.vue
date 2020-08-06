@@ -305,12 +305,4 @@ export default {
   float: left;
   align-self: flex-start;
 }
-.bbox {
-  height: 120px;
-  min-width: 210px;
-  margin: auto;
-  border: 1px solid tomato;
-  align-self: flex-start;
-  z-index: 200;
-}
 </style>

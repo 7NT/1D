@@ -67,7 +67,7 @@ export default {
       return jbGetNick(this.jsPlayerById(pId))
     },
     getAvatar (pId) {
-      if (pId === '@info') return '/jbicon/seats/seat0.svg'
+      if (pId === '@info') return '/jbIcon/seats/seat0.svg'
       else return jbAvatar(this.jsPlayerById(pId))
     },
     chatDate (created) {
@@ -76,13 +76,6 @@ export default {
   }
 }
 </script>
+
 <style scoped>
-.box {
-  max-height: 25vh;
-}
-.messages {
-  width: 100%;
-  height: auto;
-  overflow-y: hidden;
-}
 </style>

@@ -123,6 +123,12 @@ export const setJsMap = (state, map) => {
       if (i >= 0) state.jsPM.splice(i, 1)
       break
     }
+    /*
+    case 'sb': { // scorebook
+      state.jsSB = map.value
+      break
+    }
+    */
     case 'pf': { // player following
       state.jsPF = map.value
       break

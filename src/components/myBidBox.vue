@@ -187,11 +187,6 @@ export default {
 </script>
 
 <style scoped>
-.bidbox {
-  min-width: 160px;
-  min-height: 160px;
-  overflow-x: hidden;
-}
 .vul0 {
   border: 2px solid silver;
 }

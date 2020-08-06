@@ -96,6 +96,7 @@
 </template>
 
 <script>
+// import { mapActions } from 'vuex'
 import { jbIsPlayer, jbSeatIcon } from 'src/jbPlayer'
 
 import myPlayBox from 'src/components/myPlayBox'
@@ -124,6 +125,8 @@ export default {
     }
   },
   methods: {
+    // ...mapActions('jstore', ['setJsMap']),
+
     mySeatIcon (sId) {
       return jbSeatIcon(sId)
     },
@@ -169,6 +172,7 @@ export default {
   mounted () { }
 }
 </script>
+
 <style scoped>
 .trickbox {
   max-height: 60px;

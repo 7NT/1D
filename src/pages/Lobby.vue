@@ -230,7 +230,7 @@ export default {
     },
     */
     isVisible (v) {
-      if (this.$q.screen.lt.sm) { // this.$q.fullscreen.isActive
+      if (this.$q.screen.lt.sm || this.$q.fullscreen.isActive) {
         if (v) return this.$q.screen.height < this.$q.screen.width // landscape
         else return this.$q.screen.height > this.$q.screen.width // portrait
       }

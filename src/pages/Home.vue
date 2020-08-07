@@ -1,85 +1,71 @@
 <template>
-  <q-page padding class='fit'>
-    <!-- content -->
-    <div class="column container">
-      <div class='col-10 tops'>
-        <q-markup-table flat bordered>
-          <thead class="bg-teal">
-            <tr>
-              <th colspan="5">
-                <div class="row no-wrap items-center">
-                  <q-img
-                    style="width: 70px"
-                    :ratio="1"
-                    class="rounded-borders"
-                    src="jbicon/seats/seat0.svg"
-                  />
+  <div class="q-pa-md">
+    <q-carousel
+      swipeable
+      animated
+      v-model="slide"
+      :autoplay="autoplay"
+      ref="carousel"
+      infinite
+    >
+      <q-carousel-slide
+        :name="1"
+        img-src="https://cdn.quasar.dev/img/mountains.jpg"
+      />
+      <q-carousel-slide
+        :name="2"
+        img-src="https://cdn.quasar.dev/img/parallax1.jpg"
+      />
+      <q-carousel-slide
+        :name="3"
+        img-src="https://cdn.quasar.dev/img/parallax2.jpg"
+      />
+      <q-carousel-slide
+        :name="4"
+        img-src="https://cdn.quasar.dev/img/quasar.jpg"
+      />
 
-                  <div class="text-h4 q-ml-md text-white">🏆Top Players:</div>
-                </div>
-              </th>
-            </tr>
-            <tr>
-              <th>XIMP</th>
-              <th>IMP</th>
-              <th>MP</th>
-              <th>Tourney</th>
-              <th>Team</th>
-            </tr>
-          </thead>
-          <tbody class="bg-grey-3">
-          </tbody>
-        </q-markup-table>
-        <q-space />
-      </div>
-      <div class='col-2'>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </div>
-    </div>
-    <q-footer reveal elevated bordered class='bg-grey-1 text-primary fixed-bottom'>
-      ✉ Contact: <a href="mailto:help@jbridge.net">Email Us</a>
-    </q-footer>
-  </q-page>
+      <template v-slot:control>
+        <q-carousel-control
+          position="top-right"
+          :offset="[18, 18]"
+          class="text-white rounded-borders"
+          style="background: rgba(0, 0, 0, .3); padding: 4px 8px;"
+        >
+          <q-toggle
+            dense
+            dark
+            color="orange"
+            v-model="autoplay"
+            label="Auto Play"
+          />
+        </q-carousel-control>
+
+        <q-carousel-control
+          position="bottom-right"
+          :offset="[18, 18]"
+          class="q-gutter-xs"
+        >
+          <q-btn
+            push
+            round
+            dense
+            color="orange"
+            text-color="black"
+            icon="arrow_left"
+            @click="$refs.carousel.previous()"
+          />
+          <q-btn
+            push
+            round
+            dense
+            color="orange"
+            text-color="black"
+            icon="arrow_right"
+            @click="$refs.carousel.next()"
+          />
+        </q-carousel-control>
+      </template>
+    </q-carousel>
+  </div>
 </template>
-
-<script>
-import EssentialLink from 'components/EssentialLink.vue'
-
-const linkData = [
-  {
-    title: 'Convention Card Editor',
-    caption: 'bridgewinners.com',
-    icon: 'bookmark_border',
-    link: 'https://bridgewinners.com/convention-card/'
-  },
-  {
-    title: 'Gavatar',
-    caption: 'A Globally Recognized Avatar',
-    icon: 'bookmark_border',
-    link: 'https://www.gravatar.com/'
-  }
-]
-export default {
-  name: 'Home',
-  components: { EssentialLink },
-
-  data () {
-    return {
-      essentialLinks: linkData
-    }
-  }
-}
-</script>
-
-<style scoped>
-.container {
-  min-height: 85vh;
-}
-.tops {
-  flex: 1;
-}
-</style>

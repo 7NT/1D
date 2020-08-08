@@ -16,7 +16,6 @@
         />
 
         <q-toolbar-title>
-          1
           <q-icon name='img:jbIcon/seats/seat0.svg' /> App
         </q-toolbar-title>
 

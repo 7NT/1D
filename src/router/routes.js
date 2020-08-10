@@ -11,6 +11,11 @@ const routes = [{
     component: () => import('pages/Home')
   },
   {
+    path: '/tops',
+    name: 'tops',
+    component: () => import('pages/Tops')
+  },
+  {
     path: '/signin',
     name: 'signin',
     component: () => import('pages/SignIn')

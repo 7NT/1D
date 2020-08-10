@@ -68,6 +68,11 @@ async function tableJoin (app: any, user: any, seat: any) {
 }
 
 async function newTable (tables$: any, user: any, seat: any) {
+  const sayc = {
+    title: 'SAYC',
+    link: 'https://bridgewinners.com/convention-card/print/modern-standard-american-2/4563'
+  }
+
   const tdata = {
     id: '#' + user._id,
     name: '#' + user.nick,
@@ -76,7 +81,7 @@ async function newTable (tables$: any, user: any, seat: any) {
     turn: 0,
     bT: jbMIX(),
     players: 1,
-    cc: ['SAYC', 'SAYC'],
+    cc: [sayc, sayc],
     seats: [null, null, null, null],
     ready: [0, 0, 0, 0]
   }
@@ -119,17 +124,21 @@ const onLogout = (): Hook => {
   return async (context: HookContext) => {
     const pId = context.id
     if (pId) {
-      let player = await context.service.get(pId)
-      // console.log(context, player)
-      if (player) {
-        const users$ = context.app.service('users')
-        const { seat }  = player
-        seat.tId0 = seat.tId,
-        seat.sId0 = seat.sId
+      try {
+        let player = await context.service.get(pId)
+        // console.log(context, player)
+        if (player) {
+          const users$ = context.app.service('users')
+          const { seat } = player
+          seat.tId0 = seat.tId,
+            seat.sId0 = seat.sId
 
-        playerPart(context.app, player.nick, seat)
-        const userData = { seat, state: 0, logoutAt: new Date().getTime() }
-        users$.patch(pId, userData) // save for relogin
+          playerPart(context.app, player.nick, seat)
+          const userData = { seat, state: 0, logoutAt: new Date().getTime() }
+          users$.patch(pId, userData) // save for relogin
+        }
+      } catch (error) {
+        console.error(error)
       }
     }
     return Promise.resolve(context)

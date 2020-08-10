@@ -32,6 +32,18 @@
             :offset="[0, 10]"
           >Home</q-tooltip>
         </q-btn>
+        <q-btn
+          flat
+          round
+          @click="goTo('tops')"
+        >
+          <q-icon name="star" />
+          <q-tooltip
+            anchor="bottom middle"
+            self="top middle"
+            :offset="[0, 10]"
+          >Top Players</q-tooltip>
+        </q-btn>
         <!--
           <a href="localhost:3030/oauth/google">Login with Google</a>
         -->

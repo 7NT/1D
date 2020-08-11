@@ -126,7 +126,6 @@ const onLogout = (): Hook => {
     if (pId) {
       try {
         let player = await context.service.get(pId)
-        // console.log(context, player)
         if (player) {
           const users$ = context.app.service('users')
           const { seat } = player
@@ -138,7 +137,8 @@ const onLogout = (): Hook => {
           users$.patch(pId, userData) // save for relogin
         }
       } catch (error) {
-        console.error(error)
+        // console.log('logout', error)
+        throw new Error('Player Notfound')
       }
     }
     return Promise.resolve(context)

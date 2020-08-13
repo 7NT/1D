@@ -44,9 +44,6 @@
             :offset="[0, 10]"
           >Top Players</q-tooltip>
         </q-btn>
-        <!--
-          <a href="localhost:3030/oauth/google">Login with Google</a>
-        -->
         <q-btn
           flat
           icon="login"

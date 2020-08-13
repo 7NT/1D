@@ -28,17 +28,24 @@
       "passwordField": "password"
     },
     "oauth": {
-      "redirect": "/",
+      "redirect": "http://localhost:8080",
       "google": {
         "key": "819669594394-59m1jucvthqdfs1qvh294f4anvknggov.apps.googleusercontent.com",
         "secret": "2VA2PU2egDys3pA9-ebJs5N5",
-        "scope": ["openid", "email", "profile"],
+        "scope": [
+          "openid",
+          "email",
+          "profile"
+        ],
         "nonce": true
       },
       "facebook": {
-        "key": "2145076132384553",
-        "secret": "86c2a9ca92acb0784a7791a190cc1aaf",
-        "scope": ["email", "public_profile"]
+        "key": "723452768493061",
+        "secret": "91ebec1cf7c599a114378dd2470b2648",
+        "scope": [
+          "email",
+          "public_profile"
+        ]
       },
       "twitter": {
         "key": "<twitter oauth key>",

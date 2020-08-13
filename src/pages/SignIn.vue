@@ -98,10 +98,11 @@
           class="text-primary"
         >
           <div class='row'>
+            <!--
             <q-btn
               dense
               type="a"
-              href="/api/oauth/facebook"
+              href="http://localhost:3030/oauth/facebook"
               no-caps
               label="Facebook"
               icon="mdi-facebook"
@@ -122,6 +123,7 @@
               vertical
               spaced
             />
+            -->
             <q-btn
               push
               label='Cancel'

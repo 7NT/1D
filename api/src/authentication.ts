@@ -26,9 +26,9 @@ class JbLocalStrategy extends LocalStrategy {
 */
 class GoogleStrategy extends OAuthStrategy {
   async getEntityData (profile: OAuthProfile, existing: any, params: Params) {
+    console.log('google', profile)
     // this will set 'googleId'
     const baseData = await super.getEntityData(profile, existing, params)
-    console.log('google', baseData)
     // this will grab the picture and email address of the Google profile
     return {
       ...baseData,
@@ -60,10 +60,16 @@ class FacebookStrategy extends OAuthStrategy {
   async getEntityData (profile: OAuthProfile, existing: any, params: Params) {
     // `profile` is the data returned by getProfile
     const baseData = await super.getEntityData(profile, existing, params)
-
     return {
       ...baseData,
-      email: profile.email
+      nick: profile.email,
+      email: profile.email,
+      profile: {
+        id: profile.id,
+        social: 'facebook',
+        name: profile.name,
+        avatar: `http://graph.facebook.com/${profile.id}/picture`
+      }
     }
   }
 }

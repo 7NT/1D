@@ -114,7 +114,7 @@ module.exports = function (ctx) {
         // proxy all requests starting with /api to jsonplaceholder
         '/api': {
           target: 'http://localhost:3030',
-          changeOrigin: false,
+          changeOrigin: true,
           pathRewrite: {
             '^/api': ''
           }
@@ -124,7 +124,8 @@ module.exports = function (ctx) {
       public: 'www.jbridge.net',
       host: 'localhost',
       port: 8080,
-      open: true // opens browser window automatically
+      // index: 'public/index.html',
+      open: false // opens browser window automatically
     },
 
     // animations: 'all', // --- includes all animations

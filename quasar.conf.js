@@ -106,6 +106,16 @@ module.exports = function (ctx) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
+      proxy: {
+        // proxy all requests starting with /api to jsonplaceholder
+        '/api': {
+          target: 'http://localhost:3030',
+          changeOrigin: false,
+          pathRewrite: {
+            '^/api': ''
+          }
+        }
+      },
       https: false,
       public: 'www.jbridge.net',
       host: 'localhost',

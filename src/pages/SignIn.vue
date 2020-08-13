@@ -97,18 +97,44 @@
           align="right"
           class="text-primary"
         >
-          <q-btn
-            push
-            label='Cancel'
-            v-close-popup
-            @click="onOk(true)"
-          />
-          <q-btn
-            push
-            :label="title"
-            v-close-popup
-            @click="onOk(false)"
-          />
+          <div class='row'>
+            <q-btn
+              dense
+              type="a"
+              href="/api/oauth/facebook"
+              no-caps
+              label="Facebook"
+              icon="mdi-facebook"
+              push
+              color="blue"
+            />
+            <q-btn
+              dense
+              type="a"
+              href="/api/oauth/google"
+              no-caps
+              label="Google"
+              icon="mdi-google"
+              push
+              color="red"
+            />
+            <q-separator
+              vertical
+              spaced
+            />
+            <q-btn
+              push
+              label='Cancel'
+              v-close-popup
+              @click="onOk(true)"
+            />
+            <q-btn
+              push
+              :label="title"
+              v-close-popup
+              @click="onOk(false)"
+            />
+          </div>
         </q-card-actions>
       </q-card>
     </q-dialog>

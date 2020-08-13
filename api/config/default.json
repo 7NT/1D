@@ -28,11 +28,11 @@
       "passwordField": "password"
     },
     "oauth": {
-      "redirect": "http://localhost:8080/",
+      "redirect": "/",
       "google": {
-        "key": "307017809042-1bps9t3p9e36ur1d6c6ms3bfbi095bq5.apps.googleusercontent.com",
-        "secret": "jqjiNjxGSngVqhrP8e6TXN0T",
-        "scope": ["openid", "email"],
+        "key": "819669594394-59m1jucvthqdfs1qvh294f4anvknggov.apps.googleusercontent.com",
+        "secret": "2VA2PU2egDys3pA9-ebJs5N5",
+        "scope": ["openid", "email", "profile"],
         "nonce": true
       },
       "facebook": {

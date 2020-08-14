@@ -100,7 +100,7 @@ async function t1Board (context: any) {
         $limit: 1,
         $select: ['bN'],
         bT: t1.bT,
-        $sort: { bN: -1 }
+        $sort: { played: -1 }
       }
     })
     let bNs: any = bN_data.data.map((x: { bN: number }) => x.bN)

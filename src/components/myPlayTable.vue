@@ -248,7 +248,10 @@ export default {
       }
     },
     myAlert () {
-      return this.jsTable.alert || null
+      try {
+        return this.jsTable.alert
+      } catch (err) { }
+      return null
     },
     myBids () {
       return this.jsTable.bids

@@ -456,6 +456,7 @@ export default {
   },
   mounted () {
     // Check if there is already a session running
+    console.log('layout', this.user)
     auth
       .login()
       .then(user => {

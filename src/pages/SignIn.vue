@@ -98,6 +98,7 @@
           class="text-primary"
         >
           <div class='row'>
+            <!--
             <q-btn
               dense
               type="a"
@@ -122,6 +123,7 @@
               vertical
               spaced
             />
+            -->
             <q-btn
               push
               label='Cancel'

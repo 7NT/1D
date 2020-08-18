@@ -458,16 +458,18 @@ export default {
     // Check if there is already a session running
     console.log('layout', this.user)
     auth
-      .login()
+      // .login()
+      .authenticateWithToken()
       .then(user => {
-        // this.signin(user.user)
+        console.log('login', user)
         this.$q.notify({
           type: 'positive',
           message: 'Restoring previous session'
         })
       })
-      .catch(_ => {
-        this.goTo('home')
+      .catch(err => {
+        console.log(err)
+        // this.goTo('/')
       })
 
     // On successful login

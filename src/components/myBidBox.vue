@@ -172,17 +172,19 @@ export default {
       }
     },
     getBColor (bdata) {
-      if (!bdata) return 'bg-grey'
-      else if (bdata.bid === '?') return 'bg-warning'
-      else if (bdata.bid.endsWith('♦') || bdata.bid.endsWith('♥')) return 'col-3 red'
-      else {
-        if (this.getAlert(bdata)) return 'col-3 vul3'
-        else return 'col-3'
-      }
+      let c
+      if (!bdata) c = 'bg-grey'
+      else if (bdata.bid === '?') c = 'bg-warning'
+      else if (bdata.bid.endsWith('♦') || bdata.bid.endsWith('♥')) c = 'col-3 red'
+      else c = 'col-3'
+
+      if (this.getAlert(bdata)) c += ' vul3'
+
+      return c
     }
   },
   watch: {},
-  mounted () {}
+  mounted () { }
 }
 </script>
 

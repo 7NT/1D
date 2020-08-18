@@ -217,7 +217,7 @@ export default {
       if (this.handState < 1) return false
       else if (this.handState > 2) return true
       else if (this.mySeat.sId === 9) return true
-      else if (this.isDummy) return true
+      else if (this.isDummy || !!this.handClaim) return true
       else if (this.isDeclarer) {
         return this.jsTable.bids.info.by % 2 === this.mySeat.sId % 2
       } else return this.seatX === Math.abs(this.mySeat.sId)

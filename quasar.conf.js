@@ -124,7 +124,7 @@ module.exports = function (ctx) {
       public: 'www.jbridge.net',
       port: 8080,
       // index: 'public/index.html',
-      open: false // opens browser window automatically
+      open: true // opens browser window automatically
     },
 
     // animations: 'all', // --- includes all animations

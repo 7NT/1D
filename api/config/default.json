@@ -18,17 +18,17 @@
       "header": {
         "typ": "access"
       },
-      "audience": "https://yourdomain.com",
-      "issuer": "feathers",
+      "audience": "https://jbridge.net",
+      "issuer": "jbridge",
       "algorithm": "HS256",
-      "expiresIn": "1d"
+      "expiresIn": "7d"
     },
     "local": {
-      "usernameField": "nick",
+      "usernameField": "email",
       "passwordField": "password"
     },
     "oauth": {
-      "redirect": "http://localhost:8080",
+      "redirect": "http://localhost:8080/",
       "google": {
         "key": "819669594394-59m1jucvthqdfs1qvh294f4anvknggov.apps.googleusercontent.com",
         "secret": "2VA2PU2egDys3pA9-ebJs5N5",

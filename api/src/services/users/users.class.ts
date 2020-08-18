@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import { Params } from '@feathersjs/feathers'
+import { ServiceMethods, Params, Id, NullableId } from "@feathersjs/feathers"
 import { Service, MongooseServiceOptions } from 'feathers-mongoose'
 import { Application } from '../../declarations'
 
@@ -27,7 +27,6 @@ export class Users extends Service {
   }
 
   create (data: UserData, params?: Params) {
-    console.log('user', data)
     // This is the information we want from the user signup data
     const { nick, email, password, profile } = data
     // The complete user
@@ -40,6 +39,7 @@ export class Users extends Service {
       profile,
       created: new Date()
     }
+
     if (!profile.avatar) {
       // Gravatar uses MD5 hashes from an email address (all lowercase) to get the image
       const hash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex')
@@ -47,7 +47,22 @@ export class Users extends Service {
       const avatar = `${gravatarUrl}/${hash}?${query}`
       userData.profile.avatar = avatar
     }
+
     // Call the original `create` method with existing `params` and new data
+    // return super.create(userData, params)
     return super.create(userData, params)
+      .then(user => {
+        return user
+      })
+      .catch(async err => {
+        // const user = await super.find({ query: { email } })
+        if (err.code === 409) {
+          // const data = await super.find({ query: { email } })
+          return super.patch(null, { profile }, { query: { email } })
+            .then(user => {
+              if (user.length > 0) return user[0]
+            })
+        } else return err
+      })
   }
 }

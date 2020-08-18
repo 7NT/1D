@@ -49,4 +49,30 @@ const auth = {
   }
 }
 
-export default auth
+export async function authenticateWithPassword (email, password) {
+  // const { user } = await api.authenticate({ strategy: 'local', email, password })
+  return await api.authenticate({ strategy: 'local', email, password })
+}
+
+export async function authenticateWithToken () {
+  const accessToken = await api.authentication.getAccessToken()
+  console.log('token', accessToken)
+  if (!accessToken) {
+    return { guest: true }
+  }
+
+  try {
+    const { user } = await api.authenticate({ strategy: 'jwt', accessToken })
+    return user
+  } catch (err) {
+    console.error('Failed to authenticate', err)
+    if (err.code === 401 || err.code === 404) {
+      api.authentication.removeAccessToken()
+      return { guest: true }
+    } else {
+      throw err
+    }
+  }
+}
+
+export default { auth, authenticateWithToken }

@@ -113,6 +113,12 @@ export default {
   top: 30px;
   left: 0px;
 }
+img {
+  -moz-box-shadow: inset 0 0 2px #000000;
+  -webkit-box-shadow: inset 0 0 2px #000000;
+  box-shadow: inset 0 0 2px #000000;
+  border: 1px solid silver;
+}
 img.card {
   max-height: 96px;
   /*max-width: 76px;*/

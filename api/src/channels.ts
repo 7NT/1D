@@ -58,6 +58,7 @@ export default function (app: Application) {
   app.on('login', (authResult: any, { connection }: any) => {
     // connection can be undefined if there is no
     // real-time connection, e.g. when logging in via REST
+    console.log('login', authResult, connection)
     if (connection) {
       // Obtain the logged in user from the connection
       const user = connection.user
@@ -71,7 +72,7 @@ export default function (app: Application) {
         profile: user.profile,
         status: user.status || 0,
         state: 0,
-        seat: {tId: null, sId: 0}
+        seat: { tId: null, sId: 0 }
       }
       players$.create(player)
     }

@@ -15,7 +15,14 @@ api.configure(socketio(socket, {
   pingInterval: 10000,
   pingTimeout: 50000
 }))
-api.configure(auth())
+// api.configure(auth())
+api.configure(
+  auth({
+    storage: window.localStorage,
+    storageKey: 'access-token',
+    path: '/authentication'
+  })
+)
 
 const users$ = api.service('/users')
 const chats$ = api.service('/chats')

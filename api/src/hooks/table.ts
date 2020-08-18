@@ -145,6 +145,7 @@ async function t1Board (context: any) {
   t1.state = 1
   t1.board = board
   t1.bids = bids
+  t1.alert = null
   t1.turn = dealer
   t1.ready = [1, 2, 3, 4]
 
@@ -201,6 +202,7 @@ async function t2Board (context: any, t2: any) {
     state: 1,
     board,
     bids,
+    alert: null,
     turn: dealer,
     ready: [1, 2, 3, 4],
     t2
@@ -268,6 +270,7 @@ function onBid (tdata: any) {
     } else {
       // tdata.board.cards = resortCards(tdata.board.cards)
       tdata.state = 2
+      tdata.alert = null
       tdata.turn = (info.by % 4) + 1
     }
   }

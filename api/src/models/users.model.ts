@@ -2,25 +2,32 @@
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
-import { Application } from '../declarations';
+import { Application } from "../declarations";
 
-export default function (app: Application) {
-  const modelName = 'users';
-  const mongooseClient = app.get('mongooseClient');
+export default function(app: Application) {
+  const modelName = "users";
+  const mongooseClient = app.get("mongooseClient");
   const { Schema } = mongooseClient;
-  const schema = new Schema({
-    nick: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String },
-    profile: {
-      flag: { type: String },
-      avatar: { type: String }
-    },
-    status: { type: Number },
-    state: { type: Number },
-    created: { type: Date, default: Date.now }
-  });
+  const schema = new Schema(
+    {
+      email: { type: String, unique: true, lowercase: true },
+      password: { type: String },
 
+      googleId: { type: String },
+      facebookId: { type: String },
+      country: {
+        name: { type: String },
+        flag: { type: String }
+      },
+      avatar: { type: String },
+      status: { type: Number, default: 0 },
+      state: { type: Number, default: 0 },
+      created: { type: Date, default: Date.now }
+    },
+    {
+      timestamps: true
+    }
+  );
 
   // This is necessary to avoid model compilation errors in watch mode
   // see https://mongoosejs.com/docs/api/connection.html#connection_Connection-deleteModel

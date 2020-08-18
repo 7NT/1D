@@ -1,6 +1,6 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
-import { Hook, HookContext } from '@feathersjs/feathers';
+import { Hook, HookContext } from "@feathersjs/feathers";
 
 export default (): Hook => {
   return async (context: HookContext) => {
@@ -9,7 +9,7 @@ export default (): Hook => {
 
     // Throw an error if we didn't get a text
     if (!text && !request) {
-      throw new Error('A message must have a text');
+      throw new Error("A message must have a text");
     }
 
     // The authenticated user
@@ -27,10 +27,10 @@ export default (): Hook => {
       //userId: user._id,
       from: { nick: user.nick, id: user._id },
       // Add the current date
-      created: new Date().getTime()
+      createdAt: new Date().getTime()
     };
 
     // Best practice: hooks should always return the context
     return context;
   };
-}
+};

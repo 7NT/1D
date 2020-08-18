@@ -2,11 +2,7 @@
   <div class="q-pa-md">
     <q-toolbar class="bg-primary text-white shadow-2">
       <q-toolbar-title>Tourney List:</q-toolbar-title>
-      <q-btn
-        :icon="newT2 ? 'close' : 'add'"
-        :disable="!isTD"
-        @click="newT2=!newT2"
-      />
+      <q-btn :icon="newT2 ? 'close' : 'add'" :disable="!isTD" @click="newT2=!newT2" />
     </q-toolbar>
     <q-expansion-item
       dense
@@ -31,14 +27,7 @@
               <q-space />
               <div class="col">
                 <q-badge color="secondary">Start in: {{ myT2.minutes2 }} minutes</q-badge>
-                <q-slider
-                  dense
-                  v-model="myT2.minutes2"
-                  color="red"
-                  :min="10"
-                  :max="30"
-                  :step="10"
-                />
+                <q-slider dense v-model="myT2.minutes2" color="red" :min="10" :max="30" :step="10" />
               </div>
             </div>
           </q-item-label>
@@ -97,20 +86,11 @@
         </q-card-section>
         <q-separator dark />
         <q-card-actions align="right">
-          <q-btn
-            push
-            :disable="myT2.state > 0"
-            @click="onCreate(myT2)"
-            label="Submit"
-          ></q-btn>
+          <q-btn push :disable="myT2.state > 0" @click="onCreate(myT2)" label="Submit"></q-btn>
         </q-card-actions>
       </q-card>
     </q-expansion-item>
-    <q-list
-      dense
-      bordered
-      separator
-    >
+    <q-list dense bordered separator>
       <q-expansion-item
         dense
         dense-toggle
@@ -135,17 +115,10 @@
             </q-item-label>
             <q-item-label caption>
               <q-badge color="blue">{{t2.bT}}</q-badge>
-              <q-badge
-                transparent
-                align="middle"
-                color="orange"
-              >{{t2.bN}} x {{t2.bR}}</q-badge>
+              <q-badge transparent align="middle" color="orange">{{t2.bN}} x {{t2.bR}}</q-badge>
             </q-item-label>
           </q-item-section>
-          <q-item-section
-            side
-            top
-          >
+          <q-item-section side top>
             <q-badge color="info">start in: {{startAt(t2.startAt)}}</q-badge>
           </q-item-section>
           <q-item-section side>
@@ -205,13 +178,10 @@
             />
           </q-card-section>
           <q-card-section class="justify-start"></q-card-section>
-          <q-separator
-            color="orange"
-            inset
-          />
-          <q-card-actions align='right'>
+          <q-separator color="orange" inset />
+          <q-card-actions align="right">
             <template v-if="t2.state===0">
-              <div class='row'>
+              <div class="row">
                 <q-btn-toggle
                   v-model="myCC"
                   push
@@ -223,38 +193,18 @@
                     {label: 'Precision', value: 'Precision'},
                   ]"
                 />
-                <q-separator
-                  vertical
-                  inset
-                />
-                <q-input
-                  filled
-                  dense
-                  v-model="myCC"
-                  label="My CC..."
-                />
+                <q-separator vertical inset />
+                <q-input filled dense v-model="myCC" label="My CC..." />
                 <q-space />
-                <q-input
-                  filled
-                  dense
-                  v-model="myPd"
-                  label="My Partner"
-                />
+                <q-input filled dense v-model="myPd" label="My Partner" />
                 <q-space>
                   <q-separator />
                 </q-space>
-                <q-btn
-                  push
-                  @click="onRegister(t2)"
-                >{{register(t2)}}</q-btn>
+                <q-btn push @click="onRegister(t2)">{{register(t2)}}</q-btn>
               </div>
             </template>
             <template v-if="isTD">
-              <q-btn
-                push
-                @click="onAddPair(t2)"
-                v-if="isTD"
-              >Add Pair</q-btn>
+              <q-btn push @click="onAddPair(t2)" v-if="isTD">Add Pair</q-btn>
             </template>
           </q-card-actions>
         </q-card>
@@ -432,7 +382,7 @@ export default {
           boards: 0,
           score: null,
           state: 0,
-          update: new Date().getTime()
+          updateAt: new Date().getTime()
         }
         pairs.push(pair)
       }

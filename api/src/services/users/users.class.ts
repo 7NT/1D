@@ -1,68 +1,56 @@
-import crypto from 'crypto'
-import { ServiceMethods, Params, Id, NullableId } from "@feathersjs/feathers"
-import { Service, MongooseServiceOptions } from 'feathers-mongoose'
-import { Application } from '../../declarations'
-
-// The Gravatar image service
-const gravatarUrl = 'https://s.gravatar.com/avatar'
-// The size query. Our chat needs 60px images
-const query = 's=60'
+import { ServiceMethods, Params, Id, NullableId } from "@feathersjs/feathers";
+import { Service, MongooseServiceOptions } from "feathers-mongoose";
+import { Application } from "../../declarations";
 
 // A type interface for our user (it does not validate any data)
 interface UserData {
-  _id?: string
-  nick: string
-  email: string
-  password: string
-  status?: number
-  state?: number
-  profile?: any
-  seat?: any,
-  created?: number
+  _id?: string;
+  name?: string;
+  email: string;
+  password?: string;
+  avatar?: string;
 }
 
 export class Users extends Service {
   constructor(options: Partial<MongooseServiceOptions>, app: Application) {
-    super(options)
+    super(options);
   }
 
-  create (data: UserData, params?: Params) {
+  async create(data: UserData, params?: Params) {
     // This is the information we want from the user signup data
-    const { nick, email, password, profile } = data
+    const { name, email, password, avatar } = data;
     // The complete user
     const userData = {
-      nick,
+      name,
       email,
       password,
-      status: 0,
-      state: 0,
-      profile,
-      created: new Date()
-    }
+      avatar
+    };
 
-    if (!profile.avatar) {
-      // Gravatar uses MD5 hashes from an email address (all lowercase) to get the image
-      const hash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex')
-      // The full avatar URL
-      const avatar = `${gravatarUrl}/${hash}?${query}`
-      userData.profile.avatar = avatar
+    // check if email already exists
+    let users: any = await super.find({
+      query: {
+        $limit: 1,
+        email,
+        $sort: { created: -1 }
+      }
+    });
+
+    if (users.data.length > 0) {
+      // date avatar
+      const date = {
+        avatar,
+        updatedAt: new Date().getTime()
+      };
+      return super.patch(users.data[0]._id, { avatar }, { query: { email } });
+    } else {
+      // Call the original `create` method with existing `params` and new data
+      // return super.create(userData, params)
+      return super.create(userData, params);
     }
 
     // Call the original `create` method with existing `params` and new data
     // return super.create(userData, params)
-    return super.create(userData, params)
-      .then(user => {
-        return user
-      })
-      .catch(async err => {
-        // const user = await super.find({ query: { email } })
-        if (err.code === 409) {
-          // const data = await super.find({ query: { email } })
-          return super.patch(null, { profile }, { query: { email } })
-            .then(user => {
-              if (user.length > 0) return user[0]
-            })
-        } else return err
-      })
+    // return user;
   }
 }

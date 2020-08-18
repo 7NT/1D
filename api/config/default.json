@@ -3,17 +3,14 @@
   "port": 3030,
   "public": "../public/",
   "paginate": {
-    "default": 10,
-    "max": 50
+    "default": 100,
+    "max": 500
   },
   "authentication": {
     "entity": "user",
     "service": "users",
     "secret": "5CGF5hqveLvJ3Mylof/w3DCz72s=",
-    "authStrategies": [
-      "jwt",
-      "local"
-    ],
+    "authStrategies": ["jwt", "local"],
     "jwtOptions": {
       "header": {
         "typ": "access"
@@ -32,26 +29,19 @@
       "google": {
         "key": "819669594394-59m1jucvthqdfs1qvh294f4anvknggov.apps.googleusercontent.com",
         "secret": "2VA2PU2egDys3pA9-ebJs5N5",
-        "scope": [
-          "openid",
-          "email",
-          "profile"
-        ],
+        "scope": ["openid", "email", "profile"],
         "nonce": true
       },
       "facebook": {
         "key": "723452768493061",
         "secret": "91ebec1cf7c599a114378dd2470b2648",
-        "scope": [
-          "email",
-          "public_profile"
-        ]
+        "scope": ["email", "public_profile"]
       },
       "twitter": {
-        "key": "<twitter oauth key>",
-        "secret": "<twitter oauth secret>"
+        "key": "xVXVkmdAvEjgdNceGuyabgVhG",
+        "secret": "pffJI7h76HVCgO6aspBEksl6JlSStRx91IEgmiCrIMODbjwlZK"
       }
     }
   },
-  "mongodb": "mongodb://hp160:27017/jb"
+  "mongodb": "mongodb://localhost:27017/1d"
 }

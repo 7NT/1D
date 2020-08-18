@@ -1,78 +1,50 @@
 // Import the Feathers client module that we've created before
-import {
-  api
-} from './api'
+import { api } from './api';
 
 const auth = {
   // keep track of the logged in user
   user: null,
 
-  authenticated () {
-    return this.user != null
+  authenticated() {
+    return this.user != null;
   },
 
-  register (credential) {
+  register(credential) {
     // await api.authentication.removeAccessToken()
-    return api.service('users').create(credential)
+    return api.service('users').create(credential);
   },
 
-  login (credentials) {
+  login(credentials) {
     if (!credentials) {
       // Try to authenticate using an existing token
-      return api.reAuthenticate()
+      return api.reAuthenticate();
     } else {
       // Otherwise log in with the `local` strategy using the credentials we got
       return api.authenticate({
         strategy: 'local',
         ...credentials
-      })
+      });
     }
   },
 
-  signout () {
-    return api.logout()
+  signout() {
+    return api.logout();
   },
 
-  onLogout (callback) {
+  onLogout(callback) {
     api.on('logout', () => {
-      this.user = null
-      callback()
-    })
+      this.user = null;
+      callback();
+    });
   },
 
-  onAuthenticated (callback) {
+  onAuthenticated(callback) {
     api.on('authenticated', response => {
       // console.log('authenticated', response)
-      this.user = response.user
-      callback(this.user)
-    })
+      this.user = response.user;
+      callback(this.user);
+    });
   }
-}
+};
 
-export async function authenticateWithPassword (email, password) {
-  // const { user } = await api.authenticate({ strategy: 'local', email, password })
-  return await api.authenticate({ strategy: 'local', email, password })
-}
-
-export async function authenticateWithToken () {
-  const accessToken = await api.authentication.getAccessToken()
-  console.log('token', accessToken)
-  if (!accessToken) {
-    return { guest: true }
-  }
-
-  try {
-    const { user } = await api.authenticate({ strategy: 'jwt', accessToken })
-    return user
-  } catch (err) {
-    console.error('Failed to authenticate', err)
-    if (err.code === 401 || err.code === 404) {
-      api.authentication.removeAccessToken()
-      return { guest: true }
-    } else {
-      throw err
-    }
-  }
-}
-
-export default { auth, authenticateWithToken }
+export { auth };

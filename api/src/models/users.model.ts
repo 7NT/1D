@@ -13,16 +13,15 @@ export default function(app: Application) {
       email: { type: String, unique: true, lowercase: true },
       password: { type: String },
 
-      googleId: { type: String },
-      facebookId: { type: String },
+      // googleId: { type: String },
+      // facebookId: { type: String },
       country: {
         name: { type: String },
         flag: { type: String }
       },
       avatar: { type: String },
       status: { type: Number, default: 0 },
-      state: { type: Number, default: 0 },
-      created: { type: Date, default: Date.now }
+      state: { type: Number, default: 0 }
     },
     {
       timestamps: true

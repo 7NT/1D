@@ -122,7 +122,7 @@ module.exports = function (ctx) {
       },
       https: false,
       public: 'www.jbridge.net',
-      host: 'localhost',
+      // host: 'localhost',
       port: 8080,
       // index: 'public/index.html',
       open: true // opens browser window automatically

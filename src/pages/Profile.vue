@@ -25,6 +25,7 @@
                   autofocus
                   type='text'
                   label='Nickname'
+                  :disable='!!nick'
                   :rules='[ n => n.length > 1 || "Nickname is required"]'
                 />
               </q-item-section>
@@ -86,15 +87,15 @@ export default {
       if (update) {
         if (this.nick) {
           const profile = { nick: this.nick, country: this.country, flag: this.flag }
+          // console.log('profile u', this.user)
           users$.patch(this.user._id, profile)
             .then(u => {
               players$.patch(this.user._id, profile)
+            })
+            .then(p => {
               this.$router.go(-1)
             })
-            .catch(err => {
-              console.log(err)
-              this.$q.notify({ type: 'negative', message: err })
-            })
+            .catch(err => console.error(err))
         } else {
           this.$q.notify({ type: 'info', message: 'Nickname is required' })
         }

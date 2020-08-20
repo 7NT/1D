@@ -1,9 +1,6 @@
 <template>
   <q-layout view='lHh Lpr lFf'>
-    <q-header
-      elevated
-      v-show='!$q.fullscreen.isActive'
-    >
+    <q-header elevated v-show='!$q.fullscreen.isActive'>
       <q-toolbar>
         <q-btn
           flat
@@ -20,54 +17,19 @@
         </q-toolbar-title>
 
         <div>v{{ version }}</div>
-        <q-btn
-          flat
-          round
-          @click='goTo("home")'
-        >
+        <q-btn flat round @click='goTo("home")'>
           <q-icon name='home' />
-          <q-tooltip
-            anchor='bottom middle'
-            self='top middle'
-            :offset='[0, 10]'
-          >Home</q-tooltip>
+          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Home</q-tooltip>
         </q-btn>
-        <q-btn
-          flat
-          round
-          @click='goTo("tops")'
-        >
+        <q-btn flat round @click='goTo("tops")'>
           <q-icon name='star' />
-          <q-tooltip
-            anchor='bottom middle'
-            self='top middle'
-            :offset='[0, 10]'
-          >Top Players</q-tooltip>
+          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Top Players</q-tooltip>
         </q-btn>
-        <q-btn
-          flat
-          icon='login'
-          @click='goTo("signin")'
-          v-show='!authenticated'
-        >Sign In</q-btn>
-        <q-btn
-          flat
-          icon='account_box'
-          @click='goTo("register")'
-          v-show='!authenticated'
-        >Register</q-btn>
-        <q-btn
-          flat
-          round
-          @click='goTo("lobby")'
-          v-if='authenticated'
-        >
+        <q-btn flat icon='login' @click='goTo("signin")' v-show='!authenticated'>Sign In</q-btn>
+        <q-btn flat icon='account_box' @click='goTo("register")' v-show='!authenticated'>Register</q-btn>
+        <q-btn flat round @click='goTo("lobby")' v-if='authenticated'>
           <q-icon name='local_play' />
-          <q-tooltip
-            anchor='bottom middle'
-            self='top middle'
-            :offset='[0, 10]'
-          >Lobby</q-tooltip>
+          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
@@ -78,44 +40,20 @@
           aria-label='ScoreBook'
           v-show='authenticated'
         />
-        <q-btn
-          flat
-          round
-          @click='goTo("profile")'
-          v-if='authenticated'
-        >
+        <q-btn flat round @click='goTo("profile")' v-if='authenticated'>
           <q-avatar class='gt-xs'>
             <img :src='user.avatar' />
           </q-avatar>
-          <q-tooltip
-            anchor='bottom middle'
-            self='top middle'
-            :offset='[0, 10]'
-          >Profile</q-tooltip>
+          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Profile</q-tooltip>
         </q-btn>
-        <q-btn
-          flat
-          round
-          @click='signout'
-          v-show='authenticated'
-        >
+        <q-btn flat round @click='signout' v-show='authenticated'>
           <q-icon name='exit_to_app' />
-          <q-tooltip
-            anchor='bottom middle'
-            self='top middle'
-            :offset='[0, 10]'
-          >Signout</q-tooltip>
+          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Signout</q-tooltip>
         </q-btn>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model='playerList'
-      v-if='authenticated'
-      bordered
-      elevated
-      content-class='bg-grey-1'
-    >
+    <q-drawer v-model='playerList' v-if='authenticated' bordered elevated content-class='bg-grey-1'>
       <myP1List />
     </q-drawer>
 
@@ -206,7 +144,7 @@ export default {
     ]),
     goTo (route) {
       if (this.$route.name !== route) {
-        this.$router.push({ name: route }).catch(err => { console.error(err) })
+        this.$router.push({ name: route }).catch(err => { console.log(route, err) })
       }
     },
     setUser (user) {
@@ -465,8 +403,7 @@ export default {
       })
       .catch(err => {
         console.log(err)
-        auth.removeAccessToken()
-        // this.signout()
+        this.signout()
       })
 
     // On successful login
@@ -489,10 +426,10 @@ export default {
     }
   },
   watch: {
-    user (u1) {
-      // console.log('u', u1, u0)
+    user (u1, u0) {
+      console.log('u', u1, u0)
       if (u1) {
-        this.goTo('lobby')
+        if (!u0) this.goTo('lobby')
       } else {
         this.signout()
         this.goTo('home')

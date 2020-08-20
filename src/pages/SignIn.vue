@@ -1,25 +1,15 @@
 <template>
   <q-page class='flex flex-center'>
-    <q-dialog
-      v-model='show'
-      persistent
-    >
+    <q-dialog v-model='show' persistent>
       <q-card style='min-width: 400px'>
         <q-card-section>
           <div class='text-h6'>{{ title }}:</div>
         </q-card-section>
 
         <q-card-section>
-          <q-list
-            dense
-            bordered
-            padding
-          >
+          <q-list dense bordered padding>
             <q-item dense>
-              <q-item-section
-                top
-                avatar
-              >
+              <q-item-section top avatar>
                 <q-icon name='face' />
               </q-item-section>
               <q-item-section top>
@@ -32,45 +22,20 @@
                   :rules='[ n => n.length > 1 || "Nick is required"]'
                 />
               </q-item-section>
-              <q-item-section
-                top
-                side
-                v-if='isRegistration()'
-              >
-                <q-input
-                  v-model='name'
-                  dense
-                  filled
-                  type='text'
-                  label='Name'
-                />
+              <q-item-section top side v-if='isRegistration()'>
+                <q-input v-model='name' dense filled type='text' label='Name' />
               </q-item-section>
             </q-item>
-            <q-item
-              dense
-              v-if='isRegistration()'
-            >
-              <q-item-section
-                top
-                avatar
-              >
+            <q-item dense v-if='isRegistration()'>
+              <q-item-section top avatar>
                 <q-icon name='email' />
               </q-item-section>
               <q-item-section>
-                <q-input
-                  v-model='email'
-                  dense
-                  filled
-                  type='email'
-                  label='Email'
-                />
+                <q-input v-model='email' dense filled type='email' label='Email' />
               </q-item-section>
             </q-item>
             <q-item dense>
-              <q-item-section
-                top
-                avatar
-              >
+              <q-item-section top avatar>
                 <q-icon name='fingerprint' />
               </q-item-section>
               <q-item-section>
@@ -91,38 +56,23 @@
                 </q-input>
               </q-item-section>
             </q-item>
-            <q-item
-              dense
-              v-if='isRegistration()'
-            >
-              <q-item-section
-                top
-                avatar
-              >
+            <q-item dense v-if='isRegistration()'>
+              <q-item-section top avatar>
                 <q-icon :name='`img:flags/4x3/${flag.toLowerCase()}.svg`' />
               </q-item-section>
               <q-item-section>
-                <q-select
-                  dense
-                  filled
-                  v-model='country'
-                  :options='countries'
-                  label='Country:'
-                />
+                <q-select dense filled v-model='country' :options='countries' label='Country:' />
               </q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
 
-        <q-card-actions
-          align='right'
-          class='text-primary'
-        >
+        <q-card-actions align='right' class='text-primary'>
           <div class='row'>
             <q-btn
               dense
               type='a'
-              href='http://localhost:3030/oauth/facebook'
+              href='http://www.jbridge.net:3030/oauth/facebook'
               no-caps
               label='Facebook'
               icon='mdi-facebook'
@@ -132,7 +82,7 @@
             <q-btn
               dense
               type='a'
-              href='http://localhost:3030/oauth/google'
+              href='http://www.jbridge.net:3030/oauth/google'
               no-caps
               label='Google'
               icon='mdi-google'
@@ -152,20 +102,8 @@
             />
             <q-separator vertical spaced />
             -->
-            <q-btn
-              push
-              dense
-              label='Cancel'
-              v-close-popup
-              @click='onOk(true)'
-            />
-            <q-btn
-              push
-              dense
-              :label='title'
-              v-close-popup
-              @click='onOk(false)'
-            />
+            <q-btn push dense label='Cancel' v-close-popup @click='onOk(true)' />
+            <q-btn push dense :label='title' v-close-popup @click='onOk(false)' />
           </div>
         </q-card-actions>
       </q-card>
@@ -223,7 +161,6 @@ export default {
             .register(credential)
             .then(user => {
               console.log('register', user)
-              // auth.removeAccessToken()
               return this.login()
             })
             .then(user => {
@@ -276,7 +213,7 @@ export default {
   },
   mounted () {
     this.title = this.isRegistration() ? 'Register' : 'Sign In'
-    // auth.removeToken()
+    // auth.removeAccessToken()
   },
   beforeDestroy () { }
 }

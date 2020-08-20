@@ -31,16 +31,8 @@ const auth = {
   },
 
   signout () {
+    // api.removeAccessToken()
     return api.logout()
-  },
-  removeToken () {
-    return api.removeAccessToken()
-      .then((token) => {
-        console.log(token)
-      })
-      .catch((error) => {
-        console.error(error)
-      })
   },
 
   onLogout (callback) {

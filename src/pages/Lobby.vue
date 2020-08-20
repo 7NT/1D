@@ -260,11 +260,12 @@ export default {
   },
   mounted () {
     this.$parent.page = 'Lobby'
+    // console.log('lobby', this.user, !this.user.nick)
     // window.addEventListener('orientationchange', this.handleOrientationChange)
+    if (!this.user.nick) this.$router.push({ name: 'profile' })
   },
   created () {
     this.user = this.$attrs.user
-    if (!this.user.nick) this.$router.push({ name: 'profile' })
   }
 }
 </script>

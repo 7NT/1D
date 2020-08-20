@@ -120,7 +120,7 @@ module.exports = function (ctx) {
           }
         }
       },
-      https: true,
+      https: false,
       public: 'www.jbridge.net',
       // host: 'localhost',
       port: 8080,

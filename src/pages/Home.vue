@@ -1,153 +1,100 @@
 <template>
-  <div class="q-pa-md">
-    <div class="text-h2">Guideline:</div>
-    <div class="row justify-center">
-      <q-btn-toggle
-        glossy
-        dense
-        no-caps
-        v-model="slide"
-        :options="[
-      { label: 'Register', value: 'register' },
-      { label: 'SignIn', value: 'signin' },
-      { label: 'Lobby', value: 'lobby' },
-      { label: 'Table', value: 'playtable' },
-      { label: 'Bidding', value: 'bidding' },
-      { label: 'Playing', value: 'playing' },
-      { label: 'Tourney', value: 'tourney' },
-      { label: 'Player', value: 'players' },
-      { label: 'Scorebook', value: 'scorebook' },
-      { label: 'Icons', value: 'icons' },
-      { label: 'Voice', value: 'voice' }
-    ]"
-      />
+  <div class='q-pa-md'>
+    <div class='text-h2'>Guideline:</div>
+    <div class='row justify-center'>
+      <q-btn-toggle glossy dense no-caps v-model='slide' :options='slides' />
     </div>
     <q-carousel
       arrows
       swipeable
       animated
       padding
-      v-model="slide"
-      :autoplay="autoplay"
-      ref="carousel"
+      v-model='slide'
+      :autoplay='autoplay'
+      ref='carousel'
     >
-      <q-carousel-slide
-        name="register"
-        img-src="~assets/imgs/register.png"
-      >
-        <div class="absolute-bottom custom-caption">
-          <div class="text-h2">Register</div>
+      <q-carousel-slide name='register' img-src='~assets/imgs/register.png'>
+        <div class='absolute-bottom custom-caption'>
+          <div class='text-h2'>Register</div>
         </div>
       </q-carousel-slide>
-      <q-carousel-slide
-        name="signin"
-        img-src="~assets/imgs/signin.png"
-      >
-        <div class="absolute-bottom custom-caption">
-          <div class="text-h2">Signin</div>
+      <q-carousel-slide name='signin' img-src='~assets/imgs/signin.png'>
+        <div class='absolute-bottom custom-caption'>
+          <div class='text-h2'>Signin</div>
         </div>
       </q-carousel-slide>
-      <q-carousel-slide
-        name="lobby"
-        img-src="~assets/imgs/lobby.png"
-      >
-        <div class="absolute-bottom custom-caption">
-          <div class="text-h2">Lobby</div>
+      <q-carousel-slide name='lobby' img-src='~assets/imgs/lobby.png'>
+        <div class='absolute-bottom custom-caption'>
+          <div class='text-h2'>Lobby</div>
         </div>
       </q-carousel-slide>
-      <q-carousel-slide
-        name="playtable"
-        img-src="~assets/imgs/playtable.png"
-      >
-        <div class="absolute-bottom custom-caption">
-          <div class="text-h2">Play Table</div>
-          <div class="text-subtitle1">Fullscreen on</div>
+      <q-carousel-slide name='playtable' img-src='~assets/imgs/playtable.png'>
+        <div class='absolute-bottom custom-caption'>
+          <div class='text-h2'>Play Table</div>
+          <div class='text-subtitle1'>Fullscreen on</div>
         </div>
       </q-carousel-slide>
-      <q-carousel-slide
-        name="bidding"
-        img-src="~assets/imgs/bidding.png"
-      >
-        <div class="absolute-bottom custom-caption">
-          <div class="text-h2">Bidding</div>
+      <q-carousel-slide name='bidding' img-src='~assets/imgs/bidding.png'>
+        <div class='absolute-bottom custom-caption'>
+          <div class='text-h2'>Bidding</div>
         </div>
       </q-carousel-slide>
-      <q-carousel-slide
-        name="playing"
-        img-src="~assets/imgs/playing.png"
-      >
-        <div class="absolute-bottom custom-caption">
-          <div class="text-h2">Playing</div>
+      <q-carousel-slide name='playing' img-src='~assets/imgs/playing.png'>
+        <div class='absolute-bottom custom-caption'>
+          <div class='text-h2'>Playing</div>
         </div>
       </q-carousel-slide>
-      <q-carousel-slide
-        name="tourney"
-        img-src="~assets/imgs/tourney.png"
-      >
-        <div class="absolute-bottom custom-caption">
-          <div class="text-h2">Tourney</div>
-          <div class="text-subtitle1">sign up</div>
+      <q-carousel-slide name='tourney' img-src='~assets/imgs/tourney.png'>
+        <div class='absolute-bottom custom-caption'>
+          <div class='text-h2'>Tourney</div>
+          <div class='text-subtitle1'>sign up</div>
         </div>
       </q-carousel-slide>
-      <q-carousel-slide
-        name="players"
-        img-src="~assets/imgs/players.png"
-      >
-        <div class="absolute-bottom custom-caption">
-          <div class="text-h2">Players</div>
-          <div class="text-subtitle1">Swipe right</div>
+      <q-carousel-slide name='players' img-src='~assets/imgs/players.png'>
+        <div class='absolute-bottom custom-caption'>
+          <div class='text-h2'>Players</div>
+          <div class='text-subtitle1'>Swipe right</div>
         </div>
       </q-carousel-slide>
-      <q-carousel-slide
-        name="scorebook"
-        img-src="~assets/imgs/scorebook.png"
-      >
-        <div class="absolute-bottom custom-caption">
-          <div class="text-h2">Scorebook</div>
-          <div class="text-subtitle1">Swipe left</div>
+      <q-carousel-slide name='scorebook' img-src='~assets/imgs/scorebook.png'>
+        <div class='absolute-bottom custom-caption'>
+          <div class='text-h2'>Scorebook</div>
+          <div class='text-subtitle1'>Swipe left</div>
         </div>
       </q-carousel-slide>
-      <q-carousel-slide name="icons">
-        <div class="q-mt-md q-gutter-md">
+      <q-carousel-slide name='icons'>
+        <div class='q-mt-md q-gutter-md'>
           <q-chip
-            class="glossy"
-            color="primary"
-            text-color="white"
+            class='glossy'
+            color='primary'
+            text-color='white'
             square
-            size="lg"
+            size='lg'
             v-for='i in icons'
-            :key="i.name"
+            :key='i.name'
           >
-            <q-icon
-              :color="i.color"
-              :name="i.icon"
-            />
+            <q-icon :color='i.color' :name='i.icon' />
             : {{i.name}}
           </q-chip>
         </div>
       </q-carousel-slide>
-      <q-carousel-slide name="voice">
-        <div class="row q-mt-md q-gutter-md">
+      <q-carousel-slide name='voice'>
+        <div class='row q-mt-md q-gutter-md'>
           <q-card
             dark
             bordered
-            class="my-card bg-secondary text-white"
+            class='my-card bg-secondary text-white'
             v-for='v in voices'
-            :key="v.name"
+            :key='v.name'
           >
             <q-card-section>
-              <div class="text-h6">{{v.name}}</div>
-              <div class="text-subtitle2">English Commands...</div>
+              <div class='text-h6'>{{v.name}}</div>
+              <div class='text-subtitle2'>English Commands...</div>
             </q-card-section>
 
-            <q-separator
-              dark
-              inset
-            />
+            <q-separator dark inset />
 
-            <q-card-section>
-              {{ v.commands }}
-            </q-card-section>
+            <q-card-section>{{ v.commands }}</q-card-section>
           </q-card>
         </div>
       </q-carousel-slide>
@@ -161,6 +108,19 @@ export default {
     return {
       slide: 1,
       autoplay: true,
+      slides: [
+        { label: 'Register', value: 'register' },
+        { label: 'SignIn', value: 'signin' },
+        { label: 'Lobby', value: 'lobby' },
+        { label: 'Table', value: 'playtable' },
+        { label: 'Bidding', value: 'bidding' },
+        { label: 'Playing', value: 'playing' },
+        { label: 'Tourney', value: 'tourney' },
+        { label: 'Player', value: 'players' },
+        { label: 'Scorebook', value: 'scorebook' },
+        { label: 'Icons', value: 'icons' },
+        { label: 'Voice', value: 'voice' }
+      ],
       icons: [
         { icon: 'home', name: 'Home', color: 'white' },
         { icon: 'account_box', name: 'Register', color: 'white' },

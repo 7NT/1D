@@ -90,19 +90,18 @@
               push
               color='red'
             />
-            <!--
             <q-btn
               dense
               type='a'
-              href='http://localhost:3030/oauth/twitter'
+              href='http://www.jbridge.net:3030/oauth/twitter'
               no-caps
               label='Twitter'
               icon='mdi-twitter'
               push
               color='blue'
+              :disable='true'
             />
             <q-separator vertical spaced />
-            -->
             <q-btn push dense label='Cancel' v-close-popup @click='onOk(true)' />
             <q-btn push dense :label='title' v-close-popup @click='onOk(false)' />
           </div>

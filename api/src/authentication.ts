@@ -69,14 +69,31 @@ class FacebookStrategy extends OAuthStrategy {
   }
 }
 
+class TwitterStrategy extends OAuthStrategy {
+  async getEntityData(profile: OAuthProfile, existing: any, params: Params) {
+    // this will set 'googleId'
+    console.log('t', profile);
+    const baseData = await super.getEntityData(profile, existing, params);
+    console.log('t', baseData);
+    // this will grab the picture and email address of the Google profile
+    return {
+      ...baseData,
+      email: profile.email,
+      name: profile.name,
+      avatar: profile.picture,
+      locale: profile.locale
+    };
+  }
+}
+
 export default function(app: Application) {
   const authentication = new AuthenticationService(app);
 
   authentication.register('jwt', new JWTStrategy());
   authentication.register('local', new LocalStrategy());
-  // authentication.register('local', new JbLocalStrategy());
   authentication.register('google', new GoogleStrategy());
   authentication.register('facebook', new FacebookStrategy());
+  authentication.register('twitter', new TwitterStrategy());
 
   app.use('/authentication', authentication);
   app.configure(expressOauth());

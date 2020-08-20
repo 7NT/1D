@@ -1,50 +1,56 @@
 // Import the Feathers client module that we've created before
-import { api } from './api';
+import { api } from './api'
 
 const auth = {
   // keep track of the logged in user
   user: null,
 
-  authenticated() {
-    return this.user != null;
+  authenticated () {
+    return this.user != null
   },
-
-  register(credential) {
+  async reAuthenticate () {
+    console.log('reAuthenticate')
+    return await api.reAuthenticate()
+  },
+  register (credential) {
     // await api.authentication.removeAccessToken()
-    return api.service('users').create(credential);
+    return api.service('users').create(credential)
   },
 
-  login(credentials) {
+  async login (credentials) {
     if (!credentials) {
       // Try to authenticate using an existing token
-      return api.reAuthenticate();
+      return await api.reAuthenticate()
     } else {
       // Otherwise log in with the `local` strategy using the credentials we got
-      return api.authenticate({
+      return await api.authenticate({
         strategy: 'local',
         ...credentials
-      });
+      })
     }
   },
 
-  signout() {
-    return api.logout();
+  signout () {
+    return api.logout()
+  },
+  async removeToken () {
+    return await api.removeAccessToken()
   },
 
-  onLogout(callback) {
+  onLogout (callback) {
     api.on('logout', () => {
-      this.user = null;
-      callback();
-    });
+      this.user = null
+      callback()
+    })
   },
 
-  onAuthenticated(callback) {
+  onAuthenticated (callback) {
     api.on('authenticated', response => {
       // console.log('authenticated', response)
-      this.user = response.user;
-      callback(this.user);
-    });
+      this.user = response.user
+      callback(this.user)
+    })
   }
-};
+}
 
-export { auth };
+export default auth

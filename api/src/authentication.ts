@@ -1,20 +1,20 @@
-import { ServiceAddons, Params, Query } from "@feathersjs/feathers";
+import { ServiceAddons, Params, Query } from '@feathersjs/feathers';
 import {
   AuthenticationService,
   JWTStrategy,
   AuthenticationRequest
-} from "@feathersjs/authentication";
-import { LocalStrategy } from "@feathersjs/authentication-local";
+} from '@feathersjs/authentication';
+import { LocalStrategy } from '@feathersjs/authentication-local';
 import {
   expressOauth,
   OAuthStrategy,
   OAuthProfile
-} from "@feathersjs/authentication-oauth";
+} from '@feathersjs/authentication-oauth';
 
-import axios from "axios";
-import { Application } from "./declarations";
+import axios from 'axios';
+import { Application } from './declarations';
 
-declare module "./declarations" {
+declare module './declarations' {
   interface ServiceTypes {
     authentication: AuthenticationService & ServiceAddons<any>;
   }
@@ -24,13 +24,14 @@ class GoogleStrategy extends OAuthStrategy {
   async getEntityData(profile: OAuthProfile, existing: any, params: Params) {
     // this will set 'googleId'
     const baseData = await super.getEntityData(profile, existing, params);
-    console.log("g", profile, baseData);
+    console.log('g', profile, baseData);
     // this will grab the picture and email address of the Google profile
     return {
       ...baseData,
       email: profile.email,
       name: profile.name,
-      avatar: profile.picture
+      avatar: profile.picture,
+      locale: profile.locale
     };
   }
 }
@@ -41,13 +42,13 @@ class FacebookStrategy extends OAuthStrategy {
     // for Facebook API requests as the Bearer token
     const accessToken = authResult.access_token;
 
-    const { data } = await axios.get("https://graph.facebook.com/me", {
+    const { data } = await axios.get('https://graph.facebook.com/me', {
       headers: {
         authorization: `Bearer ${accessToken}`
       },
       params: {
         // There are
-        fields: "id,name,email"
+        fields: 'id,name,email'
       }
     });
 
@@ -57,12 +58,13 @@ class FacebookStrategy extends OAuthStrategy {
   async getEntityData(profile: OAuthProfile, existing: any, params: Params) {
     // `profile` is the data returned by getProfile
     const baseData = await super.getEntityData(profile, existing, params);
-    console.log("f", profile, baseData);
+    console.log('f', profile, baseData);
     return {
       ...baseData,
       email: profile.email,
       name: profile.name,
-      avatar: `http://graph.facebook.com/${profile.id}/picture`
+      avatar: `http://graph.facebook.com/${profile.id}/picture`,
+      locale: profile.locale || 'en'
     };
   }
 }
@@ -70,12 +72,12 @@ class FacebookStrategy extends OAuthStrategy {
 export default function(app: Application) {
   const authentication = new AuthenticationService(app);
 
-  authentication.register("jwt", new JWTStrategy());
-  authentication.register("local", new LocalStrategy());
+  authentication.register('jwt', new JWTStrategy());
+  authentication.register('local', new LocalStrategy());
   // authentication.register('local', new JbLocalStrategy());
-  authentication.register("google", new GoogleStrategy());
-  authentication.register("facebook", new FacebookStrategy());
+  authentication.register('google', new GoogleStrategy());
+  authentication.register('facebook', new FacebookStrategy());
 
-  app.use("/authentication", authentication);
+  app.use('/authentication', authentication);
   app.configure(expressOauth());
 }

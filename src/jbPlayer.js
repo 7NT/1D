@@ -14,20 +14,16 @@ export function jbPlayerSIcon (p) {
 export function jbSeatIcon (sId) {
   return `img:jbIcon/seats/seat${sId}.svg`
 }
-/*
-export function jbPFlag (p) {
-  return p ? p.profile.flag : null
-}
-*/
+
 export function jbFlag (p) {
   if (p) {
-    const flag2 = p.profile.flag.toLowerCase()
+    const flag2 = (p.flag || 'us').toLowerCase()
     return `img:flags/4x3/${flag2}.svg`
   } else return null
 }
 
 export function jbAvatar (p) {
-  return p ? p.profile.avatar : null
+  return p ? p.avatar : null
 }
 
 export function jbSameId (i0, i1) {

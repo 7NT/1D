@@ -1,37 +1,23 @@
 <template>
-  <div class="row items-end">
-    <div class="column">
-      <div class="row self-end no-wrap">
-        <q-card
-          flat
-          v-if="isVisible"
-          class="transparent"
-        >
-          <div class="hand hhand-compact active-hand full-width no-wrap">
+  <div class='row items-end'>
+    <div class='column'>
+      <div class='row self-end no-wrap'>
+        <q-card flat v-if='isVisible' class='transparent'>
+          <div class='hand hhand-compact active-hand full-width no-wrap'>
             <img
-              v-for="(c, i) of handCards"
-              :key="i"
-              :src="cardImg(c)"
-              @click="onPlay(c)"
-              class="card"
+              v-for='(c, i) of handCards'
+              :key='i'
+              :src='cardImg(c)'
+              @click='onPlay(c)'
+              class='card'
             />
           </div>
         </q-card>
       </div>
-      <div class="pbar">
-        <q-btn-group
-          flat
-          dense
-          spread
-        >
-          <q-icon
-            :name="seatIcon"
-            class="seat"
-          />
-          <q-icon
-            :name="handFlag"
-            class="flag"
-          />
+      <div class='pbar'>
+        <q-btn-group flat dense spread>
+          <q-icon :name='seatIcon' class='seat' />
+          <q-icon :name='handFlag' class='flag' />
           <q-btn
             flat
             outline
@@ -39,55 +25,42 @@
             no-caps
             no-wrap
             ellipsis
-            :label="handNick"
-            :icon="handAvatar"
-            :color="handTurn"
-            align="left"
-            class="player"
-            :disable="!handPlayer"
-            @click="onPlayer()"
+            :label='handNick'
+            :icon='handAvatar'
+            :color='handTurn'
+            align='left'
+            class='player'
+            :disable='!handPlayer'
+            @click='onPlayer()'
           >
-            <q-badge
-              color="orange"
-              align="top"
-              transparent
-              v-if="handMessage"
-            >∞</q-badge>
+            <q-badge color='orange' align='top' transparent v-if='handMessage'>∞</q-badge>
           </q-btn>
           <q-space />
           <q-btn
             dense
             push
             ripple
-            color="primary"
-            :icon="handPlayer ? 'check' : 'event_seat'"
-            :label="handPlayer ? 'Ready' : 'Sit'"
-            v-show="!handPlayer || isReady === 0"
-            class="ready"
-            @click="onReady"
+            color='primary'
+            :icon='handPlayer ? "check" : "event_seat"'
+            :label='handPlayer ? "Ready" : "Sit"'
+            v-show='!handPlayer || isReady === 0'
+            class='ready'
+            @click='onReady'
           />
           <q-btn-dropdown
             push
             split
             auto-close
-            v-if="isDeclarer"
-            :label="handContract"
-            color="info"
-            class="declarer"
-            :disable="myDeclarer"
+            v-if='isDeclarer'
+            :label='handContract'
+            color='info'
+            class='declarer'
+            :disable='myDeclarer'
           >
             <q-list dense>
-              <q-item
-                clickable
-                v-close-popup
-              >
+              <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label
-                    label
-                    v-for="c in claims"
-                    :key="c"
-                    @click="onClaim(c)"
-                  >{{ c }}</q-item-label>
+                  <q-item-label label v-for='c in claims' :key='c' @click='onClaim(c)'>{{ c }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -95,20 +68,14 @@
         </q-btn-group>
       </div>
     </div>
-    <q-dialog
-      auto-close
-      v-model="pchat"
-    >
-      <q-card
-        class="q-dialog-plugin"
-        v-if="handPlayer"
-      >
+    <q-dialog auto-close v-model='pchat'>
+      <q-card class='q-dialog-plugin' v-if='handPlayer'>
         <q-card-section>
-          <myMessages :chatTo="handPlayer" />
+          <myMessages :chatTo='handPlayer' />
         </q-card-section>
 
-        <q-card-actions align="right">
-          <myChat :chatTo="handPlayer" />
+        <q-card-actions align='right'>
+          <myChat :chatTo='handPlayer' />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -162,7 +129,7 @@ export default {
         : jbSeatName(this.seatX - 1)
     },
     handAvatar () {
-      if (this.handPlayer) return `img:${this.handPlayer.profile.avatar}`
+      if (this.handPlayer) return `img:${this.handPlayer.avatar}`
       else return null
     },
     handFlag () {
@@ -490,7 +457,7 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
   text-transform: none;
-  background-image: url("~assets/imgs/jbpbar.png");
+  background-image: url('~assets/imgs/jbpbar.png');
   background-repeat: no-repeat;
   background-size: cover;
   opacity: 1;

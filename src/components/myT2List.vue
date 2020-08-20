@@ -1,146 +1,117 @@
 <template>
-  <q-item :class="getBorder(myPair)">
-    <q-item-section
-      avatar
-      class="col-2"
-    >
+  <q-item :class='getBorder(myPair)'>
+    <q-item-section avatar class='col-2'>
       <q-chip>
-        <q-avatar
-          color="info"
-          text-color="white"
-        >{{myPair.pN}}</q-avatar>
+        <q-avatar color='info' text-color='white'>{{myPair.pN}}</q-avatar>
         {{myPair.cc}}
       </q-chip>
     </q-item-section>
 
-    <q-item-section class="col-6">
-      <div class="row">
-        <div class="col-6">
-          <template v-if="isOnline(myPlayer)">
-            <q-icon
-              :name="myFlag(myPlayer)"
-              size="sm"
-            />
+    <q-item-section class='col-6'>
+      <div class='row'>
+        <div class='col-6'>
+          <template v-if='isOnline(myPlayer)'>
+            <q-icon :name='myFlag(myPlayer)' size='sm' />
             <q-btn
-              :icon="myAvatar(myPlayer)"
-              :label="myNick(myPlayer)"
-              class="pbar bg-secondary"
-              align="around"
+              :icon='myAvatar(myPlayer)'
+              :label='myNick(myPlayer)'
+              class='pbar bg-secondary'
+              align='around'
             />
           </template>
-          <template v-else-if="myPair.player">
-            <q-btn
-              :label="myPair.player"
-              icon="person"
-              class="pbar bg-info"
-              align="around"
-            />
+          <template v-else-if='myPair.player'>
+            <q-btn :label='myPair.player' icon='person' class='pbar bg-info' align='around' />
             <q-tooltip>{{myPair.player}} is offline</q-tooltip>
           </template>
         </div>
-        <div class="col-6">
-          <template v-if="isOnline(myPartner)">
-            <q-icon
-              :name="myFlag(myPartner)"
-              size="sm"
-            />
+        <div class='col-6'>
+          <template v-if='isOnline(myPartner)'>
+            <q-icon :name='myFlag(myPartner)' size='sm' />
             <q-btn
-              :icon="myAvatar(myPartner)"
-              :label="myNick(myPartner)"
-              class="pbar bg-secondary"
-              align="around"
+              :icon='myAvatar(myPartner)'
+              :label='myNick(myPartner)'
+              class='pbar bg-secondary'
+              align='around'
             />
           </template>
-          <template v-else-if="myPartner">
-            <q-btn
-              :label="myPartner.nick"
-              icon="person"
-              class="pbar bg-info"
-              align="around"
-            />
+          <template v-else-if='myPartner'>
+            <q-btn :label='myPartner.nick' icon='person' class='pbar bg-info' align='around' />
             <q-tooltip>partner is offline</q-tooltip>
           </template>
           <template v-else>
             <q-btn
-              label="Join..."
-              icon="person_add"
-              class="pbar bg-info"
-              align="around"
-              @click="onP2Join(myPair)"
+              label='Join...'
+              icon='person_add'
+              class='pbar bg-info'
+              align='around'
+              @click='onP2Join(myPair)'
             />
           </template>
         </div>
       </div>
     </q-item-section>
 
-    <q-item-section class="col-2">
+    <q-item-section class='col-2'>
       <q-chip square>
-        <q-avatar
-          color="green"
-          text-color="white"
-        >{{myPair.score}}</q-avatar>
+        <q-avatar color='green' text-color='white'>{{myPair.score}}</q-avatar>
         {{myPair.boards || 0}} / {{ getBoards ()}}
       </q-chip>
     </q-item-section>
-    <q-item-section
-      side
-      top
-      class="col-2"
-    >
-      <div class="col-2 q-mt-md">
+    <q-item-section side top class='col-2'>
+      <div class='col-2 q-mt-md'>
         <q-fab
           square
-          :label="myT2State(myPair.state)"
-          :color="myT2Color(myPair.state)"
-          icon="keyboard_arrow_left"
-          direction="left"
-          padding="none sm"
-          :v-show="isMyPair || isTD"
+          :label='myT2State(myPair.state)'
+          :color='myT2Color(myPair.state)'
+          icon='keyboard_arrow_left'
+          direction='left'
+          padding='none sm'
+          :v-show='isMyPair || isTD'
         >
           <q-fab-action
             square
-            padding="3px"
-            color="accent"
-            @click="onP2Part(myPair)"
-            icon="exit_to_app"
-            label="Leave"
-            v-show="isMyPair"
+            padding='3px'
+            color='accent'
+            @click='onP2Part(myPair)'
+            icon='exit_to_app'
+            label='Leave'
+            v-show='isMyPair'
           />
           <q-fab-action
             square
-            padding="3px"
-            color="info"
-            @click="onP2Change(myPair)"
-            icon="cached"
-            label="Change"
-            v-show="isTD"
+            padding='3px'
+            color='info'
+            @click='onP2Change(myPair)'
+            icon='cached'
+            label='Change'
+            v-show='isTD'
           />
           <q-fab-action
             square
-            padding="3px"
-            color="green"
-            @click="onP2State(0)"
-            icon="hourglass_full"
-            label="Waiting"
-            v-show="isTD"
+            padding='3px'
+            color='green'
+            @click='onP2State(0)'
+            icon='hourglass_full'
+            label='Waiting'
+            v-show='isTD'
           />
           <q-fab-action
             square
-            padding="3px"
-            color="warning"
-            @click="onP2State(-1)"
-            icon="hourglass_empty"
-            label="Close"
-            v-show="isTD"
+            padding='3px'
+            color='warning'
+            @click='onP2State(-1)'
+            icon='hourglass_empty'
+            label='Close'
+            v-show='isTD'
           />
           <q-fab-action
             square
-            padding="3px"
-            color="negative"
-            @click="onP2State(-2)"
-            icon="close"
-            label="Remove"
-            v-show="isTD"
+            padding='3px'
+            color='negative'
+            @click='onP2State(-2)'
+            icon='close'
+            label='Remove'
+            v-show='isTD'
           />
         </q-fab>
       </div>
@@ -195,14 +166,14 @@ export default {
     },
     myFlag (player) {
       try {
-        const flag = player.profile.flag.toLowerCase()
+        const flag = player.flag.toLowerCase()
         return `img:flags/4x3/${flag}.svg`
       } catch (err) { }
       return null
     },
     myAvatar (player) {
       try {
-        return `img:${player.profile.avatar}`
+        return `img:${player.avatar}`
       } catch (err) { }
       return null
     },

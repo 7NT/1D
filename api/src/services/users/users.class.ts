@@ -1,14 +1,15 @@
-import { ServiceMethods, Params, Id, NullableId } from "@feathersjs/feathers";
-import { Service, MongooseServiceOptions } from "feathers-mongoose";
-import { Application } from "../../declarations";
+import { Params } from '@feathersjs/feathers';
+import { Service, MongooseServiceOptions } from 'feathers-mongoose';
+import { Application } from '../../declarations';
 
 // A type interface for our user (it does not validate any data)
 interface UserData {
   _id?: string;
-  name?: string;
   email: string;
   password?: string;
+  name?: string;
   avatar?: string;
+  locale?: string;
 }
 
 export class Users extends Service {
@@ -18,14 +19,7 @@ export class Users extends Service {
 
   async create(data: UserData, params?: Params) {
     // This is the information we want from the user signup data
-    const { name, email, password, avatar } = data;
-    // The complete user
-    const userData = {
-      name,
-      email,
-      password,
-      avatar
-    };
+    const { name, email, password, avatar, locale } = data;
 
     // check if email already exists
     let users: any = await super.find({
@@ -46,6 +40,14 @@ export class Users extends Service {
     } else {
       // Call the original `create` method with existing `params` and new data
       // return super.create(userData, params)
+      // The complete user
+      const userData = {
+        name,
+        email,
+        password,
+        avatar,
+        locale
+      };
       return super.create(userData, params);
     }
 

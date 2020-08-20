@@ -1,95 +1,96 @@
-import '@feathersjs/transport-commons'
-import { HookContext } from '@feathersjs/feathers'
-import { Application } from './declarations'
+import '@feathersjs/transport-commons';
+import { HookContext } from '@feathersjs/feathers';
+import { Application } from './declarations';
 
-export default function (app: Application) {
+export default function(app: Application) {
   if (typeof app.channel !== 'function') {
     // If no real-time functionality has been configured just return
-    return
+    return;
   }
   // const userService = app.service('users')
-  const players$ = app.service('players')
+  const players$ = app.service('players');
 
   // Join a channel given a user and connection
   const joinChannels = (user: any, connection: any) => {
-    app.channel('#Lobby').join(connection)
-    app.channel(`@${user._id}`).join(connection)
-  }
+    app.channel('#Lobby').join(connection);
+    app.channel(`@${user._id}`).join(connection);
+  };
 
   // Get a user to leave all channels
   const leaveChannels = (user: any) => {
-    app.channel(app.channels).leave((connection: any) =>
-      connection.user._id === user._id
-    )
-  }
+    app
+      .channel(app.channels)
+      .leave((connection: any) => connection.user._id === user._id);
+  };
 
   // Leave and re-join all channels with new user information
   const updateChannels = (user: any) => {
     // Find all connections for this user
-    const { connections } = app.channel(app.channels).filter(connection =>
-      connection.user._id === user._id
-    )
+    const { connections } = app
+      .channel(app.channels)
+      .filter(connection => connection.user._id === user._id);
 
     // Leave all channels
-    leaveChannels(user)
+    leaveChannels(user);
 
     // Re-join all channels with the updated user information
-    connections.forEach(connection => joinChannels(user, connection))
-  }
+    connections.forEach(connection => joinChannels(user, connection));
+  };
 
   app.on('connection', (connection: any) => {
     // On a new real-time connection, add it to the anonymous channel
     // console.log('connect', connection)
-    app.channel('#Anonymous').join(connection)
-  })
+    app.channel('#Anonymous').join(connection);
+  });
 
   app.on('disconnect', (connection: any) => {
     // console.log('disconnect', connection)
-    const user = connection.user
+    const user = connection.user;
     if (user) {
       //When logging out, leave all channels before joining anonymous channel
-      if (app.channels.length) app.channel(app.channels).leave(connection)
+      if (app.channels.length) app.channel(app.channels).leave(connection);
       // app.channel('#Anonymous').join(connection)
 
-      players$.remove(user._id)
+      players$.remove(user._id);
     }
-  })
+  });
 
   app.on('login', (authResult: any, { connection }: any) => {
     // connection can be undefined if there is no
     // real-time connection, e.g. when logging in via REST
-    console.log('login', authResult, connection)
+    // console.log('login', authResult, connection);
     if (connection) {
       // Obtain the logged in user from the connection
-      const user = connection.user
-      user.state = 1
+      const user = connection.user;
+      user.state = 1;
       // console.log('login', user)
-      joinChannels(user, connection)
+      joinChannels(user, connection);
 
       const player = {
         id: user._id,
-        nick: user.nick,
-        profile: user.profile,
+        nick: user.nick || null,
+        locale: user.locale,
+        avatar: user.avatar,
         status: user.status || 0,
         state: 0,
-        seat: { tId: null, sId: 0 }
-      }
-      players$.create(player)
+        seat: { sId: 0 }
+      };
+      players$.create(player);
     }
-  })
+  });
 
   app.on('logout', (payload: any, { connection }: any) => {
     if (connection) {
-      const user = connection.user
-      user.state = 0
+      const user = connection.user;
+      user.state = 0;
 
       // console.log('logout', user)
       //When logging out, leave all channels before joining anonymous channel
-      if (app.channels.length) app.channel(app.channels).leave(connection)
+      if (app.channels.length) app.channel(app.channels).leave(connection);
       //app.channel('#Anonymous').join(connection)
-      players$.remove(user._id)
+      players$.remove(user._id);
     }
-  })
+  });
 
   // eslint-disable-next-line no-unused-vars
   app.publish((data: any, hook: HookContext) => {
@@ -100,8 +101,8 @@ export default function (app: Application) {
 
     // e.g. to publish all service events to all authenticated users use
     //return app.channel('authenticated')
-    return app.channel('#Lobby')
-  })
+    return app.channel('#Lobby');
+  });
 
   // Here you can also add service specific event publishers
   // e.g. the publish the `users` service `created` event to the `admins` channel
@@ -117,5 +118,5 @@ export default function (app: Application) {
   // app.service('players').on('updated', updateChannels)
   // app.service('players').on('patched', updateChannels)
   // On `removed`, remove the connection from all channels
-  players$.on('removed', leaveChannels)
+  players$.on('removed', leaveChannels);
 }

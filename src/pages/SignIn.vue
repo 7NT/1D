@@ -1,92 +1,105 @@
 <template>
-  <q-page class="flex flex-center">
-    <q-dialog v-model="show" persistent>
-      <q-card style="min-width: 400px">
+  <q-page class='flex flex-center'>
+    <q-dialog v-model='show' persistent>
+      <q-card style='min-width: 400px'>
         <q-card-section>
-          <div class="text-h6">{{ title }}:</div>
+          <div class='text-h6'>{{ title }}:</div>
         </q-card-section>
 
+        <!--
         <q-card-section>
           <q-list dense bordered padding>
             <q-item>
               <q-item-section top avatar>
-                <q-icon name="face" />
+                <q-icon name='face' />
               </q-item-section>
               <q-item-section>
                 <q-input
-                  v-model="nick"
+                  v-model='nick'
                   filled
-                  type="text"
-                  label="Nickname"
-                  :rules="[ n => n.length > 1 || 'Nickname is required']"
+                  type='text'
+                  label='Nickname'
+                  :rules='[ n => n.length > 1 || "Nickname is required"]'
                 />
               </q-item-section>
             </q-item>
-            <q-item v-if="isRegistration()">
+            <q-item v-if='isRegistration()'>
               <q-item-section top avatar>
-                <q-icon name="email" />
+                <q-icon name='email' />
               </q-item-section>
               <q-item-section>
-                <q-input v-model="email" filled type="email" label="Email" />
+                <q-input v-model='email' filled type='email' label='Email' />
               </q-item-section>
             </q-item>
             <q-item>
               <q-item-section top avatar>
-                <q-icon name="fingerprint" />
+                <q-icon name='fingerprint' />
               </q-item-section>
               <q-item-section>
                 <q-input
-                  v-model="password"
+                  v-model='password'
                   filled
-                  :type="isPwd ? 'password' : 'text'"
-                  label="Password"
+                  :type='isPwd ? "password" : "text"'
+                  label='Password'
                 >
                   <template v-slot:append>
                     <q-icon
-                      :name="isPwd ? 'visibility_off' : 'visibility'"
-                      class="cursor-pointer"
-                      @click="isPwd = !isPwd"
+                      :name='isPwd ? "visibility_off" : "visibility"'
+                      class='cursor-pointer'
+                      @click='isPwd = !isPwd'
                     />
                   </template>
                 </q-input>
               </q-item-section>
             </q-item>
-            <q-item v-if="isRegistration()">
+            <q-item v-if='isRegistration()'>
               <q-item-section top avatar>
-                <q-icon :name="`img:flags/4x3/${flag.toLowerCase()}.svg`" />
+                <q-icon :name='`img:flags/4x3/${flag.toLowerCase()}.svg`' />
               </q-item-section>
               <q-item-section>
-                <q-input v-model="flag" square filled label="Country:" mask="AA" type="text"></q-input>
+                <q-input v-model='flag' square filled label='Country:' mask='AA' type='text'></q-input>
               </q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
-
-        <q-card-actions align="right" class="text-primary">
-          <div class="row">
+        -->
+        <q-card-actions align='right' class='text-primary'>
+          <div class='row'>
             <q-btn
               dense
-              type="a"
-              href="http://localhost:3030/oauth/facebook"
+              type='a'
+              href='http://www.jbridge.net:3030/oauth/facebook'
               no-caps
-              label="Facebook"
-              icon="mdi-facebook"
+              label='Facebook'
+              icon='mdi-facebook'
               push
-              color="blue"
+              color='indigo'
             />
             <q-btn
               dense
-              type="a"
-              href="http://localhost:3030/oauth/google"
+              type='a'
+              href='http://www.jbridge.net:3030/oauth/google'
               no-caps
-              label="Google"
-              icon="mdi-google"
+              label='Google'
+              icon='mdi-google'
               push
-              color="red"
+              color='red'
+            />
+            <!--
+            <q-btn
+              dense
+              type='a'
+              href='http://localhost:3030/oauth/twitter'
+              no-caps
+              label='Twitter'
+              icon='mdi-twitter'
+              push
+              color='blue'
             />
             <q-separator vertical spaced />
-            <q-btn push label="Cancel" v-close-popup @click="onOk(true)" />
-            <q-btn push :label="title" v-close-popup @click="onOk(false)" />
+            <q-btn push label='Cancel' v-close-popup @click='onOk(true)' />
+            <q-btn push :label='title' v-close-popup @click='onOk(false)' />
+            -->
           </div>
         </q-card-actions>
       </q-card>
@@ -132,7 +145,7 @@ export default {
         const credential = this.getCredentials()
         if (this.isRegistration()) {
           credential.email = this.$data.email
-          credential.profile = { flag: this.$data.flag, avatar: null }
+          credential.locale = { country: this.country, flag: this.$data.flag }
 
           auth
             .register(credential)
@@ -180,6 +193,7 @@ export default {
     }
   },
   mounted () {
+    auth.removeToken()
     this.title = this.isRegistration() ? 'Register' : 'Sign In'
   },
   beforeDestroy () { }

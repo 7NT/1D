@@ -1,112 +1,74 @@
 <template>
-  <q-page
-    class="no-padding no-margin"
-    v-if="!!jsPlayer"
-  >
+  <q-page class='no-padding no-margin' v-if='!!jsPlayer'>
     <!-- content -->
-    <div class="column">
+    <div class='column'>
       <div class='col'>
         <q-card class='fit'>
           <q-tabs
-            v-model="rId"
-            align="left"
+            v-model='rId'
+            align='left'
             dense
             shrink
             no-caps
             inline-label
-            indicator-color="yellow"
-            class="bg-secondary text-white shadow-2"
-            v-show="isVisible(false)"
+            indicator-color='yellow'
+            class='bg-secondary text-white shadow-2'
+            v-show='isVisible(false)'
           >
             <q-tab
-              v-for="r in rooms"
-              :key="r.id"
-              :name="r.id"
-              :icon="r.icon"
-              :label="r.name"
-              :disable="!isOpen(r)"
+              v-for='r in rooms'
+              :key='r.id'
+              :name='r.id'
+              :icon='r.icon'
+              :label='r.name'
+              :disable='!isOpen(r)'
             />
           </q-tabs>
-          <q-tab-panels
-            keep-alive
-            v-model="rId"
-            animated
-            class="bg-teal"
-          >
-            <q-tab-panel
-              :name="0"
-              class='no-margin no-padding'
-            >
-              <div class="fit">
-                <q-list
-                  dense
-                  bordered
-                  separator
-                >
+          <q-tab-panels keep-alive v-model='rId' animated class='bg-teal'>
+            <q-tab-panel :name='0' class='no-margin no-padding'>
+              <div class='fit'>
+                <q-list dense bordered separator>
                   <myT1List
-                    v-for="t1 in myTables"
-                    :key="t1.id"
-                    :myTable="t1"
-                    v-on:onPlayer="onPlayer"
+                    v-for='t1 in myTables'
+                    :key='t1.id'
+                    :myTable='t1'
+                    v-on:onPlayer='onPlayer'
                   />
                 </q-list>
               </div>
             </q-tab-panel>
 
-            <q-tab-panel
-              :name="1"
-              class='no-margin no-padding'
-            >
-              <myPlayTable
-                :jsPlayer="jsPlayer"
-                v-on:onPlayer="onPlayer"
-                v-show="isVisible(true)"
-              />
+            <q-tab-panel :name='1' class='no-margin no-padding'>
+              <myPlayTable :jsPlayer='jsPlayer' v-on:onPlayer='onPlayer' v-show='isVisible(true)' />
             </q-tab-panel>
 
-            <q-tab-panel :name="2">
+            <q-tab-panel :name='2'>
               <div class='fit'>
-                <myTourney :jsPlayer="jsPlayer" />
+                <myTourney :jsPlayer='jsPlayer' />
               </div>
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
       </div>
-      <div
-        col='col'
-        v-show="isVisible(false)"
-      >
-        <myMessages :chatTo="myRoom" />
+      <div col='col' v-show='isVisible(false)'>
+        <myMessages :chatTo='myRoom' />
       </div>
     </div>
-    <q-footer
-      elevated
-      v-show="isVisible(false)"
-    >
-      <myChat :chatTo="myRoom" />
+    <q-footer elevated v-show='isVisible(false)'>
+      <myChat :chatTo='myRoom' />
     </q-footer>
 
-    <q-page-sticky
-      position="top-right"
-      :offset="[18, 18]"
-    >
+    <q-page-sticky position='top-right' :offset='[18, 18]'>
       <q-btn
         round
-        color="accent"
-        @click="$q.fullscreen.toggle()"
-        :icon="
-          $q.fullscreen.isActive
-            ? 'fullscreen_exit'
-            : 'fullscreen'
-        "
+        color='accent'
+        @click='$q.fullscreen.toggle()'
+        :icon='$q.fullscreen.isActive ? "fullscreen_exit" : "fullscreen"'
       >
         <q-tooltip>Full Screen</q-tooltip>
       </q-btn>
     </q-page-sticky>
-    <q-page-sticky
-      position="bottom-right"
-      :offset="[18, 18]"
-    >
+    <q-page-sticky position='bottom-right' :offset='[18, 18]'>
       <SpeechToText />
     </q-page-sticky>
   </q-page>
@@ -302,7 +264,7 @@ export default {
   },
   created () {
     this.user = this.$attrs.user
-    if (!this.user.profile.flag) this.$router.push({ name: 'profile' })
+    if (!this.user.nick) this.$router.push({ name: 'profile' })
   }
 }
 </script>

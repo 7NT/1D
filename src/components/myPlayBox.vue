@@ -1,29 +1,9 @@
 <template>
-  <div id="playBox">
-    <img
-      id="playCard1"
-      class="card"
-      :src="cardImg(1)"
-      :style="zIndex(1)"
-    />
-    <img
-      id="playCard4"
-      class="card"
-      :src="cardImg(4)"
-      :style="zIndex(4)"
-    />
-    <img
-      id="playCard2"
-      class="card"
-      :src="cardImg(2)"
-      :style="zIndex(2)"
-    />
-    <img
-      id="playCard3"
-      class="card"
-      :src="cardImg(3)"
-      :style="zIndex(3)"
-    />
+  <div id='playBox'>
+    <img id='playCard1' class='card' :src='cardImg(1)' :style='zIndex(1)' />
+    <img id='playCard4' class='card' :src='cardImg(4)' :style='zIndex(4)' />
+    <img id='playCard2' class='card' :src='cardImg(2)' :style='zIndex(2)' />
+    <img id='playCard3' class='card' :src='cardImg(3)' :style='zIndex(3)' />
   </div>
 </template>
 
@@ -114,9 +94,11 @@ export default {
   left: 0px;
 }
 img {
+  /*
   -moz-box-shadow: inset 0 0 2px #000000;
   -webkit-box-shadow: inset 0 0 2px #000000;
   box-shadow: inset 0 0 2px #000000;
+  */
   border: 1px solid silver;
 }
 img.card {

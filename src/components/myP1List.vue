@@ -1,35 +1,14 @@
 <template>
   <div v-if='!!jsPlayer'>
-    <q-toolbar class="bg-primary text-white rounded-borders">
-      <q-btn
-        round
-        dense
-        flat
-        icon="group"
-        class="q-mr-xs"
-      />
+    <q-toolbar class='bg-primary text-white rounded-borders'>
+      <q-btn round dense flat icon='group' class='q-mr-xs' />
 
       <q-space />
 
-      <q-input
-        dark
-        dense
-        standout
-        v-model="searchPlayer"
-        input-class="text-right"
-        class="q-ml-md"
-      >
+      <q-input dark dense standout v-model='searchPlayer' input-class='text-right' class='q-ml-md'>
         <template v-slot:append>
-          <q-icon
-            v-if="!searchPlayer"
-            name="search"
-          />
-          <q-icon
-            v-else
-            name="clear"
-            class="cursor-pointer"
-            @click="player_search = null"
-          />
+          <q-icon v-if='!searchPlayer' name='search' />
+          <q-icon v-else name='clear' class='cursor-pointer' @click='player_search = null' />
         </template>
       </q-input>
     </q-toolbar>
@@ -38,19 +17,19 @@
       <q-item>
         <q-item-section>
           <q-btn-toggle
-            v-model="model"
+            v-model='model'
             spread
             push
             dense
             glossy
             no-caps
-            toggle-color="primary"
-            :options="[
-              {label: '♣All', value: 0},
-              {label: '♢Players', value: 1},
-              {label: '♡Friends', value: 2},
-              {label: '♠Admin', value: 3}
-            ]"
+            toggle-color='primary'
+            :options='[
+              {label: "♣All", value: 0},
+              {label: "♢Players", value: 1},
+              {label: "♡Friends", value: 2},
+              {label: "♠Admin", value: 3}
+            ]'
           />
         </q-item-section>
       </q-item>
@@ -59,71 +38,47 @@
         dense
         dense-toggle
         expand-separator
-        v-for="p in myPlayers"
-        :key="p.id"
+        v-for='p in myPlayers'
+        :key='p.id'
         @input='readMessage(p)'
       >
         <template v-slot:header>
           <q-item-section side>
-            <div class="row items-center">
-              <q-icon
-                :name="seatIcon(p)"
-                size="24px"
-              />
-              <q-avatar size="24px">
-                <img :src="playerAvatar(p)" />
+            <div class='row items-center'>
+              <q-icon :name='seatIcon(p)' size='24px' />
+              <q-avatar size='24px'>
+                <img :src='p1Avatar(p)' />
               </q-avatar>
             </div>
           </q-item-section>
 
           <q-item-section>
             <div>
-              <template v-if="p.status==2">
-                <span style="color:red;">@</span>
+              <template v-if='p.status==2'>
+                <span style='color:red;'>@</span>
               </template>
-              <template v-else-if="p.status==1">
-                <span style="color:white;">&#xf3a5;</span>
+              <template v-else-if='p.status==1'>
+                <span style='color:white;'>&#xf3a5;</span>
               </template>
-              <template v-else-if="isFriend(p.nick)">
+              <template v-else-if='isFriend(p.nick)'>
                 <q-icon name='mdi-account-heart' />
               </template>
               {{p.nick}}
-              <q-badge
-                color="orange"
-                align='top'
-                transparent
-                v-if='newMessage(p)'
-              >
-                ∞
-              </q-badge>
+              <q-badge color='orange' align='top' transparent v-if='newMessage(p)'>∞</q-badge>
             </div>
           </q-item-section>
 
-          <q-item-section
-            avatar
-            side
-          >
-            <q-icon
-              dense
-              :name="playerFlag(p)"
-              class="q-ml-md"
-              size="sm"
-            />
+          <q-item-section avatar side>
+            <q-icon dense :name='p1Flag(p)' class='q-ml-md' size='sm' />
           </q-item-section>
         </template>
         <q-card v-if='!isMyPlayer(p)'>
           <q-card-actions>
+            <q-btn dense flat size='sm' icon='mdi-account-heart' @click='setFriend(p.nick)'>Friend</q-btn>
             <q-btn
               dense
               flat
-              size="sm"
-              icon='mdi-account-heart'
-              @click='setFriend(p.nick)'
-            >Friend</q-btn>
-            <q-btn
-              dense
-              flat
-              size="sm"
+              size='sm'
               icon='mdi-account-supervisor'
               v-if='!isMyTable(p)'
               @click='onWatch(p)'
@@ -131,7 +86,7 @@
             <q-btn
               dense
               flat
-              size="sm"
+              size='sm'
               icon='mdi-account-multiple-plus'
               v-if='!isMyTable(p)'
               @click='onJoin(p, 0)'
@@ -197,17 +152,17 @@ export default {
   methods: {
     ...mapActions('jstore', ['setJsMap']),
 
-    getT1Name (t) {
+    t1Name (t) {
       if (t) {
         const t1 = this.jsTableById(t)
         if (t1) return t1.name
       }
       return '#Lobby'
     },
-    playerAvatar (p) {
+    p1Avatar (p) {
       return jbAvatar(p)
     },
-    playerFlag (p) {
+    p1Flag (p) {
       return jbFlag(p)
     },
     seatIcon (p) {

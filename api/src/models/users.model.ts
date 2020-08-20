@@ -2,24 +2,25 @@
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
-import { Application } from "../declarations";
+import { Application } from '../declarations';
 
 export default function(app: Application) {
-  const modelName = "users";
-  const mongooseClient = app.get("mongooseClient");
+  const modelName = 'users';
+  const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const schema = new Schema(
     {
-      email: { type: String, unique: true, lowercase: true },
+      nick: { type: String, unique: true, lowercase: true },
+      email: { type: String, unique: true, lowercase: true, required: true },
       password: { type: String },
 
       // googleId: { type: String },
       // facebookId: { type: String },
-      country: {
-        name: { type: String },
-        flag: { type: String }
-      },
+      name: { type: String },
       avatar: { type: String },
+      locale: { type: String },
+      country: { type: String },
+      flag: { type: String },
       status: { type: Number, default: 0 },
       state: { type: Number, default: 0 }
     },

@@ -54,6 +54,19 @@ socket.on('pong', (reason) => {
   console.log('pong', reason)
 })
 */
+/*
+const login = async() => {
+  try {
+    return await api.reAuthenticate()
+  }catch (err) {
+    return await api.authenticate({
+      strategy: 'local',
+      email,
+      password
+    })
+  }
+}
+*/
 // export default api
 export {
   api,

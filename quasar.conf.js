@@ -113,7 +113,7 @@ module.exports = function (ctx) {
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
         '/api': {
-          target: 'http://localhost:3030',
+          target: 'http://www.jbridge.net:3030',
           changeOrigin: true,
           pathRewrite: {
             '^/api': ''

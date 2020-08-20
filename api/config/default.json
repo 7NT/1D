@@ -27,8 +27,8 @@
     "oauth": {
       "redirect": "http://www.jbridge.net:8080/#/lobby/",
       "google": {
-        "key": "819669594394-59m1jucvthqdfs1qvh294f4anvknggov.apps.googleusercontent.com",
-        "secret": "2VA2PU2egDys3pA9-ebJs5N5",
+        "key": "819669594394-tbikikgng6k6u2htf33fqjc0u82bsoas.apps.googleusercontent.com",
+        "secret": "lJqKySdIL771UmpZhdLffwpu",
         "scope": ["openid", "email", "profile"],
         "nonce": true
       },

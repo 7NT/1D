@@ -78,6 +78,7 @@
               icon='mdi-facebook'
               push
               color='indigo'
+              :disable='true'
             />
             <q-btn
               dense

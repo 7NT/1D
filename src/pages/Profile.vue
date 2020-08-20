@@ -25,7 +25,7 @@
                   autofocus
                   type='text'
                   label='Nickname'
-                  :disable='!!nick'
+                  :disable='!!user.nick'
                   :rules='[ n => n.length > 1 || "Nickname is required"]'
                 />
               </q-item-section>
@@ -112,7 +112,7 @@ export default {
   },
   created () {
     this.user = this.$attrs.user
-    this.nick = this.user.nick || ''
+    this.nick = this.user.nick || null
     this.flag = this.user.flag || 'us'
     this.country = this.user.country || 'United States'
     console.log('profile', this.user)

@@ -410,7 +410,6 @@ export default {
     auth.onAuthenticated(user => {
       console.log('onAuthenticated', user)
       this.setUser(user)
-      this.onServices()
     })
 
     // On logout
@@ -429,7 +428,10 @@ export default {
     user (u1, u0) {
       console.log('u', u1, u0)
       if (u1) {
-        if (!u0) this.goTo('lobby')
+        if (!u0) {
+          this.onServices()
+          this.goTo('lobby')
+        }
       } else {
         this.signout()
         this.goTo('home')

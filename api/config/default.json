@@ -18,10 +18,10 @@
       "audience": "https://jbridge.net",
       "issuer": "jbridge",
       "algorithm": "HS256",
-      "expiresIn": "7d"
+      "expiresIn": "1d"
     },
     "local": {
-      "usernameField": "email",
+      "usernameField": "nick",
       "passwordField": "password"
     },
     "oauth": {
@@ -43,5 +43,5 @@
       }
     }
   },
-  "mongodb": "mongodb://localhost:27017/1d"
+  "mongodb": "mongodb://hp160:27017/1d"
 }

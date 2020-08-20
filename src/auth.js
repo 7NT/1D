@@ -33,8 +33,14 @@ const auth = {
   signout () {
     return api.logout()
   },
-  async removeToken () {
-    return await api.removeAccessToken()
+  removeToken () {
+    return api.removeAccessToken()
+      .then((token) => {
+        console.log(token)
+      })
+      .catch((error) => {
+        console.error(error)
+      })
   },
 
   onLogout (callback) {

@@ -1,25 +1,29 @@
-import { Params } from '@feathersjs/feathers';
-import { Service, MongooseServiceOptions } from 'feathers-mongoose';
-import { Application } from '../../declarations';
+import crypto from 'crypto'
+import { Params } from '@feathersjs/feathers'
+import { Service, MongooseServiceOptions } from 'feathers-mongoose'
+import { Application } from '../../declarations'
 
 // A type interface for our user (it does not validate any data)
 interface UserData {
-  _id?: string;
-  email: string;
-  password?: string;
-  name?: string;
-  avatar?: string;
-  locale?: string;
+  _id?: string
+  nick?: string
+  email: string
+  password?: string
+  name?: string
+  avatar?: string
+  country?: string
+  flag?: string
+  locale?: string
 }
 
 export class Users extends Service {
   constructor(options: Partial<MongooseServiceOptions>, app: Application) {
-    super(options);
+    super(options)
   }
 
-  async create(data: UserData, params?: Params) {
+  async create (data: UserData, params?: Params) {
     // This is the information we want from the user signup data
-    const { name, email, password, avatar, locale } = data;
+    const { nick, name, email, password, country, flag, avatar, locale } = data
 
     // check if email already exists
     let users: any = await super.find({
@@ -28,31 +32,46 @@ export class Users extends Service {
         email,
         $sort: { created: -1 }
       }
-    });
+    })
 
     if (users.data.length > 0) {
       // date avatar
       const date = {
         avatar,
+        name,
         updatedAt: new Date().getTime()
-      };
-      return super.patch(users.data[0]._id, { avatar }, { query: { email } });
+      }
+      console.log('update', users, data)
+      return super.patch(users.data[0]._id, data)
     } else {
-      // Call the original `create` method with existing `params` and new data
-      // return super.create(userData, params)
-      // The complete user
       const userData = {
+        nick,
         name,
         email,
         password,
         avatar,
+        country,
+        flag,
         locale
-      };
-      return super.create(userData, params);
+      }
+      if (!avatar) {
+        // The Gravatar image service
+        const gravatarUrl = 'https://s.gravatar.com/avatar'
+        // The size query. Our chat needs 60px images
+        const query = 's=60'
+        // Gravatar uses MD5 hashes from an email address (all lowercase) to get the image
+        const hash = crypto.createHash('md5').update(email.toLowerCase()).digest('hex')
+        // The full avatar URL
+        userData.avatar = `${gravatarUrl}/${hash}?${query}`
+      }
+      // Call the original `create` method with existing `params` and new data
+      // return super.create(userData, params)
+      // The complete user
+      console.log('create', userData)
+      return super.create(userData, params)
     }
 
     // Call the original `create` method with existing `params` and new data
     // return super.create(userData, params)
-    // return user;
   }
 }

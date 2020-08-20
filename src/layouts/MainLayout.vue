@@ -206,7 +206,7 @@ export default {
     ]),
     goTo (route) {
       if (this.$route.name !== route) {
-        this.$router.push({ name: route }).catch(e => { console.log(e) })
+        this.$router.push({ name: route }).catch(err => { console.error(err) })
       }
     },
     setUser (user) {
@@ -456,6 +456,7 @@ export default {
     auth
       .login()
       .then(u => {
+        console.log('login', u)
         if (u.user !== this.user) this.setUser(u.user)
         this.$q.notify({
           type: 'positive',
@@ -464,7 +465,8 @@ export default {
       })
       .catch(err => {
         console.log(err)
-        this.signout()
+        auth.removeAccessToken()
+        // this.signout()
       })
 
     // On successful login
@@ -476,8 +478,10 @@ export default {
 
     // On logout
     auth.onLogout(() => {
+      console.log('logout')
       this.goTo('home')
       this.setUser(null)
+      // auth.removeAccessToken()
     })
 
     window.onbeforeunload = function () {

@@ -15,24 +15,41 @@
             bordered
             padding
           >
-            <q-item>
+            <q-item dense>
               <q-item-section
                 top
                 avatar
               >
                 <q-icon name='face' />
               </q-item-section>
-              <q-item-section>
+              <q-item-section top>
                 <q-input
                   v-model='nick'
+                  dense
                   filled
                   type='text'
-                  label='Nickname'
-                  :rules='[ n => n.length > 1 || "Nickname is required"]'
+                  label='Nick'
+                  :rules='[ n => n.length > 1 || "Nick is required"]'
+                />
+              </q-item-section>
+              <q-item-section
+                top
+                side
+                v-if='isRegistration()'
+              >
+                <q-input
+                  v-model='name'
+                  dense
+                  filled
+                  type='text'
+                  label='Name'
                 />
               </q-item-section>
             </q-item>
-            <q-item v-if='isRegistration()'>
+            <q-item
+              dense
+              v-if='isRegistration()'
+            >
               <q-item-section
                 top
                 avatar
@@ -42,13 +59,14 @@
               <q-item-section>
                 <q-input
                   v-model='email'
+                  dense
                   filled
                   type='email'
                   label='Email'
                 />
               </q-item-section>
             </q-item>
-            <q-item>
+            <q-item dense>
               <q-item-section
                 top
                 avatar
@@ -58,6 +76,7 @@
               <q-item-section>
                 <q-input
                   v-model='password'
+                  dense
                   filled
                   :type='isPwd ? "password" : "text"'
                   label='Password'
@@ -72,7 +91,10 @@
                 </q-input>
               </q-item-section>
             </q-item>
-            <q-item v-if='isRegistration()'>
+            <q-item
+              dense
+              v-if='isRegistration()'
+            >
               <q-item-section
                 top
                 avatar
@@ -80,14 +102,13 @@
                 <q-icon :name='`img:flags/4x3/${flag.toLowerCase()}.svg`' />
               </q-item-section>
               <q-item-section>
-                <q-input
-                  v-model='flag'
-                  square
+                <q-select
+                  dense
                   filled
+                  v-model='country'
+                  :options='countries'
                   label='Country:'
-                  mask='AA'
-                  type='text'
-                ></q-input>
+                />
               </q-item-section>
             </q-item>
           </q-list>
@@ -101,7 +122,7 @@
             <q-btn
               dense
               type='a'
-              href='http://www.jbridge.net:3030/oauth/facebook'
+              href='http://localhost:3030/oauth/facebook'
               no-caps
               label='Facebook'
               icon='mdi-facebook'
@@ -111,7 +132,7 @@
             <q-btn
               dense
               type='a'
-              href='http://www.jbridge.net:3030/oauth/google'
+              href='http://localhost:3030/oauth/google'
               no-caps
               label='Google'
               icon='mdi-google'
@@ -133,12 +154,14 @@
             -->
             <q-btn
               push
+              dense
               label='Cancel'
               v-close-popup
               @click='onOk(true)'
             />
             <q-btn
               push
+              dense
               :label='title'
               v-close-popup
               @click='onOk(false)'
@@ -152,6 +175,7 @@
 
 <script>
 import auth from 'src/auth'
+import data from 'src/data/iso3166_2.json'
 
 export default {
   data () {
@@ -159,10 +183,13 @@ export default {
       show: true,
       title: null,
       nick: '',
+      name: null,
       email: null,
       password: '',
       isPwd: true,
-      flag: 'US'
+      countries: data.map(c => c.name),
+      flag: 'us',
+      country: 'United States'
     }
   },
   computed: {},
@@ -185,17 +212,19 @@ export default {
       if (cancel) {
         this.$router.go(-1)
       } else {
-        const credential = this.getCredentials()
         if (this.isRegistration()) {
+          const credential = this.getCredentials()
           credential.email = this.$data.email
-          credential.locale = { country: this.country, flag: this.$data.flag }
+          credential.name = this.$data.name
+          credential.country = this.$data.country
+          credential.flag = this.$data.flag
 
           auth
             .register(credential)
             .then(user => {
-              delete credential.email
-              delete credential.profile
-              return this.login(credential)
+              console.log('register', user)
+              // auth.removeAccessToken()
+              return this.login()
             })
             .then(user => {
               this.$q.notify({
@@ -213,7 +242,7 @@ export default {
               this.goTo('home')
             })
         } else {
-          this.login(credential)
+          this.login()
             .then(() => {
               this.$q.notify({
                 color: 'positive',
@@ -231,13 +260,23 @@ export default {
         }
       }
     },
-    login (credential) {
+    login () {
+      const credential = this.getCredentials()
+      console.log('login', credential)
       return auth.login(credential)
     }
   },
+  watch: {
+    country (c) {
+      if (c) {
+        const countryData = data.filter(d => d.name === c)
+        if (countryData) this.flag = countryData[0].code
+      }
+    }
+  },
   mounted () {
-    auth.removeToken()
     this.title = this.isRegistration() ? 'Register' : 'Sign In'
+    // auth.removeToken()
   },
   beforeDestroy () { }
 }

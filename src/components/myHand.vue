@@ -69,7 +69,7 @@
       </div>
     </div>
     <q-dialog auto-close v-model='pchat'>
-      <q-card class='q-dialog-plugin' v-if='handPlayer'>
+      <q-card class='q-dialog-plugin' v-if='!!handPlayer'>
         <q-card-section>
           <myMessages :chatTo='handPlayer' />
         </q-card-section>

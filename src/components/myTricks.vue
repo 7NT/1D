@@ -1,34 +1,15 @@
 <template>
-  <div class="row full-width">
-    <div class="column justify-start">
-      <div class="row no-wrap">
-        <q-card
-          flat
-          class="transparent"
-        >
-          <template v-if="myState===2">>
+  <div class='row full-width'>
+    <div class='column justify-start'>
+      <div class='row no-wrap'>
+        <q-card flat class='transparent'>
+          <template v-if='myState===2'>
             <q-card-section>
-              <div class="hand hhand-compact active-hand full-width no-wrap">
-                <span
-                  v-for="(c, i) of playedCards"
-                  :key="`${i}`"
-                  class="card"
-                >
-                  <img
-                    :src="cardback(c)"
-                    :class="trickClass(c, i)"
-                    :style="`z-index:${i}`"
-                  />
-                  <q-tooltip
-                    content-class="bg-info"
-                    anchor="top right"
-                    self="bottom left"
-                  >
-                    <myPlayBox
-                      :jsPlayer="jsPlayer"
-                      :jsTable="jsTable"
-                      :review="true"
-                    />
+              <div class='hand hhand-compact active-hand full-width no-wrap'>
+                <span v-for='(c, i) of playedCards' :key='`${i}`' class='card'>
+                  <img :src='cardback(c)' :class='trickClass(c, i)' :style='`z-index:${i}`' />
+                  <q-tooltip content-class='bg-info' anchor='top right' self='bottom left'>
+                    <myPlayBox :jsPlayer='jsPlayer' :jsTable='jsTable' :review='true' />
                   </q-tooltip>
                 </span>
               </div>
@@ -36,56 +17,25 @@
           </template>
           <template v-else>
             <q-card-section v-if='result'>
-              <myScoreList
-                :tId='result.tId'
-                :bId='result.bId'
-              />
+              <myScoreList :tId='result.tId' :bId='result.bId' />
             </q-card-section>
           </template>
         </q-card>
       </div>
       <div class='row'>
-        <q-list
-          dense
-          class='column scorebar'
-        >
+        <q-list dense class='column scorebar'>
           <q-item dense>
             <q-item-section class='col-10'>
-              <div class="row">
-                <q-icon
-                  size='sm'
-                  :name="mySeatIcon(13)"
-                  left
-                />
-                <q-badge
-                  outline
-                  color="silver"
-                  :label="tricks(0)"
-                  align="middle"
-                />
-                <q-icon
-                  size='sm'
-                  :name="mySeatIcon(24)"
-                  right
-                />
-                <q-badge
-                  outline
-                  color="silver"
-                  :label="tricks(1)"
-                  align="middle"
-                />
+              <div class='row'>
+                <q-icon size='sm' :name='mySeatIcon(13)' left />
+                <q-badge outline color='silver' :label='tricks(0)' align='middle' />
+                <q-icon size='sm' :name='mySeatIcon(24)' right />
+                <q-badge outline color='silver' :label='tricks(1)' align='middle' />
               </div>
             </q-item-section>
-            <q-item-section
-              side
-              avatar
-              class='col-2'
-            >
+            <q-item-section side avatar class='col-2'>
               <q-avatar square>
-                <q-btn
-                  color="silver"
-                  icon='menu_book'
-                />
+                <q-btn color='silver' icon='menu_book' />
               </q-avatar>
             </q-item-section>
           </q-item>

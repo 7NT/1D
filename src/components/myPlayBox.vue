@@ -67,11 +67,10 @@ export default {
 <style scoped>
 #playBox {
   position: relative;
-  width: 150px;
-  height: 150px;
   margin: auto;
-  /* border: green solid 1px; */
-  overflow: hidden;
+  height: 160px;
+  width: 160px;
+  /* overflow: hidden; */
 }
 #playCard1 {
   position: absolute;
@@ -105,7 +104,4 @@ img.card {
   max-height: 96px;
   /*max-width: 76px;*/
 }
-</style>
-
-<style scoped>
 </style>

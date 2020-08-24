@@ -69,41 +69,47 @@
 
         <q-card-actions align='right' class='text-primary'>
           <div class='row'>
-            <q-btn
-              dense
-              type='a'
-              href='http://www.jbridge.net:3030/oauth/facebook'
-              no-caps
-              label='Facebook'
-              icon='mdi-facebook'
-              push
-              color='indigo'
-              :disable='true'
-            />
-            <q-btn
-              dense
-              type='a'
-              href='http://www.jbridge.net:3030/oauth/google'
-              no-caps
-              label='Google'
-              icon='mdi-google'
-              push
-              color='red'
-            />
-            <q-btn
-              dense
-              type='a'
-              href='http://www.jbridge.net:3030/oauth/twitter'
-              no-caps
-              label='Twitter'
-              icon='mdi-twitter'
-              push
-              color='blue'
-              :disable='true'
-            />
+            <div v-if='$q.platform.is.desktop'>
+              <q-btn
+                dense
+                type='a'
+                href='http://www.jbridge.net:3030/oauth/google'
+                no-caps
+                label='Google'
+                icon='mdi-google'
+                push
+                color='red'
+              />
+              <!--
+              <q-btn
+                dense
+                type='a'
+                href='http://www.jbridge.net:3030/oauth/facebook'
+                no-caps
+                label='Facebook'
+                icon='mdi-facebook'
+                push
+                color='indigo'
+                :disable='true'
+              />
+              <q-btn
+                dense
+                type='a'
+                href='http://www.jbridge.net:3030/oauth/twitter'
+                no-caps
+                label='Twitter'
+                icon='mdi-twitter'
+                push
+                color='blue'
+                :disable='true'
+              />
+              -->
+            </div>
             <q-separator vertical spaced />
-            <q-btn push dense label='Cancel' v-close-popup @click='onOk(true)' />
-            <q-btn push dense :label='title' v-close-popup @click='onOk(false)' />
+            <div>
+              <q-btn push dense label='Cancel' v-close-popup @click='onOk(true)' />
+              <q-btn push dense :label='title' v-close-popup @click='onOk(false)' />
+            </div>
           </div>
         </q-card-actions>
       </q-card>

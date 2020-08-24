@@ -1,34 +1,23 @@
 <template>
-  <div class='no-margin no-padding'>
+  <div class='no-margin no-padding full-width'>
     <q-table
       dense
       square
       hide-bottom
-      separator="cell"
-      :data="myBidData"
-      :columns="columns"
-      row-key="row"
+      separator='cell'
+      :data='myBidData'
+      :columns='columns'
+      row-key='row'
     >
-      <q-tr
-        slot="header"
-        slot-scope="props"
-        :props="props"
-      >
-        <q-th
-          :class="getVColor(col.seat)"
-          v-for="col in props.cols"
-          :key="col.seat"
-        >
+      <q-tr slot='header' slot-scope='props' :props='props'>
+        <q-th :class='getVColor(col.seat)' v-for='col in props.cols' :key='col.seat'>
           <!--{{ props.cols[col.seat - 1].field }}-->
           {{ col.field }}
           <q-tooltip>{{ col.label }}</q-tooltip>
         </q-th>
       </q-tr>
-      <template v-slot:body-cell="props">
-        <q-td
-          :props="props"
-          :class="getBColor(props.value)"
-        >
+      <template v-slot:body-cell='props'>
+        <q-td :props='props' :class='getBColor(props.value)'>
           {{ getBid(props.value) }}
           <q-tooltip>{{ getAlert(props.value) }}</q-tooltip>
         </q-td>
@@ -190,22 +179,22 @@ export default {
 
 <style scoped>
 .vul0 {
-  border: 2px solid silver;
+  border: 1px solid silver;
 }
 .vul1 {
-  border-top: 2px solid red;
-  border-bottom: 2px solid red;
-  border-left: 2px solid silver;
-  border-right: 2px solid silver;
+  border-top: 1px solid red;
+  border-bottom: 1px solid red;
+  border-left: 1px solid silver;
+  border-right: 1px solid silver;
 }
 .vul2 {
-  border-top: 2px solid silver;
-  border-bottom: 2px solid silver;
-  border-left: 2px solid red;
-  border-right: 2px solid red;
+  border-top: 1px solid silver;
+  border-bottom: 1px solid silver;
+  border-left: 1px solid red;
+  border-right: 1px solid red;
 }
 .vul3 {
-  border: 2px solid red;
+  border: 1px solid red;
 }
 table thead {
   font-size: medium;

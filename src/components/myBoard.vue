@@ -1,39 +1,38 @@
-<template padding>
-  <div class="boardBox">
-    <div class="full-width">
-      <q-slide-item @left="setBT">
+<template>
+  <div class='boardBox'>
+    <div class='full-width'>
+      <q-slide-item @left='setBT'>
         <template v-slot:left>
           <q-btn-toggle
-            v-model="bT"
+            v-model='bT'
             dense
             push
             glossy
-            toggle-color="primary"
-            :options="[
-              {label: 'MP', value: 'MP'},
-              {label: 'IMP', value: 'IMP'},
-              {label: 'XIMP', value: 'XIMP'},
-            ]"
+            toggle-color='primary'
+            :options='[
+              {label: "MP", value: "MP"},
+              {label: "IMP", value: "IMP"},
+              {label: "XIMP", value: "XIMP"},
+            ]'
           />
         </template>
 
         <q-item>
           <q-item-section avatar>
-            <q-icon name="drag_indicator" />
+            <q-icon name='drag_indicator' />
           </q-item-section>
-          <q-item-section>{{bdata}}</q-item-section>
+          <q-item-section>
+            <q-item-label overline>{{bdataT}}</q-item-label>
+            <q-item-label caption>{{bdataN}}</q-item-label>
+          </q-item-section>
           <q-item-section avatar>
-            <q-icon name="img:jbIcon/svg/mix.svg" />
+            <q-icon name='img:jbIcon/svg/mix.svg' />
           </q-item-section>
         </q-item>
-
       </q-slide-item>
-      <q-slide-item @left="setCC">
+      <q-slide-item @left='setCC'>
         <template v-slot:left>
-          <q-btn-dropdown
-            color="info"
-            label="Set CC..."
-          >
+          <q-btn-dropdown color='info' label='Set CC...'>
             <q-list dense>
               <q-item
                 dense
@@ -41,7 +40,7 @@
                 v-close-popup
                 v-for='c in ccLinks'
                 :key='c.title'
-                @click="onCC(c)"
+                @click='onCC(c)'
               >
                 <q-item-section>
                   <q-item-label>{{c.title}}</q-item-label>
@@ -50,87 +49,51 @@
             </q-list>
           </q-btn-dropdown>
         </template>
-        <q-item
-          dense
-          class="row boardItem"
-        >
-          <q-item-section class="col-2">
+        <q-item dense class='row boardItem'>
+          <q-item-section class='col-2'>
             <q-item-label>CC:</q-item-label>
           </q-item-section>
-          <q-item-section
-            side
-            class="col-10"
-          >
-            <div class="row no-wrap full-width">
-              <div class="col-6">
-                <q-btn
-                  dense
-                  size="xs"
-                  :icon="mySeatIcon(13)"
-                  @click='onCCView(0)'
-                >
+          <q-item-section side class='col-10'>
+            <div class='row no-wrap full-width'>
+              <div class='col-6'>
+                <q-btn dense size='xs' :icon='mySeatIcon(13)' @click='onCCView(0)'>
                   <q-badge
-                    class="cc"
-                    color="orange"
-                    text-color="black"
-                    align="top"
-                    :label="cc[0].title"
+                    class='cc'
+                    color='orange'
+                    text-color='black'
+                    align='top'
+                    :label='cc[0].title'
                   />
                 </q-btn>
               </div>
-              <div class="col-6">
-                <q-btn
-                  dense
-                  size="xs"
-                  :icon="mySeatIcon(24)"
-                  @click='onCCView(1)'
-                >
+              <div class='col-6'>
+                <q-btn dense size='xs' :icon='mySeatIcon(24)' @click='onCCView(1)'>
                   <q-badge
-                    class="cc"
-                    color="orange"
-                    text-color="black"
-                    align="top"
-                    :label="cc[1].title"
+                    class='cc'
+                    color='orange'
+                    text-color='black'
+                    align='top'
+                    :label='cc[1].title'
                   />
                 </q-btn>
               </div>
             </div>
           </q-item-section>
         </q-item>
-
       </q-slide-item>
-      <q-list
-        dense
-        bordered
-        separator
-        class="rounded-borders"
-      >
-        <q-slide-item @right="onScore">
+      <q-list dense bordered class='rounded-borders'>
+        <q-slide-item @right='onScore'>
           <q-item>
-            <q-item-section
-              top
-              class="col-4"
-            >
-              <q-item-label class="q-mt-sm">{{bT}}/#:</q-item-label>
+            <q-item-section top class='col-4'>
+              <q-item-label class='q-mt-sm'>{{bT}}/#:</q-item-label>
             </q-item-section>
-            <q-item-section
-              side
-              class="col-10"
-            >
-              <div class="row q-pa-xs q-gutter-xs no-wrap text-orange full-width">
-                <div class="col-4">
-                  <q-badge
-                    color="info"
-                    text-color="black"
-                    :label="score(0)"
-                  />
+            <q-item-section side class='col-10'>
+              <div class='row q-pa-xs q-gutter-xs no-wrap text-orange full-width'>
+                <div class='col-4'>
+                  <q-badge color='info' text-color='black' :label='score(0)' />
                 </div>
-                <div class="col-4">
-                  <q-badge
-                    color="info"
-                    text-color="black"
-                    :label="score(1)"
-                  />
+                <div class='col-4'>
+                  <q-badge color='info' text-color='black' :label='score(1)' />
                 </div>
               </div>
             </q-item-section>
@@ -213,13 +176,21 @@ export default {
         this.onBT(value)
       }
     },
-    bdata: function () {
+    bdataT: function () {
       try {
         if (this.jsTable.board) {
-          return this.jsTable.board.bT + ': ' + this.jsTable.board.bId + '#' + this.jsTable.board.bN
+          return this.jsTable.board.bT
         }
       } catch (err) { }
       return 'Board'
+    },
+    bdataN: function () {
+      try {
+        if (this.jsTable.board) {
+          return this.jsTable.board.bId + '#' + this.jsTable.board.bN
+        }
+      } catch (err) { }
+      return null
     },
     cc: function () {
       return this.jsTable.cc || [this.ccLink[0], this.ccLink[0]]
@@ -347,9 +318,9 @@ export default {
 
 <style scoped>
 .boardBox {
-  max-width: 240px;
-  height: 120px;
-  margin: 4px;
+  max-width: 230px;
+  max-height: 130px;
+  margin: 1px;
   background: bisque;
 }
 .boardItem {

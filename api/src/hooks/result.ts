@@ -1,19 +1,19 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
-import { Hook, HookContext } from "@feathersjs/feathers";
+import { Hook, HookContext } from '@feathersjs/feathers';
 
-import { jbIMPs } from "../jbScore";
+import { jbIMPs } from '../jbScore';
 
 const onFind = (): Hook => {
   return async (context: HookContext) => {
-    if (context.method === "find") {
+    if (context.method === 'find') {
       const { user } = context.params;
       if (user) {
-        const played$ = context.app.service("played");
+        const played$ = context.app.service('played');
         let played = await played$.find({
           query: {
             $limit: 10,
-            $select: ["bId"],
+            $select: ['bId'],
             uId: user._id
           }
         });
@@ -39,15 +39,15 @@ const onCreate = (): Hook => {
       const results$ = context.service;
       const results = await results$.find({
         query: {
-          $select: ["_id", "score"],
+          $select: ['_id', 'score'],
           // $sort: { score: -1 },
-          "info.bT": result.info.bT,
-          "info.bN": result.info.bN,
+          'info.bT': result.info.bT,
+          'info.bN': result.info.bN,
           bId: result.bId
         },
         paginate: false
       });
-
+      console.log('onCreate', results);
       if (results.length > 0) {
         results.push({ _id: null, score: result.score });
         results.sort((a: { score: number }, b: { score: number }) =>
@@ -58,15 +58,15 @@ const onCreate = (): Hook => {
 
         let scoreMap: any;
         switch (result.info.bT) {
-          case "MP": {
+          case 'MP': {
             scoreMap = scoreM(raw);
             break;
           }
-          case "IMP": {
+          case 'IMP': {
             scoreMap = scoreI(raw);
             break;
           }
-          case "XIMP": {
+          case 'XIMP': {
             scoreMap = scoreX(raw);
             break;
           }
@@ -96,15 +96,15 @@ const onUpdate = (): Hook => {
         // tourney
         const results$ = context.service;
         const t2Id = result.info.t2;
-        const score2 = result.info.bT === "MP" ? 100 : 0;
+        const score2 = result.info.bT === 'MP' ? 100 : 0;
         const p12: any[] = [];
         // p12.push({ pair: result.info.pairs[0], score: result.mix })
         // p12.push({ pair: result.info.pairs[1], score: score2 - result.mix })
 
         const r2 = await results$.find({
           query: {
-            $select: ["info.pairs", "mix"],
-            "info.t2": t2Id
+            $select: ['info.pairs', 'mix'],
+            'info.t2': t2Id
           },
           paginate: false
         });
@@ -114,7 +114,7 @@ const onUpdate = (): Hook => {
           p12.push({ pair: p.info.pairs[1], score: score2 - p.mix });
         });
         // console.log(p12, r2)
-        const tourneys$ = context.app.service("tourneys");
+        const tourneys$ = context.app.service('tourneys');
         const t2 = await tourneys$.get(t2Id);
         /*
         let t2pairs0 = t2.pairs.map((p: any) => p.state === 0).sort((a: { update: number }, b: { update: number }) => a.update - b.update)  // waiting pairs
@@ -151,7 +151,7 @@ const onUpdate = (): Hook => {
           }
         });
         // console.log('t2', t2)
-        tourneys$.patch(t2Id, { action: "update", pairs: t2.pairs });
+        tourneys$.patch(t2Id, { action: 'update', pairs: t2.pairs });
       }
     }
     return Promise.resolve(context);

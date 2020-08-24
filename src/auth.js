@@ -13,7 +13,7 @@ const auth = {
     return await api.reAuthenticate()
   },
   register (credential) {
-    // await api.authentication.removeAccessToken()
+    // api.removeAccessToken()
     return api.service('users').create(credential)
   },
 

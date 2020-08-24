@@ -18,17 +18,17 @@
 
         <div>v{{ version }}</div>
         <q-btn flat round @click='goTo("home")'>
-          <q-icon name='home' />
+          <q-icon name='home' />Home
           <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Home</q-tooltip>
         </q-btn>
         <q-btn flat round @click='goTo("tops")'>
-          <q-icon name='star' />
+          <q-icon name='star' />Top Players
           <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Top Players</q-tooltip>
         </q-btn>
         <q-btn flat icon='login' @click='goTo("signin")' v-show='!authenticated'>Sign In</q-btn>
         <q-btn flat icon='account_box' @click='goTo("register")' v-show='!authenticated'>Register</q-btn>
         <q-btn flat round @click='goTo("lobby")' v-if='authenticated'>
-          <q-icon name='local_play' />
+          <q-icon name='local_play' />Lobby
           <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Lobby</q-tooltip>
         </q-btn>
         <q-btn
@@ -37,6 +37,7 @@
           dense
           icon='menu_book'
           @click='scoreBook = !scoreBook'
+          label='Scorebook'
           aria-label='ScoreBook'
           v-show='authenticated'
         />
@@ -394,7 +395,7 @@ export default {
     auth
       .login()
       .then(u => {
-        console.log('login', u)
+        // console.log('login', u)
         if (u.user !== this.user) this.setUser(u.user)
         this.$q.notify({
           type: 'positive',
@@ -426,7 +427,7 @@ export default {
   },
   watch: {
     user (u1, u0) {
-      console.log('u', u1, u0)
+      // console.log('u', u1, u0)
       if (u1) {
         if (!u0) {
           this.onServices()
@@ -443,4 +444,8 @@ export default {
   }
 }
 </script>
-<style scoped></style>
+<style scoped>
+.q-btn {
+  text-transform: none;
+}
+</style>

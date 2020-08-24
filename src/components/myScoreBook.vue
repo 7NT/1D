@@ -1,58 +1,49 @@
 <template>
-  <q-list
-    separator
-    bordered
-    dense
-  >
+  <q-list separator bordered dense>
     <q-item>
       <q-item-section>
         <q-btn-toggle
-          v-model="model"
+          v-model='model'
           push
           no-caps
           glossy
-          toggle-color="primary"
-          :options="[
-            {label: 'ScoreBook', value: 0},
-            {label: 'Tourney Points', value: 1}
-          ]"
+          toggle-color='primary'
+          :options='[
+            {label: "ScoreBook", value: 0},
+            {label: "Tourney Points", value: 1}
+          ]'
         />
       </q-item-section>
     </q-item>
     <q-separator />
-    <template v-if="model===0">
-      <q-expansion-item
-        v-for="r in jsResults"
-        :key="r._id"
-        >
-          <template v-slot:header>
-            <q-item-section>
+    <template v-if='model===0'>
+      <q-expansion-item v-for='r in jsResults' :key='r._id'>
+        <template v-slot:header>
+          <q-item-section>
             <q-item-label overline>{{ getBoardInfo(r) }}</q-item-label>
-              <q-item-label caption>
-                {{ getContractInfo(r) }}
-                <q-badge
+            <q-item-label caption>
+              {{ getContractInfo(r) }}
+              <q-badge
                 outline
                 color='secondary'
-                :text-color="getRScore(r) >= 0 ? 'positive' : 'negative'"
-                :label="getScore(r)"
-                />
-              </q-item-label>
-            </q-item-section>
+                :text-color='getRScore(r) >= 0 ? "positive" : "negative"'
+                :label='getScore(r)'
+              />
+            </q-item-label>
+          </q-item-section>
 
-            <q-item-section side top>
-              <q-item-label caption>{{playedDate(r.played)}}</q-item-label>
-            </q-item-section>
-          </template>
-          <q-card>
-            <q-card-section>
-              <myScoreList :tId='r.tId' :bId='r.bId' />
-            </q-card-section>
-          </q-card>
+          <q-item-section side top>
+            <q-item-label caption>{{playedDate(r.played)}}</q-item-label>
+          </q-item-section>
+        </template>
+        <q-card>
+          <q-card-section>
+            <myScoreList :tId='r.tId' :bId='r.bId' />
+          </q-card-section>
+        </q-card>
       </q-expansion-item>
     </template>
-    <template v-else-if="model===1">
-
-    </template>
+    <template v-else-if='model===1'></template>
   </q-list>
 </template>
 
@@ -85,7 +76,7 @@ export default {
       else return `${r.result}`
     },
     getBoardInfo (r) {
-      return r.info.bT + '#' + r.info.bN // + ': ' + this.getPNick(r)
+      return r.info.bId + '#' + r.info.bN // + ': ' + this.getPNick(r)
     },
     getContractInfo (r) {
       return r.info.contract + ' ' + this.getResult(r) + ': ' + this.getRScore(r)

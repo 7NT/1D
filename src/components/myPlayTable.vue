@@ -1,179 +1,134 @@
 <template>
-  <div
-    v-if="!!jsTable"
-    class="fit"
-  >
-    <div class="column jbtable">
-      <div class="col">
-        <div class="row no-wrap">
-          <div class="col-4 items-start">
-            <myBoard
-              :jsTable="jsTable"
-              :mySeat="mySeat"
-              v-on:onTable="onTable"
-            ></myBoard>
+  <div v-if='!!jsTable' class='fit'>
+    <div class='column jbtable'>
+      <div class='col'>
+        <div class='row no-wrap'>
+          <div class='col-4 items-start'>
+            <myBoard :jsTable='jsTable' :mySeat='mySeat' v-on:onTable='onTable'></myBoard>
           </div>
-          <div class="col-5">
-            <div class="column justify-start">
+          <div class='col-5'>
+            <div class='column justify-start'>
               <myHand
-                :handId="1"
-                :jsPlayer="jsPlayer"
-                :jsTable="jsTable"
-                v-on:onTable="onTable"
-                class="myHand"
+                :handId='1'
+                :jsPlayer='jsPlayer'
+                :jsTable='jsTable'
+                v-on:onTable='onTable'
+                class='myHand'
               />
             </div>
           </div>
-          <div class="col-3 items-start column">
+          <div class='col-3 items-start column'>
             <q-list bordered>
-              <q-item-label
-                overline
-                class="bg-primary text-white shadow-2"
-              >
-                <div class="full-width">
-                  <div class="row statusbar">
-                    <q-space />
-                    <q-chip
-                      square
-                      color="green"
-                      text-color="white"
-                      icon="alarm"
-                      :label="myStatus"
-                      class="full-width"
+              <q-item-label overline class='bg-primary text-white shadow-2'>
+                <div class='full-width row statusbar'>
+                  <q-chip square color='green' text-color='white' icon='alarm'>
+                    <myTimer :timer='timer' />
+                  </q-chip>
+                  <q-btn-group push>
+                    <q-btn
+                      class='gt-xs'
+                      size='12px'
+                      flat
+                      dense
+                      icon='live_help'
+                      @click='onCommand(0)'
+                      disable
                     >
-                      <myTimer :timer="timer" />
-                    </q-chip>
-                    <q-space />
-                    <q-btn-group push>
-                      <q-btn
-                        size="12px"
-                        flat
-                        dense
-                        round
-                        icon="more_vert"
-                      >
-                        <q-tooltip>Table Settings</q-tooltip>
-                      </q-btn>
-                      <q-btn
-                        class="gt-xs"
-                        size="12px"
-                        flat
-                        dense
-                        icon="live_help"
-                        @click="onCommand(0)"
-                        disable
-                      >
-                        <q-tooltip>Call Admin...</q-tooltip>
-                      </q-btn>
-                      <q-btn
-                        class="gt-xs"
-                        size="12px"
-                        flat
-                        dense
-                        icon="close"
-                        color="negative"
-                        @click="onCommand(-1)"
-                      >
-                        <q-tooltip>Exit Table</q-tooltip>
-                      </q-btn>
-                    </q-btn-group>
-                  </div>
+                      <q-tooltip>Call Admin...</q-tooltip>
+                    </q-btn>
+                    <q-btn
+                      class='gt-xs'
+                      size='12px'
+                      flat
+                      dense
+                      icon='close'
+                      color='negative'
+                      @click='onCommand(-1)'
+                    >
+                      <q-tooltip>Exit Table</q-tooltip>
+                    </q-btn>
+                    <q-btn size='12px' flat dense round icon='more_vert'>
+                      <q-tooltip>Table Settings</q-tooltip>
+                    </q-btn>
+                  </q-btn-group>
                 </div>
               </q-item-label>
-              <q-item-section v-if="myState > 1">
-                <myBidBox
-                  :jsPlayer="jsPlayer"
-                  :jsTable="jsTable"
-                  class="fit bbox"
-                />
+              <q-item-section v-if='myState > 1'>
+                <q-expansion-item
+                  icon='img:jbIcon/svg/mix.svg'
+                  :label='myContract'
+                  header-class='bg-primary text-white'
+                  expand-icon-class='text-white'
+                >
+                  <myBidBox :jsPlayer='jsPlayer' :jsTable='jsTable' class='fit bbox' />
+                </q-expansion-item>
               </q-item-section>
             </q-list>
           </div>
         </div>
       </div>
-      <div class="col">
-        <div class="row no-wrap">
-          <div class="col-4">
-            <div class="column">
+      <div class='col'>
+        <div class='row no-wrap'>
+          <div class='col-4'>
+            <div class='column'>
               <myHand
-                :handId="4"
-                :jsPlayer="jsPlayer"
-                :jsTable="jsTable"
-                v-on:onTable="onTable"
-                class="myHand justify-center"
+                :handId='4'
+                :jsPlayer='jsPlayer'
+                :jsTable='jsTable'
+                v-on:onTable='onTable'
+                class='myHand justify-center'
               />
             </div>
           </div>
-          <div class="col-4">
-            <div class="column justify-start">
-              <div class="centerbox">
-                <q-card
-                  class="bbox pbox"
-                  v-if="myState === 1"
-                >
+          <div class='col-4'>
+            <div class='column items-center justify-center'>
+              <div class='bbox'>
+                <q-card class='fit' v-if='myState === 1'>
                   <q-card>
-                    <myBidBox
-                      :jsPlayer="jsPlayer"
-                      :jsTable="jsTable"
-                    />
+                    <myBidBox :jsPlayer='jsPlayer' :jsTable='jsTable' />
                   </q-card>
                 </q-card>
-                <q-card
-                  flat
-                  class="pbox transparent"
-                  v-if="myState >= 2"
-                >
-                  <myPlayBox
-                    :jsPlayer="jsPlayer"
-                    :jsTable="jsTable"
-                    :review="false"
-                  />
+                <q-card flat class='fit transparent' v-if='myState >= 2'>
+                  <myPlayBox :jsPlayer='jsPlayer' :jsTable='jsTable' :review='false' />
                 </q-card>
                 <q-space />
               </div>
             </div>
           </div>
-          <div class="col-4">
-            <div class="column">
+          <div class='col-4'>
+            <div class='column'>
               <myHand
-                :handId="2"
-                :jsPlayer="jsPlayer"
-                :jsTable="jsTable"
-                v-on:onTable="onTable"
-                class="myHand justify-start"
+                :handId='2'
+                :jsPlayer='jsPlayer'
+                :jsTable='jsTable'
+                v-on:onTable='onTable'
+                class='myHand justify-start'
               />
             </div>
           </div>
         </div>
       </div>
-      <div class="col-auto">
-        <div class="row items-end no-wrap">
-          <div class="col-3 column">
-            <div class="justify-end q-pa-sm">
-              <myTricks
-                :jsPlayer="jsPlayer"
-                :jsTable="jsTable"
-              />
+      <div class='col-auto'>
+        <div class='row items-end no-wrap'>
+          <div class='col-3 column'>
+            <div class='justify-end q-pa-sm'>
+              <myTricks :jsPlayer='jsPlayer' :jsTable='jsTable' />
             </div>
           </div>
-          <div class="col-5">
-            <div class="column">
+          <div class='col-5'>
+            <div class='column'>
               <myHand
-                :handId="3"
-                :jsPlayer="jsPlayer"
-                :jsTable="jsTable"
-                v-on:onTable="onTable"
-                class="myHand justify-center"
+                :handId='3'
+                :jsPlayer='jsPlayer'
+                :jsTable='jsTable'
+                v-on:onTable='onTable'
+                class='myHand justify-center'
               />
             </div>
           </div>
-          <div class="col-4 column">
-            <div class="justify-end">
-              <myBid
-                :jsPlayer="jsPlayer"
-                :jsTable="jsTable"
-                v-on:onTable="onTable"
-              />
+          <div class='col-4 column'>
+            <div class='justify-end'>
+              <myBid :jsPlayer='jsPlayer' :jsTable='jsTable' v-on:onTable='onTable' />
             </div>
           </div>
         </div>
@@ -246,6 +201,12 @@ export default {
         default:
           return null
       }
+    },
+    myContract () {
+      let c = this.jsTable.bids ? this.jsTable.bids.info.contract : null
+      if (this.jsTable.bids.info.XX) c += 'XX'
+      else if (this.jsTable.bids.info.X) c += 'X'
+      return c
     },
     myAlert () {
       try {
@@ -497,26 +458,19 @@ export default {
 <!-- Notice lang='scss' -->
 <style scoped>
 .jbtable {
-  margin: 2px;
+  margin: 0px;
   min-height: 393px;
-  background-image: url("~assets/imgs/jbbg.jpeg");
+  background-image: url('~assets/imgs/jbbg.jpeg');
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-size: cover; /* Resize the background image to cover the entire container */
 }
-.centerbox {
-  align-items: center;
-  justify-content: center;
-}
 .bbox {
   margin: auto;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
   z-index: 100;
-}
-.pbox {
-  max-height: 200px;
-  max-width: 240px;
-  margin: auto;
-  overflow-y: auto;
 }
 .statusbar {
   min-width: 200px;

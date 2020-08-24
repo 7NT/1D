@@ -58,7 +58,7 @@
       <myChat :chatTo='myRoom' />
     </q-footer>
 
-    <q-page-sticky position='top-right' :offset='[18, 18]'>
+    <q-page-sticky position='top-right' :offset='[18, 0]'>
       <q-btn
         round
         color='accent'
@@ -134,7 +134,7 @@ export default {
       return this.jsTables
     },
     mySeat () {
-      return this.jsPlayer ? this.jsPlayer.seat : { sId: 0 }
+      return this.jsPlayer ? this.jsPlayer.seat : { id: '#Lobby', sId: 0 }
     },
     myRoom () {
       switch (this.rId) {

@@ -1,20 +1,20 @@
 <template>
-  <q-toolbar class="bg-primary text-white rounded-borders">
+  <q-toolbar class='bg-primary text-white rounded-borders'>
     <q-space />
-    <div class="full-width">
+    <div class='full-width'>
       <q-input
         dark
         dense
         standout
         autofocus
         clearable
-        color="silver"
-        label="Chat"
-        v-model="chat"
-        icon="chat"
-        clear-icon="clear"
-        :disable="!canChat"
-        @keypress="onChat"
+        color='silver'
+        label='Chat'
+        v-model='chat'
+        icon='chat'
+        clear-icon='clear'
+        :disable='!bChat'
+        @keypress='onChat'
       />
     </div>
   </q-toolbar>
@@ -36,7 +36,8 @@ export default {
   computed: {
     ...mapGetters('jstore', ['jsPlayer']),
 
-    canChat () {
+    bChat () {
+      console.log('chat', this.chatTo)
       if (this.chatTo.id.startsWith('#')) return true
       else if (this.chatTo.seat.tId === this.jsPlayer.seat.tId) {
         const s0 = this.chatTo.seat.sId || 0
@@ -48,6 +49,7 @@ export default {
       return true
     },
     chatWho () {
+      console.log('chatWho', this.chatTo)
       if (this.chatTo.id.startsWith('#')) return this.chatTo.id
       return `@${this.chatTo.id}`
     }

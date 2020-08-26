@@ -8,6 +8,7 @@ export default function (app: Application) {
     return
   }
   // const userService = app.service('users')
+  const tables$ = app.service('tables')
   const players$ = app.service('players')
 
   // Join a channel given a user and connection
@@ -55,7 +56,7 @@ export default function (app: Application) {
     }
   })
 
-  app.on('login', (authResult: any, { connection }: any) => {
+  app.on('login', async (authResult: any, { connection }: any) => {
     // connection can be undefined if there is no
     // real-time connection, e.g. when logging in via REST
     // console.log('login', authResult, connection);
@@ -63,7 +64,7 @@ export default function (app: Application) {
       // Obtain the logged in user from the connection
       const user = connection.user
       user.state = 1
-      // console.log('login', user)
+      console.log('login', user)
       joinChannels(user, connection)
 
       const player = {
@@ -73,11 +74,22 @@ export default function (app: Application) {
         avatar: user.avatar,
         status: user.status || 0,
         state: 0,
-        seat: { tId: null, sId: 0 }
+        seat: { sId: 0 }
       }
-      const dt = new Date().getTime() - user.logoutAt
-      const mm = Math.floor(dt / 1000 / 60)
-      if (mm < 1) player.seat = user.seat
+      try {
+        if (user.seat.sId > 0 && user.seat.sId < 5) {
+          const dt = new Date().getTime() - user.logoutAt
+          const mm = Math.floor(dt / 1000 / 60)
+          if (mm < 1) {
+            const t1 = await tables$.get(user.seat.tId)
+            if (t1.id === user.seat.tId) {
+              player.seat = user.seat
+            }
+          }
+        }
+      } catch (err) {
+        // console.log('login', err)
+      }
       players$.create(player)
     }
   })

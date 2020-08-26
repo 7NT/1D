@@ -1,6 +1,9 @@
 <template>
   <q-layout view='lHh Lpr lFf'>
-    <q-header elevated v-show='!$q.fullscreen.isActive'>
+    <q-header
+      elevated
+      v-show='!$q.fullscreen.isActive'
+    >
       <q-toolbar>
         <q-btn
           flat
@@ -17,19 +20,54 @@
         </q-toolbar-title>
 
         <div>v{{ version }}</div>
-        <q-btn flat round @click='goTo("home")'>
+        <q-btn
+          flat
+          round
+          @click='goTo("home")'
+        >
           <q-icon name='home' />Home
-          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Home</q-tooltip>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 10]'
+          >Home</q-tooltip>
         </q-btn>
-        <q-btn flat round @click='goTo("tops")'>
+        <q-btn
+          flat
+          round
+          @click='goTo("tops")'
+        >
           <q-icon name='star' />Top Players
-          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Top Players</q-tooltip>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 10]'
+          >Top Players</q-tooltip>
         </q-btn>
-        <q-btn flat icon='login' @click='goTo("signin")' v-show='!authenticated'>Sign In</q-btn>
-        <q-btn flat icon='account_box' @click='goTo("register")' v-show='!authenticated'>Register</q-btn>
-        <q-btn flat round @click='goTo("lobby")' v-if='authenticated'>
+        <q-btn
+          flat
+          icon='login'
+          @click='goTo("signin")'
+          v-show='!authenticated'
+        >Sign In</q-btn>
+        <q-btn
+          flat
+          icon='account_box'
+          @click='goTo("register")'
+          v-show='!authenticated'
+        >Register</q-btn>
+        <q-btn
+          flat
+          round
+          @click='goTo("lobby")'
+          v-if='authenticated'
+        >
           <q-icon name='local_play' />Lobby
-          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Lobby</q-tooltip>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 10]'
+          >Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
@@ -41,20 +79,44 @@
           aria-label='ScoreBook'
           v-show='authenticated'
         />
-        <q-btn flat round @click='goTo("profile")' v-if='authenticated'>
+        <q-btn
+          flat
+          round
+          @click='goTo("profile")'
+          v-if='authenticated'
+        >
           <q-avatar class='gt-xs'>
             <img :src='user.avatar' />
           </q-avatar>
-          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Profile</q-tooltip>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 10]'
+          >Profile</q-tooltip>
         </q-btn>
-        <q-btn flat round @click='signout' v-show='authenticated'>
+        <q-btn
+          flat
+          round
+          @click='signout'
+          v-show='authenticated'
+        >
           <q-icon name='exit_to_app' />
-          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Signout</q-tooltip>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 10]'
+          >Signout</q-tooltip>
         </q-btn>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model='playerList' v-if='authenticated' bordered elevated content-class='bg-grey-1'>
+    <q-drawer
+      v-model='playerList'
+      v-if='authenticated'
+      bordered
+      elevated
+      content-class='bg-grey-1'
+    >
       <myP1List />
     </q-drawer>
 
@@ -175,7 +237,7 @@ export default {
       // this.setTables([])
       // find
       tables$.find().then(response => {
-        console.log('tabales', response)
+        console.log('tables', response)
         this.setTables(response.data)
         response.data.forEach(t => this.onTable(t))
       })
@@ -238,19 +300,12 @@ export default {
         this.addPlayer(p1)
         if (p1.id === this.user._id) {
           // rejoin
-          try {
-            const { seat } = p1
-            const t1 = this.jsTableById(seat.tId) // if table still exists
-            if (t1.id === seat.tId) {
-              seat.action = 'resit'
-              seat.tId0 = null
-              this.onTableSit(p1.id, { seat })
-            }
-          } catch (err) {
-            // p1.seat = { sId: 0 }
-            console.error(err)
+          const { seat } = p1
+          if (jbIsPlayer(seat.sId)) {
+            seat.action = 'resit'
+            seat.tId0 = null
+            this.onTableSit(p1.id, { seat })
           }
-          // p1 = JSON.parse(JSON.stringify(p1))
         } else {
           this.$q.notify({
             color: 'into',

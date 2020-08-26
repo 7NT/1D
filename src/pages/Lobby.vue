@@ -155,6 +155,7 @@ export default {
       if (b) this.onPlayer({ sId: 0 })
     },
     onPlayer (seat) {
+      console.log('onPlayer', seat)
       if (!seat) {
         this.rId = 0
         seat = { action: 'part', tId: null, sId: 0 }
@@ -205,12 +206,13 @@ export default {
     },
     mySeat (n, o) {
       try {
+        console.log('myseat', n, o)
         if (n.tId) {
           this.rooms[1].room = n.tId
           this.rId = 1
         } else this.rId = 0
       } catch (err) {
-        // console.err(err)
+        console.err(err)
       }
     },
     jsSpeech (s) {

@@ -1,33 +1,33 @@
 <template>
-  <div class="fit" v-if="isMyTurn()">
-    <div class="column justify-end">
-      <div class="col row">
+  <div class='fit' v-if='isMyTurn()'>
+    <div class='column justify-end'>
+      <div class='col row'>
         <q-btn-group push>
           <q-fab
             square
             glossy
             unelevated
             hide-icon
-            v-for="n of 7"
-            :key="n"
-            v-show="bidN(n)"
-            :label="n"
-            label-position="left"
-            type="button"
-            direction="up"
-            class="bg-teal"
-            padding="sm"
-            style="width:32px"
+            v-for='n of 7'
+            :key='n'
+            v-show='bidN(n)'
+            :label='n'
+            label-position='left'
+            type='button'
+            direction='up'
+            class='bg-teal'
+            padding='sm'
+            style='width:32px'
           >
             <q-fab-action
-              v-for="s in suits"
-              :key="s.id"
+              v-for='s in suits'
+              :key='s.id'
               square
-              v-show="isBid(n, s.id)"
-              icon="null"
-              :color="s.color"
+              v-show='isBid(n, s.id)'
+              icon='null'
+              :color='s.color'
               v-close-popup
-              @click="onBid(`${n}${s.suit}`)"
+              @click='onBid(`${n}${s.suit}`)'
             >
               {{ bidNS(n, s.suit) }}
               <q-tooltip>{{n}} {{ getSuitName(s.suit) }}</q-tooltip>
@@ -36,42 +36,42 @@
           <q-separator spaced inset vertical />
         </q-btn-group>
       </div>
-      <div class="col row" style="height:30px">
-        <q-btn-group dense class="full-width">
+      <div class='col row' style='height:30px'>
+        <q-btn-group dense class='full-width'>
           <q-btn
             glossy
-            label="X"
-            color="negative"
-            :disable="X"
-            @click="onBid('X')"
-            style="width:20%"
+            label='X'
+            color='negative'
+            :disable='X'
+            @click='onBid("X")'
+            style='width:20%'
           />
           <q-btn
             glossy
-            label="XX"
-            color="warning"
-            :disable="XX"
-            @click="onBid('XX')"
-            style="width:25%"
+            label='XX'
+            color='warning'
+            :disable='XX'
+            @click='onBid("XX")'
+            style='width:25%'
           />
-          <q-btn glaosy label="Pass" color="primary" @click="onBid('pass')" style="width:45%" />
+          <q-btn glaosy label='Pass' color='primary' @click='onBid("pass")' style='width:45%' />
         </q-btn-group>
       </div>
-      <div class="col row items-center">
-        <q-btn-group dense class="full-width" style="height:30px">
+      <div class='col row items-center'>
+        <q-btn-group dense class='full-width' style='height:30px'>
           <q-btn
             glossy
-            :label="`Bid: ${bidding}`"
-            :disable="!bidding"
-            color="positive"
-            @click="onBid2()"
+            :label='`Bid: ${bidding}`'
+            :disable='!bidding'
+            color='positive'
+            @click='onBid2()'
           />
           <q-btn
             glossy
-            :label="`Alert: ${bidding}`"
-            :disable="!bidding"
-            color="negative"
-            @click="onAlert2()"
+            :label='`Alert: ${bidding}`'
+            :disable='!bidding'
+            color='negative'
+            @click='onAlert2()'
           />
         </q-btn-group>
       </div>
@@ -253,7 +253,7 @@ export default {
         {
           const n = jbV2N(w)
           const s = jbV2S(bid12[1])
-          console.log(w, n, s)
+          // console.log(w, n, s)
           switch (s) {
             case 'c':
               if (this.isBid(n, 1)) return n + '♣'

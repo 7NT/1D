@@ -17,7 +17,7 @@
           </template>
           <template v-else>
             <q-card-section v-if='result'>
-              <myScoreList :tId='result.tId' :bId='result.bId' />
+              <myScoreList :result='result' />
             </q-card-section>
           </template>
         </q-card>
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-// import { mapActions } from 'vuex'
+import { mapGetters } from 'vuex'
 import { jbIsPlayer, jbSeatIcon } from 'src/jbPlayer'
 
 import myPlayBox from 'src/components/myPlayBox'
@@ -63,7 +63,7 @@ export default {
   },
   components: { myPlayBox, myScoreList },
   computed: {
-    // ...mapGetters('jstore', ['jsPlayer', 'jsTable']),
+    ...mapGetters('jstore', ['jsResultById']),
     myState () {
       return this.jsTable.state
     },
@@ -112,10 +112,7 @@ export default {
   watch: {
     myState (s) {
       if (s === 3) { // review
-        this.result = {
-          tId: this.jsTable.id,
-          bId: this.jsTable.board._id
-        }
+        this.result = this.jsResultById(this.jsTable.id)
       }
     }
   },

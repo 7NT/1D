@@ -170,13 +170,12 @@ export default {
           })
         })
     },
-    async onServices () {
+    onServices () {
+      console.log('onServices')
+      // this.setTables([])
       // find
-      await players$.find().then(response => {
-        this.setPlayers(response.data)
-      })
-      await tables$.find().then(response => {
-        // console.log('tabales', response)
+      tables$.find().then(response => {
+        console.log('tabales', response)
         this.setTables(response.data)
         response.data.forEach(t => this.onTable(t))
       })
@@ -195,7 +194,9 @@ export default {
       teams$.find().then(response => {
         this.setTeams(response.data)
       })
-
+      players$.find().then(response => {
+        this.setPlayers(response.data)
+      })
       chats$.on('created', chat => {
         // if (chat.to === '#Lobby') this.myChats.unshift(chat)
         if (chat.to === `@${this.user._id}`) {
@@ -236,19 +237,20 @@ export default {
         console.log('create player', p1, this.user)
         this.addPlayer(p1)
         if (p1.id === this.user._id) {
-          const { seat0 } = this.user
-          if (seat0 && seat0.tId) {
-            // rejoin
-            const t1 = this.jsTableById(seat0.tId) // if table still exists
-            if (t1) {
-              const seat = {
-                tId: seat0.tId,
-                sId: seat0.sId,
-                tId0: null
-              }
+          // rejoin
+          try {
+            const { seat } = p1
+            const t1 = this.jsTableById(seat.tId) // if table still exists
+            if (t1.id === seat.tId) {
+              seat.action = 'resit'
+              seat.tId0 = null
               this.onTableSit(p1.id, { seat })
             }
+          } catch (err) {
+            // p1.seat = { sId: 0 }
+            console.error(err)
           }
+          // p1 = JSON.parse(JSON.stringify(p1))
         } else {
           this.$q.notify({
             color: 'into',
@@ -317,6 +319,7 @@ export default {
         const p = this.jsPlayerById(this.user.nick)
 
         const seat = {
+          action: 'resit',
           tId: t1.id,
           sId: sId + 1,
           tId0: p.tId,
@@ -326,6 +329,7 @@ export default {
       }
     },
     onTableSit (pId, seat) {
+      console.log('resit', pId, seat)
       players$.patch(pId, seat)
     },
     onRequest (chat) {
@@ -416,7 +420,7 @@ export default {
     // On logout
     auth.onLogout(() => {
       console.log('logout')
-      this.goTo('home')
+      this.goTo('tops')
       this.setUser(null)
       // auth.removeAccessToken()
     })
@@ -427,7 +431,6 @@ export default {
   },
   watch: {
     user (u1, u0) {
-      // console.log('u', u1, u0)
       if (u1) {
         if (!u0) {
           this.onServices()

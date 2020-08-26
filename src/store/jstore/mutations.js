@@ -7,7 +7,6 @@ export const setPlayers = (state, players) => {
 }
 
 export const setTables = (state, tables) => {
-  state.jsTables = tables
   const lobby = {
     id: null,
     name: '#Lobby',
@@ -15,7 +14,8 @@ export const setTables = (state, tables) => {
     players: 0,
     seats: [null, null, null, null]
   }
-  state.jsTables.unshift(lobby)
+  tables.unshift(lobby)
+  state.jsTables = tables
 }
 
 export const setResults = (state, results) => {

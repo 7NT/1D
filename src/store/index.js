@@ -15,7 +15,7 @@ Vue.use(Vuex)
  * async/await or return a Promise which resolves
  * with the Store instance.
  */
-
+// export const strict = false
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {

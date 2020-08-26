@@ -57,7 +57,7 @@
                 <q-expansion-item
                   icon='img:jbIcon/svg/mix.svg'
                   :label='myContract'
-                  header-class='bg-primary text-white'
+                  header-class='bg-info text-white'
                   expand-icon-class='text-white'
                 >
                   <myBidBox :jsPlayer='jsPlayer' :jsTable='jsTable' class='fit bbox' />
@@ -225,6 +225,7 @@ export default {
     ...mapActions('jstore', ['addTable', 'addChat']),
 
     onTable (action) {
+      console.log('onTable', action)
       switch (action.action) {
         case 'sit': {
           this.$emit('onPlayer', action.seat)

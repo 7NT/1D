@@ -38,7 +38,7 @@
         </template>
         <q-card>
           <q-card-section>
-            <myScoreList :tId='r.tId' :bId='r.bId' />
+            <myScoreList :result='r' />
           </q-card-section>
         </q-card>
       </q-expansion-item>
@@ -76,7 +76,7 @@ export default {
       else return `${r.result}`
     },
     getBoardInfo (r) {
-      return r.info.bId + '#' + r.info.bN // + ': ' + this.getPNick(r)
+      return r.info.id + '#' + r.info.bN
     },
     getContractInfo (r) {
       return r.info.contract + ' ' + this.getResult(r) + ': ' + this.getRScore(r)

@@ -4,13 +4,12 @@
       dense
       square
       hide-bottom
-      separator="cell"
-      :data="myScoreData"
-      :columns="columns"
-      :visible-columns="myColumns"
-      row-key="row"
-    >
-    </q-table>
+      separator='cell'
+      :data='myScoreData'
+      :columns='columns'
+      :visible-columns='myColumns'
+      row-key='row'
+    ></q-table>
   </div>
 </template>
 
@@ -19,7 +18,7 @@ import { results$ } from 'src/api'
 
 export default {
   name: 'myScoreList',
-  props: ['tId', 'bId'],
+  props: ['result'],
 
   data: () => ({
     seatName: ['N', 'E', 'S', 'W'],
@@ -53,22 +52,29 @@ export default {
     myScoreData: []
   }),
   mounted () {
-    if (this.bId) {
-      results$.find({ query: { bId: this.bId } })
+    if (this.result) {
+      results$.find({
+        query:
+        {
+          'info.id': this.result.info.id,
+          'info.bN': this.result.info.bN,
+          'info.bT': this.result.info.bT
+        }
+      })
         .then(response => {
           // console.log('r', response)
           response.data.forEach(d => {
-            let result
-            if (d.result === 0) result = '='
-            else if (d.result > 0) result = '+' + d.result
-            else result = d.result
+            let r
+            if (d.result === 0) r = '='
+            else if (d.result > 0) r = '+' + d.result
+            else r = d.result
 
             let by
             if (d.info.by === 0) by = 'pass all'
             else if (d.info.by % 2) by = this.seatName[d.info.by - 1] + ': ' + d.score
             else by = this.seatName[d.info.by - 1] + ': ' + (-d.score)
 
-            const contract = d.info.contract + ' ' + result
+            const contract = d.info.contract + ' ' + r
             const lead = d.lead
             const ew = d.info.bT === 'MP' ? 100 - d.mix : -d.mix
             const scoreData = {

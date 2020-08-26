@@ -203,9 +203,6 @@ export default {
     },
     state () {
       return this.jsTable.state
-    },
-    myTid () {
-      return this.jsTable.id
     }
   },
   methods: {
@@ -279,9 +276,9 @@ export default {
         this.onBT(bt)
       }
     },
-    myTid (n, o) {
-      if (o) {
-        const r = this.jsResultById(o)
+    state (s) {
+      if (s === 3) {
+        const r = this.jsResultById(this.jsTable.id)
         if (r) {
           for (let i = 0; i < 2; i++) {
             let mix = r.mix

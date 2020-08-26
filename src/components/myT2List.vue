@@ -283,7 +283,7 @@ export default {
               pairs.push(p0)
             } else pairs.push(p)
           })
-          console.log(p2, pairs)
+          // console.log(p2, pairs)
           this.$emit('onPairs', { _id: this.t2._id, pairs, state: this.t2.state })
           break
         }

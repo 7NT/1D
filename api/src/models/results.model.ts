@@ -2,12 +2,12 @@
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
-import { Application } from '../declarations';
+import { Application } from '../declarations'
 
 export default function (app: Application) {
-  const modelName = 'results';
-  const mongooseClient = app.get('mongooseClient');
-  const { Schema } = mongooseClient;
+  const modelName = 'results'
+  const mongooseClient = app.get('mongooseClient')
+  const { Schema } = mongooseClient
   const schema = new Schema({
     tId: { type: String },
     bId: { type: String },
@@ -20,7 +20,7 @@ export default function (app: Application) {
       lead: { type: String },
       cc: { type: Array },
       pairs: { type: Array },
-      t2: {type: String }
+      id: { type: String }
     },
     players: { type: Array },  //JSON string
     bids: { type: String },
@@ -29,12 +29,12 @@ export default function (app: Application) {
     score: { type: Number },
     mix: { type: Number },
     played: { type: Date, default: Date.now }
-  });
+  })
 
   // This is necessary to avoid model compilation errors in watch mode
   // see https://mongoosejs.com/docs/api/connection.html#connection_Connection-deleteModel
   if (mongooseClient.modelNames().includes(modelName)) {
-    mongooseClient.deleteModel(modelName);
+    mongooseClient.deleteModel(modelName)
   }
-  return mongooseClient.model(modelName, schema);
+  return mongooseClient.model(modelName, schema)
 }

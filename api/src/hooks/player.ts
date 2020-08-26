@@ -13,11 +13,11 @@ const onSit = (): Hook => {
   }
 }
 
-async function playerSit (context: any, seat: any) {
-  const { connection } = context.params
-  const { user } = context.params
+async function playerSit(context: any, seat: any) {
+  const { connection, user } = context.params
 
   if (connection) {
+    console.log('sit', seat)
     if (seat.tId0) {
       if (seat.tId0 !== seat.tId) {  //leave table
         playerPart(context.app, user.nick, seat)
@@ -37,7 +37,7 @@ async function playerSit (context: any, seat: any) {
   return context.data
 }
 
-async function tableJoin (app: any, user: any, seat: any) {
+async function tableJoin(app: any, user: any, seat: any) {
   const tables$ = app.service('tables')
 
   let t1: { _id: any, seats: any[]; ready: any[]; state: number; id: any }
@@ -67,7 +67,7 @@ async function tableJoin (app: any, user: any, seat: any) {
   return t1
 }
 
-async function newTable (tables$: any, user: any, seat: any) {
+async function newTable(tables$: any, user: any, seat: any) {
   const sayc = {
     title: 'SAYC',
     link: 'https://bridgewinners.com/convention-card/print/modern-standard-american-2/4563'
@@ -90,47 +90,54 @@ async function newTable (tables$: any, user: any, seat: any) {
   return await tables$.create(tdata)
 }
 
-async function playerPart (app: any, nick: any, seat: any) {
+async function playerPart(app: any, nick: any, seat: any) {
   const tId0 = seat.tId0  // mongoose.Types.ObjectId(seat.tId)
   if (!tId0) return
   const tables$ = app.service('tables')
-  let t0 = await tables$.get(tId0)
 
-  if (t0.players < 2) {   // free seat
-    tables$.remove(tId0)
-  } else {
-    let tdata = {
-      players: t0.players - 1,
-      seats: t0.seats,
-      ready: t0.ready
-    }
-    if (jbIsPlayer(seat.sId0)) {
-      let p = tdata.seats[seat.sId0 - 1]
-      if (p === nick) {
-        tdata.seats[seat.sId0 - 1] = null
-        if (t0.state < 1) tdata.ready[seat.sId0 - 1] = 0
+  try {
+    let t0 = await tables$.get(tId0)
+
+    if (t0.players < 2) {   // free seat
+      tables$.remove(tId0)
+    } else {
+      let tdata = {
+        players: t0.players - 1,
+        seats: t0.seats,
+        ready: t0.ready
       }
-      let nicks = t0.seats.filter((x: any) => x != null)
-      if (nicks.length < 1) {
-        t0.state = 0
-        t0.ready = [0, 0, 0, 0]
+      if (jbIsPlayer(seat.sId0)) {
+        let p = tdata.seats[seat.sId0 - 1]
+        if (p === nick) {
+          tdata.seats[seat.sId0 - 1] = null
+          if (t0.state < 1) tdata.ready[seat.sId0 - 1] = 0
+        }
+        let nicks = t0.seats.filter((x: any) => x != null)
+        if (nicks.length < 1) {
+          t0.state = 0
+          t0.ready = [0, 0, 0, 0]
+        }
       }
+      tables$.patch(tId0, tdata)
     }
-    tables$.patch(tId0, tdata)
+  } catch (err) {
+    // console.log('part', err)
+    // throw new Error('Table Notfound')
   }
 }
 
 const onLogout = (): Hook => {
   return async (context: HookContext) => {
     const pId = context.id
+    // console.log('logout', context)
     if (pId) {
       try {
         let player = await context.service.get(pId)
         if (player) {
           const users$ = context.app.service('users')
           const { seat } = player
-          seat.tId0 = seat.tId,
-            seat.sId0 = seat.sId
+          seat.tId0 = seat.tId
+          seat.sId0 = seat.sId
 
           playerPart(context.app, player.nick, seat)
           const userData = { seat, state: 0, logoutAt: new Date().getTime() }

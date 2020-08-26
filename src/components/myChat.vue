@@ -37,7 +37,6 @@ export default {
     ...mapGetters('jstore', ['jsPlayer']),
 
     bChat () {
-      console.log('chat', this.chatTo)
       if (this.chatTo.id.startsWith('#')) return true
       else if (this.chatTo.seat.tId === this.jsPlayer.seat.tId) {
         const s0 = this.chatTo.seat.sId || 0
@@ -49,7 +48,6 @@ export default {
       return true
     },
     chatWho () {
-      console.log('chatWho', this.chatTo)
       if (this.chatTo.id.startsWith('#')) return this.chatTo.id
       return `@${this.chatTo.id}`
     }

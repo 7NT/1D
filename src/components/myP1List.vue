@@ -66,6 +66,7 @@
               {{p.nick}}
               <q-badge color='orange' align='top' transparent v-if='newMessage(p)'>∞</q-badge>
             </div>
+            <q-item-label caption>{{t1Name(p)}}</q-item-label>
           </q-item-section>
 
           <q-item-section avatar side>
@@ -152,9 +153,9 @@ export default {
   methods: {
     ...mapActions('jstore', ['setJsMap']),
 
-    t1Name (t) {
-      if (t) {
-        const t1 = this.jsTableById(t)
+    t1Name (p) {
+      if (p.seat) {
+        const t1 = this.jsTableById(p.seat.tId)
         if (t1) return t1.name
       }
       return '#Lobby'

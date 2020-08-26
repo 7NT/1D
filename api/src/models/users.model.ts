@@ -22,7 +22,12 @@ export default function (app: Application) {
       country: { type: String },
       flag: { type: String },
       status: { type: Number, default: 0 },
-      state: { type: Number, default: 0 }
+      state: { type: Number, default: 0 },
+      logoutAt: { type: Date },
+      seat: {
+        tId: { type: String },
+        sId: { type: Number },
+      }
     },
     {
       timestamps: true

@@ -219,7 +219,6 @@ export default {
   },
   mounted () {
     this.title = this.isRegistration() ? 'Register' : 'Sign In'
-    // auth.removeAccessToken()
   },
   beforeDestroy () { }
 }

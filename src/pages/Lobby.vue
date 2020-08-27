@@ -155,7 +155,7 @@ export default {
       if (b) this.onPlayer({ sId: 0 })
     },
     onPlayer (seat) {
-      console.log('onPlayer', seat)
+      // console.log('onPlayer', seat)
       if (!seat) {
         this.rId = 0
         seat = { action: 'part', tId: null, sId: 0 }
@@ -206,7 +206,6 @@ export default {
     },
     mySeat (n, o) {
       try {
-        console.log('myseat', n, o)
         if (n.tId) {
           this.rooms[1].room = n.tId
           this.rId = 1
@@ -261,8 +260,8 @@ export default {
     }
   },
   mounted () {
-    this.$parent.page = 'Lobby'
-    // console.log('lobby', this.user, !this.user.nick)
+    // this.$parent.page = 'Lobby'
+    console.log('lobby', this.jsPlayer)
     // window.addEventListener('orientationchange', this.handleOrientationChange)
     if (!this.user.nick) this.$router.push({ name: 'profile' })
   },

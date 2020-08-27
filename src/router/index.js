@@ -35,8 +35,8 @@ export default function (/* { store, ssrContext } */) {
     } else {
       if (to.meta.requiresAuth && !auth.authenticated()) {
         auth.reAuthenticate()
-        // console.log('ReAuthenticate')
       } else console.log('Not authenticated')
+
       // Cancel the route change and redirect back to the Home page
       next({
         path: '/'

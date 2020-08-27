@@ -17,7 +17,7 @@ async function playerSit(context: any, seat: any) {
   const { connection, user } = context.params
 
   if (connection) {
-    console.log('sit', seat)
+    // console.log('sit', seat)
     if (seat.tId0) {
       if (seat.tId0 !== seat.tId) {  //leave table
         playerPart(context.app, user.nick, seat)

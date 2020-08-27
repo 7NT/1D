@@ -80,7 +80,7 @@ export default function (app: Application) {
         if (user.seat.sId > 0 && user.seat.sId < 5) {
           const dt = new Date().getTime() - user.logoutAt
           const mm = Math.floor(dt / 1000 / 60)
-          if (mm < 1) {
+          if (mm < 5) {
             const t1 = await tables$.get(user.seat.tId)
             if (t1.id === user.seat.tId) {
               player.seat = user.seat

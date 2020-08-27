@@ -3,13 +3,19 @@
     <q-table
       dense
       square
-      hide-bottom
       separator='cell'
       :data='myScoreData'
       :columns='columns'
       :visible-columns='myColumns'
-      row-key='row'
-    ></q-table>
+      row-key='id'
+    >
+      <template v-slot:body-cell='props'>
+        <q-td :props='props' :class='props.row.myClass'>
+          {{ props.value }}
+          <q-tooltip>{{ props }}</q-tooltip>
+        </q-td>
+      </template>
+    </q-table>
   </div>
 </template>
 
@@ -29,13 +35,13 @@ export default {
         // unique id
         // identifies column
         // (used by pagination.sortBy, "body-cell-[name]" slot, ...)
-        name: 'tId',
+        name: 'id',
 
         // label for header
-        label: 'tId',
+        label: 'id',
 
         // row Object property to determine value for this column
-        field: 'tId',
+        field: 'id',
         // OR field: row => row.some.nested.prop,
 
         // (optional) if we use visible-columns, this col will always be visible
@@ -48,22 +54,40 @@ export default {
       { name: 'result', label: 'Result', field: 'result' },
       { name: 'ew', label: 'EW', field: 'ew' }
     ],
-    myColumns: ['ns', 'contract', 'by', 'lead', 'ew'],
+    myColumns: ['ns', 'contract', 'by', 'played', 'ew'],
     myScoreData: []
   }),
+  computed: {
+    scoreFormat () {
+      return this.result.info.bT === 'MP' ? '%' : ''
+    },
+    ewFormat () {
+      return this.result.info.bT === 'MP' ? 100 : 0
+    }
+  },
   mounted () {
     if (this.result) {
       results$.find({
         query:
         {
+          $select: ['info.contract', 'info.by', 'result', 'score', 'mix', 'tId'],
           'info.id': this.result.info.id,
           'info.bN': this.result.info.bN,
-          'info.bT': this.result.info.bT
+          'info.bT': this.result.info.bT,
+          $sort: { mix: -1 }
         }
       })
         .then(response => {
-          // console.log('r', response)
-          response.data.forEach(d => {
+          const scores = []
+          response.data.forEach(function (d) {
+            var i = scores.findIndex(x => ((x.info.contract === d.info.contract) && (x.info.by === d.info.by) && (x.result === d.result)))
+            if (i <= -1) {
+              scores.push(d)
+            }
+          })
+          // console.log('r', response.data, scores)
+
+          scores.forEach(d => {
             let r
             if (d.result === 0) r = '='
             else if (d.result > 0) r = '+' + d.result
@@ -76,15 +100,18 @@ export default {
 
             const contract = d.info.contract + ' ' + r
             const lead = d.lead
-            const ew = d.info.bT === 'MP' ? 100 - d.mix : -d.mix
+            const ew = this.ewFormat - d.mix
+            const myClass = (d.tId === this.result.tId) ? 'myScore' : 'scoreClass'
             const scoreData = {
+              id: d._id,
               ns: d.mix,
               contract,
               by,
               lead,
-              ew
+              ew,
+              myClass
             }
-            // console.log('d', scoreData)
+            // console.log('d', d, scoreData)
             this.myScoreData.push(scoreData)
           })
         })
@@ -94,4 +121,10 @@ export default {
 </script>
 
 <style scoped>
+.scoreClass {
+  color: black;
+}
+.myScore {
+  color: blue;
+}
 </style>

@@ -225,7 +225,7 @@ export default {
     ...mapActions('jstore', ['addTable', 'addChat']),
 
     onTable (action) {
-      console.log('onTable', action)
+      // console.log('onTable', action)
       switch (action.action) {
         case 'sit': {
           this.$emit('onPlayer', action.seat)

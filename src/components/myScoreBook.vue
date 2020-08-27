@@ -19,6 +19,7 @@
     <template v-if='model===0'>
       <q-expansion-item v-for='r in jsResults' :key='r._id'>
         <template v-slot:header>
+          <!--
           <q-item-section>
             <q-item-label overline>{{ getBoardInfo(r) }}</q-item-label>
             <q-item-label caption>
@@ -35,6 +36,8 @@
           <q-item-section side top>
             <q-item-label caption>{{playedDate(r.played)}}</q-item-label>
           </q-item-section>
+          -->
+          <myScoreHeader :result='r' />
         </template>
         <q-card>
           <q-card-section>
@@ -49,16 +52,15 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import * as moment from 'moment'
+import myScoreHeader from 'src/components/myScoreHeader'
 import myScoreList from 'src/components/myScoreList'
 
 export default {
   name: 'myScoreBook',
-  components: { myScoreList },
+  components: { myScoreHeader, myScoreList },
 
   data: () => ({
-    model: 0,
-    seatName: ['North', 'East', 'South', 'West']
+    model: 0
   }),
   computed: {
     ...mapState('jstore', ['jsResults'])
@@ -70,48 +72,11 @@ export default {
       // this.resetResults()
       // this.$emit('onDrawer', 'scoreBook')
     },
-    getResult (r) {
-      if (r.result === 0) return '='
-      else if (r.result > 0) return `+${r.result}`
-      else return `${r.result}`
-    },
-    getBoardInfo (r) {
-      return r.info.id + '#' + r.info.bN
-    },
-    getContractInfo (r) {
-      return r.info.contract + ' ' + this.getResult(r) + ': ' + this.getRScore(r)
-    },
-    getRScore (r) {
-      switch (r.info.by) {
-        case 1:
-        case 3:
-          return r.score
-        case 2:
-        case 4:
-          return -r.score
-        default: return 0
-      }
-    },
-    getScore (r) {
-      const bT = r.info.bT
-      const score = bT + ': '
-      const ns = 'NS: ' + r.mix
-      const ew = 'EW: ' + r.mix
-      switch (bT) {
-        case 'MP':
-          return score + ns + '% :: ' + ew + '%'
-        default:
-          return score + ns + ' :: ' + ew
-      }
-    },
     getPNick (r) {
       if (r.info.by < 1) return ''
       const nick = r.players[r.info.by - 1]
       if (nick) return 'by ' + nick
       else return 'by ' + this.seatName[r.info.by - 1]
-    },
-    playedDate (playedAt) {
-      return moment(playedAt).fromNow()
     }
   }
 }

@@ -16,8 +16,8 @@
             </q-card-section>
           </template>
           <template v-else>
-            <q-card-section v-if='result'>
-              <myScoreList :result='result' />
+            <q-card-section v-if='myScore'>
+              <myScoreHeader :result='myResult' />
             </q-card-section>
           </template>
         </q-card>
@@ -35,7 +35,7 @@
             </q-item-section>
             <q-item-section side avatar class='col-2'>
               <q-avatar square>
-                <q-btn color='silver' icon='menu_book' />
+                <q-btn color='silver' icon='menu_book' @click='myScore=!myScore' />
               </q-avatar>
             </q-item-section>
           </q-item>
@@ -50,7 +50,7 @@ import { mapGetters } from 'vuex'
 import { jbIsPlayer, jbSeatIcon } from 'src/jbPlayer'
 
 import myPlayBox from 'src/components/myPlayBox'
-import myScoreList from 'src/components/myScoreList'
+import myScoreHeader from 'src/components/myScoreHeader'
 
 export default {
   name: 'myTricks',
@@ -58,10 +58,10 @@ export default {
   data () {
     return {
       offset: 0,
-      result: null
+      myScore: false
     }
   },
-  components: { myPlayBox, myScoreList },
+  components: { myPlayBox, myScoreHeader },
   computed: {
     ...mapGetters('jstore', ['jsResultById']),
     myState () {
@@ -72,6 +72,9 @@ export default {
         .slice(0)
         .filter(c => c.winner > 0)
         .map(c => c.winner)
+    },
+    myResult () {
+      return this.jsResultById(this.jsTable.id)
     }
   },
   methods: {
@@ -107,13 +110,6 @@ export default {
       const w = this.isWinner(c)
       const t = w ? 'card cardv' : 'card cardh'
       return t
-    }
-  },
-  watch: {
-    myState (s) {
-      if (s === 3) { // review
-        this.result = this.jsResultById(this.jsTable.id)
-      }
     }
   },
   mounted () { }

@@ -9,11 +9,10 @@ const auth = {
     return this.user != null
   },
   async reAuthenticate () {
-    console.log('reAuthenticate')
+    // console.log('reAuthenticate')
     return await api.reAuthenticate()
   },
   register (credential) {
-    // api.removeAccessToken()
     return api.service('users').create(credential)
   },
 
@@ -31,7 +30,6 @@ const auth = {
   },
 
   signout () {
-    // api.removeAccessToken()
     return api.logout()
   },
 

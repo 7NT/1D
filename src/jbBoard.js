@@ -25,7 +25,8 @@ export const jbCards = (data, s, t) => {
 }
 
 const jbCard2SN = (n) => {
-  return Math.floor((n % 52) / 13) + 1
+  const s = Math.floor((n % 52) / 13) + 1
+  return s
 }
 
 const jbSuit2N = (s) => {
@@ -50,15 +51,15 @@ const jbSuit2N = (s) => {
 }
 
 const jbCardSuit = (n) => {
-  const s = Math.floor((n % 52) / 13) + 1
+  const s = jbCard2SN(n)
   return jbCardSuit4(s)
 }
 
 const jbCardSuit4 = (s4) => {
   switch (s4) {
-    case 1:
-      return 'D'
     case 2:
+      return 'D'
+    case 1:
       return 'C'
     case 3:
       return 'H'
@@ -88,11 +89,12 @@ const jbCardValue = (c52) => {
 }
 
 const jbCard52 = (c52) => {
-  return {
+  const card = {
     value: (c52 % 52),
     suit: jbCardSuit(c52),
     rank: jbCardValue(c52)
   }
+  return card
 }
 
 export const jbCardImg = (card) => {

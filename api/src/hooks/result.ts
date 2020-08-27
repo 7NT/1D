@@ -44,11 +44,10 @@ const onCreate = (): Hook => {
           'info.bT': result.info.bT,
           'info.bN': result.info.bN,
           'info.id': result.info.id
-          // bId: result.bId ,
         },
         paginate: false
       })
-      console.log('onCreate', results, results.length)
+      // console.log('onCreate', results, results.length)
       if (results.length > 0) {
         results.push({ _id: null, score: result.score })
         results.sort((a: { score: number }, b: { score: number }) =>

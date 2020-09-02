@@ -138,7 +138,7 @@ export default {
         this.$q.notify({ type: 'positive', message })
         return null
       } else {
-        return `http://localhost:3030/oauth/${social}?feathers_token=${this.accessToken}`
+        return `http://www.jbridge.net:3030/oauth/${social}?feathers_token=${this.accessToken}`
       }
     },
     getFlag () {

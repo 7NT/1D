@@ -73,7 +73,7 @@
               <q-btn
                 dense
                 type='a'
-                href='http://localhost:3030/oauth/google'
+                href='http://www.jbridge.net:3030/oauth/google'
                 no-caps
                 label='Google'
                 icon='mdi-google'

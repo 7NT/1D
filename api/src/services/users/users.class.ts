@@ -1,4 +1,4 @@
-import crypto from 'crypto'
+// import crypto from 'crypto'
 import { Params } from '@feathersjs/feathers'
 import { Service, MongooseServiceOptions } from 'feathers-mongoose'
 import { Application } from '../../declarations'
@@ -61,6 +61,7 @@ export class Users extends Service {
         locale,
         link
       }
+      /*
       if (!avatar) {
         // The Gravatar image service
         const gravatarUrl = 'https://s.gravatar.com/avatar'
@@ -74,6 +75,7 @@ export class Users extends Service {
         // The full avatar URL
         userData.avatar = `${gravatarUrl}/${hash}?${query}`
       }
+      */
       // Call the original `create` method with existing `params` and new data
       // return super.create(userData, params)
       // The complete user

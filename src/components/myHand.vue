@@ -87,7 +87,7 @@ import { mapState, mapGetters, mapActions } from 'vuex'
 import myMessages from 'src/components/myMessages'
 import myChat from 'src/components/myChat'
 import { jbCards, jbCardImg } from 'src/jbBoard'
-import { jbIsPlayer, jbIsMyPlayer, jbFlag, jbSeatIcon } from 'src/jbPlayer'
+import { jbIsPlayer, jbIsMyPlayer, jbFlag, jbSeatIcon, jbAvatarImg } from 'src/jbPlayer'
 import { jbSeatName, jbSeatX, jbSeat1234 } from 'src/jbSeat'
 import { jbV2N } from 'src/jbVoice'
 
@@ -129,8 +129,7 @@ export default {
         : jbSeatName(this.seatX - 1)
     },
     handAvatar () {
-      if (this.handPlayer) return `img:${this.handPlayer.avatar}`
-      else return null
+      return jbAvatarImg(this.handPlayer)
     },
     handFlag () {
       return jbFlag(this.handPlayer)

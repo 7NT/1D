@@ -64,7 +64,7 @@ export default function (app: Application) {
       // Obtain the logged in user from the connection
       const user = connection.user
       user.state = 1
-      console.log('login', user)
+      // console.log('login', user)
       joinChannels(user, connection)
 
       const player = {

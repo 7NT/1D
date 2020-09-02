@@ -15,4 +15,3 @@ server.on('listening', () =>
     port
   )
 )
-

@@ -122,7 +122,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex'
 import { jbT2State } from 'src/jbState'
-import { jbIsAdmin, jbIsMyNick } from 'src/jbPlayer'
+import { jbIsAdmin, jbIsMyNick, jbAvatarImg } from 'src/jbPlayer'
 import myT2Pair from 'src/components/myT2Pair'
 
 export default {
@@ -172,10 +172,7 @@ export default {
       return null
     },
     myAvatar (player) {
-      try {
-        return `img:${player.avatar}`
-      } catch (err) { }
-      return null
+      return jbAvatarImg(player)
     },
     myT2State (s2) {
       return jbT2State(s2)

@@ -10,9 +10,9 @@
           <q-list bordered padding>
             <q-item>
               <q-item-section top avatar>
-                <q-btn round @click='gotoGravart()'>
-                  <q-avatar rounded>
-                    <img :src='user.avatar' />
+                <q-btn round>
+                  <q-avatar>
+                    <img :src='userAvatar' />
                     <q-tooltip>my avatar...</q-tooltip>
                   </q-avatar>
                 </q-btn>
@@ -35,7 +35,6 @@
             <q-item>
               <q-item-section top avatar>
                 <q-icon :name='getFlag()' />
-                <q-tooltip>2 letter ISO 3166 country flag codes</q-tooltip>
               </q-item-section>
               <q-item-section>
                 <q-select filled v-model='country' :options='countries' label='Country:' />
@@ -101,13 +100,14 @@
 
 <script>
 import moment from 'moment'
-import { openURL } from 'quasar'
+// import { openURL } from 'quasar'
 import { users$, players$ } from 'src/api'
 import auth from 'src/auth'
+import { jbAvatar } from 'src/jbPlayer'
 import data from 'src/data/iso3166_2.json'
 
-const gravatarUrl = 'http://www.gravatar.com'
-
+// const gravatarUrl = 'http://www.gravatar.com'
+// const avatarUrl = 'https://ui-avatars.com/'
 export default {
   name: 'Profile',
   data () {
@@ -125,11 +125,12 @@ export default {
       isPwd: true
     }
   },
-  computed: {},
+  computed: {
+    userAvatar () {
+      return jbAvatar(this.user)
+    }
+  },
   methods: {
-    gotoGravart () {
-      openURL(gravatarUrl)
-    },
     authLink (social) {
       if (this.link && this.link.provider === 'google') {
         this.link.provider = null
@@ -169,14 +170,15 @@ export default {
   watch: {
     country (c) {
       if (c) {
-        const countryData = data.filter(d => d.name === c)
+        const countryData = data.filter(d => d.name.toLowerCase() === c.toLowerCase())
+        console.log(c, countryData)
         if (countryData) this.flag = countryData[0].code
       }
     }
   },
   mounted () {
-    this.user = auth.getUser()
-    // this.user = this.$attrs.user
+    // this.user = auth.getUser()
+    this.user = this.$attrs.user
     this.accessToken = auth.getAccessToken()
     this.nick = this.user.nick || null
     this.flag = this.user.flag || 'us'

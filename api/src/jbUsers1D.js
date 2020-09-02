@@ -16,12 +16,12 @@ function getUsers () {
       console.error(err)
     })
 }
-async function updateUser (u0: { id?: any; nick?: any; _id: any; password: any }) {
+async function updateUser (u0) {
   try {
-    console.log(u0.id, u0.nick, u0.password)
+    console.log(u0.link.id, u0.nick, u0.password)
     const u1 = await users$.patch(u0._id, { password: u0.password })
     n1++
-    console.log(n1 + '/' + n0, u1.id, u1.nick, u1.password)
+    console.log(n1 + '/' + n0, u1.link.id, u1.nick, u1.password)
   } catch (err) {
     console.error(err)
   }

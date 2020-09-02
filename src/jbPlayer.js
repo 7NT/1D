@@ -23,7 +23,13 @@ export function jbFlag (p) {
 }
 
 export function jbAvatar (p) {
-  return p ? p.avatar : null
+  return p ? (p.avatar || `https://ui-avatars.com/api/?name=${p.nick}`) : null
+}
+
+export function jbAvatarImg (p) {
+  const avatar = jbAvatar(p)
+  if (avatar) return `img:${avatar}`
+  else return null
 }
 
 export function jbSameId (i0, i1) {

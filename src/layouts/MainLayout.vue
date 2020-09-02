@@ -5,7 +5,6 @@
         <q-btn
           flat
           dense
-          round
           icon='group'
           aria-label='Players'
           v-if='authenticated'
@@ -17,36 +16,35 @@
         </q-toolbar-title>
 
         <div>v{{ version }}</div>
-        <q-btn flat round @click='goTo("home")'>
+        <q-btn flat @click='goTo("home")'>
           <q-icon name='home' />
           <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Home</q-tooltip>
         </q-btn>
-        <q-btn flat round @click='goTo("tops")'>
+        <q-btn flat @click='goTo("tops")'>
           <q-icon name='star' />
           <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Top Players</q-tooltip>
         </q-btn>
         <q-btn flat icon='login' @click='goTo("signin")' v-show='!authenticated'>Sign In</q-btn>
         <q-btn flat icon='account_box' @click='goTo("register")' v-show='!authenticated'>Register</q-btn>
-        <q-btn flat round @click='goTo("lobby")' v-if='authenticated'>
+        <q-btn flat @click='goTo("lobby")' v-if='authenticated'>
           <q-icon name='local_play' />
           <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
-          round
           dense
           icon='menu_book'
           @click='scoreBook = !scoreBook'
           aria-label='ScoreBook'
           v-show='authenticated'
         />
-        <q-btn flat round @click='goTo("profile")' v-if='authenticated'>
-          <q-avatar class='gt-xs'>
-            <img :src='user.avatar' />
+        <q-btn flat @click='goTo("profile")' v-if='authenticated'>
+          <q-avatar>
+            <img :src='userAvatar' />
           </q-avatar>
           <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Profile</q-tooltip>
         </q-btn>
-        <q-btn flat round @click='signout' v-show='authenticated'>
+        <q-btn flat @click='signout' v-show='authenticated'>
           <q-icon name='exit_to_app' />
           <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Signout</q-tooltip>
         </q-btn>
@@ -93,7 +91,7 @@ import {
   teams$
 } from 'src/api'
 import auth from 'src/auth'
-import { jbIsPlayer } from 'src/jbPlayer'
+import { jbIsPlayer, jbAvatar } from 'src/jbPlayer'
 
 export default {
   name: 'MainLayout',
@@ -108,19 +106,24 @@ export default {
   data () {
     return {
       version: version,
+      user: null,
       // essentialLinks: [],
       playerList: true,
       scoreBook: false,
       page: '',
-      user: null,
       following: null
     }
   },
   computed: {
     ...mapState('jstore', ['jsPF']),
     ...mapGetters('jstore', ['jsTableById', 'jsPlayerById', 'jsTourneyById']),
+
+    // user () { return auth.user },
     authenticated () {
-      return this.user != null
+      return this.user !== null
+    },
+    userAvatar () {
+      return jbAvatar(this.user)
     },
     seatIcon () {
       return 'img:jb1D.svg'
@@ -152,7 +155,7 @@ export default {
       auth.setUser(user)
       this.setJsUser(user)
       this.user = user
-      this.onServices()
+      // this.onServices()
     },
     signout () {
       auth
@@ -214,9 +217,9 @@ export default {
         this.addChat(chat)
       })
 
-      users$.on('patched', u0 => {
-        console.log('user patched', u0)
-        if (u0._id === this.user._id) this.setUser(u0)
+      users$.on('patched', user => {
+        console.log('user patched', user)
+        if (user._id === this.user._id) this.setUser(user)
       })
 
       tables$.on('created', t1 => {
@@ -383,18 +386,15 @@ export default {
       }
     }
   },
-  beforeMount () {
-    // this.user = null
-    // console.log(this.$q.platform.is.ios, this.$q.platform.is.mac)
-  },
+  beforeMount () {},
   mounted () {
     // Check if there is already a session running
     console.log('layout', this.user)
     auth
       .login()
-      .then(login => {
-        console.log('login', login)
-        if (typeof (login) !== 'undefined') auth.setLogin(login)
+      .then(token => {
+        console.log('login', token)
+        if (typeof (token) !== 'undefined') auth.setToken(token)
         this.$q.notify({
           type: 'positive',
           message: 'Restoring previous session'
@@ -402,7 +402,7 @@ export default {
       })
       .catch(err => {
         console.log(err)
-        this.signout()
+        // this.signout()
       })
 
     // On successful login
@@ -419,11 +419,10 @@ export default {
     })
   },
   watch: {
-    user (u1, u0) {
-      if (u1) {
-        if (!u0) {
-          this.goTo('lobby')
-        }
+    authenticated (a1, a0) {
+      if (a1 && !a0) {
+        this.onServices()
+        this.goTo('lobby')
       } else {
         this.signout()
         this.goTo('home')

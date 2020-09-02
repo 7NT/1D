@@ -14,8 +14,8 @@ const auth = {
     return this.user
   },
 
-  async setLogin (login) {
-    const { user, accessToken } = login
+  async setToken (token) {
+    const { user, accessToken } = token
     if (user) this.setUser(user)
     if (accessToken) this.setAccessToken(accessToken)
   },

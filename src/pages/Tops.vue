@@ -1,27 +1,21 @@
 <template>
-  <q-page
-    padding
-    class='fit'
-  >
+  <q-page padding class='fit'>
     <!-- content -->
-    <div class="column container">
+    <div class='column container'>
       <div class='col-10 tops'>
-        <q-markup-table
-          flat
-          bordered
-        >
-          <thead class="bg-teal">
+        <q-markup-table flat bordered>
+          <thead class='bg-teal'>
             <tr>
-              <th colspan="5">
-                <div class="row no-wrap items-center">
+              <th colspan='5'>
+                <div class='row no-wrap items-center'>
                   <q-img
-                    style="width: 70px"
-                    :ratio="1"
-                    class="rounded-borders"
-                    src="jbIcon/seats/seat0.svg"
+                    style='width: 70px'
+                    :ratio='1'
+                    class='rounded-borders'
+                    src='jbIcon/seats/seat0.svg'
                   />
 
-                  <div class="text-h4 q-ml-md text-white">🏆Top Players:</div>
+                  <div class='text-h4 q-ml-md text-white'>🏆Top Players:</div>
                 </div>
               </th>
             </tr>
@@ -33,26 +27,17 @@
               <th>Team</th>
             </tr>
           </thead>
-          <tbody class="bg-grey-3">
-          </tbody>
+          <tbody class='bg-grey-3'></tbody>
         </q-markup-table>
         <q-space />
       </div>
       <div class='col-2'>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <EssentialLink v-for='link in essentialLinks' :key='link.title' v-bind='link' />
       </div>
     </div>
-    <q-footer
-      reveal
-      elevated
-      bordered
-      class='bg-grey-1 text-primary fixed-bottom'
-    >
-      ✉ Contact: <a href="mailto:help@jbridge.net">Email Us</a>
+    <q-footer reveal elevated bordered class='bg-grey-1 text-primary fixed-bottom'>
+      ✉ Contact:
+      <a href='mailto:help@jbridge.net'>Email Us</a>
     </q-footer>
   </q-page>
 </template>
@@ -68,10 +53,10 @@ const linkData = [
     link: 'https://bridgewinners.com/convention-card/'
   },
   {
-    title: 'Gavatar',
-    caption: 'A Globally Recognized Avatar',
+    title: 'UI Avatars',
+    caption: 'Generate avatars with initials from names',
     icon: 'bookmark_border',
-    link: 'https://www.gravatar.com/'
+    link: 'https://ui-avatars.com/'
   }
 ]
 export default {

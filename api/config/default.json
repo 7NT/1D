@@ -1,5 +1,5 @@
 {
-  "host": "www.jbridge.net",
+  "host": "localhost",
   "port": 3030,
   "public": "../public/",
   "paginate": {
@@ -9,13 +9,13 @@
   "authentication": {
     "entity": "user",
     "service": "users",
-    "secret": "5CGF5hqveLvJ3Mylof/w3DCz72s=",
+    "secret": "winBridge1com",
     "authStrategies": ["jwt", "local"],
     "jwtOptions": {
       "header": {
         "typ": "access"
       },
-      "audience": "https://jbridge.net",
+      "audience": "http://www.jbridge.net",
       "issuer": "jbridge",
       "algorithm": "HS256",
       "expiresIn": "1d"
@@ -25,7 +25,7 @@
       "passwordField": "password"
     },
     "oauth": {
-      "redirect": "http://www.jbridge.net:8080/#/lobby/",
+      "redirect": "http://localhost:8080/#/lobby/",
       "google": {
         "key": "819669594394-tbikikgng6k6u2htf33fqjc0u82bsoas.apps.googleusercontent.com",
         "secret": "lJqKySdIL771UmpZhdLffwpu",
@@ -43,5 +43,5 @@
       }
     }
   },
-  "mongodb": "mongodb://hp160:27017/1d"
+  "mongodb": "mongodb://localhost:27017/1d"
 }

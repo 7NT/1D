@@ -73,37 +73,13 @@
               <q-btn
                 dense
                 type='a'
-                href='http://www.jbridge.net:3030/oauth/google'
+                href='http://localhost:3030/oauth/google'
                 no-caps
                 label='Google'
                 icon='mdi-google'
                 push
                 color='red'
               />
-              <!--
-              <q-btn
-                dense
-                type='a'
-                href='http://www.jbridge.net:3030/oauth/facebook'
-                no-caps
-                label='Facebook'
-                icon='mdi-facebook'
-                push
-                color='indigo'
-                :disable='true'
-              />
-              <q-btn
-                dense
-                type='a'
-                href='http://www.jbridge.net:3030/oauth/twitter'
-                no-caps
-                label='Twitter'
-                icon='mdi-twitter'
-                push
-                color='blue'
-                :disable='true'
-              />
-              -->
             </div>
             <q-separator vertical spaced />
             <div>

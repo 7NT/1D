@@ -4,8 +4,8 @@ const io = require('socket.io-client')
 const auth = require('@feathersjs/authentication-client')
 
 // Set up Socket.io client with the socket
-const socket = io('http://www.jbridge.net:3030', { transports: ['websocket'], forceNew: true })
-// const socket = io('http://localhost:3030', { transports: ['websocket'], forceNew: true })
+const host = 'http://localhost:3030' // http://www.jbridge.net:3030
+const socket = io(host, { transports: ['websocket'], forceNew: true })
 
 const api = feathers()
 
@@ -67,6 +67,7 @@ const login = async() => {
   }
 }
 */
+console.log('connect', host)
 // export default api
 export {
   api,

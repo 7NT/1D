@@ -78,6 +78,7 @@
 import { mapState, mapGetters, mapActions } from 'vuex'
 
 import { players$, tables$ } from 'src/api'
+// import auth from 'src/auth'
 import myT1List from 'src/components/myT1List'
 import myPlayTable from 'src/components/myPlayTable'
 import myMessages from 'src/components/myMessages'
@@ -178,20 +179,6 @@ export default {
           return false
       }
     },
-    /*
-    handleOrientationChange () {
-      if (this.$q.platform.is.mobile || this.$q.screen.lt.md) {
-        const orientation = window.screen.orientation.type
-        if (orientation === 'portrait-primary') {
-          // portrait mode
-          // if (this.rId === 1) this.rId = 0
-        } else if (orientation === 'landscape-primary') {
-          // landscape mode
-          if (this.mySeat.sId !== 0) this.rId = 1
-        }
-      }
-    },
-    */
     isVisible (v) {
       if (this.$q.screen.lt.sm || this.$q.fullscreen.isActive) {
         if (v) return this.$q.screen.height < this.$q.screen.width // landscape
@@ -261,12 +248,12 @@ export default {
   },
   mounted () {
     // this.$parent.page = 'Lobby'
-    console.log('lobby', this.jsPlayer)
-    // window.addEventListener('orientationchange', this.handleOrientationChange)
-    if (!this.user.nick) this.$router.push({ name: 'profile' })
+    this.user = this.$attrs.user
+    console.log('lobby', this.user, this.jsPlayer)
+    if (this.user && !this.user.nick) this.$router.push({ name: 'profile' })
   },
   created () {
-    this.user = this.$attrs.user
+    // this.user = this.$attrs.user
   }
 }
 </script>

@@ -77,7 +77,6 @@
 
 <script>
 import { version } from '../../package.json'
-// import router from '@/router'
 // import EssentialLink from 'components/EssentialLink'
 import { mapState, mapGetters, mapActions } from 'vuex'
 import myP1List from 'src/components/myP1List'
@@ -145,14 +144,14 @@ export default {
     ]),
     goTo (route) {
       if (this.$route.name !== route) {
-        this.$router.push({ name: route }).catch(err => { console.error(err) })
-        // router.push({ name: route }).catch(err => { console.error(err) })
+        this.$router.push({ name: route }).catch(err => { console.log(this.$route.name, route, err) })
       }
     },
     setUser (user) {
       console.log('user', user)
-      this.user = user
+      auth.setUser(user)
       this.setJsUser(user)
+      this.user = user
       this.onServices()
     },
     signout () {
@@ -393,10 +392,9 @@ export default {
     console.log('layout', this.user)
     auth
       .login()
-      .then(u => {
-        console.log('login', u)
-        const { user } = u
-        this.setUser(user)
+      .then(login => {
+        console.log('login', login)
+        if (typeof (login) !== 'undefined') auth.setLogin(login)
         this.$q.notify({
           type: 'positive',
           message: 'Restoring previous session'
@@ -418,12 +416,7 @@ export default {
       console.log('logout')
       this.goTo('tops')
       this.setUser(null)
-      // auth.removeAccessToken()
     })
-
-    window.onbeforeunload = function () {
-      // this.signout()
-    }
   },
   watch: {
     user (u1, u0) {
@@ -438,7 +431,7 @@ export default {
     }
   },
   beforeDestroy () {
-    // this.signout()
+    if (this.user) this.signout()
   }
 }
 </script>

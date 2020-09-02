@@ -4,18 +4,42 @@ import { api } from './api'
 const auth = {
   // keep track of the logged in user
   user: null,
+  accessToken: null,
+
+  setUser (u) {
+    this.user = u
+  },
+
+  async getUser () {
+    return this.user
+  },
+
+  async setLogin (login) {
+    const { user, accessToken } = login
+    if (user) this.setUser(user)
+    if (accessToken) this.setAccessToken(accessToken)
+  },
+
+  setAccessToken (accessToken) {
+    this.AccessToken = accessToken
+  },
+
+  async getAccessToken () {
+    return this.AccessToken
+  },
 
   authenticated () {
-    return this.user != null
+    return this.getUser() != null
   },
   async reAuthenticate () {
     // console.log('reAuthenticate')
     return await api.reAuthenticate()
   },
-  register (credential) {
-    return api.service('users').create(credential)
+  async register (credential) {
+    return await api.service('users').create(credential)
   },
 
+  /*
   async login (credentials) {
     if (!credentials) {
       // Try to authenticate using an existing token
@@ -28,9 +52,26 @@ const auth = {
       })
     }
   },
+  */
+  async login (credentials) {
+    try {
+      if (!credentials) {
+        // Try to authenticate using an existing token
+        return await api.reAuthenticate()
+      } else {
+        // Otherwise log in with the `local` strategy using the credentials we got
+        return await api.authenticate({
+          strategy: 'local',
+          ...credentials
+        })
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  },
 
-  signout () {
-    return api.logout()
+  async signout () {
+    return await api.logout()
   },
 
   onLogout (callback) {

@@ -23,11 +23,34 @@ export default function (app: Application) {
       flag: { type: String },
       status: { type: Number, default: 0 },
       state: { type: Number, default: 0 },
-      logoutAt: { type: Date },
       seat: {
         tId: { type: String },
         sId: { type: Number },
-      }
+      },
+      scores: {
+        MP: Number,
+        IMP: Number,
+        XIMP: Number,
+        Tourney: Number
+      },
+      boards: {
+        MP: Number,
+        IMP: Number,
+        XIMP: Number,
+        Tourney: Number
+      },
+      ranks: {
+        MP: Number,
+        IMP: Number,
+        XIMP: Number,
+        Tourney: Number
+      },
+      club: { type: String },
+      link: {
+        provider: { type: String },
+        id: { type: String }
+      },
+      logoutAt: { type: Date }
     },
     {
       timestamps: true

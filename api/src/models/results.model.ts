@@ -27,9 +27,12 @@ export default function (app: Application) {
     plays: { type: String },
     result: { type: Number },
     score: { type: Number },
-    mix: { type: Number },
-    played: { type: Date, default: Date.now }
-  })
+    mix: { type: Number }
+  },
+    {
+      timestamps: true
+    }
+  )
 
   // This is necessary to avoid model compilation errors in watch mode
   // see https://mongoosejs.com/docs/api/connection.html#connection_Connection-deleteModel

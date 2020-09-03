@@ -145,28 +145,17 @@ export default {
               console.log('register', user)
               return this.login()
             })
-            .then(user => {
-              this.$q.notify({
-                color: 'positive',
-                message: 'You are now logged in'
-              })
-              this.goTo('lobby')
-            })
             .catch(err => {
               console.error(err)
               this.$q.notify({
                 color: 'positive',
                 message: 'Cannot register, please check your nickname or password'
               })
-              this.goTo('home')
             })
         } else {
           this.login()
-            .then(() => {
-              this.$q.notify({
-                color: 'positive',
-                message: 'You are now logged in'
-              })
+            .then((user) => {
+              console.log('login', user)
             })
             .catch(err => {
               console.error(err)
@@ -174,9 +163,9 @@ export default {
                 color: 'positive',
                 message: 'Cannot sign in, please check your nickname or password'
               })
-              this.goTo('home')
             })
         }
+        this.goTo('home')
       }
     },
     login () {

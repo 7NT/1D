@@ -10,12 +10,48 @@
           <q-list bordered padding>
             <q-item>
               <q-item-section top avatar>
-                <q-btn round>
+                <q-btn round @click='avatar=!avatar'>
                   <q-avatar>
                     <img :src='userAvatar' />
                     <q-tooltip>my avatar...</q-tooltip>
                   </q-avatar>
                 </q-btn>
+                <q-dialog v-model='avatar'>
+                  <q-card>
+                    <q-card-section>
+                      <div class='text-h6'>My avatar link:</div>
+                    </q-card-section>
+
+                    <q-card-section class='q-pt-none'>
+                      <q-input
+                        v-model='userAvatar'
+                        dense
+                        filled
+                        label='Avatar link'
+                        :value='userAvatar'
+                      />
+                      <q-separator color='orange' inset spaced />
+                      <q-btn
+                        flat
+                        no-caps
+                        size='sm'
+                        label='make my avatar online...'
+                        @click='avatarLink()'
+                      />
+                    </q-card-section>
+
+                    <q-card-actions align='right'>
+                      <q-btn
+                        flat
+                        label='Cancel'
+                        color='primary'
+                        v-close-popup
+                        @click='avatarlink=null'
+                      />
+                      <q-btn flat label='OK' color='primary' v-close-popup />
+                    </q-card-actions>
+                  </q-card>
+                </q-dialog>
               </q-item-section>
 
               <q-item-section>
@@ -100,14 +136,14 @@
 
 <script>
 import moment from 'moment'
-// import { openURL } from 'quasar'
+import { openURL } from 'quasar'
 import { users$, players$ } from 'src/api'
 import auth from 'src/auth'
 import { jbAvatar } from 'src/jbPlayer'
 import data from 'src/data/iso3166_2.json'
 
 // const gravatarUrl = 'http://www.gravatar.com'
-// const avatarUrl = 'https://ui-avatars.com/'
+const avatarUrl = 'https://ui-avatars.com/'
 export default {
   name: 'Profile',
   data () {
@@ -122,15 +158,27 @@ export default {
       country: 'United States',
       link: null,
       pwd: false,
-      isPwd: true
+      isPwd: true,
+      avatar: false,
+      jbavatar: null
     }
   },
   computed: {
-    userAvatar () {
-      return jbAvatar(this.user)
+    userAvatar: {
+      // getter
+      get: function () {
+        return this.jbavatar
+      },
+      // setter
+      set: function (newAvatar) {
+        this.jbavatar = newAvatar
+      }
     }
   },
   methods: {
+    avatarLink () {
+      openURL(avatarUrl)
+    },
     authLink (social) {
       if (this.link && this.link.provider === 'google') {
         this.link.provider = null
@@ -151,7 +199,7 @@ export default {
     onUpdate (update) {
       if (update) {
         if (this.nick) {
-          const profile = { nick: this.nick, country: this.country, flag: this.flag, link: this.link }
+          const profile = { nick: this.nick, country: this.country, flag: this.flag, link: this.link, avatar: this.jbavatar }
           if (this.password) profile.password = this.password
           users$.patch(this.user._id, profile)
             .then(u => {
@@ -171,7 +219,7 @@ export default {
     country (c) {
       if (c) {
         const countryData = data.filter(d => d.name.toLowerCase() === c.toLowerCase())
-        console.log(c, countryData)
+        // console.log(c, countryData)
         if (countryData) this.flag = countryData[0].code
       }
     }
@@ -183,9 +231,10 @@ export default {
     this.nick = this.user.nick || null
     this.flag = this.user.flag || 'us'
     this.country = this.user.country || 'United States'
+    this.jbavatar = jbAvatar(this.user)
     this.link = this.user.link
 
-    console.log('profile', this.user, this.accessToken)
+    console.log('profile', this.user, this.jbavatar)
   }
 }
 </script>

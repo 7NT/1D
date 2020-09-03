@@ -25,14 +25,23 @@
             no-caps
             no-wrap
             ellipsis
-            :label='handNick'
             :icon='handAvatar'
+            :label='handNick'
             :color='handTurn'
             align='left'
             class='player'
             :disable='!handPlayer'
             @click='onPlayer()'
           >
+            <q-rating
+              v-if='stars>0'
+              v-model='stars3'
+              size='.4em'
+              :max='3'
+              :color='starColor'
+              readonly
+              no-dimming
+            />
             <q-badge color='orange' align='top' transparent v-if='handMessage'>∞</q-badge>
           </q-btn>
           <q-space />
@@ -127,6 +136,24 @@ export default {
       return this.handPlayer
         ? this.handPlayer.nick
         : jbSeatName(this.seatX - 1)
+    },
+    stars () {
+      try {
+        const stars = this.handPlayer.ranks[`${this.jsTable.board.bT}`]
+        return stars
+      } catch (err) {
+        // console.error(err)
+      }
+      return 0
+    },
+    stars3 () {
+      if (this.star3 > 0) return (this.star3 % 3) || 3
+      else return 0
+    },
+    starColor () {
+      if (this.stars > 13) return 'orange'
+      else if (this.stars > 10) return 'white'
+      else return 'brown'
     },
     handAvatar () {
       return jbAvatarImg(this.handPlayer)

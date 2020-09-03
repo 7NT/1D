@@ -1,6 +1,7 @@
 import '@feathersjs/transport-commons'
 import { HookContext } from '@feathersjs/feathers'
 import { Application } from './declarations'
+import usersHooks from './services/users/users.hooks'
 
 export default function (app: Application) {
   if (typeof app.channel !== 'function') {
@@ -74,6 +75,7 @@ export default function (app: Application) {
         avatar: user.avatar,
         status: user.status || 0,
         state: 0,
+        ranks: user.ranks,
         seat: { sId: 0 }
       }
       try {

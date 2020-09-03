@@ -1,6 +1,6 @@
 {
   "name": "1d",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "description": "1D app",
   "productName": "One Diamond",
   "author": "7NT <jun@jbridge.net>",
@@ -13,11 +13,11 @@
     "@feathersjs/authentication-client": "^4.5.4",
     "@feathersjs/feathers": "^4.5.3",
     "@feathersjs/socketio-client": "^4.5.4",
-    "@quasar/extras": "^1.9.3",
+    "@quasar/extras": "^1.9.5",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
     "moment": "^2.26.0",
-    "quasar": "^1.12.13",
+    "quasar": "^1.13.2",
     "say": "^0.16.0",
     "socket.io-client": "^2.3.0",
     "vuex-persistedstate": "^3.0.1"

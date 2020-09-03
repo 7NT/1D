@@ -4,6 +4,7 @@
       <div class='col row'>
         <q-btn-group push>
           <q-fab
+            dense
             square
             glossy
             unelevated
@@ -39,6 +40,7 @@
       <div class='col row' style='height:30px'>
         <q-btn-group dense class='full-width'>
           <q-btn
+            dense
             glossy
             label='X'
             color='negative'
@@ -47,6 +49,7 @@
             style='width:20%'
           />
           <q-btn
+            dense
             glossy
             label='XX'
             color='warning'
@@ -54,12 +57,20 @@
             @click='onBid("XX")'
             style='width:25%'
           />
-          <q-btn glaosy label='Pass' color='primary' @click='onBid("pass")' style='width:45%' />
+          <q-btn
+            dense
+            glaosy
+            label='Pass'
+            color='primary'
+            @click='onBid("pass")'
+            style='width:45%'
+          />
         </q-btn-group>
       </div>
       <div class='col row items-center'>
         <q-btn-group dense class='full-width' style='height:30px'>
           <q-btn
+            dense
             glossy
             :label='`Bid: ${bidding}`'
             :disable='!bidding'
@@ -67,6 +78,7 @@
             @click='onBid2()'
           />
           <q-btn
+            dense
             glossy
             :label='`Alert: ${bidding}`'
             :disable='!bidding'

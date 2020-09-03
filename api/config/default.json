@@ -43,5 +43,5 @@
       }
     }
   },
-  "mongodb": "mongodb://Juns-Mac-mini:27017/1d"
+  "mongodb": "mongodb://hp160:27017/1d"
 }

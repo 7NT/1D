@@ -98,15 +98,17 @@ export default function (app: Application) {
       // firebase admin SDK
       let uid = user.nick
 
-      admin
-        .auth()
-        .createCustomToken(uid)
-        .then(customToken => {
-          console.log(customToken)
-        })
-        .catch(err => {
-          console.log(err)
-        })
+      try {
+        admin
+          .auth()
+          .createCustomToken(uid)
+          .then(customToken => {
+            console.log(customToken)
+          })
+          .catch(err => {
+            console.log(err)
+          })
+      } catch (_) { }
     }
   })
 

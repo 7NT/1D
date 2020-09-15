@@ -1,5 +1,5 @@
 {
-  "host": "localhost",
+  "host": "www.jbridge.net",
   "port": 3030,
   "public": "../public/",
   "paginate": {

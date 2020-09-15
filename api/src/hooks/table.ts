@@ -34,7 +34,7 @@ const onTable = (): Hook => {
   }
 }
 
-async function onReady(context: any) {
+async function onReady (context: any) {
   const { state, ready } = context.data
   switch (state) {
     case 0:
@@ -50,7 +50,7 @@ async function onReady(context: any) {
   }
 }
 
-async function getBoard(context: any) {
+async function getBoard (context: any) {
   const id = context.id
 
   if (id.startsWith('#@')) {
@@ -66,7 +66,7 @@ async function getBoard(context: any) {
   else if (id.startsWith('#')) return t1Board(context)
 }
 
-async function t1Board(context: any) {
+async function t1Board (context: any) {
   const boards$ = context.app.service('boards')
   const played$ = context.app.service('played')
 
@@ -155,7 +155,7 @@ async function t1Board(context: any) {
   return t1
 }
 
-async function t2Board(context: any, t2: any) {
+async function t2Board (context: any, t2: any) {
   const played$ = context.app.service('played')
   const boards$ = context.app.service('boards')
 
@@ -213,11 +213,11 @@ async function t2Board(context: any, t2: any) {
   }
 }
 
-async function t4Board(app: any) {
+async function t4Board (app: any) {
   return null
 }
 
-async function t2Pairs(app: any, t1: any) {
+async function t2Pairs (app: any, t1: any) {
   const tourneys$ = app.service('tourneys')
   const t2 = await tourneys$.get(t1.t2Id)
   const pairs = t2.pairs
@@ -251,7 +251,7 @@ async function t2Pairs(app: any, t1: any) {
   tourneys$.patch(t1.t2Id, { pairs })
 }
 
-function onBid(tdata: any) {
+function onBid (tdata: any) {
   tdata = updateBid(tdata)
   let info = tdata.bids.info
   if (info.P > 3 || (info.P > 2 && info.by > 0)) {
@@ -286,7 +286,7 @@ function onBid(tdata: any) {
   return tdata
 }
 
-function updateBid(tdata: any) {
+function updateBid (tdata: any) {
   let suits = [
     [0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0]
@@ -354,7 +354,7 @@ function updateBid(tdata: any) {
   return tdata
 }
 
-function bidSuit(b: any) {
+function bidSuit (b: any) {
   let s = b.substring(1).trim()
   switch (s) {
     case '♣':
@@ -376,7 +376,7 @@ function bidSuit(b: any) {
   }
 }
 
-function C1D2H3S4NT5(n: number) {
+function C1D2H3S4NT5 (n: number) {
   const suits = ['C', 'D', 'H', 'S', 'NT']
   switch (n) {
     case 1:
@@ -390,7 +390,7 @@ function C1D2H3S4NT5(n: number) {
   }
 }
 
-function onPlay(tdata: any) {
+function onPlay (tdata: any) {
   let n = tdata.plays.data.length
   if (n < 1) return tdata
 
@@ -449,7 +449,7 @@ function onPlay(tdata: any) {
   return tdata
 }
 
-function onClaim(tdata: any) {
+function onClaim (tdata: any) {
   let claim = tdata.claim
   let d = (claim.declarer - 1) % 2
   let o = (d + 1) % 2
@@ -494,7 +494,7 @@ const onState = (): Hook => {
   }
 }
 
-async function onResult(context: any) {
+async function onResult (context: any) {
   let { result } = context.data
   if (result && context.id) {
     const results$ = context.app.service('results')
@@ -529,21 +529,21 @@ async function onResult(context: any) {
   }
 }
 
-function getInfoId(t1: any) {
+function getInfoId (t1: any) {
   if (t1.id.startsWith('#@')) return t1.t2.t2Id // t2
   else if (t1.id.startsWith('#')) return t1.board.bId // t2
   // else // t4
   else return null
 }
 
-function getInfoPairs(t1: any) {
+function getInfoPairs (t1: any) {
   if (t1.id.startsWith('#@')) return [t1.t2.p1.pN, t1.t2.p2.pN] // t2
   else if (t1.id.startsWith('#')) return null // t2
   // else // t4
   else return null
 }
 
-function getContract(info: any) {
+function getContract (info: any) {
   if (info.by === 0) return 'Passed hand'
   else {
     let c = info.contract
@@ -553,7 +553,7 @@ function getContract(info: any) {
   }
 }
 
-function getLead(plays: any) {
+function getLead (plays: any) {
   try {
     const card = plays.data[0].card
     return card.suit + card.rank
@@ -561,7 +561,7 @@ function getLead(plays: any) {
   return null
 }
 
-function onScore(tdata: any) {
+function onScore (tdata: any) {
   const rdata = {
     bV: jbVulN(tdata.board.bN),
     contract: tdata.bids.info,

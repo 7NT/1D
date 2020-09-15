@@ -11,6 +11,7 @@
   "prettier.semi": false,
   "javascript.format.semicolons": "remove",
   "typescript.format.semicolons": "remove",
+  "vetur.format.defaultFormatter.js": "vscode-typescript",
   "vetur.format.defaultFormatterOptions": {
     "prettier": {
       "singleQuote": true

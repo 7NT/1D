@@ -1,7 +1,9 @@
 import '@feathersjs/transport-commons'
 import { HookContext } from '@feathersjs/feathers'
 import { Application } from './declarations'
-import usersHooks from './services/users/users.hooks'
+// import usersHooks from './services/users/users.hooks'
+
+import * as admin from 'firebase-admin'
 
 export default function (app: Application) {
   if (typeof app.channel !== 'function') {
@@ -93,6 +95,18 @@ export default function (app: Application) {
         // console.log('login', err)
       }
       players$.create(player)
+      // firebase admin SDK
+      let uid = user.nick
+
+      admin
+        .auth()
+        .createCustomToken(uid)
+        .then(customToken => {
+          console.log(customToken)
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   })
 

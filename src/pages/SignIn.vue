@@ -19,7 +19,7 @@
                   filled
                   type='text'
                   label='Nick'
-                  :rules='[ n => n.length > 1 || "Nick is required"]'
+                  :rules='[n => n.length > 1 || "Nick is required"]'
                 />
               </q-item-section>
               <q-item-section top side v-if='isRegistration()'>
@@ -107,7 +107,7 @@ export default {
       email: null,
       password: '',
       isPwd: true,
-      countries: data.map(c => c.name),
+      countries: data.map((c) => c.name),
       flag: 'us',
       country: 'United States'
     }
@@ -141,15 +141,16 @@ export default {
 
           auth
             .register(credential)
-            .then(user => {
+            .then((user) => {
               console.log('register', user)
               return this.login()
             })
-            .catch(err => {
+            .catch((err) => {
               console.error(err)
               this.$q.notify({
                 color: 'positive',
-                message: 'Cannot register, please check your nickname or password'
+                message:
+                  'Cannot register, please check your nickname or password'
               })
             })
         } else {
@@ -157,11 +158,12 @@ export default {
             .then((user) => {
               console.log('login', user)
             })
-            .catch(err => {
+            .catch((err) => {
               console.error(err)
               this.$q.notify({
                 color: 'positive',
-                message: 'Cannot sign in, please check your nickname or password'
+                message:
+                  'Cannot sign in, please check your nickname or password'
               })
             })
         }
@@ -177,7 +179,7 @@ export default {
   watch: {
     country (c) {
       if (c) {
-        const countryData = data.filter(d => d.name === c)
+        const countryData = data.filter((d) => d.name === c)
         if (countryData) this.flag = countryData[0].code
       }
     }
@@ -189,5 +191,4 @@ export default {
 }
 </script>
 
-<style lang='styl'>
-</style>
+<style lang="styl"></style>

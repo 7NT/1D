@@ -1,8 +1,8 @@
 {
   "name": "1d",
   "version": "0.0.21",
-  "description": "1D app",
-  "productName": "One Diamond",
+  "description": "1♦ app",
+  "productName": "1♦",
   "author": "7NT <jun@jbridge.net>",
   "private": true,
   "scripts": {

@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "819669594394",
+    "firebase_url": "https://d-app-286301.firebaseio.com",
+    "project_id": "d-app-286301",
+    "storage_bucket": "d-app-286301.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:819669594394:android:e959767be11cda10de3ca3",
+        "android_client_info": {
+          "package_name": "net.jbridge.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "819669594394-gcjuc22ctj9gleofc1hcg9h2kdd974eo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxxhU6peoOA2Ecn168paOVaCmydQeS704"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "819669594394-tbikikgng6k6u2htf33fqjc0u82bsoas.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "819669594394-75a0ohs81e9rohe5t5a4iscd7utnnfjp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.jbridge.f1d"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

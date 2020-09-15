@@ -18,6 +18,15 @@ import channels from './channels'
 import authentication from './authentication'
 import mongodb from './mongodb'
 import mongoose from './mongoose'
+
+// firebase admin SDK
+import * as admin from 'firebase-admin'
+import * as serviceAccount from './serviceAccountKey.json'
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+})
+
 // Don't remove this comment. It's needed to format import lines nicely.
 
 const app: Application = express(feathers())

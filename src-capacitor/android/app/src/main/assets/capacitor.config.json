@@ -1,7 +1,10 @@
 {
   "appId": "net.jbridge.app",
-  "appName": "One Diamond",
+  "appName": "1♦",
   "bundledWebRuntime": false,
   "npmClient": "npm",
-  "webDir": "www"
+  "webDir": "www",
+  "server": {
+    "url": "http://192.168.1.73:8080"
+  }
 }

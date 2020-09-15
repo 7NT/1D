@@ -53,20 +53,16 @@ const auth = {
     }
   },
   */
-  async login (credentials) {
-    try {
-      if (!credentials) {
-        // Try to authenticate using an existing token
-        return await api.reAuthenticate()
-      } else {
-        // Otherwise log in with the `local` strategy using the credentials we got
-        return await api.authenticate({
-          strategy: 'local',
-          ...credentials
-        })
-      }
-    } catch (err) {
-      console.error(err)
+  login (credentials) {
+    if (!credentials) {
+      // Try to authenticate using an existing token
+      return api.reAuthenticate()
+    } else {
+      // Otherwise log in with the `local` strategy using the credentials we got
+      return api.authenticate({
+        strategy: 'local',
+        ...credentials
+      })
     }
   },
 

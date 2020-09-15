@@ -1,6 +1,8 @@
 // Use this hook to manipulate incoming or outgoing data.
 // For more information on hooks see: http://docs.feathersjs.com/api/hooks.html
 import { Hook, HookContext } from '@feathersjs/feathers'
+import admin from 'firebase-admin'
+
 // import mongoose from 'mongoose';
 import { jbIsPlayer } from '../jbPlayer'
 import { jbMIX } from '../jbBoard'
@@ -13,7 +15,7 @@ const onSit = (): Hook => {
   }
 }
 
-async function playerSit(context: any, seat: any) {
+async function playerSit (context: any, seat: any) {
   const { connection, user } = context.params
 
   if (connection) {
@@ -37,7 +39,7 @@ async function playerSit(context: any, seat: any) {
   return context.data
 }
 
-async function tableJoin(app: any, user: any, seat: any) {
+async function tableJoin (app: any, user: any, seat: any) {
   const tables$ = app.service('tables')
 
   let t1: { _id: any, seats: any[]; ready: any[]; state: number; id: any }
@@ -67,7 +69,7 @@ async function tableJoin(app: any, user: any, seat: any) {
   return t1
 }
 
-async function newTable(tables$: any, user: any, seat: any) {
+async function newTable (tables$: any, user: any, seat: any) {
   const sayc = {
     title: 'SAYC',
     link: 'https://bridgewinners.com/convention-card/print/modern-standard-american-2/4563'
@@ -87,10 +89,20 @@ async function newTable(tables$: any, user: any, seat: any) {
   }
 
   tdata.seats[seat.sId - 1] = user.nick
+
+  let message = {
+    data: {
+      table: tdata.name,
+      status: 'Open'
+    },
+    topic: 'Table'
+  }
+  onMessaging(message)
+
   return await tables$.create(tdata)
 }
 
-async function playerPart(app: any, nick: any, seat: any) {
+async function playerPart (app: any, nick: any, seat: any) {
   const tId0 = seat.tId0  // mongoose.Types.ObjectId(seat.tId)
   if (!tId0) return
   const tables$ = app.service('tables')
@@ -150,6 +162,18 @@ const onLogout = (): Hook => {
     }
     return Promise.resolve(context)
   }
+}
+
+function onMessaging (message: any) {
+  // Send a message to devices subscribed to the provided topic.
+  admin.messaging().send(message)
+    .then((response) => {
+      // Response is a message ID string.
+      console.log('Successfully sent message:', response)
+    })
+    .catch((error) => {
+      console.log('Error sending message:', error)
+    })
 }
 
 export {

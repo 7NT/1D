@@ -3,8 +3,5 @@
   "appName": "1♦",
   "bundledWebRuntime": false,
   "npmClient": "npm",
-  "webDir": "www",
-  "server": {
-    "url": "http://192.168.1.73:8080"
-  }
+  "webDir": "www"
 }

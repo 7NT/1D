@@ -53,5 +53,5 @@
       }
     }
   },
-  "mongodb": "mongodb://hp160:27017/1d"
+  "mongodb": "mongodb://localhost:27017/1d"
 }

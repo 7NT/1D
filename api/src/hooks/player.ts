@@ -90,14 +90,7 @@ async function newTable (tables$: any, user: any, seat: any) {
 
   tdata.seats[seat.sId - 1] = user.nick
 
-  let message = {
-    data: {
-      table: tdata.name,
-      status: 'Open'
-    },
-    topic: 'Table'
-  }
-  onMessaging(message)
+  onTableMessaging(tdata.name)
 
   return await tables$.create(tdata)
 }
@@ -164,9 +157,16 @@ const onLogout = (): Hook => {
   }
 }
 
-function onMessaging (message: any) {
+function onTableMessaging (tname: any) {
   // Send a message to devices subscribed to the provided topic.
   try {
+    var message = {
+      notification: {
+        title: 'New Table: ' + tname
+      },
+      topic: 'table',
+    }
+
     admin.messaging().send(message)
       .then((response) => {
         // Response is a message ID string.

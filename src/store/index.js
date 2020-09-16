@@ -1,9 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { vuexfireMutations } from 'vuexfire'
+
 // import createPersistedState from 'vuex-persistedstate'
 
 // import example from './module-example'
 import jstore from './jstore'
+import auth from './auth'
+import user from './user'
 
 Vue.use(Vuex)
 
@@ -20,7 +24,12 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       // example
-      jstore
+      jstore,
+      auth,
+      user
+    },
+    mutations: {
+      ...vuexfireMutations
     },
     // plugins: [createPersistedState()],
     // enable strict mode (adds overhead!)

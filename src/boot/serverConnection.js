@@ -23,6 +23,8 @@ export default ({ store, Vue }) => {
     console.error(error)
   })
 
+  // firebaseService.getToken()
+
   Vue.prototype.$fb = firebaseService
   store.$fb = firebaseService
 }

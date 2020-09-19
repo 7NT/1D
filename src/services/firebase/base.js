@@ -1,6 +1,7 @@
 
 import firebase from 'firebase/app'
 import 'firebase/auth'
+// import '@firebase/messaging'
 
 /**
  * Returns Firebase 's global namespace from which all Firebase services are accessed

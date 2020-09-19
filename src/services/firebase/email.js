@@ -24,10 +24,10 @@ export const loginWithEmail = (email, password) => {
 }
 
 export const signInWithSocial = (social) => {
-  let authProvider = null
-  if (social === 'google') authProvider = firebase.auth().googleAuthProvider()
-  else if (social === 'facebook') authProvider = firebase.auth().facebookAuthProvider()
+  let provider = null
+  if (social === 'google') provider = firebase.auth().GoogleAuthProvider()
+  else if (social === 'facebook') provider = firebase.auth().facebookAuthProvider()
 
-  if (social) return firebase.auth().signInWithRedirect(authProvider)
+  if (social) return firebase.auth().signInWithPopup(provider)
   else return null
 }

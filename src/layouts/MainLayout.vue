@@ -1,6 +1,9 @@
 <template>
   <q-layout view='lHh Lpr lFf'>
-    <q-header elevated v-show='!$q.fullscreen.isActive'>
+    <q-header
+      elevated
+      v-show='!$q.fullscreen.isActive'
+    >
       <q-toolbar>
         <q-btn
           flat
@@ -16,19 +19,51 @@
         </q-toolbar-title>
 
         <div>v{{ version }}</div>
-        <q-btn flat @click='goTo("home")'>
+        <q-btn
+          flat
+          @click='goTo("home")'
+        >
           <q-icon name='home' />
-          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Home</q-tooltip>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 10]'
+          >Home</q-tooltip>
         </q-btn>
-        <q-btn flat @click='goTo("tops")'>
+        <q-btn
+          flat
+          @click='goTo("tops")'
+        >
           <q-icon name='star' />
-          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Top Players</q-tooltip>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 10]'
+          >Top Players</q-tooltip>
         </q-btn>
-        <q-btn flat icon='login' @click='goTo("signin")' v-show='!authenticated'>Sign In</q-btn>
-        <q-btn flat icon='account_box' @click='goTo("register")' v-show='!authenticated'>Register</q-btn>
-        <q-btn flat @click='goTo("lobby")' v-if='authenticated'>
+        <q-btn
+          flat
+          icon='login'
+          @click='goTo("signin")'
+          v-show='!authenticated'
+        >Sign In</q-btn>
+        <q-btn
+          flat
+          icon='account_box'
+          @click='goTo("register")'
+          v-show='!authenticated'
+        >Register</q-btn>
+        <q-btn
+          flat
+          @click='goTo("lobby")'
+          v-if='authenticated'
+        >
           <q-icon name='local_play' />
-          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Lobby</q-tooltip>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 10]'
+          >Lobby</q-tooltip>
         </q-btn>
         <q-btn
           flat
@@ -38,20 +73,42 @@
           aria-label='ScoreBook'
           v-show='authenticated'
         />
-        <q-btn flat @click='goTo("profile")' v-if='authenticated'>
+        <q-btn
+          flat
+          @click='goTo("profile")'
+          v-if='authenticated'
+        >
           <q-avatar>
             <img :src='userAvatar' />
           </q-avatar>
-          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Profile</q-tooltip>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 10]'
+          >Profile</q-tooltip>
         </q-btn>
-        <q-btn flat @click='signout' v-show='authenticated'>
+        <q-btn
+          flat
+          @click='signout'
+          v-show='authenticated'
+        >
           <q-icon name='exit_to_app' />
-          <q-tooltip anchor='bottom middle' self='top middle' :offset='[0, 10]'>Signout</q-tooltip>
+          <q-tooltip
+            anchor='bottom middle'
+            self='top middle'
+            :offset='[0, 10]'
+          >Signout</q-tooltip>
         </q-btn>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model='playerList' v-if='authenticated' bordered elevated content-class='bg-grey-1'>
+    <q-drawer
+      v-model='playerList'
+      v-if='authenticated'
+      bordered
+      elevated
+      content-class='bg-grey-1'
+    >
       <myP1List />
     </q-drawer>
 
@@ -385,9 +442,62 @@ export default {
         }
       }
     }
+    /*
+    getMessagingToken () {
+      messaging.getToken().then(async (token) => {
+        if (token) {
+          const currentMessageToken = window.localStorage.getItem('messagingToken')
+          console.log('token will be updated', currentMessageToken != token)
+          if (currentMessageToken != token) {
+            await this.saveToken(token)
+          }
+        } else {
+          console.log('No Instance ID token available. Request permission to generate one.')
+          this.notificationsPermisionRequest()
+        }
+      }).catch(function (err) {
+        console.log('An error occurred while retrieving token. ', err)
+      })
+    },
+    notificationsPermisionRequest () {
+      messaging.requestPermission()
+        .then(() => {
+          this.getMessagingToken()
+        })
+        .catch((err) => {
+          console.log('Unable to get permission to notify.', err)
+        })
+    },
+    listenTokenRefresh () {
+      const currentMessageToken = window.localStorage.getItem('messagingToken')
+      console.log('currentMessageToken', currentMessageToken)
+      if (currentMessageToken) {
+        messaging.onTokenRefresh(function () {
+          messaging.getToken().then(function (token) {
+            this.saveToken(token)
+          }).catch(function (err) {
+            console.log('Unable to retrieve refreshed token ', err)
+          })
+        })
+      }
+    },
+    saveToken (token) {
+      console.log('tokens', token)
+      axios.post('https://us-central1-cropchien.cloudfunctions.net/GeneralSubscription', { token })
+        .then(response => {
+          window.localStorage.setItem('messagingToken', token)
+          console.log(response)
+        }).catch((err) => {
+          console.log(err)
+        })
+    }
+    */
   },
-  beforeMount () {},
+  beforeMount () { },
   mounted () {
+    // firebase cloud messaging
+    // this.listenTokenRefresh()
+
     // Check if there is already a session running
     console.log('layout', this.user)
     auth

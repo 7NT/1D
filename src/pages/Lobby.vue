@@ -1,5 +1,8 @@
 <template>
-  <q-page class='no-padding no-margin' v-if='!!jsPlayer'>
+  <q-page
+    class='no-padding no-margin'
+    v-if='!!jsPlayer'
+  >
     <!-- content -->
     <div class='column'>
       <div class='col'>
@@ -24,10 +27,22 @@
               :disable='!isOpen(r)'
             />
           </q-tabs>
-          <q-tab-panels keep-alive v-model='rId' animated class='bg-teal'>
-            <q-tab-panel :name='0' class='no-margin no-padding'>
+          <q-tab-panels
+            keep-alive
+            v-model='rId'
+            animated
+            class='bg-teal'
+          >
+            <q-tab-panel
+              :name='0'
+              class='no-margin no-padding'
+            >
               <div class='fit'>
-                <q-list dense bordered separator>
+                <q-list
+                  dense
+                  bordered
+                  separator
+                >
                   <myT1List
                     v-for='t1 in myTables'
                     :key='t1.id'
@@ -38,8 +53,15 @@
               </div>
             </q-tab-panel>
 
-            <q-tab-panel :name='1' class='no-margin no-padding'>
-              <myPlayTable :jsPlayer='jsPlayer' v-on:onPlayer='onPlayer' v-show='isVisible(true)' />
+            <q-tab-panel
+              :name='1'
+              class='no-margin no-padding'
+            >
+              <myPlayTable
+                :jsPlayer='jsPlayer'
+                v-on:onPlayer='onPlayer'
+                v-show='isVisible(true)'
+              />
             </q-tab-panel>
 
             <q-tab-panel :name='2'>
@@ -50,15 +72,24 @@
           </q-tab-panels>
         </q-card>
       </div>
-      <div col='col' v-show='isVisible(false)'>
+      <div
+        col='col'
+        v-show='isVisible(false)'
+      >
         <myMessages :chatTo='myRoom' />
       </div>
     </div>
-    <q-footer elevated v-show='isVisible(false)'>
+    <q-footer
+      elevated
+      v-show='isVisible(false)'
+    >
       <myChat :chatTo='myRoom' />
     </q-footer>
 
-    <q-page-sticky position='top-right' :offset='[18, 0]'>
+    <q-page-sticky
+      position='top-right'
+      :offset='[18, 0]'
+    >
       <q-btn
         round
         color='accent'
@@ -68,7 +99,10 @@
         <q-tooltip>Full Screen</q-tooltip>
       </q-btn>
     </q-page-sticky>
-    <q-page-sticky position='bottom-right' :offset='[18, 18]'>
+    <q-page-sticky
+      position='bottom-right'
+      :offset='[18, 18]'
+    >
       <SpeechToText />
     </q-page-sticky>
   </q-page>
@@ -249,7 +283,6 @@ export default {
   mounted () {
     // this.$parent.page = 'Lobby'
     this.user = this.$attrs.user
-    console.log('lobby', this.user, this.jsPlayer)
     if (this.user && !this.user.nick) this.$router.push({ name: 'profile' })
   },
   created () {

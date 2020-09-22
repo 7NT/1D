@@ -10,10 +10,7 @@
     "entity": "user",
     "service": "users",
     "secret": "winBridge1com",
-    "authStrategies": [
-      "jwt",
-      "local"
-    ],
+    "authStrategies": ["jwt", "local"],
     "jwtOptions": {
       "header": {
         "typ": "access"
@@ -32,20 +29,13 @@
       "google": {
         "key": "819669594394-tbikikgng6k6u2htf33fqjc0u82bsoas.apps.googleusercontent.com",
         "secret": "lJqKySdIL771UmpZhdLffwpu",
-        "scope": [
-          "openid",
-          "email",
-          "profile"
-        ],
+        "scope": ["openid", "email", "profile"],
         "nonce": true
       },
       "facebook": {
         "key": "723452768493061",
         "secret": "91ebec1cf7c599a114378dd2470b2648",
-        "scope": [
-          "email",
-          "public_profile"
-        ]
+        "scope": ["email", "public_profile"]
       },
       "twitter": {
         "key": "xVXVkmdAvEjgdNceGuyabgVhG",
@@ -53,5 +43,5 @@
       }
     }
   },
-  "mongodb": "mongodb://localhost:27017/1d"
+  "mongodb": "mongodb://192.168.1.73:27017/1d"
 }

@@ -16,11 +16,13 @@
     "@quasar/extras": "^1.9.5",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
+    "firebase": "^7.20.0",
     "moment": "^2.26.0",
     "quasar": "^1.14.0",
     "say": "^0.16.0",
     "socket.io-client": "^2.3.0",
-    "vuex-persistedstate": "^3.0.1"
+    "vuex-persistedstate": "^3.0.1",
+    "vuexfire": "^3.2.4"
   },
   "devDependencies": {
     "@quasar/app": "^2.1.0",

@@ -121,6 +121,13 @@ import myTourney from 'src/components/myTourney'
 import { jbV2C } from 'src/jbVoice'
 import SpeechToText from 'src/components/SpeechToText'
 // import myBottomSheet from 'src/components/myBottomSheet'
+// https://capacitorjs.com/docs/guides/push-notifications-firebase
+import { Plugins } from '@capacitor/core' // PushNotification, PushNotificationToken, PushNotificationActionPerformed
+const { PushNotifications } = Plugins
+
+// https://github.com/capacitor-community/fcm
+// alternatively - without types
+const { FCMPlugin } = Plugins
 
 export default {
   name: 'Lobby',
@@ -287,6 +294,66 @@ export default {
   },
   created () {
     // this.user = this.$attrs.user
+    console.log('Initializing HomePage')
+
+    // Request permission to use push notifications
+    // iOS will prompt user and return if they granted permission or not
+    // Android will just grant without prompting
+    if (this.$q.platform.is.capacitor) {
+      PushNotifications.requestPermission().then(result => {
+        if (result.granted) {
+          // Register with Apple / Google to receive push via APNS/FCM
+          PushNotifications.register()
+            .then(() => {
+              //
+              // Subscribe to a specific topic
+              // you can use `FCMPlugin` or just `fcm`
+              FCMPlugin.subscribeTo({ topic: 'Notifications' })
+                .then((r) => console.log('subscribed to topic'))
+                .catch((err) => {
+                  // console.log(err)
+                  this.$q.notify({
+                    message: err,
+                    icon: 'info'
+                  })
+                })
+            })
+            .catch((err) => {
+              // alert(JSON.stringify(err))
+              this.$q.notify({
+                message: err,
+                icon: 'info'
+              })
+            })
+        } else {
+          // Show some error
+        }
+      })
+
+      PushNotifications.addListener('registration',
+        (token) => { // : PushNotificationToken
+          // console.log('Push registration success, token: ' + token.value)
+        }
+      )
+
+      PushNotifications.addListener('registrationError',
+        (error) => { // : any
+          console.log('Error on registration: ' + JSON.stringify(error))
+        }
+      )
+
+      PushNotifications.addListener('pushNotificationReceived',
+        (notification) => { // : PushNotification
+          // alert('Push received: ' + JSON.stringify(notification))
+        }
+      )
+
+      PushNotifications.addListener('pushNotificationActionPerformed',
+        (notification) => { // : PushNotificationActionPerformed
+          // alert('Push action performed: ' + JSON.stringify(notification))
+        }
+      )
+    }
   }
 }
 </script>

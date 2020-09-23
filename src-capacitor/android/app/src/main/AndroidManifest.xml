@@ -11,6 +11,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <!-- notification icon -->
+        <meta-data android:name="com.google.firebase.messaging.default_notification_icon" android:resource="@drawable/jb1d" />
+        <!--- <meta-data android:name="iterable_notification_channel_name" android:value="Notifications"/> -->
+
         <activity
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode"
             android:name="net.jbridge.app.MainActivity"
@@ -61,4 +65,5 @@
     <!-- Audio -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+
 </manifest>

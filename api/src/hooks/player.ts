@@ -162,18 +162,19 @@ function onTableMessaging (tname: any) {
   try {
     var message = {
       notification: {
-        title: 'New Table: ' + tname
+        title: 'New Table: ' + tname,
+        body: 'Join?'
       },
-      topic: 'table',
+      topic: 'Notifications',
     }
 
     admin.messaging().send(message)
       .then((response) => {
         // Response is a message ID string.
-        console.log('Successfully sent message:', response)
+        // console.log('Successfully sent message:', response)
       })
       .catch((error) => {
-        console.log('Error sending message:', error)
+        // console.log('Error sending message:', error)
       })
   } catch (_) { }
 }

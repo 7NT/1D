@@ -1,10 +1,11 @@
 {
   "name": "1d",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "1♦ app",
   "author": "7NT <jun@jbridge.net>",
   "private": true,
   "dependencies": {
+    "@capacitor-community/fcm": "^1.0.8",
     "@capacitor/android": "^2.4.0",
     "@capacitor/cli": "^2.0.0",
     "@capacitor/core": "^2.0.0"

@@ -95,20 +95,28 @@ export default function (app: Application) {
         // console.log('login', err)
       }
       players$.create(player)
-      // firebase admin SDK
-      let uid = user.nick
 
+      // Send a message to devices subscribed to the provided topic.
+      /*
       try {
-        admin
-          .auth()
-          .createCustomToken(uid)
-          .then(customToken => {
-            console.log(customToken)
+        var message = {
+          notification: {
+            title: 'Login: ' + user.nick
+            // bosy: 'welcome...'
+          },
+          topic: 'Notifications',
+        }
+
+        admin.messaging().send(message)
+          .then((response) => {
+            // Response is a message ID string.
+            // console.log('Successfully sent message:', response)
           })
-          .catch(err => {
-            console.log(err)
+          .catch((error) => {
+            // console.log('Error sending message:', error)
           })
       } catch (_) { }
+      */
     }
   })
 
